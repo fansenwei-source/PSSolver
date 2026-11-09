@@ -29,7 +29,10 @@ def _rc456_successor(relative: str, historical: str) -> str:
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if registration is not None and registration["historical_sha256"] == resolved:
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
             resolved = registration["current_sha256"]
     return resolve_s03_successor(relative, resolved)
 

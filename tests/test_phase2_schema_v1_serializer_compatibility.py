@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
+from dataclasses import replace
 import ast
 import hashlib
 import json
-from copy import deepcopy
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -23,10 +23,23 @@ from pssolver.configuration import plane_beris_edwards_schema_v1 as schema_v1
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CASES_PATH = PROJECT_ROOT / "tests" / "fixtures" / "configuration" / "plane_run_spec_v1_cases.json"
+CASES_PATH = (
+    PROJECT_ROOT
+    / "tests"
+    / "fixtures"
+    / "configuration"
+    / "plane_run_spec_v1_cases.json"
+)
 CASES_ORACLE = json.loads(CASES_PATH.read_text(encoding="utf-8"))
-FACADE_PATH = PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards.py"
-SERIALIZER_PATH = PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards_schema_v1.py"
+FACADE_PATH = (
+    PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards.py"
+)
+SERIALIZER_PATH = (
+    PROJECT_ROOT
+    / "pssolver"
+    / "configuration"
+    / "plane_beris_edwards_schema_v1.py"
+)
 
 
 def _spec(**overrides: object) -> PlaneBerisEdwardsRunSpec:
@@ -55,10 +68,14 @@ def test_all_schema_v1_documents_and_hashes_match_the_frozen_oracle(case):
 
     assert spec.to_metadata() == case["expected_metadata"]
     assert spec.canonical_sha256() == case["canonical_sha256"]
-    assert spec.runtime_identity_metadata() == (case["expected_runtime_identity_metadata"])
+    assert spec.runtime_identity_metadata() == (
+        case["expected_runtime_identity_metadata"]
+    )
     assert spec.runtime_identity_sha256() == case["runtime_identity_sha256"]
     assert spec.identity_metadata() == case["expected_identity_metadata"]
-    assert spec.runtime_selection_metadata() == (case["expected_runtime_selection_metadata"])
+    assert spec.runtime_selection_metadata() == (
+        case["expected_runtime_selection_metadata"]
+    )
 
 
 def test_schema_v1_metadata_calls_return_fresh_mutation_isolated_documents():
@@ -115,7 +132,9 @@ def test_runtime_identity_dispatches_through_public_metadata_but_retains_direct_
     }
     replacement["preset"] = {"sentinel": "preset"}
     replacement["zero_mode"] = {"sentinel": "zero-mode"}
-    replacement["workflow"]["spectral_refresh"] = {"sentinel": "ignored-workflow-refresh"}
+    replacement["workflow"]["spectral_refresh"] = {
+        "sentinel": "ignored-workflow-refresh"
+    }
     calls: list[PlaneBerisEdwardsRunSpec] = []
 
     def metadata(target: PlaneBerisEdwardsRunSpec) -> dict[str, object]:
@@ -197,10 +216,15 @@ def test_serializer_is_one_stateless_direct_module_only_authority():
         serializer,
         schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer,
     )
-    assert schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer.__slots__ == ()
+    assert (
+        schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer.__slots__
+        == ()
+    )
     assert not hasattr(serializer, "__dict__")
     assert facade.PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER is serializer
-    assert facade.PLANE_RUN_SPEC_SCHEMA_VERSION == (schema_v1.PLANE_RUN_SPEC_SCHEMA_VERSION)
+    assert facade.PLANE_RUN_SPEC_SCHEMA_VERSION == (
+        schema_v1.PLANE_RUN_SPEC_SCHEMA_VERSION
+    )
     for name in (
         "PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER",
         "PlaneBerisEdwardsSchemaV1CompatibilitySerializer",
@@ -273,10 +297,16 @@ def test_serializer_direct_entry_points_equal_all_facade_documents_and_hashes():
         spec = _spec(**case["factory_overrides"])
         assert serializer.to_metadata(spec) == spec.to_metadata()
         assert serializer.canonical_sha256(spec) == spec.canonical_sha256()
-        assert serializer.runtime_identity_metadata(spec) == (spec.runtime_identity_metadata())
-        assert serializer.runtime_identity_sha256(spec) == (spec.runtime_identity_sha256())
+        assert serializer.runtime_identity_metadata(spec) == (
+            spec.runtime_identity_metadata()
+        )
+        assert serializer.runtime_identity_sha256(spec) == (
+            spec.runtime_identity_sha256()
+        )
         assert serializer.identity_metadata(spec) == spec.identity_metadata()
-        assert serializer.runtime_selection_metadata(spec) == (spec.runtime_selection_metadata())
+        assert serializer.runtime_selection_metadata(spec) == (
+            spec.runtime_selection_metadata()
+        )
 
 
 def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges():
@@ -326,8 +356,12 @@ def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges
 
 
 def test_serializer_and_migrated_component_graph_are_in_source_inventory():
-    assert "pssolver/core/__init__.py" in (PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES)
-    assert "pssolver/geometries/__init__.py" in (PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES)
+    assert "pssolver/core/__init__.py" in (
+        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
+    assert "pssolver/geometries/__init__.py" in (
+        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
     assert "pssolver/configuration/plane_beris_edwards_schema_v1.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )

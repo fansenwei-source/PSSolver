@@ -1,15 +1,10 @@
 """CPU qualification for Stage N.1 generation-local representation reuse."""
 
 from __future__ import annotations
-
 from pathlib import Path
 
 import pssolver
-from pssolver.core import (
-    BoundarySet,
-    HomogeneousNeumannBC,
-    PeriodicBC,
-)
+from pssolver.core import BoundarySet, HomogeneousNeumannBC, PeriodicBC
 
 
 P = PeriodicBC()

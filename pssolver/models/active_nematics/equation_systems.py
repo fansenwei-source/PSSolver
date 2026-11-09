@@ -8,8 +8,8 @@ transform, or construct a runtime.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
+import math
 from numbers import Real
 
 from pssolver.core.fields import FieldRole
@@ -18,18 +18,16 @@ from pssolver.systems.equations import (
     EquationSystemSpec,
     EquationTermSpec,
 )
-from pssolver.systems.stokes import (
-    IncompressibleStokesSystemSpec,
-)
+from pssolver.systems.stokes import IncompressibleStokesSystemSpec
+
+from .fields import Q_COMPONENTS
+from .specifications import BerisEdwardsMaterialRequest
 from pssolver.systems.stokes import (
     PressureGauge as PressureGauge,
 )
 from pssolver.systems.stokes import (
     TangentialZeroModePolicy as TangentialZeroModePolicy,
 )
-
-from .fields import Q_COMPONENTS
-from .specifications import BerisEdwardsMaterialRequest
 
 
 CARTESIAN_AXES = ("x", "y", "z")
@@ -42,11 +40,15 @@ DISTORTION_STRESS_COMPONENTS = tuple(
     f"stress_distortion_{component}" for component in STRESS_COMPONENTS
 )
 Q_GRADIENT_COMPONENTS = tuple(
-    f"d{component}_d{axis}" for axis in CARTESIAN_AXES for component in Q_COMPONENTS
+    f"d{component}_d{axis}"
+    for axis in CARTESIAN_AXES
+    for component in Q_COMPONENTS
 )
 VELOCITY_COMPONENTS = ("ux", "uy", "uz")
 VELOCITY_GRADIENT_COMPONENTS = tuple(
-    f"d{component}_d{axis}" for axis in CARTESIAN_AXES for component in VELOCITY_COMPONENTS
+    f"d{component}_d{axis}"
+    for axis in CARTESIAN_AXES
+    for component in VELOCITY_COMPONENTS
 )
 COMPLETE_STRESS_FORCE_COMPONENTS = ("force_x", "force_y", "force_z")
 ACTIVE_FORCE_COMPONENTS = ("fx", "fy", "fz")
@@ -56,7 +58,9 @@ BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY = "beris_edwards_molecular_field"
 BERIS_EDWARDS_Q_GRADIENT_CAPABILITY = "beris_edwards_q_gradient"
 BERIS_EDWARDS_STRESS_CAPABILITY = "beris_edwards_stress"
 BERIS_EDWARDS_FORCE_CAPABILITY = "beris_edwards_force"
-BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY = "beris_edwards_velocity_gradient"
+BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY = (
+    "beris_edwards_velocity_gradient"
+)
 
 
 def _finite(value: object, description: str, *, positive: bool = False) -> float:
@@ -102,10 +106,16 @@ class CompleteStressBerisEdwardsEquationRequest:
             _finite(self.activity_amplitude, "activity_amplitude"),
         )
         if not isinstance(self.stokes_system, IncompressibleStokesSystemSpec):
-            raise TypeError("stokes_system must be an IncompressibleStokesSystemSpec")
-        if self.stokes_system.force_components != COMPLETE_STRESS_FORCE_COMPONENTS:
+            raise TypeError(
+                "stokes_system must be an IncompressibleStokesSystemSpec"
+            )
+        if (
+            self.stokes_system.force_components
+            != COMPLETE_STRESS_FORCE_COMPONENTS
+        ):
             raise ValueError(
-                "complete-stress Stokes force components must be ('force_x', 'force_y', 'force_z')"
+                "complete-stress Stokes force components must be "
+                "('force_x', 'force_y', 'force_z')"
             )
         _validate_stokes_outputs(self.stokes_system)
 
@@ -206,7 +216,9 @@ class CompleteStressBerisEdwardsEquationRequest:
                     ),
                 ),
             ),
-            algebraic_systems=(self.stokes_system.to_algebraic_system_spec(),),
+            algebraic_systems=(
+                self.stokes_system.to_algebraic_system_spec(),
+            ),
             parameters={
                 "force_law": "complete_one_constant_nematic_stress",
                 "material": material.to_metadata(),
@@ -227,7 +239,9 @@ class CompleteStressBerisEdwardsEquationRequest:
 
 def _validate_stokes_outputs(system: IncompressibleStokesSystemSpec) -> None:
     if system.velocity_components != VELOCITY_COMPONENTS:
-        raise ValueError("Stokes velocity components must be ('ux', 'uy', 'uz')")
+        raise ValueError(
+            "Stokes velocity components must be ('ux', 'uy', 'uz')"
+        )
     if system.pressure_component != "p":
         raise ValueError("Stokes pressure component must be 'p'")
 
@@ -268,7 +282,9 @@ def _common_q_flow_fields(
             )
         )
     else:
-        fields.append(_field("active_force", FieldRole.TRANSIENT, force_components))
+        fields.append(
+            _field("active_force", FieldRole.TRANSIENT, force_components)
+        )
     fields.extend(
         (
             _field("velocity", FieldRole.ALGEBRAIC, VELOCITY_COMPONENTS),

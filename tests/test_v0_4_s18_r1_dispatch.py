@@ -33,47 +33,21 @@ def _mutate(spec, case):
     if case == "model":
         return replace(spec, equation_system=replace(spec.equation_system, variant="unknown"))
     if case in {"runtime", "backend"}:
-        return replace(
-            spec,
-            execution=replace(
-                spec.execution,
-                **{
-                    "runtime_path" if case == "runtime" else "backend": "unknown",
-                },
-            ),
-        )
+        return replace(spec, execution=replace(spec.execution, **{
+            "runtime_path" if case == "runtime" else "backend": "unknown",
+        }))
     if case == "capability":
-        return replace(
-            spec,
-            equation_system=replace(
-                spec.equation_system,
-                evolution_laws=(
-                    replace(spec.equation_system.evolution_laws[0], capability="unknown"),
-                ),
-            ),
-        )
+        return replace(spec, equation_system=replace(spec.equation_system,
+            evolution_laws=(replace(spec.equation_system.evolution_laws[0], capability="unknown"),)))
     if case == "time":
-        return replace(
-            spec,
-            time_integration=TimeIntegrationSpec(
-                integrator=IntegratorSpec.sbdf2(dt=spec.time_integration.integrator.dt)
-            ),
-        )
+        return replace(spec, time_integration=TimeIntegrationSpec(
+            integrator=IntegratorSpec.sbdf2(dt=spec.time_integration.integrator.dt)))
     assert case == "topology"
     bad = copy(spec)
     geometry = spec.geometry
-    object.__setattr__(
-        bad,
-        "geometry",
-        GeometrySpec(
-            geometry.name,
-            geometry.domain,
-            tuple(
-                AxisTopology.BOUNDED if item is AxisTopology.PERIODIC else AxisTopology.PERIODIC
-                for item in geometry.axis_topologies
-            ),
-        ),
-    )
+    object.__setattr__(bad, "geometry", GeometrySpec(geometry.name, geometry.domain,
+        tuple(AxisTopology.BOUNDED if item is AxisTopology.PERIODIC
+              else AxisTopology.PERIODIC for item in geometry.axis_topologies)))
     return bad
 
 

@@ -9,31 +9,20 @@ timestep dispatch is introduced.
 from __future__ import annotations
 
 from collections.abc import Callable
-
 from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.construction import (
     BuilderProvision,
     RuntimeConstructionBinding,
 )
-
-from .channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeAdapterProtocol,
-    ChannelBerisEdwardsRuntimeBuildRequest,
-)
+from .channel_beris_edwards import ChannelBerisEdwardsRuntimeAdapterProtocol, ChannelBerisEdwardsRuntimeBuildRequest
+from .plane_beris_edwards import PlaneRuntimeAdapterProtocol, PlaneRuntimeBuildRequest
+from .periodic_beris_edwards import PeriodicRuntimeAdapterProtocol, PeriodicRuntimeBuildRequest
 from .channel_beris_edwards import (
     build_channel_beris_edwards_runtime as build_channel_beris_edwards_runtime,
 )
 from .periodic_beris_edwards import (
-    PeriodicRuntimeAdapterProtocol,
-    PeriodicRuntimeBuildRequest,
-)
-from .periodic_beris_edwards import (
     build_periodic_beris_edwards_runtime as build_periodic_beris_edwards_runtime,
-)
-from .plane_beris_edwards import (
-    PlaneRuntimeAdapterProtocol,
-    PlaneRuntimeBuildRequest,
 )
 from .plane_beris_edwards import (
     build_plane_beris_edwards_runtime as build_plane_beris_edwards_runtime,
@@ -80,11 +69,18 @@ def _require_builder_contract(
         "compiled_builder": compiled_builder,
     }
     unexpected = tuple(
-        name for name, value in provided.items() if value is not None and name != selected
+        name
+        for name, value in provided.items()
+        if value is not None and name != selected
     )
     if unexpected:
-        raise ValueError(f"unselected runtime builders are forbidden: {unexpected!r}")
-    if binding.builder_provision is BuilderProvision.CALLER and provided[selected] is None:
+        raise ValueError(
+            f"unselected runtime builders are forbidden: {unexpected!r}"
+        )
+    if (
+        binding.builder_provision is BuilderProvision.CALLER
+        and provided[selected] is None
+    ):
         raise RuntimeError(
             f"{binding.kind.value} requires caller-provided {selected}; "
             "runtime fallback is forbidden"
@@ -109,7 +105,9 @@ def build_bound_simulation_runtime(
     simulation = _request_simulation(request)
     expected = bind_simulation_runtime(simulation)
     if binding != expected:
-        raise ValueError("runtime construction binding does not match the build request")
+        raise ValueError(
+            "runtime construction binding does not match the build request"
+        )
     _require_builder_contract(
         binding,
         legacy_builder=legacy_builder,
@@ -125,7 +123,8 @@ def build_bound_simulation_runtime(
         raise TypeError(application.runtime_request_error)
     factory = globals()[application.runtime_factory.rsplit(".", 1)[1]]
     if application.runtime_accepts_builders:
-        return factory(request, legacy_builder=legacy_builder, compiled_builder=compiled_builder)
+        return factory(request, legacy_builder=legacy_builder,
+                       compiled_builder=compiled_builder)
     return factory(request)
 
 

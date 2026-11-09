@@ -21,10 +21,9 @@ def test_focused_recovery_record_preserves_failure_and_authorization_boundaries(
     assert record["source_failure"]["historical_result_reclassified"] is False
     assert record["source_failure"]["thresholds_changed"] is False
     assert record["adjudication_boundary"]["focused_pass_is_g1_complete"] is False
-    assert (
-        record["adjudication_boundary"]["focused_pass_only_authorizes_cumulative_reassembly"]
-        is True
-    )
+    assert record["adjudication_boundary"][
+        "focused_pass_only_authorizes_cumulative_reassembly"
+    ] is True
     assert record["adjudication_boundary"]["production_default_changed"] is False
     assert record["authorization"] == {
         "push_authorized": True,

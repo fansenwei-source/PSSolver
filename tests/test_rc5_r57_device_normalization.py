@@ -19,7 +19,6 @@ from pssolver import (
     compile_simulation,
     run_simulation,
 )
-from pssolver.applications.plane_beris_edwards import run_plane_beris_edwards
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -27,6 +26,7 @@ from pssolver.boundaries import (
     neumann_q,
     no_slip_velocity,
 )
+from pssolver.applications.plane_beris_edwards import run_plane_beris_edwards
 from pssolver.configuration.execution_device import (
     execution_device_normalization,
     resolve_allocated_execution_device,
@@ -118,7 +118,9 @@ def _simulation(
         time=TimeStepping(dt=0.001),
         initial_condition=SnapshotInitialCondition(snapshot, step=0),
         execution=TorchSpectralExecution(
-            runtime_path=("periodic_spectral" if periodic else "channel_complete_stress"),
+            runtime_path=(
+                "periodic_spectral" if periodic else "channel_complete_stress"
+            ),
             device=device,
             options=options,
         ),
@@ -220,7 +222,9 @@ def test_output_metadata_persists_requested_and_resolved_device(
             output_name=output_name,
         )
     )
-    metadata = json.loads((result.output_directory / "metadata.json").read_text(encoding="utf-8"))
+    metadata = json.loads(
+        (result.output_directory / "metadata.json").read_text(encoding="utf-8")
+    )
     assert metadata["normalization"] == {
         "requested_execution_device": "auto",
         "resolved_execution_device": "cpu",

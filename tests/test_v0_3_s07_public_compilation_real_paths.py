@@ -1,7 +1,6 @@
 """Real public dry-runs for S-07 compilation provenance."""
 
 from __future__ import annotations
-
 import json
 
 from pssolver import compile_simulation, run_simulation
@@ -33,13 +32,17 @@ def _assert_real_dry_run(source, capsys) -> None:
     metadata = json.loads(capsys.readouterr().out)
     public = metadata["public_compilation"]
     assert set(public) == PUBLIC_COMPILATION_KEYS
-    assert public["compilation_identity_sha256"] == (compiled.compilation_identity_sha256)
+    assert public["compilation_identity_sha256"] == (
+        compiled.compilation_identity_sha256
+    )
     assert public["source_simulation_sha256"] == source.canonical_sha256()
     assert public["application"] == compiled.application
     assert public["application_simulation_sha256"] == (
         compiled.application_specification.canonical_sha256()
     )
-    assert public["application_request_sha256"] == (compiled.application_request.canonical_sha256())
+    assert public["application_request_sha256"] == (
+        compiled.application_request.canonical_sha256()
+    )
     assert public["normalization"] == dict(compiled.normalization)
     assert public["fallback_allowed"] is False
 

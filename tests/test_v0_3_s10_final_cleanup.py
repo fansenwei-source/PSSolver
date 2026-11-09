@@ -52,15 +52,7 @@ def test_r1_r9_completed_subset_and_deferred_remainder_are_explicit() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert set(disposition["completed_in_s10"]) == {"R7", "R9"}
     assert set(disposition["remaining_deferred"]) == {
-        "R1",
-        "R2",
-        "R3",
-        "R4",
-        "R5",
-        "R6",
-        "R7",
-        "R8",
-        "R9",
+        "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"
     }
     assert issues["R1-R9"]["status"] == "deferred"
     # Historical S-10 decision, not the living backlog's later disposition.

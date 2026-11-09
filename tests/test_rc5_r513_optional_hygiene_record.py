@@ -8,18 +8,36 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
-RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
-RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
-RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
-RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
-RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
-RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
+RC6_R2_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+)
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
+RC6_R5_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+)
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -45,7 +63,9 @@ def test_r513_dispositions_are_explicit_and_compatibility_preserving():
 def test_r513_scope_remains_cpu_only_and_fail_closed():
     record = _record()
     assert record["status"] == "installed_wheel_cpu_verified"
-    assert record["classification"] == ("PASS_R5_13_OPTIONAL_HYGIENE_INSTALLED_WHEEL_CPU_CLOSURE")
+    assert record["classification"] == (
+        "PASS_R5_13_OPTIONAL_HYGIENE_INSTALLED_WHEEL_CPU_CLOSURE"
+    )
     assert record["authorization"] == {
         "r5_13_complete": True,
         "eligible_for_next_work_item": True,

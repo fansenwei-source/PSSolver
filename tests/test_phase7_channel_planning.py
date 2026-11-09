@@ -74,7 +74,9 @@ def test_phase7_plan_is_planning_only_and_excludes_boundary_and_control_work():
     assert value["status"] == "P7_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED"
     assert value["phase_6_prerequisite"]["phase_6_complete"] is True
     assert value["slices"][0] == "P7.0_inventory_and_oracle_freeze"
-    assert value["slices"][-1] == ("P7.6_h100_performance_memory_long_run_closure")
+    assert value["slices"][-1] == (
+        "P7.6_h100_performance_memory_long_run_closure"
+    )
     assert "strong_anchoring" in value["out_of_scope"]
     assert "optimal_control" in value["out_of_scope"]
     assert value["authorization"] == {

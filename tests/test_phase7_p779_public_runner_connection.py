@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import ast
-import json
-import sys
 from dataclasses import FrozenInstanceError
+import json
 from pathlib import Path
+import sys
 from types import ModuleType, SimpleNamespace
 
 import numpy as np
@@ -30,11 +30,7 @@ from pssolver.boundaries import (
     neumann_pressure_compatibility,
     neumann_q,
 )
-from pssolver.configuration.public_simulation_runner import (
-    PUBLIC_PLANE_APPLICATION,
-    PublicCompilationRejectionCode,
-    PublicSimulationCompilationError,
-)
+from pssolver.configuration.public_simulation_runner import PUBLIC_PLANE_APPLICATION, PublicCompilationRejectionCode, PublicSimulationCompilationError
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
@@ -42,7 +38,9 @@ from pssolver.planning.construction import RuntimeConstructionKind
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p779_public_runner_connection.json")
+RESULT_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p779_public_runner_connection.json"
+)
 
 
 def _simulation(**replacements) -> Simulation:
@@ -128,15 +126,21 @@ def test_compile_simulation_binds_exact_existing_plane_application():
     assert isinstance(compiled, CompiledSimulation)
     assert compiled.source is source
     assert compiled.application == PUBLIC_PLANE_APPLICATION
-    assert compiled.construction_plan.kind is (RuntimeConstructionKind.PLANE_COMPILED_V2)
+    assert compiled.construction_plan.kind is (
+        RuntimeConstructionKind.PLANE_COMPILED_V2
+    )
     assert compiled.application_request.runtime_path.value == "compiled_v2"
     assert compiled.application_request.device == "cpu"
     assert compiled.application_request.dry_run is True
     assert compiled.normalization["requested_execution_device"] == "cpu"
     assert compiled.normalization["resolved_execution_device"] == "cpu"
     assert compiled.application_request.parameterization == "fixed-k"
-    assert compiled.application_request.output_dir == Path("data/public_runner_test")
-    assert compiled.application_request.numerics.to_metadata() == (source.numerics.to_metadata())
+    assert compiled.application_request.output_dir == Path(
+        "data/public_runner_test"
+    )
+    assert compiled.application_request.numerics.to_metadata() == (
+        source.numerics.to_metadata()
+    )
     assert compiled.lowering_plan.source_simulation_sha256 == (
         compiled.application_specification.canonical_sha256()
     )
@@ -152,9 +156,13 @@ def test_coefficient_translation_preserves_requested_physics_with_roundoff_only(
     normalization = compiled.normalization
 
     assert normalization["requested_activity"] == 0.01
-    assert normalization["effective_activity"] == pytest.approx(0.01, rel=2.0e-14, abs=2.0e-15)
+    assert normalization["effective_activity"] == pytest.approx(
+        0.01, rel=2.0e-14, abs=2.0e-15
+    )
     assert normalization["requested_ldg_l1"] == 1.0 / 81.0
-    assert normalization["effective_ldg_l1"] == pytest.approx(1.0 / 81.0, rel=2.0e-14, abs=2.0e-15)
+    assert normalization["effective_ldg_l1"] == pytest.approx(
+        1.0 / 81.0, rel=2.0e-14, abs=2.0e-15
+    )
 
 
 @pytest.mark.parametrize(
@@ -220,7 +228,10 @@ def test_default_time_stepping_has_explicit_disabled_refresh():
     compiled = compile_simulation(source)
 
     assert source.time.refresh == {"mode": "disabled"}
-    assert compiled.application_specification.time_integration.refresh["mode"] == "disabled"
+    assert (
+        compiled.application_specification.time_integration.refresh["mode"]
+        == "disabled"
+    )
 
 
 def test_compile_simulation_rejects_unqualified_negative_activity():
@@ -235,7 +246,9 @@ def test_compile_simulation_rejects_unqualified_negative_activity():
         flow_alignment=material["flow_alignment"],
         activity=-0.01,
         beta=material["beta"],
-        viscosity=original.model.parameters["stokes"]["parameters"]["viscosity"],
+        viscosity=original.model.parameters["stokes"]["parameters"][
+            "viscosity"
+        ],
     )
     boundaries = assign_boundaries(
         model=invalid,
@@ -247,7 +260,9 @@ def test_compile_simulation_rejects_unqualified_negative_activity():
         },
     )
     with pytest.raises(PublicSimulationCompilationError, match="positive activity"):
-        compile_simulation(_simulation(model=invalid, boundaries=boundaries))
+        compile_simulation(
+            _simulation(model=invalid, boundaries=boundaries)
+        )
 
 
 def test_plane_compiler_wraps_non_nematic_bulk_coefficients():
@@ -262,7 +277,9 @@ def test_plane_compiler_wraps_non_nematic_bulk_coefficients():
         flow_alignment=material["flow_alignment"],
         activity=0.01,
         beta=material["beta"],
-        viscosity=original.model.parameters["stokes"]["parameters"]["viscosity"],
+        viscosity=original.model.parameters["stokes"]["parameters"][
+            "viscosity"
+        ],
     )
     boundaries = assign_boundaries(
         model=invalid,
@@ -277,7 +294,9 @@ def test_plane_compiler_wraps_non_nematic_bulk_coefficients():
     with pytest.raises(PublicSimulationCompilationError) as caught:
         compile_simulation(_simulation(model=invalid, boundaries=boundaries))
 
-    assert caught.value.code is (PublicCompilationRejectionCode.MODEL_CONTRACT)
+    assert caught.value.code is (
+        PublicCompilationRejectionCode.MODEL_CONTRACT
+    )
     assert "positive real uniaxial equilibrium" in str(caught.value)
 
 
@@ -286,14 +305,17 @@ def test_public_compiler_translates_known_option_boundary_errors(monkeypatch):
         raise TypeError("synthetic option boundary failure")
 
     monkeypatch.setattr(
-        "pssolver.configuration.public_simulation_runner._compile_plane_public_simulation",
+        "pssolver.configuration.public_simulation_runner."
+        "_compile_plane_public_simulation",
         fail_at_known_boundary,
     )
 
     with pytest.raises(PublicSimulationCompilationError) as caught:
         compile_simulation(_simulation())
 
-    assert caught.value.code is (PublicCompilationRejectionCode.MALFORMED_APPLICATION_SPEC)
+    assert caught.value.code is (
+        PublicCompilationRejectionCode.MALFORMED_APPLICATION_SPEC
+    )
     assert caught.value.context == {
         "boundary": "public_compiler_dispatch",
         "exception_type": "TypeError",
@@ -365,13 +387,17 @@ def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
         "emit_metadata": True,
         "public_compilation_metadata": {
             "schema_version": 1,
-            "compilation_identity_sha256": (compiled.compilation_identity_sha256),
+            "compilation_identity_sha256": (
+                compiled.compilation_identity_sha256
+            ),
             "source_simulation_sha256": compiled.source.canonical_sha256(),
             "application": compiled.application,
             "application_simulation_sha256": (
                 compiled.application_specification.canonical_sha256()
             ),
-            "application_request_sha256": (compiled.application_request.canonical_sha256()),
+            "application_request_sha256": (
+                compiled.application_request.canonical_sha256()
+            ),
             "normalization": dict(compiled.normalization),
             "fallback_allowed": False,
         },
@@ -394,7 +420,9 @@ def test_run_simulation_represents_plane_dry_run_without_false_outputs(
         assert run_spec is compiled.application_request
         assert progress is None
         assert emit_metadata is False
-        assert public_compilation_metadata["normalization"] == dict(compiled.normalization)
+        assert public_compilation_metadata["normalization"] == dict(
+            compiled.normalization
+        )
         return None
 
     fake.run_plane_beris_edwards = run_plane_beris_edwards
@@ -422,7 +450,9 @@ def test_public_plane_dry_run_emits_complete_compilation_provenance(capsys):
     assert result.status.value == "dry_run"
     metadata = json.loads(capsys.readouterr().out)
     public = metadata["public_compilation"]
-    assert public["compilation_identity_sha256"] == (compiled.compilation_identity_sha256)
+    assert public["compilation_identity_sha256"] == (
+        compiled.compilation_identity_sha256
+    )
     assert public["source_simulation_sha256"] == source.canonical_sha256()
     assert public["application"] == compiled.application
     assert public["normalization"] == dict(compiled.normalization)
@@ -441,10 +471,14 @@ def test_public_runner_has_no_top_level_application_or_runtime_import():
     path = ROOT / "pssolver/api/runner.py"
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     imports = {
-        node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom) and node.module
+        node.module
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom) and node.module
     }
     top_level_imports = {
-        node.module for node in tree.body if isinstance(node, ast.ImportFrom) and node.module
+        node.module
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom) and node.module
     }
     assert not {
         name
@@ -467,7 +501,9 @@ def test_public_exports_include_compile_and_run_connection():
 
 def test_machine_record_binds_scope_and_source_identity():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
-    assert record["classification"] == ("PASS_P7_7_9_TWO_COMBINATION_PUBLIC_COMPILER")
+    assert record["classification"] == (
+        "PASS_P7_7_9_TWO_COMBINATION_PUBLIC_COMPILER"
+    )
     assert record["p7_7_10_complete"] is False
     assert record["qualified_applications"] == [
         PUBLIC_PLANE_APPLICATION,

@@ -1,22 +1,10 @@
 """Qualification tests for the Stage K Plane shadow-run boundary."""
 
 from __future__ import annotations
-
 import torch
 
 import pssolver
-from pssolver.core import (
-    BoundarySet,
-    DealiasRule,
-    HomogeneousDirichletBC,
-    HomogeneousNeumannBC,
-    NumericsConfig,
-    PeriodicBC,
-    Precision,
-    ProjectedTransformExecution,
-    SpectralStorage,
-    TransformExecutionOrder,
-)
+from pssolver.core import BoundarySet, DealiasRule, HomogeneousDirichletBC, HomogeneousNeumannBC, NumericsConfig, PeriodicBC, Precision, ProjectedTransformExecution, SpectralStorage, TransformExecutionOrder
 from pssolver.execution import IncompressibleStokesSystemSpec
 from pssolver.models.active_nematics import (
     NEMATIC_FORCE_COMPONENTS,
@@ -88,7 +76,9 @@ def _numerics(*, half_spectrum):
         transform_execution_order=TransformExecutionOrder.REAL_FIRST,
         projected_transform_execution=ProjectedTransformExecution.TRUNCATED,
         spectral_storage=(
-            SpectralStorage.HERMITIAN_HALF if half_spectrum else SpectralStorage.FULL_COMPLEX
+            SpectralStorage.HERMITIAN_HALF
+            if half_spectrum
+            else SpectralStorage.FULL_COMPLEX
         ),
         hermitian_axis=1 if half_spectrum else None,
     )

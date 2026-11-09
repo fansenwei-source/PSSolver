@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 import hashlib
 import json
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -24,24 +24,8 @@ from pssolver.io import (
     verify_checkpoint_metadata,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime import (
-    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
-    PlaneFiniteQAnchoringCheckpoint,
-    PlaneRobinScalarCheckpoint,
-)
-from pssolver.workflows import (
-    PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PlaneWorkflowCheckpoint,
-    build_plane_checkpoint_compatibility_identity,
-    load_finite_q_anchoring_checkpoint,
-    load_plane_checkpoint,
-    read_plane_checkpoint_header,
-    upgrade_finite_q_anchoring_checkpoint_directory,
-    upgrade_plane_checkpoint_directory_v2,
-    write_finite_q_anchoring_checkpoint,
-    write_plane_checkpoint,
-)
+from pssolver.runtime import FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION, PlaneFiniteQAnchoringCheckpoint, PlaneRobinScalarCheckpoint
+from pssolver.workflows import PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION, PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION, PlaneWorkflowCheckpoint, build_plane_checkpoint_compatibility_identity, load_finite_q_anchoring_checkpoint, load_plane_checkpoint, read_plane_checkpoint_header, upgrade_finite_q_anchoring_checkpoint_directory, upgrade_plane_checkpoint_directory_v2, write_finite_q_anchoring_checkpoint, write_plane_checkpoint
 
 
 def _tensor(value: float = 0.0) -> torch.Tensor:
@@ -73,7 +57,8 @@ def _plane_checkpoint(tmp_path: Path) -> PlaneWorkflowCheckpoint:
     )
     spatial = {name: _tensor(index) for index, name in enumerate(Q_COMPONENTS)}
     spectral = {
-        name: torch.complex(value, torch.zeros_like(value)) for name, value in spatial.items()
+        name: torch.complex(value, torch.zeros_like(value))
+        for name, value in spatial.items()
     }
     backend = {"kind": "s05_test_backend"}
     identity = build_plane_checkpoint_compatibility_identity(
@@ -197,15 +182,21 @@ def _metadata_tamper(
 ) -> None:
     if mutation == "tensor_record":
         if kind == "finite_q":
-            metadata["components"]["Qxx"]["tensors"]["remainder"]["file"]["sha256"] = "0" * 64
+            metadata["components"]["Qxx"]["tensors"]["remainder"]["file"][
+                "sha256"
+            ] = "0" * 64
         else:
-            metadata["tensor_files"]["evolved_spatial"]["Qxx"]["sha256"] = "0" * 64
+            metadata["tensor_files"]["evolved_spatial"]["Qxx"]["sha256"] = (
+                "0" * 64
+            )
         return
     if mutation == "restart_or_persistent_state":
         if kind in {"plane", "channel"}:
             metadata["backend_restart"] = {"kind": "tampered"}
         elif kind == "finite_q":
-            metadata["components"]["Qxx"]["representations"] = {"kind": "tampered"}
+            metadata["components"]["Qxx"]["representations"] = {
+                "kind": "tampered"
+            }
         else:
             metadata["algebraic_restart"]["format_version"] = 999
         return
@@ -228,7 +219,9 @@ def _metadata_tamper(
 
 
 @pytest.mark.parametrize("kind", ("plane", "finite_q"))
-def test_current_formats_are_sealed_and_tamper_before_payload_load(tmp_path, monkeypatch, kind):
+def test_current_formats_are_sealed_and_tamper_before_payload_load(
+    tmp_path, monkeypatch, kind
+):
     directory = _write_current(kind, tmp_path / kind, tmp_path)
     metadata_path = directory / "checkpoint.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -263,7 +256,9 @@ def test_current_formats_are_sealed_and_tamper_before_payload_load(tmp_path, mon
 
 
 @pytest.mark.parametrize("kind", ("plane", "finite_q"))
-def test_coordinated_progress_tamper_without_recomputed_digest_is_rejected(tmp_path, kind):
+def test_coordinated_progress_tamper_without_recomputed_digest_is_rejected(
+    tmp_path, kind
+):
     directory = _write_current(kind, tmp_path / kind, tmp_path)
     metadata_path = directory / "checkpoint.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -308,7 +303,9 @@ def test_current_formats_require_a_well_formed_metadata_digest(
         "missing_key",
     ),
 )
-def test_every_registered_metadata_class_is_covered_by_the_seal(tmp_path, kind, mutation):
+def test_every_registered_metadata_class_is_covered_by_the_seal(
+    tmp_path, kind, mutation
+):
     directory = _write_current(kind, tmp_path / kind, tmp_path)
     metadata_path = directory / "checkpoint.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -322,14 +319,17 @@ def test_every_registered_metadata_class_is_covered_by_the_seal(tmp_path, kind, 
 
 @pytest.mark.parametrize("kind", ("plane", "finite_q"))
 @pytest.mark.parametrize("mutation", ("unknown_key", "missing_key"))
-def test_exact_current_schema_still_rejects_after_digest_recomputation(tmp_path, kind, mutation):
+def test_exact_current_schema_still_rejects_after_digest_recomputation(
+    tmp_path, kind, mutation
+):
     directory = _write_current(kind, tmp_path / kind, tmp_path)
     metadata_path = directory / "checkpoint.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     metadata.pop("metadata_sha256")
     _metadata_tamper(kind, mutation, metadata)
     metadata_path.write_text(
-        json.dumps(seal_checkpoint_metadata(metadata), indent=2, sort_keys=True) + "\n",
+        json.dumps(seal_checkpoint_metadata(metadata), indent=2, sort_keys=True)
+        + "\n",
         encoding="utf-8",
     )
     with pytest.raises(CheckpointIntegrityError, match="schema differs"):
@@ -337,7 +337,9 @@ def test_exact_current_schema_still_rejects_after_digest_recomputation(tmp_path,
 
 
 @pytest.mark.parametrize("kind", ("plane", "finite_q"))
-def test_unsealed_formats_are_read_only_visible_and_upgrade_with_honest_source(tmp_path, kind):
+def test_unsealed_formats_are_read_only_visible_and_upgrade_with_honest_source(
+    tmp_path, kind
+):
     source = _write_current(kind, tmp_path / f"{kind}_source", tmp_path)
     _downgrade_to_unsealed(kind, source)
     source_tree_sha256 = checkpoint_directory_tree_sha256(source)
@@ -358,7 +360,9 @@ def test_unsealed_formats_are_read_only_visible_and_upgrade_with_honest_source(t
     assert checkpoint_directory_tree_sha256(source) == source_tree_sha256
     upgraded = _load(kind, target)
     assert upgraded.integrity_status == CHECKPOINT_INTEGRITY_SEALED_SHA256
-    assert _compatibility_identity(kind, upgraded) == _compatibility_identity(kind, loaded)
+    assert _compatibility_identity(kind, upgraded) == _compatibility_identity(
+        kind, loaded
+    )
     provenance = upgraded.migration_provenance
     assert provenance["source_integrity_status"] == "unsealed_legacy"
     assert provenance["source_tree_sha256"] == source_tree_sha256
@@ -367,19 +371,21 @@ def test_unsealed_formats_are_read_only_visible_and_upgrade_with_honest_source(t
 
 
 def test_header_integrity_status_is_outside_compatibility_identity(tmp_path):
-    plane = write_plane_checkpoint(tmp_path / "plane", _plane_checkpoint(tmp_path))
+    plane = write_plane_checkpoint(
+        tmp_path / "plane",
+        _plane_checkpoint(tmp_path),
+    )
     plane_header = read_plane_checkpoint_header(plane)
     assert plane_header.integrity_status == CHECKPOINT_INTEGRITY_SEALED_SHA256
-    assert (
-        "integrity_status"
-        not in json.loads((plane / "checkpoint.json").read_text(encoding="utf-8"))[
-            "compatibility_identity"
-        ]
-    )
+    assert "integrity_status" not in json.loads(
+        (plane / "checkpoint.json").read_text(encoding="utf-8")
+    )["compatibility_identity"]
 
 
 @pytest.mark.parametrize("kind", ("plane", "finite_q"))
-def test_sealed_upgrade_requires_honest_complete_source_provenance(tmp_path, kind):
+def test_sealed_upgrade_requires_honest_complete_source_provenance(
+    tmp_path, kind
+):
     checkpoint = {
         "plane": lambda: _plane_checkpoint(tmp_path),
         "finite_q": _finite_q_checkpoint,

@@ -4,15 +4,20 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
 from pathlib import Path
+import subprocess
 
 from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_09_s05_metadata_integrity.json"
-CANDIDATE_RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_10_s05_candidate.json"
+RECORD = (
+    ROOT
+    / "notes/PSSolver_v0_3_0_s03_successor_09_s05_metadata_integrity.json"
+)
+CANDIDATE_RECORD = (
+    ROOT / "notes/PSSolver_v0_3_0_s03_successor_10_s05_candidate.json"
+)
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 IMPLEMENTATION = "af7c1217b4599f7e870b42a9c0fc92f5b3c90c61"
 PARENT = "26216537ee38c2258e06f32ce9b095d17a9dbc40"
@@ -33,24 +38,18 @@ def test_s05_record_binds_the_linear_implementation_commit():
     assert identity["implementation_commit"] == IMPLEMENTATION
     assert identity["implementation_parent"] == PARENT
     assert identity["record_commit_is_qualified_source"] is False
-    assert (
-        subprocess.run(
-            ["git", "merge-base", "--is-ancestor", PARENT, IMPLEMENTATION],
-            cwd=ROOT,
-            check=False,
-        ).returncode
-        == 0
-    )
-    assert (
-        subprocess.run(
-            ["git", "rev-parse", f"{IMPLEMENTATION}^"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        == PARENT
-    )
+    assert subprocess.run(
+        ["git", "merge-base", "--is-ancestor", PARENT, IMPLEMENTATION],
+        cwd=ROOT,
+        check=False,
+    ).returncode == 0
+    assert subprocess.run(
+        ["git", "rev-parse", f"{IMPLEMENTATION}^"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip() == PARENT
 
 
 def test_s05_record_preserves_the_selected_contract_and_scope():
@@ -79,9 +78,15 @@ def test_s05_record_preserves_the_selected_contract_and_scope():
 
 
 def test_s05_registry_claim_is_independently_verified():
-    issue = next(item for item in _read(REGISTRY)["issues"] if item["id"] == "A2-21/S2-12")
+    issue = next(
+        item
+        for item in _read(REGISTRY)["issues"]
+        if item["id"] == "A2-21/S2-12"
+    )
     assert issue["status"] == "verified"
-    assert issue["fixed_in"] == ("65ef1080cb0215131efe90143863de7014fe4b5b")
+    assert issue["fixed_in"] == (
+        "65ef1080cb0215131efe90143863de7014fe4b5b"
+    )
     assert "not a MAC or signature" in issue["notes"]
     assert "Independently verified by R-0013" in issue["notes"]
     assert issue["verified_by"] == "R-0013"
@@ -109,9 +114,9 @@ def test_s05_candidate_successors_bind_the_current_tree():
         "65ef1080cb0215131efe90143863de7014fe4b5b"
     )
     for relative, successor in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(relative, successor["historical_sha256"]) == _sha256(
-            ROOT / relative
-        )
+        assert resolve_s03_successor(
+            relative, successor["historical_sha256"]
+        ) == _sha256(ROOT / relative)
 
 
 def test_s05_candidate_records_the_complete_local_qualification():
@@ -130,8 +135,12 @@ def test_s05_candidate_records_the_complete_local_qualification():
         "failed": 0,
         "skipped": 0,
     }
-    assert validation["released_v0_2_2_forward_rejection"]["accepted_count"] == 0
-    assert validation["released_v0_2_2_forward_rejection"]["explicit_rejection_count"] == 4
+    assert validation["released_v0_2_2_forward_rejection"][
+        "accepted_count"
+    ] == 0
+    assert validation["released_v0_2_2_forward_rejection"][
+        "explicit_rejection_count"
+    ] == 4
     assert validation["full_cpu_suite"] == {
         "passed": 4430,
         "failed": 0,

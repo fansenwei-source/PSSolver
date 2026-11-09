@@ -220,7 +220,6 @@ def test_pressure_policy_output_and_validation_match_released_source_exactly():
     [
         ("v0_2_0_checkpoints_v1/production_legacy_channel", "legacy active-force Channel"),
         ("v0_4_0_s24_retired/separated_canary", "separated_canary"),
-        ("v0_4_0_s24_retired/private_lifting", "private Plane lifting"),
     ],
 )
 def test_retired_checkpoint_rejected_before_any_tensor_access(relative, family, monkeypatch):

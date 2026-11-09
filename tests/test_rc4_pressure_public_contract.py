@@ -9,20 +9,40 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json"
-RC443 = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
-RC444 = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
-RC447_RECOVERY = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json"
+RC443 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
+)
+RC444 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
+RC447_RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json"
+)
 RC447_PERFORMANCE_REPAIR = (
-    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
 )
 RC447_PERFORMANCE_RECOVERY_V10 = (
-    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
 )
 RC447_BOUNDED_OPERATOR_RECOVERY_V11 = (
-    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
-RC455 = ROOT / ("notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json")
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
@@ -30,7 +50,9 @@ RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
@@ -52,14 +74,22 @@ def test_rc442_binds_plan_and_adjudication_without_starting_implementation():
 
     assert record["phase"] == "RC4.4.2"
     assert record["status"] == "contract_complete_implementation_not_started"
-    assert record["classification"] == ("PASS_RC4_4_2_PUBLIC_CHANNEL_PRESSURE_CONTRACT")
-    assert baseline["contract_parent_commit"] == ("0ce8828508982d3d156f31fecd2533328acc095c")
-    assert _sha256(ROOT / baseline["rc4_4_0_plan"]) == baseline["rc4_4_0_plan_sha256"]
-    assert (
-        _sha256(ROOT / baseline["rc4_4_1_adjudication"]) == baseline["rc4_4_1_adjudication_sha256"]
+    assert record["classification"] == (
+        "PASS_RC4_4_2_PUBLIC_CHANNEL_PRESSURE_CONTRACT"
     )
+    assert baseline["contract_parent_commit"] == (
+        "0ce8828508982d3d156f31fecd2533328acc095c"
+    )
+    assert _sha256(ROOT / baseline["rc4_4_0_plan"]) == baseline[
+        "rc4_4_0_plan_sha256"
+    ]
+    assert _sha256(ROOT / baseline["rc4_4_1_adjudication"]) == baseline[
+        "rc4_4_1_adjudication_sha256"
+    ]
     assert baseline["required_decision"] == "ACTIVE_MODE_RMS_REQUIRED"
-    assert baseline["required_capability_finding"] == ("METADATA_REPAIR_REQUIRED")
+    assert baseline["required_capability_finding"] == (
+        "METADATA_REPAIR_REQUIRED"
+    )
 
 
 def test_rc442_keeps_user_input_shape_and_derives_one_mode():
@@ -115,7 +145,9 @@ def test_rc442_scale_safe_magnitude_cannot_confuse_underflow_with_zero():
         "binary_mantissa": None,
         "binary_exponent": None,
     }
-    assert magnitude["zero_is_determined_by"].startswith("exact_active_coefficient_zero_test")
+    assert magnitude["zero_is_determined_by"].startswith(
+        "exact_active_coefficient_zero_test"
+    )
     assert magnitude["subnormal_nonzero_must_not_be_mislabeled_zero"] is True
     assert magnitude["NaN_or_infinity_allowed"] is False
 
@@ -123,7 +155,9 @@ def test_rc442_scale_safe_magnitude_cannot_confuse_underflow_with_zero():
 def test_rc442_freezes_one_scale_and_breakdown_definition_for_every_path():
     scale = _record()["numerical_scale_contract"]
 
-    assert scale["public_absolute_scale"] == ("channel_pressure_active_rms_magnitude.v1")
+    assert scale["public_absolute_scale"] == (
+        "channel_pressure_active_rms_magnitude.v1"
+    )
     assert scale["normalized_residual_denominator"] == (
         "projected_rhs_not_initial_warm_start_residual"
     )
@@ -147,8 +181,12 @@ def test_rc442_diagnostics_schema_v2_is_complete_and_phase_isolated():
     assert diagnostics["public_and_json_safe"] is True
     assert diagnostics["immutable_snapshot"] is True
     assert diagnostics["tensor_values_allowed"] is False
-    assert len(diagnostics["required_fields"]) == len(set(diagnostics["required_fields"]))
-    assert set(diagnostics["required_fields"]) == set(diagnostics["field_types"])
+    assert len(diagnostics["required_fields"]) == len(
+        set(diagnostics["required_fields"])
+    )
+    assert set(diagnostics["required_fields"]) == set(
+        diagnostics["field_types"]
+    )
     assert set(diagnostics["termination_reasons"]) == {
         "not_run",
         "zero_rhs",
@@ -163,12 +201,13 @@ def test_rc442_diagnostics_schema_v2_is_complete_and_phase_isolated():
     }
     aggregate = diagnostics["implicit_adjoint_aggregate"]
     assert aggregate["new_primal_increments_sequence"] is True
-    assert (
-        aggregate["new_primal_atomically_replaces_transpose_with_not_run_for_the_same_sequence"]
-        is True
-    )
+    assert aggregate[
+        "new_primal_atomically_replaces_transpose_with_not_run_for_the_same_sequence"
+    ] is True
     assert aggregate["stale_transpose_from_an_older_primal_allowed"] is False
-    assert diagnostics["failure_persistence"].startswith("complete failure diagnostics")
+    assert diagnostics["failure_persistence"].startswith(
+        "complete failure diagnostics"
+    )
 
 
 def test_rc442_stopping_and_failure_contracts_are_fail_closed():
@@ -179,14 +218,22 @@ def test_rc442_stopping_and_failure_contracts_are_fail_closed():
     assert stopping["fixed_work"]["ordinary_tolerance_early_exit"] is False
     assert stopping["fixed_work"]["requested_work_required"] is True
     assert stopping["fixed_work"]["breakdown"] == "fail_closed"
-    assert stopping["relative_tolerance"]["tolerance_is_required_postcondition"] is True
-    assert stopping["relative_tolerance"]["cap_without_postcondition"] == ("fail_closed")
-    assert stopping["production_warm_start"]["committed_only_after_acceptable_solve"] is True
+    assert stopping["relative_tolerance"][
+        "tolerance_is_required_postcondition"
+    ] is True
+    assert stopping["relative_tolerance"]["cap_without_postcondition"] == (
+        "fail_closed"
+    )
+    assert stopping["production_warm_start"][
+        "committed_only_after_acceptable_solve"
+    ] is True
     assert stopping["production_warm_start"]["unchanged_on_failure"] is True
     assert stopping["functional_pressure_state"]["persistent_pressure_guess"] is False
     assert stopping["partial_target_mutation_on_failure"] is False
     assert failures["production_execution"]["base"] == "RuntimeError"
-    assert failures["functional_execution"]["code"] == ("functional_convergence_error")
+    assert failures["functional_execution"]["code"] == (
+        "functional_convergence_error"
+    )
     assert failures["path_specific_exception_families_remain_until_rc4_5"]
     assert failures["message_text_is_not_a_machine_contract"] is True
 
@@ -199,7 +246,9 @@ def test_rc442_capabilities_distinguish_runtime_from_connected_component():
     assert capability["runtime_executable"] is True
     assert capability["explicit_vjp"] is False
     assert capability["differentiability"] == "validated_custom_adjoint"
-    assert capability["inner_solve_gradient"] == ("custom_implicit_pressure_adjoint_v2")
+    assert capability["inner_solve_gradient"] == (
+        "custom_implicit_pressure_adjoint_v2"
+    )
     implicit = capability["implicit_adjoint_component"]
     transpose = capability["standalone_transpose_component"]
     assert implicit["component_is_runtime"] is False
@@ -208,7 +257,9 @@ def test_rc442_capabilities_distinguish_runtime_from_connected_component():
     assert transpose["component_is_runtime"] is False
     assert transpose["component_connected_to_executable_runtime"] is True
     assert transpose["custom_autograd_rule"] is False
-    assert capability["ambiguous_component_field_removed"] == ("functional_runtime_executable")
+    assert capability["ambiguous_component_field_removed"] == (
+        "functional_runtime_executable"
+    )
 
 
 def test_rc442_versions_dynamics_but_not_state_or_envelope():
@@ -220,13 +271,19 @@ def test_rc442_versions_dynamics_but_not_state_or_envelope():
     assert identity["production_forward_dynamics"]["to"].endswith(".v4")
     assert identity["functional_forward_dynamics"]["to"].endswith(".v4")
     assert identity["functional_derivative_dynamics"]["to"].endswith(".v4")
-    assert identity["production_state_layout"]["from"] == identity["production_state_layout"]["to"]
-    assert identity["functional_state_layout"]["from"] == identity["functional_state_layout"]["to"]
+    assert identity["production_state_layout"]["from"] == identity[
+        "production_state_layout"
+    ]["to"]
+    assert identity["functional_state_layout"]["from"] == identity[
+        "functional_state_layout"
+    ]["to"]
     assert identity["functional_bridge_format"] == {"from": 3, "to": 3}
     assert identity["checkpoint_envelope_format_changes"] is False
     for case in identity["compatibility_matrix"]:
         if "v3" in case["source"]:
-            assert case["expected"] == ("reject_before_tensor_load_and_target_mutation")
+            assert case["expected"] == (
+                "reject_before_tensor_load_and_target_mutation"
+            )
     assert identity["old_checkpoint_rewritten"] is False
     assert identity["silent_state_only_migration"] is False
 
@@ -324,7 +381,8 @@ def test_rc442_stops_before_provider_consumer_h100_or_release_work():
             "deselected": 7,
             "subtests_passed": 8,
             "deselected_scope": (
-                "the seven pre-existing CUDA-only node IDs frozen by the RC4 CPU contract"
+                "the seven pre-existing CUDA-only node IDs frozen by the RC4 "
+                "CPU contract"
             ),
             "optional_nematics3d_available": True,
         },
@@ -338,4 +396,6 @@ def test_rc442_does_not_authorize_the_post_0_2_pcg_refactor():
     assert files["all_four_pcg_loops_may_be_consolidated_now"] is False
     assert files["R5_refactor_remains_post_0_2"] is True
     assert files["new_runtime_file_requires_scope_review"] is True
-    assert _record()["consumer_contract"]["consumer_change_authorized_by_rc4_4_2"] is False
+    assert _record()["consumer_contract"][
+        "consumer_change_authorized_by_rc4_4_2"
+    ] is False

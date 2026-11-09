@@ -6,14 +6,15 @@ import hashlib
 import json
 from pathlib import Path
 
+from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 import pssolver
 import pssolver.api
-from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
 from pssolver.configuration.public_simulation_runner import (
     PublicCompilationRejectionCode,
     PublicSimulationCompilationError,
 )
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,26 +22,50 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-R5_10_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
-R5_11_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
-R5_12_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json")
+R5_10_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
+R5_11_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 G1_HISTORICAL_AUDIT_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
 )
-RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
-RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
-RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
-RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
-RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
-RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
+RC6_R2_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+)
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
+RC6_R5_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+)
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -96,7 +121,9 @@ def _r57_successor(relative: str, historical: str) -> str:
 
 def test_r56_record_declares_cpu_closure_without_scope_expansion():
     record = _record()
-    assert record["classification"] == ("PASS_R5_6_STRUCTURED_PUBLIC_ERROR_BOUNDARY_CPU_CLOSURE")
+    assert record["classification"] == (
+        "PASS_R5_6_STRUCTURED_PUBLIC_ERROR_BOUNDARY_CPU_CLOSURE"
+    )
     assert record["status"] == "implementation_complete_cpu_verified"
     assert record["git_identity"]["implementation_commit"] == (
         "cf572bcfee0cb397961944eace123fb8fbe25683"
@@ -116,10 +143,18 @@ def test_r56_record_declares_cpu_closure_without_scope_expansion():
 
 
 def test_r56_exports_public_error_types_from_both_public_surfaces():
-    assert pssolver.PublicSimulationCompilationError is (PublicSimulationCompilationError)
-    assert pssolver.api.PublicSimulationCompilationError is (PublicSimulationCompilationError)
-    assert pssolver.PublicCompilationRejectionCode is (PublicCompilationRejectionCode)
-    assert pssolver.api.PublicCompilationRejectionCode is (PublicCompilationRejectionCode)
+    assert pssolver.PublicSimulationCompilationError is (
+        PublicSimulationCompilationError
+    )
+    assert pssolver.api.PublicSimulationCompilationError is (
+        PublicSimulationCompilationError
+    )
+    assert pssolver.PublicCompilationRejectionCode is (
+        PublicCompilationRejectionCode
+    )
+    assert pssolver.api.PublicCompilationRejectionCode is (
+        PublicCompilationRejectionCode
+    )
 
 
 def test_r56_record_binds_the_structured_rejection_matrix():
@@ -149,7 +184,9 @@ def test_r56_record_binds_installed_wheel_identity_and_cpu_results():
     assert evidence["wheel_sha256"]
     assert evidence["pip_check"] == "PASS"
     assert evidence["source_shadow_import"] is False
-    assert _record()["validation"]["installed_wheel_targeted_cpu"] == ("41 passed, 0 failed")
+    assert _record()["validation"]["installed_wheel_targeted_cpu"] == (
+        "41 passed, 0 failed"
+    )
 
 
 def test_r56_record_authorizes_only_the_next_cpu_work_item():

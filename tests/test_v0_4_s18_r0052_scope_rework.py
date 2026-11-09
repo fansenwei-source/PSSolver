@@ -119,13 +119,11 @@ def test_control_functional_runtimes_are_frozen_but_still_gate_control_main() ->
     ):
         assert classified[relative] == "read_only_frozen"
     record = _read()
-    assert (
-        "complete PSSolver-Control main CPU suite"
-        in (record["common_cpu_acceptance"]["control_main_full_cpu_gate"])
+    assert "complete PSSolver-Control main CPU suite" in (
+        record["common_cpu_acceptance"]["control_main_full_cpu_gate"]
     )
-    assert (
-        "complete Control main CPU suite"
-        in (record["scope_classification_v2"]["R4"]["control_relation"])
+    assert "complete Control main CPU suite" in (
+        record["scope_classification_v2"]["R4"]["control_relation"]
     )
 
 

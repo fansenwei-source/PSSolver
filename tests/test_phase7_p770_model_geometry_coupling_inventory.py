@@ -1,13 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import fields
 import hashlib
 import json
-from dataclasses import fields
 from pathlib import Path
-
-from pssolver.configuration.plane_beris_edwards import (
-    PlaneBerisEdwardsRunSpec,
-)
+from pssolver.configuration.plane_beris_edwards import PlaneBerisEdwardsRunSpec
 from pssolver.configuration.plane_beris_edwards_component_graph import (
     PlaneBerisEdwardsRunComponents,
 )
@@ -17,7 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 INVENTORY_PATH = (
-    ROOT / "notes" / "architecture_v0_2" / "phase_7_p770_model_geometry_coupling_inventory.json"
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_7_p770_model_geometry_coupling_inventory.json"
 )
 
 
@@ -39,7 +39,10 @@ def test_p770_inventory_is_a_non_runtime_authority() -> None:
     assert inventory["schema_version"] == 1
     assert inventory["phase"] == "P7.7.0"
     assert inventory["status"] == "P7_7_0_COMPLETE_P7_7_1_NOT_AUTHORIZED"
-    assert inventory["classification"] == "PASS_P7_7_0_MODEL_GEOMETRY_COUPLING_INVENTORY"
+    assert (
+        inventory["classification"]
+        == "PASS_P7_7_0_MODEL_GEOMETRY_COUPLING_INVENTORY"
+    )
     assert inventory["architectural_diagnosis"] == {
         "current_form": "qualified_vertical_application_slices",
         "orthogonal_model_geometry_composition_available": False,
@@ -73,7 +76,10 @@ def test_p770_plane_facade_ownership_is_complete_and_disjoint() -> None:
 
 
 def test_p770_does_not_conflate_the_two_qualified_physical_models() -> None:
-    matrix = {row["model"]: row for row in _inventory()["model_geometry_matrix"]}
+    matrix = {
+        row["model"]: row
+        for row in _inventory()["model_geometry_matrix"]
+    }
 
     complete = matrix["complete_stress_beris_edwards"]
     active_force = matrix["legacy_active_force_active_nematics"]

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
 import torch
 
@@ -21,7 +21,9 @@ from pssolver.runtime import (
 
 PROJECT_ROOT = Path(__file__).parents[1]
 PRODUCTION_SCRIPT = PROJECT_ROOT / "Plane_beris_edwards_stokes.py"
-PRODUCTION_APPLICATION = PROJECT_ROOT / "pssolver/applications/plane_beris_edwards.py"
+PRODUCTION_APPLICATION = (
+    PROJECT_ROOT / "pssolver/applications/plane_beris_edwards.py"
+)
 
 
 def _request(tmp_path: Path) -> PlaneRuntimeBuildRequest:
@@ -40,7 +42,10 @@ def _request(tmp_path: Path) -> PlaneRuntimeBuildRequest:
         spectral_refresh_time=None,
         disable_spectral_refresh=True,
     )
-    initial_values = {name: torch.zeros((8, 8, 8), dtype=torch.float64) for name in Q_COMPONENTS}
+    initial_values = {
+        name: torch.zeros((8, 8, 8), dtype=torch.float64)
+        for name in Q_COMPONENTS
+    }
     metadata = {
         "configuration": spec.identity_metadata(),
         "runtime_selection": spec.runtime_selection_metadata(),
@@ -78,7 +83,7 @@ from pssolver.runtime import PlaneRuntimeBuildRequest, build_plane_beris_edwards
 
 spec = create_plane_beris_edwards_run_spec(
     activity_number=18.0,
-    output_dir=Path({str(tmp_path / "unused")!r}),
+    output_dir=Path({str(tmp_path / 'unused')!r}),
     nx=8,
     ny=8,
     nz=8,

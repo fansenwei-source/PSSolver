@@ -86,8 +86,12 @@ def _relative_norm(value, reference):
 def test_channel_boundary_spaces_and_registered_operator_state_are_frozen():
     solver = _spectral_solver()
     stokes = _canonical(solver)
-    velocity_metadata = solver.transform_backend.get_metadata(CHANNEL_VELOCITY_BOUNDARY_CONDITIONS)
-    pressure_metadata = solver.transform_backend.get_metadata(CHANNEL_PRESSURE_BOUNDARY_CONDITIONS)
+    velocity_metadata = solver.transform_backend.get_metadata(
+        CHANNEL_VELOCITY_BOUNDARY_CONDITIONS
+    )
+    pressure_metadata = solver.transform_backend.get_metadata(
+        CHANNEL_PRESSURE_BOUNDARY_CONDITIONS
+    )
 
     assert CHANNEL_VELOCITY_BOUNDARY_CONDITIONS == (
         "periodic",
@@ -122,7 +126,9 @@ def test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge():
     stokes = _canonical(solver)
     force_hats = _force_hats(solver)
 
-    ux_hat, uy_hat, uz_hat, pressure_hat = stokes.solve_force_hats(*force_hats)
+    ux_hat, uy_hat, uz_hat, pressure_hat = stokes.solve_force_hats(
+        *force_hats
+    )
     velocity_hats = (ux_hat, uy_hat, uz_hat)
     pressure_gradient_hats = stokes.pressure_gradient_hats(pressure_hat)
 
@@ -132,12 +138,19 @@ def test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge():
         pressure_gradient_hats,
         strict=True,
     ):
-        momentum_residual = force_hat - gradient_hat - velocity_hat / stokes.a_inv
+        momentum_residual = (
+            force_hat - gradient_hat - velocity_hat / stokes.a_inv
+        )
         assert _relative_norm(momentum_residual, force_hat) < 2.0e-15
 
     divergence_hat = stokes.divergence_hat(*velocity_hats)
-    velocity_norm = sum(torch.linalg.vector_norm(value.reshape(-1)) for value in velocity_hats)
-    assert float(torch.linalg.vector_norm(divergence_hat.reshape(-1)) / velocity_norm) < 2.0e-11
+    velocity_norm = sum(
+        torch.linalg.vector_norm(value.reshape(-1))
+        for value in velocity_hats
+    )
+    assert float(
+        torch.linalg.vector_norm(divergence_hat.reshape(-1)) / velocity_norm
+    ) < 2.0e-11
     assert bool((pressure_hat[:, 0, 0, 0] == 0).all().item())
     assert stokes.last_pressure_relative_residual < 2.0e-12
 
@@ -160,20 +173,14 @@ def test_manufactured_schur_problem_recovers_the_zero_gauge_pressure():
 
     actual_pressure_hat = stokes._solve_pressure(rhs_hat)
 
-    assert (
-        _relative_norm(
-            stokes._pressure_operator(actual_pressure_hat) - rhs_hat,
-            rhs_hat,
-        )
-        < 2.0e-12
-    )
-    assert (
-        _relative_norm(
-            actual_pressure_hat - exact_pressure_hat,
-            exact_pressure_hat,
-        )
-        < 3.0e-12
-    )
+    assert _relative_norm(
+        stokes._pressure_operator(actual_pressure_hat) - rhs_hat,
+        rhs_hat,
+    ) < 2.0e-12
+    assert _relative_norm(
+        actual_pressure_hat - exact_pressure_hat,
+        exact_pressure_hat,
+    ) < 3.0e-12
     assert bool((actual_pressure_hat[:, 0, 0, 0] == 0).all().item())
 
 
@@ -232,9 +239,12 @@ def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
         "relative_tolerance_role": "diagnostic_only_not_early_exit",
         "initial_guess_policy": "persistent_production_warm_start",
         "rhs_norm_definition": "active_mode_root_mean_square.v1",
-        "working_vector_scaling": ("largest_power_of_two_not_greater_than_active_component_amax"),
+        "working_vector_scaling": (
+            "largest_power_of_two_not_greater_than_active_component_amax"
+        ),
         "breakdown_definition": (
-            "abs(mean_active(conj(left)*right))<=eps*active_rms(left)*active_rms(right)"
+            "abs(mean_active(conj(left)*right))"
+            "<=eps*active_rms(left)*active_rms(right)"
         ),
     }
 
@@ -255,9 +265,12 @@ def test_tolerance_pressure_mode_reports_maximum_iteration_precedence():
         "relative_tolerance_role": "required_postcondition",
         "initial_guess_policy": "persistent_production_warm_start",
         "rhs_norm_definition": "active_mode_root_mean_square.v1",
-        "working_vector_scaling": ("largest_power_of_two_not_greater_than_active_component_amax"),
+        "working_vector_scaling": (
+            "largest_power_of_two_not_greater_than_active_component_amax"
+        ),
         "breakdown_definition": (
-            "abs(mean_active(conj(left)*right))<=eps*active_rms(left)*active_rms(right)"
+            "abs(mean_active(conj(left)*right))"
+            "<=eps*active_rms(left)*active_rms(right)"
         ),
     }
 

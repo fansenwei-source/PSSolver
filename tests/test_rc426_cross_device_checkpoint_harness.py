@@ -85,7 +85,9 @@ def _completion() -> dict[str, object]:
 def test_frozen_matrix_is_exact_and_bidirectional():
     plan = matrix_plan()
     assert plan["count"] == 14
-    assert [cell["id"] for cell in plan["cells"]] == [f"X{index:02d}" for index in range(1, 15)]
+    assert [cell["id"] for cell in plan["cells"]] == [
+        f"X{index:02d}" for index in range(1, 15)
+    ]
     assert [cell["sequence"] for cell in plan["cells"]] == list(range(1, 15))
     for first, second in zip(MATRIX[::2], MATRIX[1::2], strict=True):
         assert first.family == second.family
@@ -227,7 +229,9 @@ def test_analyzer_rejects_scope_expansion_and_incomplete_marker():
 def test_harness_does_not_mutate_runtime_or_checkpoint_sources():
     root = Path(__file__).resolve().parents[1]
     runner = (root / "benchmarks" / "run_rc426_cross_device_checkpoint.py").read_text()
-    analyzer = (root / "benchmarks" / "analyze_rc426_cross_device_checkpoint.py").read_text()
+    analyzer = (
+        root / "benchmarks" / "analyze_rc426_cross_device_checkpoint.py"
+    ).read_text()
     assert "source.copy_(" not in runner
     assert "MEAN_RATIO_LIMIT" not in analyzer
     assert "MEMORY_RATIO_LIMIT" not in analyzer
@@ -250,11 +254,10 @@ def test_single_h100_job_harness_freezes_scheduler_and_execution_order():
         assert script.count(directive) == 1
     assert "sbatch" not in script
     assert "srun" not in script
-    assert (
-        script.index("capture_rc4_h100_preflight.py")
-        < script.index("run_rc426_cuda_tests.py")
-        < script.index("run_rc426_cross_device_checkpoint.py")
-        < script.index("analyze_rc426_cross_device_checkpoint.py")
+    assert script.index("capture_rc4_h100_preflight.py") < script.index(
+        "run_rc426_cuda_tests.py"
+    ) < script.index("run_rc426_cross_device_checkpoint.py") < script.index(
+        "analyze_rc426_cross_device_checkpoint.py"
     )
     assert "unset LD_LIBRARY_PATH" in script
     assert "NVIDIA_TF32_OVERRIDE=0" in script
@@ -278,7 +281,9 @@ def test_cuda_runner_enforces_both_tf32_flags_in_process():
 
     report = cuda_test_runner._enforce_tf32_policy(Torch())
 
-    assert report["schema"] == ("pssolver.rc4_2_6.cuda_test_tf32_policy.v1")
+    assert report["schema"] == (
+        "pssolver.rc4_2_6.cuda_test_tf32_policy.v1"
+    )
     assert report["before"]["cuda_matmul_allow_tf32"]["value"] is True
     assert report["before"]["cudnn_allow_tf32"]["value"] is True
     assert report["after"]["cuda_matmul_allow_tf32"]["value"] is False
@@ -419,12 +424,18 @@ def test_job_harness_runs_the_exact_seven_cuda_only_nodes_once():
 
 def test_execution_support_record_remains_immutable_historical_evidence():
     root = Path(__file__).resolve().parents[1]
-    path = root / "notes" / "PSSolver_v0_2_0rc4_rc426_execution_support.json"
+    path = (
+        root
+        / "notes"
+        / "PSSolver_v0_2_0rc4_rc426_execution_support.json"
+    )
     record = json.loads(path.read_text(encoding="utf-8"))
     assert hashlib.sha256(path.read_bytes()).hexdigest() == (
         "1103351765163453db53f87ee59adab279a2d09aa3d0be1594722bf74f1be94e"
     )
-    assert record["classification"] == ("READY_RC4_2_6_SINGLE_H100_EXECUTION_NOT_SUBMITTED")
+    assert record["classification"] == (
+        "READY_RC4_2_6_SINGLE_H100_EXECUTION_NOT_SUBMITTED"
+    )
     assert record["matrix_contract"]["ordered_cell_ids"] == [
         f"X{index:02d}" for index in range(1, 15)
     ]
@@ -451,9 +462,11 @@ def test_execution_support_record_remains_immutable_historical_evidence():
 def test_tf32_bootstrap_recovery_binds_current_helpers_and_failure_evidence():
     root = Path(__file__).resolve().parents[1]
     record = json.loads(
-        (root / "notes" / "PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json").read_text(
-            encoding="utf-8"
-        )
+        (
+            root
+            / "notes"
+            / "PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json"
+        ).read_text(encoding="utf-8")
     )
     assert record["classification"] == (
         "READY_RC4_2_6_TF32_PROCESS_BOOTSTRAP_RECOVERY_NOT_SUBMITTED"

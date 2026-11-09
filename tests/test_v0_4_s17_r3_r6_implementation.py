@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
-import pssolver.functional.api as stable_functional
 from pssolver.api import capability_catalog
+import pssolver.functional.api as stable_functional
 from pssolver.experimental import boundary_pilots
 
 
@@ -228,7 +228,10 @@ def test_released_finite_q_reader_keeps_its_defining_module_identity():
         load_finite_q_anchoring_checkpoint,
     )
 
-    assert boundary_pilots.load_finite_q_anchoring_checkpoint is load_finite_q_anchoring_checkpoint
+    assert (
+        boundary_pilots.load_finite_q_anchoring_checkpoint
+        is load_finite_q_anchoring_checkpoint
+    )
     assert load_finite_q_anchoring_checkpoint.__module__ == (
         "pssolver.workflows.finite_q_anchoring"
     )
@@ -240,7 +243,9 @@ def test_control_first_functional_and_planar_boundaries_are_unchanged():
         "pssolver/models/active_nematics/beris_edwards.py": (
             "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3"
         ),
-        "pssolver/models/active_nematics/q_tensor.py": ("5427df4402f31fc43ac409e1936cd31e58269966"),
+        "pssolver/models/active_nematics/q_tensor.py": (
+            "5427df4402f31fc43ac409e1936cd31e58269966"
+        ),
     }
     for relative, expected in expected_blobs.items():
         result = subprocess.run(

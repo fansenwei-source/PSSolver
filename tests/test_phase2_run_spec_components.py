@@ -9,18 +9,18 @@ runtime.
 from __future__ import annotations
 
 import ast
-import hashlib
-import json
-import pickle
 from dataclasses import (
-    MISSING,
     FrozenInstanceError,
+    MISSING,
     fields,
     is_dataclass,
     replace,
 )
 from fractions import Fraction
+import hashlib
+import json
 from pathlib import Path
+import pickle
 
 import pytest
 
@@ -76,9 +76,17 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_SPECIFICATIONS = (
     PROJECT_ROOT / "pssolver" / "models" / "active_nematics" / "specifications.py"
 )
-PLANE_COMPONENTS = PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards_components.py"
+PLANE_COMPONENTS = (
+    PROJECT_ROOT
+    / "pssolver"
+    / "configuration"
+    / "plane_beris_edwards_components.py"
+)
 PLANE_COMPONENT_GRAPH = (
-    PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards_component_graph.py"
+    PROJECT_ROOT
+    / "pssolver"
+    / "configuration"
+    / "plane_beris_edwards_component_graph.py"
 )
 
 
@@ -193,7 +201,9 @@ def _numerics(**overrides: object) -> NumericsConfig:
         "precision": Precision.FLOAT32,
         "dealias_rule": DealiasRule.CUBIC_HALF,
         "transform_execution_order": TransformExecutionOrder.REAL_FIRST,
-        "projected_transform_execution": (ProjectedTransformExecution.TRUNCATED),
+        "projected_transform_execution": (
+            ProjectedTransformExecution.TRUNCATED
+        ),
         "spectral_storage": SpectralStorage.HERMITIAN_HALF,
         "hermitian_axis": 1,
     }
@@ -485,7 +495,9 @@ def test_aggregate_field_order_and_provisional_metadata_are_explicit():
     assert physics_metadata["requested_friction_mode_fric"] == 0.1
 
     metadata = components.to_metadata()
-    assert tuple(metadata) == tuple(item.name for item in fields(PlaneBerisEdwardsRunComponents))
+    assert tuple(metadata) == tuple(
+        item.name for item in fields(PlaneBerisEdwardsRunComponents)
+    )
     assert "schema_version" not in metadata
     assert "authority" not in metadata
     json.dumps(metadata, allow_nan=False, sort_keys=True)
@@ -537,7 +549,9 @@ def test_physics_aggregate_preserves_requested_and_effective_friction():
 
 def test_physics_aggregate_rejects_non_plane_or_mismatched_friction_policy():
     with pytest.raises(ValueError, match="must be zero_mean or friction"):
-        _physics(stokes=_stokes(policy=TangentialZeroModePolicy.NOT_APPLICABLE))
+        _physics(
+            stokes=_stokes(policy=TangentialZeroModePolicy.NOT_APPLICABLE)
+        )
     with pytest.raises(ValueError, match="must be positive in friction mode"):
         _physics(
             stokes=_stokes(
@@ -583,11 +597,21 @@ def test_run_aggregate_requires_canonical_component_types(
 def _alternate_boundaries() -> PlaneFreeSlipBoundaryConditions:
     periodic = PeriodicBC()
     return PlaneFreeSlipBoundaryConditions(
-        q=BoundarySet((periodic, periodic, HomogeneousDirichletBC())),
-        tangential_velocity=BoundarySet((periodic, periodic, HomogeneousNeumannBC())),
-        normal_velocity=BoundarySet((periodic, periodic, HomogeneousDirichletBC())),
-        pressure_modal=BoundarySet((periodic, periodic, HomogeneousNeumannBC())),
-        distortion_odd_z=BoundarySet((periodic, periodic, HomogeneousDirichletBC())),
+        q=BoundarySet(
+            (periodic, periodic, HomogeneousDirichletBC())
+        ),
+        tangential_velocity=BoundarySet(
+            (periodic, periodic, HomogeneousNeumannBC())
+        ),
+        normal_velocity=BoundarySet(
+            (periodic, periodic, HomogeneousDirichletBC())
+        ),
+        pressure_modal=BoundarySet(
+            (periodic, periodic, HomogeneousNeumannBC())
+        ),
+        distortion_odd_z=BoundarySet(
+            (periodic, periodic, HomogeneousDirichletBC())
+        ),
     )
 
 
@@ -621,7 +645,9 @@ def test_run_aggregate_requires_the_qualified_plane_topology(geometry):
 def test_run_aggregate_binds_preset_to_geometry_material_and_raw_request():
     base = _components()
     mismatched_preset = replace(base.preset, zeta=base.preset.zeta * 1.01)
-    changed_physics = _physics(shendruk_request=_shendruk(activity_number=19.0))
+    changed_physics = _physics(
+        shendruk_request=_shendruk(activity_number=19.0)
+    )
 
     with pytest.raises(ValueError, match="preset must match"):
         replace(base, preset=mismatched_preset)
@@ -1004,8 +1030,12 @@ def test_components_remain_provisional_with_three_migrated_consumers():
 
     import pssolver.configuration.plane_beris_edwards_components as components
 
-    assert components.PlaneBerisEdwardsPhysicsSpec is (PlaneBerisEdwardsPhysicsSpec)
-    assert components.PlaneBerisEdwardsRunComponents is (PlaneBerisEdwardsRunComponents)
+    assert components.PlaneBerisEdwardsPhysicsSpec is (
+        PlaneBerisEdwardsPhysicsSpec
+    )
+    assert components.PlaneBerisEdwardsRunComponents is (
+        PlaneBerisEdwardsRunComponents
+    )
     assert "PlaneBerisEdwardsPhysicsSpec" in components.__all__
     assert "PlaneBerisEdwardsRunComponents" in components.__all__
     assert hasattr(components, "decompose_plane_beris_edwards_run_spec")
@@ -1017,11 +1047,13 @@ def test_components_remain_provisional_with_three_migrated_consumers():
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
 
-    facade_source = (PROJECT_ROOT / "pssolver/configuration/plane_beris_edwards.py").read_text(
-        encoding="utf-8"
-    )
+    facade_source = (
+        PROJECT_ROOT / "pssolver/configuration/plane_beris_edwards.py"
+    ).read_text(encoding="utf-8")
     assert "from .plane_beris_edwards_components" not in facade_source
-    assert "from pssolver.models.active_nematics.specifications" not in (facade_source)
+    assert "from pssolver.models.active_nematics.specifications" not in (
+        facade_source
+    )
 
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",

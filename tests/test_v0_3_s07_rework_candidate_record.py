@@ -8,7 +8,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate.json"
+)
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 IMPLEMENTATION = "8aceaab446e57a13866090ec06ecdf30e33ef490"
 CLAIMS = {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"}
@@ -32,10 +34,7 @@ def test_s07_rework_is_later_verified_by_r0018() -> None:
 
 def test_s07_rework_authorizes_no_external_action() -> None:
     record = _read(RECORD)
-    assert (
-        record["obs4_hardening"]["logging_filter_failure_cannot_mask_successful_publication"]
-        is True
-    )
+    assert record["obs4_hardening"]["logging_filter_failure_cannot_mask_successful_publication"] is True
     scope = record["scope"]
     assert scope["checkpoint_schema_changed"] is False
     assert scope["provider_identity_changed"] is False

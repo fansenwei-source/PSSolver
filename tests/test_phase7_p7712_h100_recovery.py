@@ -11,7 +11,9 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes/architecture_v0_2/phase_7_p7712_h100_qualification_plan.json"
-RECOVERY_CONTRACT = ROOT / ("notes/architecture_v0_2/phase_7_p7712_h100_evidence_recovery.json")
+RECOVERY_CONTRACT = ROOT / (
+    "notes/architecture_v0_2/phase_7_p7712_h100_evidence_recovery.json"
+)
 EXPECTED_COMMIT = "d" * 40
 DIAGNOSTIC_DTYPE = np.dtype([("step", np.int64), ("value", np.float64)])
 
@@ -155,7 +157,9 @@ def _reports(tmp_path: Path, *, slow_public: bool = False) -> list[dict[str, obj
                 output_directory=segment_output,
             )
         )
-        reports.append(_report(case, kind="resume", trial=0, entry="direct"))
+        reports.append(
+            _report(case, kind="resume", trial=0, entry="direct")
+        )
         resume_output = tmp_path / f"{case_id}-resume-public"
         _write_diagnostics(resume_output, [(60, final_value)])
         reports.append(

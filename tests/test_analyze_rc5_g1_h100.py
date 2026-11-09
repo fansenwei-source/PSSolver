@@ -124,9 +124,7 @@ def _auxiliary() -> dict[str, object]:
             "identities": {
                 "periodic": plan["consumer_h100_gate"]["periodic_identity_sha256"],
                 "channel_fixed": plan["consumer_h100_gate"]["channel_fixed_identity_sha256"],
-                "channel_tolerance": plan["consumer_h100_gate"][
-                    "channel_tolerance_identity_sha256"
-                ],
+                "channel_tolerance": plan["consumer_h100_gate"]["channel_tolerance_identity_sha256"],
             },
             "old_periodic_pin_rejected_before_mutation": True,
         },
@@ -186,8 +184,12 @@ def _write_profiles(root: Path) -> None:
             "transform_calls": {
                 "forward": entry["expected_forward_raw_calls"],
                 "inverse": entry["expected_inverse_raw_calls"],
-                "forward_per_step": (entry["expected_forward_raw_calls"] / entry["timed_steps"]),
-                "inverse_per_step": (entry["expected_inverse_raw_calls"] / entry["timed_steps"]),
+                "forward_per_step": (
+                    entry["expected_forward_raw_calls"] / entry["timed_steps"]
+                ),
+                "inverse_per_step": (
+                    entry["expected_inverse_raw_calls"] / entry["timed_steps"]
+                ),
             },
             "compiler": {"graph_breaks": 0, "compile_fallback": False},
             "initial_state_sha256": _hash("initial:" + group),

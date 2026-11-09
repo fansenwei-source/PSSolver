@@ -11,16 +11,18 @@ from benchmarks.plan_rc458_tf32_h100 import build_plan
 ROOT = Path(__file__).resolve().parents[1]
 
 
-RECOVERY_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc4_rc458_transform_counter_recovery.json")
+RECOVERY_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc458_transform_counter_recovery.json"
+)
 
 
 RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 
 
 def _resolve_r55(relative: str, historical: str) -> str:
-    successor = json.loads(RC5_R55.read_text(encoding="utf-8"))["historical_successor_sources"].get(
-        relative
-    )
+    successor = json.loads(RC5_R55.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
     if successor is not None and successor["historical_sha256"] == historical:
         return successor["current_sha256"]
     return historical
@@ -51,7 +53,9 @@ def _profile(entry: dict[str, object]) -> dict[str, object]:
     plan = build_plan()
     role = entry["provider_role"]
     group = f"{entry['family']}:{entry['grid']}:{entry['trial']}"
-    mean = (1.0 + 0.01 * int(entry["trial"])) * (1.01 if role == "candidate" else 1.0)
+    mean = (1.0 + 0.01 * int(entry["trial"])) * (
+        1.01 if role == "candidate" else 1.0
+    )
     timed = int(entry["timed_steps"])
     refresh_calls = 3 if entry["family"] in {"channel_legacy", "channel_compiled_v2"} else 0
     raw_forward = int(entry["forward_transforms_per_step"]) * timed + refresh_calls

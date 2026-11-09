@@ -8,10 +8,11 @@ Torch, backend, operator, concrete solver, runtime, workflow, or application.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from enum import Enum
+import json
 from typing import NoReturn
+
 
 from pssolver.core._canonical import canonical_json
 from pssolver.core.boundary import (
@@ -23,8 +24,8 @@ from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
-from pssolver.planning.lifting import StaticLiftingPlan
 from pssolver.planning.plan import TransformKind
+from pssolver.planning.lifting import StaticLiftingPlan
 from pssolver.planning.simulation import (
     AxisBasisRequirement,
     BasisProvenance,
@@ -44,8 +45,8 @@ from pssolver.systems.stokes import (
 )
 
 from .application_registry import APPLICATION_BY_PAIR, LOWERING_REJECTION_PAIRS
-from .lifting import build_plane_static_lifting_plan
 from .simulation import SimulationSpec
+from .lifting import build_plane_static_lifting_plan
 
 
 _BASIS_BY_MODAL_KIND = {
@@ -53,7 +54,9 @@ _BASIS_BY_MODAL_KIND = {
     BoundaryKind.NEUMANN: TransformKind.DCT,
     BoundaryKind.DIRICHLET: TransformKind.DST,
 }
-_MODAL_KIND_BY_BASIS = {value: key for key, value in _BASIS_BY_MODAL_KIND.items()}
+_MODAL_KIND_BY_BASIS = {
+    value: key for key, value in _BASIS_BY_MODAL_KIND.items()
+}
 _DERIVATIVE_BY_BASIS = {
     TransformKind.FFT: (
         TransformKind.FFT,
@@ -136,7 +139,9 @@ def _reject(
     **context: object,
 ) -> NoReturn:
     context_json = canonical_json(context)
-    raise SimulationLoweringError(LoweringRejection(code, message, context_json))
+    raise SimulationLoweringError(
+        LoweringRejection(code, message, context_json)
+    )
 
 
 def _canonical_json(value: object) -> str:
@@ -237,7 +242,8 @@ def _validate_global_contract(
         if (
             axis is None
             or axis >= simulation.geometry.domain.ndim
-            or simulation.geometry.axis_topologies[axis] is not AxisTopology.PERIODIC
+            or simulation.geometry.axis_topologies[axis]
+            is not AxisTopology.PERIODIC
         ):
             _reject(
                 LoweringRejectionCode.INVALID_HERMITIAN_AXIS,
@@ -255,26 +261,45 @@ def _component_modal_kinds(
 ) -> tuple[BoundaryKind, ...]:
     assignment = simulation.boundaries.for_component(component)
     robin_faces = tuple(
-        face for face in assignment.faces if face.condition.kind is BoundaryKind.ROBIN
+        face
+        for face in assignment.faces
+        if face.condition.kind is BoundaryKind.ROBIN
     )
     if robin_faces:
         _reject(
             LoweringRejectionCode.UNSUPPORTED_ROBIN_BOUNDARY,
             "Robin boundary laws require a qualified bounded-axis operator",
             component=component,
-            faces=[{"axis": face.axis, "side": face.side.value} for face in robin_faces],
+            faces=[
+                {"axis": face.axis, "side": face.side.value}
+                for face in robin_faces
+            ],
         )
-    prescribed_faces = tuple(face for face in assignment.faces if not face.condition.is_homogeneous)
-    if prescribed_faces and (lifting_plan is None or component not in lifting_plan.component_order):
+    prescribed_faces = tuple(
+        face
+        for face in assignment.faces
+        if not face.condition.is_homogeneous
+    )
+    if prescribed_faces and (
+        lifting_plan is None
+        or component not in lifting_plan.component_order
+    ):
         _reject(
             LoweringRejectionCode.UNSUPPORTED_PRESCRIBED_BOUNDARY,
             "prescribed boundary data require a qualified lifting plan",
             component=component,
-            faces=[{"axis": face.axis, "side": face.side.value} for face in prescribed_faces],
+            faces=[
+                {"axis": face.axis, "side": face.side.value}
+                for face in prescribed_faces
+            ],
         )
     kinds = []
     for axis in range(simulation.geometry.domain.ndim):
-        faces = {face.side: face.condition.kind for face in assignment.faces if face.axis == axis}
+        faces = {
+            face.side: face.condition.kind
+            for face in assignment.faces
+            if face.axis == axis
+        }
         lower = faces[BoundarySide.LOWER]
         upper = faces[BoundarySide.UPPER]
         if lower is not upper:
@@ -443,7 +468,9 @@ def _differentiate_basis(
     tuple[AxisBasisRequirement, ...],
     DerivativeMultiplier,
 ]:
-    transform, multiplier = _DERIVATIVE_BY_BASIS[source.axes[axis].transform_kind]
+    transform, multiplier = _DERIVATIVE_BY_BASIS[
+        source.axes[axis].transform_kind
+    ]
     axes = []
     for current in source.axes:
         if current.axis != axis:
@@ -507,7 +534,9 @@ def _lower_gradient_capability(
                     axis=axis,
                     multiplier=multiplier,
                     source_transform_kinds=source.transform_kinds,
-                    output_transform_kinds=tuple(value.transform_kind for value in output_axes),
+                    output_transform_kinds=tuple(
+                        value.transform_kind for value in output_axes
+                    ),
                 )
             )
     return tuple(derivatives)
@@ -549,7 +578,9 @@ def _channel_distortion_basis(
     for axis in source.axes:
         axis_name = axis.axis_name
         odd = suffix.count(axis_name) == 1 and axis_name in {"y", "z"}
-        modal_kind = BoundaryKind.DIRICHLET if odd else axis.modal_kind
+        modal_kind = (
+            BoundaryKind.DIRICHLET if odd else axis.modal_kind
+        )
         axes.append(
             AxisBasisRequirement(
                 axis=axis.axis,
@@ -589,50 +620,50 @@ def _lower_transient_spaces(
     for component in _field_components(simulation, "molecular_field"):
         q_source = f"Q{component[1:]}"
         _copy_basis(
-            bases,
-            field_name="molecular_field",
-            component=component,
-            source_component=q_source,
-            provenance=BasisProvenance.CONSTITUTIVE_PARITY,
-        )
+                bases,
+                field_name="molecular_field",
+                component=component,
+                source_component=q_source,
+                provenance=BasisProvenance.CONSTITUTIVE_PARITY,
+            )
     for component in _field_components(simulation, "algebraic_stress"):
         _copy_basis(
-            bases,
-            field_name="algebraic_stress",
-            component=component,
-            source_component=q_components[0],
-            provenance=BasisProvenance.CONSTITUTIVE_PARITY,
-        )
+                bases,
+                field_name="algebraic_stress",
+                component=component,
+                source_component=q_components[0],
+                provenance=BasisProvenance.CONSTITUTIVE_PARITY,
+            )
     odd_suffixes = {"xz", "yz", "zx", "zy"}
     for component in _field_components(simulation, "distortion_stress"):
         suffix = component.rsplit("_", 1)[-1]
         source = "uz" if kind == "plane" and suffix in odd_suffixes else q_components[0]
         if kind != "channel_complete":
             _copy_basis(
-                bases,
-                field_name="distortion_stress",
-                component=component,
-                source_component=source,
-                provenance=BasisProvenance.CONSTITUTIVE_PARITY,
-            )
+                    bases,
+                    field_name="distortion_stress",
+                    component=component,
+                    source_component=source,
+                    provenance=BasisProvenance.CONSTITUTIVE_PARITY,
+                )
             continue
         bases[component] = ComponentBasisRequirement(
-            field_name="distortion_stress",
-            component=component,
-            role=FieldRole.TRANSIENT,
-            axes=_channel_distortion_basis(
-                bases[q_components[0]],
-                component,
-            ),
-            provenance=BasisProvenance.CONSTITUTIVE_PARITY,
-            source_components=tuple(
-                dict.fromkeys(
-                    f"d{q_component}_d{axis_name}"
-                    for axis_name in suffix
-                    for q_component in q_components
-                )
-            ),
-        )
+                field_name="distortion_stress",
+                component=component,
+                role=FieldRole.TRANSIENT,
+                axes=_channel_distortion_basis(
+                    bases[q_components[0]],
+                    component,
+                ),
+                provenance=BasisProvenance.CONSTITUTIVE_PARITY,
+                source_components=tuple(
+                    dict.fromkeys(
+                        f"d{q_component}_d{axis_name}"
+                        for axis_name in suffix
+                        for q_component in q_components
+                    )
+                ),
+            )
     if kind == "plane":
         _validate_plane_distortion_metadata(simulation, bases["uz"])
     force_field = "nematic_force"
@@ -665,10 +696,10 @@ def _validate_plane_distortion_metadata(
     odd_basis: ComponentBasisRequirement,
 ) -> None:
     try:
-        observed = simulation.discretization_parameters["legacy_derived_boundary_spaces"][
-            "distortion_odd_z"
-        ]
-    except (KeyError, TypeError):
+        observed = simulation.discretization_parameters[
+            "legacy_derived_boundary_spaces"
+        ]["distortion_odd_z"]
+    except (KeyError, TypeError) as exc:
         _reject(
             LoweringRejectionCode.INVALID_DERIVED_SPACE,
             "Plane distortion odd-space evidence is missing",
@@ -720,7 +751,11 @@ def _capability_requirements(
                 "spectral_sum_then_velocity_space_projection",
             ),
             INCOMPRESSIBLE_STOKES_CAPABILITY: (
-                ("plane_free_slip_modal_stokes" if kind == "plane" else "periodic_modal_stokes"),
+                (
+                    "plane_free_slip_modal_stokes"
+                    if kind == "plane"
+                    else "periodic_modal_stokes"
+                ),
                 (
                     "geometry_specific_saddle_solve"
                     if kind == "plane"
@@ -786,7 +821,9 @@ def _stokes_requirements(
         INCOMPRESSIBLE_STOKES_CAPABILITY,
     )
     try:
-        stokes = IncompressibleStokesSystemSpec.from_algebraic_system_spec(algebraic)
+        stokes = IncompressibleStokesSystemSpec.from_algebraic_system_spec(
+            algebraic
+        )
     except (TypeError, ValueError) as exc:
         _reject(
             LoweringRejectionCode.INVALID_STOKES_CONTRACT,
@@ -812,13 +849,15 @@ def _stokes_requirements(
         if kind == "plane":
             action = (
                 "remove_uniform_tangential_velocity_and_force"
-                if stokes.tangential_zero_mode_policy is TangentialZeroModePolicy.ZERO_MEAN
+                if stokes.tangential_zero_mode_policy
+                is TangentialZeroModePolicy.ZERO_MEAN
                 else "retain_uniform_tangential_mode_resolved_by_friction"
             )
             tangential_components = stokes.velocity_components[:2]
             family = "free_slip_modal_stokes"
             implementation = (
-                "pssolver.linear_solvers.stokes.plane_free_slip.FreeSlipModalStokesSolver"
+                "pssolver.linear_solvers.stokes.plane_free_slip."
+                "FreeSlipModalStokesSolver"
             )
             extra_options = {
                 "wall_normal_axis": 2,
@@ -827,17 +866,23 @@ def _stokes_requirements(
         else:
             action = (
                 "remove_all_uniform_velocity_and_force"
-                if stokes.tangential_zero_mode_policy is TangentialZeroModePolicy.ZERO_MEAN
+                if stokes.tangential_zero_mode_policy
+                is TangentialZeroModePolicy.ZERO_MEAN
                 else "retain_all_uniform_velocity_resolved_by_friction"
             )
             # This legacy field name is retained in the version-1 lowering
             # schema, but all three periodic velocity components are listed.
             tangential_components = stokes.velocity_components
             family = "periodic_modal_stokes"
-            implementation = "pssolver.linear_solvers.stokes.periodic.PeriodicModalStokesSolver"
+            implementation = (
+                "pssolver.linear_solvers.stokes.periodic."
+                "PeriodicModalStokesSolver"
+            )
             extra_options = {
                 "pressure_algorithm": "direct_fourier_projection",
-                "uniform_velocity_components": list(stokes.velocity_components),
+                "uniform_velocity_components": list(
+                    stokes.velocity_components
+                ),
             }
     else:
         allowed_channel_policies = {TangentialZeroModePolicy.NOT_APPLICABLE}
@@ -858,10 +903,13 @@ def _stokes_requirements(
         tangential_components = ()
         family = "channel_no_slip_modal_stokes_pcg"
         implementation = (
-            "pssolver.linear_solvers.stokes.channel_no_slip.ChannelNoSlipModalStokesSolver"
+            "pssolver.linear_solvers.stokes.channel_no_slip."
+            "ChannelNoSlipModalStokesSolver"
         )
         try:
-            pressure_solver = simulation.discretization_parameters["pressure_solver"]
+            pressure_solver = simulation.discretization_parameters[
+                "pressure_solver"
+            ]
         except KeyError:
             _reject(
                 LoweringRejectionCode.UNSUPPORTED_SOLVER_OPTIONS,
@@ -876,7 +924,9 @@ def _stokes_requirements(
                 "Channel pressure-solver controls must be a mapping",
             )
         pressure_solver = dict(pressure_solver)
-        if pressure_solver.get("algorithm") != ("preconditioned_conjugate_gradient"):
+        if pressure_solver.get("algorithm") != (
+            "preconditioned_conjugate_gradient"
+        ):
             _reject(
                 LoweringRejectionCode.UNSUPPORTED_SOLVER_OPTIONS,
                 "Channel requires the qualified pressure PCG algorithm",
@@ -885,7 +935,9 @@ def _stokes_requirements(
         extra_options = {
             "streamwise_axis": 0,
             "pressure_solver": pressure_solver,
-            "declared_tangential_zero_mode_policy": (stokes.tangential_zero_mode_policy.value),
+            "declared_tangential_zero_mode_policy": (
+                stokes.tangential_zero_mode_policy.value
+            ),
             "effective_tangential_zero_mode_policy": "not_applicable",
         }
     options = {
@@ -931,7 +983,10 @@ def _qualified_static_lifting_plan(
     prescribed_components = tuple(
         assignment.component
         for assignment in simulation.boundaries.components
-        if any(not face.condition.is_homogeneous for face in assignment.faces)
+        if any(
+            not face.condition.is_homogeneous
+            for face in assignment.faces
+        )
     )
     if not prescribed_components:
         return None
@@ -987,7 +1042,9 @@ def lower_simulation_spec(simulation: SimulationSpec) -> SimulationLoweringPlan:
         solver=solver,
         nullspace=nullspace,
         numerics_json=_canonical_json(simulation.numerics.to_metadata()),
-        time_integration_json=_canonical_json(simulation.time_integration.to_metadata()),
+        time_integration_json=_canonical_json(
+            simulation.time_integration.to_metadata()
+        ),
         lifting_plan=lifting_plan,
     )
 

@@ -7,10 +7,7 @@ from pathlib import Path
 import torch
 
 import pssolver
-from pssolver.core import (
-    HomogeneousNeumannBC,
-    PeriodicBC,
-)
+from pssolver.core import HomogeneousNeumannBC, PeriodicBC
 from pssolver.experimental.representations import (
     AlgebraicGenerationState,
     BatchedPhysicalMaterialization,
@@ -35,7 +32,10 @@ def test_generation_state_prefetches_one_declared_physical_island():
 
     def materialize_many(names, values):
         return BatchedPhysicalMaterialization(
-            {name: value.real.clone() for name, value in zip(names, values, strict=True)},
+            {
+                name: value.real.clone()
+                for name, value in zip(names, values, strict=True)
+            },
             (2, 1),
         )
 

@@ -46,8 +46,12 @@ def _assert_state(adapter, expected: dict[str, object]) -> None:
     assert torch.equal(adapter.fields.spectral, expected["spectral"])
     assert torch.equal(adapter.capture_pressure_guess(), expected["pressure"])
     assert adapter.completed_steps == expected["completed_steps"]
-    assert int(adapter.solver.integrator.step_count) == expected["integrator_step_count"]
-    assert int(adapter.solver.integrator.refresh_count) == expected["integrator_refresh_count"]
+    assert int(adapter.solver.integrator.step_count) == expected[
+        "integrator_step_count"
+    ]
+    assert int(adapter.solver.integrator.refresh_count) == expected[
+        "integrator_refresh_count"
+    ]
 
 
 def test_released_fixture_manifest_is_provenance_bound():
@@ -61,7 +65,9 @@ def test_released_fixture_manifest_is_provenance_bound():
     }
     for name, record in manifest["cases"].items():
         directory = FIXTURES / name
-        assert _sha256(directory / "checkpoint.json") == record["checkpoint_sha256"]
+        assert _sha256(directory / "checkpoint.json") == record[
+            "checkpoint_sha256"
+        ]
         assert _tree_sha256(directory) == (
             record["file_count"],
             record["tree_sha256"],

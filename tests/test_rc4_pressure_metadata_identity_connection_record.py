@@ -8,9 +8,13 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
-RC455 = ROOT / ("notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json")
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
@@ -18,7 +22,9 @@ RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
-RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
@@ -43,19 +49,33 @@ def test_rc444_connects_policy_diagnostics_and_truthful_capabilities():
     assert connection["functional_runtime_public_diagnostics_schema"] == 2
     assert connection["declaration_runtime_capabilities_equal"] is True
     assert connection["explicit_vjp"] is False
-    assert connection["inner_solve_gradient"] == ("custom_implicit_pressure_adjoint_v2")
-    assert connection["ambiguous_component_field_removed"] == ("functional_runtime_executable")
+    assert connection["inner_solve_gradient"] == (
+        "custom_implicit_pressure_adjoint_v2"
+    )
+    assert connection["ambiguous_component_field_removed"] == (
+        "functional_runtime_executable"
+    )
 
 
 def test_rc444_versions_only_forward_derivative_semantics():
     identity = _record()["identity"]
-    assert identity["production_forward_dynamics"] == ("channel.production.forward.v4")
-    assert identity["functional_forward_dynamics"] == ("channel.functional.forward.v4")
-    assert identity["functional_derivative_dynamics"] == ("channel.functional.derivative.v4")
+    assert identity["production_forward_dynamics"] == (
+        "channel.production.forward.v4"
+    )
+    assert identity["functional_forward_dynamics"] == (
+        "channel.functional.forward.v4"
+    )
+    assert identity["functional_derivative_dynamics"] == (
+        "channel.functional.derivative.v4"
+    )
     assert identity["production_state_layout"] == "channel.production.state.v3"
-    assert identity["production_backend_restart"] == ("channel.production.backend.v1")
+    assert identity["production_backend_restart"] == (
+        "channel.production.backend.v1"
+    )
     assert identity["functional_state_layout"] == "channel.functional.state.v2"
-    assert identity["functional_backend_restart"] == ("channel.functional.backend.v2")
+    assert identity["functional_backend_restart"] == (
+        "channel.functional.backend.v2"
+    )
     assert identity["functional_bridge_format"] == 3
     assert identity["checkpoint_envelope_changed"] is False
 

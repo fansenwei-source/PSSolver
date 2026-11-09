@@ -8,24 +8,8 @@ import pytest
 import torch
 
 import pssolver
-from pssolver.core import (
-    BoundarySet,
-    DealiasRule,
-    HomogeneousDirichletBC,
-    HomogeneousNeumannBC,
-    NumericsConfig,
-    PeriodicBC,
-    Precision,
-    ProjectedTransformExecution,
-    SpectralStorage,
-    TransformExecutionOrder,
-)
-from pssolver.execution import (
-    INCOMPRESSIBLE_STOKES_CAPABILITY,
-    IncompressibleStokesSystemSpec,
-    PressureGauge,
-    TangentialZeroModePolicy,
-)
+from pssolver.core import BoundarySet, DealiasRule, HomogeneousDirichletBC, HomogeneousNeumannBC, NumericsConfig, PeriodicBC, Precision, ProjectedTransformExecution, SpectralStorage, TransformExecutionOrder
+from pssolver.execution import INCOMPRESSIBLE_STOKES_CAPABILITY, IncompressibleStokesSystemSpec, PressureGauge, TangentialZeroModePolicy
 from pssolver.models.canary import BodyForceStokesCanaryModel
 
 
@@ -153,7 +137,9 @@ def _assert_solution_is_stored(runtime, solution):
 def test_stokes_contract_is_typed_immutable_and_round_trips():
     value = _stokes_spec()
     generic = value.to_algebraic_system_spec()
-    recovered = IncompressibleStokesSystemSpec.from_algebraic_system_spec(generic)
+    recovered = IncompressibleStokesSystemSpec.from_algebraic_system_spec(
+        generic
+    )
 
     assert generic.capability == INCOMPRESSIBLE_STOKES_CAPABILITY
     assert recovered == value
@@ -167,7 +153,9 @@ def test_stokes_contract_is_typed_immutable_and_round_trips():
             pressure_component="p",
             viscosity=1.0,
             friction=0.1,
-            tangential_zero_mode_policy=(TangentialZeroModePolicy.ZERO_MEAN),
+            tangential_zero_mode_policy=(
+                TangentialZeroModePolicy.ZERO_MEAN
+            ),
         )
 
 

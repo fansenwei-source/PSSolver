@@ -30,7 +30,9 @@ def test_rc5_record_preserves_the_historical_version():
 
 def test_rc5_documents_and_machine_record_agree():
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    release_notes = (ROOT / "notes/pssolver_v0_2_0_rc5.md").read_text(encoding="utf-8")
+    release_notes = (ROOT / "notes/pssolver_v0_2_0_rc5.md").read_text(
+        encoding="utf-8"
+    )
     record = _json(RELEASE_RECORD)
 
     assert "## 0.2.0rc5" in changelog
@@ -38,7 +40,9 @@ def test_rc5_documents_and_machine_record_agree():
     assert record["release"] == "0.2.0rc5"
     assert record["status"] == "source_freeze_preparation"
     assert record["qualification"]["g1_complete"] is False
-    assert record["qualification"]["single_h100_cumulative"] == ("not_authorized")
+    assert record["qualification"]["single_h100_cumulative"] == (
+        "not_authorized"
+    )
 
 
 def test_rc5_work_evidence_is_complete_and_content_addressed():
@@ -81,7 +85,9 @@ def test_rc5_freeze_keeps_public_compatibility_boundaries_stable():
 def test_rc5_g1_plan_is_fail_closed_and_requires_one_authorized_h100_run():
     record = _json(G1_RECORD)
     assert record["phase"] == "G-1.0"
-    assert record["classification"] == ("READY_FOR_FROZEN_SOURCE_CPU_QUALIFICATION")
+    assert record["classification"] == (
+        "READY_FOR_FROZEN_SOURCE_CPU_QUALIFICATION"
+    )
     assert record["authorization"] == {
         "source_freeze_prepared": True,
         "g1_complete": False,

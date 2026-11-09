@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import base64
+from dataclasses import MISSING, fields, replace
+from enum import Enum
 import hashlib
 import inspect
 import json
-import pickle
-from dataclasses import MISSING, fields, replace
-from enum import Enum
 from pathlib import Path
+import pickle
 from typing import get_type_hints
 
 import pytest
@@ -38,9 +38,15 @@ from pssolver.presets import ShendrukPlanePreset
 
 FIXTURE_ROOT = Path(__file__).parent / "fixtures" / "configuration"
 SHARED_ORACLE = json.loads(
-    (FIXTURE_ROOT / "plane_shared_declarations_api_v1.json").read_text(encoding="utf-8")
+    (FIXTURE_ROOT / "plane_shared_declarations_api_v1.json").read_text(
+        encoding="utf-8"
+    )
 )
-RUN_CASES = json.loads((FIXTURE_ROOT / "plane_run_spec_v1_cases.json").read_text(encoding="utf-8"))
+RUN_CASES = json.loads(
+    (FIXTURE_ROOT / "plane_run_spec_v1_cases.json").read_text(
+        encoding="utf-8"
+    )
+)
 
 
 def _spec(**overrides: object) -> PlaneBerisEdwardsRunSpec:
@@ -58,29 +64,41 @@ def _field_surface(value_type: type) -> list[list[str]]:
             default = "value"
         else:
             default = "required"
-        surface.append([item.name, inspect.formatannotation(item.type), default])
+        surface.append(
+            [item.name, inspect.formatannotation(item.type), default]
+        )
     return surface
 
 
 def _alternate_boundaries() -> PlaneFreeSlipBoundaryConditions:
     return replace(
         PLANE_FREE_SLIP_BOUNDARIES,
-        q=BoundarySet((PeriodicBC(), PeriodicBC(), HomogeneousDirichletBC())),
+        q=BoundarySet(
+            (PeriodicBC(), PeriodicBC(), HomogeneousDirichletBC())
+        ),
     )
 
 
 def _pickle_objects() -> dict[str, object]:
     return {
         "PlaneRuntimePath_class": PlaneRuntimePath,
-        "PlaneFreeSlipBoundaryConditions_class": (PlaneFreeSlipBoundaryConditions),
+        "PlaneFreeSlipBoundaryConditions_class": (
+            PlaneFreeSlipBoundaryConditions
+        ),
         "SpectralRefreshSpec_class": SpectralRefreshSpec,
         "runtime_legacy_member": PlaneRuntimePath.LEGACY_PRODUCTION,
         "runtime_canary_member": PlaneRuntimePath.SEPARATED_CANARY,
         "default_boundaries": PLANE_FREE_SLIP_BOUNDARIES,
         "alternate_boundaries": _alternate_boundaries(),
-        "refresh_physical_time": SpectralRefreshSpec("physical_time", 0.2, None, 20, 0.2),
-        "refresh_steps": SpectralRefreshSpec("steps", None, 7, 7, 0.07),
-        "refresh_disabled": SpectralRefreshSpec("disabled", None, None, None, None),
+        "refresh_physical_time": SpectralRefreshSpec(
+            "physical_time", 0.2, None, 20, 0.2
+        ),
+        "refresh_steps": SpectralRefreshSpec(
+            "steps", None, 7, 7, 0.07
+        ),
+        "refresh_disabled": SpectralRefreshSpec(
+            "disabled", None, None, None, None
+        ),
         "default_run_spec": _spec(),
     }
 
@@ -93,7 +111,9 @@ def test_shared_declaration_surfaces_match_the_pre_extraction_oracle():
     assert issubclass(PlaneRuntimePath, Enum)
     members = [[item.name, item.value] for item in PlaneRuntimePath]
     assert members[: len(runtime["members"])] == runtime["members"]
-    assert members[len(runtime["members"]) :] == [["COMPILED_V2", "compiled_v2"]]
+    assert members[len(runtime["members"]):] == [
+        ["COMPILED_V2", "compiled_v2"]
+    ]
 
     for value_type, key in (
         (PlaneFreeSlipBoundaryConditions, "boundaries"),
@@ -188,12 +208,16 @@ def test_shared_leaf_validation_timing_is_frozen():
         ValueError,
         match="Plane boundary entries must be three-dimensional",
     ):
-        PlaneFreeSlipBoundaryConditions(q=BoundarySet((PeriodicBC(), PeriodicBC())))
+        PlaneFreeSlipBoundaryConditions(
+            q=BoundarySet((PeriodicBC(), PeriodicBC()))
+        )
     with pytest.raises(ValueError, match="invalid spectral refresh mode"):
         SpectralRefreshSpec("invalid", None, None, None, None)
 
     # Cross-field consistency belongs to the composition root, not this leaf.
-    inconsistent = SpectralRefreshSpec("disabled", 0.2, 9, 11, 0.3)
+    inconsistent = SpectralRefreshSpec(
+        "disabled", 0.2, 9, 11, 0.3
+    )
     assert inconsistent.requested_interval_time == 0.2
     assert inconsistent.requested_interval_steps == 9
 
@@ -235,7 +259,9 @@ def test_derived_view_validation_remains_narrow_and_field_local():
         dt=-0.01,
         steps=-1,
         initial_s=-1.0,
-        spectral_refresh=SpectralRefreshSpec("disabled", 0.2, 9, 11, 0.3),
+        spectral_refresh=SpectralRefreshSpec(
+            "disabled", 0.2, 9, 11, 0.3
+        ),
     )
     for name in ("domain", "geometry", "numerics", "shendruk_preset"):
         assert getattr(unrelated, name) == getattr(baseline, name)

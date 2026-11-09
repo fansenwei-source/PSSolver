@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import FrozenInstanceError, replace
 import hashlib
 import json
-from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 
 import pytest
 import torch
-
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
+from pssolver.configuration.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
@@ -24,14 +21,16 @@ from pssolver.configuration.simulation_binding import (
     bind_simulation_runtime,
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
-from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.planning.construction import BuilderProvision, RuntimeConstructionKind
-from pssolver.runtime import simulation_construction as connection
 from pssolver.runtime.plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
 )
-from pssolver.runtime.simulation_construction import build_bound_simulation_runtime
+from pssolver.runtime.simulation_construction import (
+    build_bound_simulation_runtime,
+)
+from pssolver.runtime import simulation_construction as connection
+from pssolver.models.active_nematics.fields import Q_COMPONENTS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,7 +45,9 @@ BINDING_PATH = ROOT / "pssolver/configuration/simulation_binding.py"
 CONNECTION_PATH = ROOT / "pssolver/runtime/simulation_construction.py"
 
 
-RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p774_runtime_construction_binding.json")
+RESULT_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p774_runtime_construction_binding.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -79,7 +80,9 @@ def _plane_spec(tmp_path: Path, runtime_path="legacy_production"):
 
 
 def _plane_simulation(spec):
-    return compose_plane_beris_edwards_simulation(decompose_plane_beris_edwards_run_spec(spec))
+    return compose_plane_beris_edwards_simulation(
+        decompose_plane_beris_edwards_run_spec(spec)
+    )
 
 
 def test_binding_declarations_and_resolver_are_tensor_and_runtime_free():
@@ -107,7 +110,10 @@ def test_binding_declarations_and_resolver_are_tensor_and_runtime_free():
         assert not {
             name
             for name in imports
-            if any(name == blocked or name.startswith(f"{blocked}.") for blocked in forbidden)
+            if any(
+                name == blocked or name.startswith(f"{blocked}.")
+                for blocked in forbidden
+            )
         }, path
 
 
@@ -117,13 +123,17 @@ def test_binding_rejects_unqualified_path_and_nonmatching_plan(tmp_path):
     invalid = replace(plan, geometry_name="other_geometry")
     with pytest.raises(SimulationBindingError) as caught:
         bind_simulation_runtime(simulation, invalid)
-    assert caught.value.rejection.code is (BindingRejectionCode.INVALID_LOWERING_PLAN)
+    assert caught.value.rejection.code is (
+        BindingRejectionCode.INVALID_LOWERING_PLAN
+    )
 
 
 def test_p774_machine_record_matches_sources_scope_and_local_evidence():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
     assert record["schema_version"] == 1
-    assert record["classification"] == ("PASS_P7_7_4_OPT_IN_RUNTIME_CONSTRUCTION_BINDING")
+    assert record["classification"] == (
+        "PASS_P7_7_4_OPT_IN_RUNTIME_CONSTRUCTION_BINDING"
+    )
     assert record["connection"]["opt_in"] is True
     assert record["connection"]["factory_result_returned_directly"] is True
     assert record["connection"]["hot_path_dispatch_added"] is False
@@ -140,7 +150,10 @@ def test_p774_machine_record_matches_sources_scope_and_local_evidence():
 def _plane_values():
     coordinate = torch.arange(6**3, dtype=torch.float64).reshape(6, 6, 6)
     coordinate = (coordinate - coordinate.mean()) / coordinate.numel()
-    return {name: coordinate.mul((index + 1) * 1.0e-3) for index, name in enumerate(Q_COMPONENTS)}
+    return {
+        name: coordinate.mul((index + 1) * 1.0e-3)
+        for index, name in enumerate(Q_COMPONENTS)
+    }
 
 
 def _plane_request(spec, values=None):
@@ -209,10 +222,7 @@ def test_connection_returns_the_existing_factory_object_without_wrapping(
     request = _plane_request(spec, {})
     binding = bind_simulation_runtime(_plane_simulation(spec))
     sentinel = object()
-
-    def builder():
-        return object()
-
+    builder = lambda: object()
     calls = []
 
     def factory(received, **kwargs):

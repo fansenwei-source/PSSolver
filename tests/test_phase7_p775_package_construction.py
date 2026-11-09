@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import FrozenInstanceError, fields
 import hashlib
 import json
-from dataclasses import FrozenInstanceError, fields
 from pathlib import Path
 
 import pytest
 import torch
-
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
+from pssolver.configuration.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
 from pssolver.configuration.package_construction import (
     normalize_package_construction,
     plan_package_runtime_construction,
@@ -23,18 +20,20 @@ from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
-from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.planning.construction import RuntimeConstructionKind
-from pssolver.runtime import package_construction as package_runtime
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
     build_package_simulation_runtime,
 )
+from pssolver.runtime import package_construction as package_runtime
 from pssolver.runtime.plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
 )
-from pssolver.workflows.plane_compiled_v2 import build_plane_compiled_v2_runtime
+from pssolver.workflows.plane_compiled_v2 import (
+    build_plane_compiled_v2_runtime,
+)
+from pssolver.models.active_nematics.fields import Q_COMPONENTS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,7 +54,9 @@ PLANE_BRIDGE_PATH = ROOT / "pssolver/runtime/plane_application_bridge.py"
 CHANNEL_BRIDGE_PATH = ROOT / "pssolver/runtime/channel_application_bridge.py"
 
 
-RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p775_package_construction.json")
+RESULT_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p775_package_construction.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -88,7 +89,9 @@ def _plane_spec(tmp_path: Path, runtime_path: str):
 
 
 def _plane_simulation(spec):
-    return compose_plane_beris_edwards_simulation(decompose_plane_beris_edwards_run_spec(spec))
+    return compose_plane_beris_edwards_simulation(
+        decompose_plane_beris_edwards_run_spec(spec)
+    )
 
 
 def _package_build(simulation, request):
@@ -122,14 +125,19 @@ def test_package_plan_declarations_and_resolver_are_tensor_runtime_free():
         assert not {
             name
             for name in imports
-            if any(name == blocked or name.startswith(f"{blocked}.") for blocked in forbidden)
+            if any(
+                name == blocked or name.startswith(f"{blocked}.")
+                for blocked in forbidden
+            )
         }, path
 
 
 def test_p775_machine_record_matches_sources_and_scope():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
     assert record["schema_version"] == 1
-    assert record["classification"] == ("PASS_P7_7_5_PACKAGE_CONSTRUCTION_OWNERSHIP_NORMALIZATION")
+    assert record["classification"] == (
+        "PASS_P7_7_5_PACKAGE_CONSTRUCTION_OWNERSHIP_NORMALIZATION"
+    )
     assert record["construction"]["application_builder_required"] is False
     assert record["construction"]["hot_path_dispatch_added"] is False
     assert record["production_applications_connected"] is False
@@ -148,7 +156,10 @@ def test_p775_machine_record_matches_sources_and_scope():
 def _plane_values():
     coordinate = torch.arange(6**3, dtype=torch.float64).reshape(6, 6, 6)
     coordinate = (coordinate - coordinate.mean()) / coordinate.numel()
-    return {name: coordinate.mul((index + 1) * 1.0e-3) for index, name in enumerate(Q_COMPONENTS)}
+    return {
+        name: coordinate.mul((index + 1) * 1.0e-3)
+        for index, name in enumerate(Q_COMPONENTS)
+    }
 
 
 def _plane_request(spec, values=None):

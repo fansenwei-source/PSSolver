@@ -7,10 +7,7 @@ from pathlib import Path
 import pytest
 
 import pssolver
-from pssolver.core import (
-    HomogeneousNeumannBC,
-    PeriodicBC,
-)
+from pssolver.core import HomogeneousNeumannBC, PeriodicBC
 from pssolver.execution import (
     AlgebraicExecutionMode,
     AlgebraicExecutionPolicy,
@@ -45,7 +42,9 @@ def test_execution_policy_encodes_only_the_valid_monotone_modes():
         AlgebraicExecutionMode.BATCHED_PHYSICAL_ISLANDS
     )
     with pytest.raises(ValueError, match="requires representation reuse"):
-        AlgebraicExecutionPolicy.from_legacy_flags(lazy_physical_materialization=True)
+        AlgebraicExecutionPolicy.from_legacy_flags(
+            lazy_physical_materialization=True
+        )
     with pytest.raises(ValueError, match="require representation reuse and lazy"):
         AlgebraicExecutionPolicy.from_legacy_flags(
             representation_reuse=True,

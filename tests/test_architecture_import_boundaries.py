@@ -10,9 +10,9 @@ allowance.
 from __future__ import annotations
 
 import ast
-import sys
 from dataclasses import dataclass
 from pathlib import Path
+import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -62,7 +62,9 @@ ALLOWED_INTERNAL_LAYERS = {
     ),
     "backends": frozenset({"backends", "core", "planning"}),
     "operators": frozenset({"backends", "core", "operators", "planning"}),
-    "linear_solvers": frozenset({"backends", "core", "linear_solvers", "operators", "planning"}),
+    "linear_solvers": frozenset(
+        {"backends", "core", "linear_solvers", "operators", "planning"}
+    ),
     "integrators": frozenset({"core", "execution", "integrators", "planning"}),
     "models": frozenset({"core", "execution", "models"}),
     "adapters": frozenset({"adapters", "core", "planning"}),
@@ -197,7 +199,9 @@ EXPECTED_LEGACY_EXCEPTIONS = {
 }
 
 
-TENSOR_FREE_LAYERS = frozenset({"core", "geometries", "planning", "systems"})
+TENSOR_FREE_LAYERS = frozenset(
+    {"core", "geometries", "planning", "systems"}
+)
 
 
 EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
@@ -407,7 +411,9 @@ REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES = {
 
 
 def test_systems_layer_has_only_the_authorized_dependency_edges():
-    assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset({"core", "systems"})
+    assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
+        {"core", "systems"}
+    )
     assert "systems" in ALLOWED_INTERNAL_LAYERS["execution"]
     assert "systems" in ALLOWED_INTERNAL_LAYERS["configuration"]
     assert "systems" in TENSOR_FREE_LAYERS
@@ -448,9 +454,14 @@ def _known_internal_modules() -> frozenset[str]:
 
 
 KNOWN_INTERNAL_MODULES = _known_internal_modules()
-PACKAGE_LAYERS = frozenset(path.parent.name for path in PACKAGE_ROOT.glob("*/__init__.py"))
+PACKAGE_LAYERS = frozenset(
+    path.parent.name
+    for path in PACKAGE_ROOT.glob("*/__init__.py")
+)
 ROOT_MODULE_NAMES = frozenset(
-    path.stem for path in PACKAGE_ROOT.glob("*.py") if path.name != "__init__.py"
+    path.stem
+    for path in PACKAGE_ROOT.glob("*.py")
+    if path.name != "__init__.py"
 )
 
 
@@ -474,7 +485,8 @@ def _from_import_targets(path: Path, node: ast.ImportFrom) -> set[str]:
 def _literal_dynamic_import(node: ast.Call) -> str | None:
     function = node.func
     recognized = (
-        isinstance(function, ast.Name) and function.id in {"__import__", "import_module"}
+        isinstance(function, ast.Name)
+        and function.id in {"__import__", "import_module"}
     ) or (
         isinstance(function, ast.Attribute)
         and isinstance(function.value, ast.Name)
@@ -512,14 +524,21 @@ def _layer(module: str) -> str:
 
 
 def test_every_internal_source_layer_is_governed_by_the_ratchet():
-    observed = {_layer(_module_name(path)) for path in PACKAGE_ROOT.rglob("*.py")}
+    observed = {
+        _layer(_module_name(path))
+        for path in PACKAGE_ROOT.rglob("*.py")
+    }
     observed.discard("")
     assert observed <= set(ALLOWED_INTERNAL_LAYERS)
 
 
 def test_s16_does_not_widen_v030_top_level_target_allowances():
     observed = {
-        layer: frozenset(target for target in allowed if target in ROOT_MODULE_NAMES)
+        layer: frozenset(
+            target
+            for target in allowed
+            if target in ROOT_MODULE_NAMES
+        )
         for layer, allowed in ALLOWED_INTERNAL_LAYERS.items()
         if layer in V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER
     }
@@ -540,7 +559,8 @@ def test_configuration_has_only_the_reviewed_systems_dependency_edge():
     observed = {
         edge
         for edge in _all_edges()
-        if _layer(edge.source) == "configuration" and _layer(edge.destination) == "systems"
+        if _layer(edge.source) == "configuration"
+        and _layer(edge.destination) == "systems"
     }
     assert observed == EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES
 
@@ -549,7 +569,8 @@ def test_configuration_has_only_reviewed_planning_composition_edges():
     observed = {
         edge
         for edge in _all_edges()
-        if _layer(edge.source) == "configuration" and _layer(edge.destination) == "planning"
+        if _layer(edge.source) == "configuration"
+        and _layer(edge.destination) == "planning"
     }
     assert observed == REVIEWED_CONFIGURATION_TO_PLANNING_EDGES
 
@@ -558,7 +579,8 @@ def test_models_have_only_reviewed_tensor_free_system_declaration_edges():
     observed = {
         edge
         for edge in _all_edges()
-        if _layer(edge.source) == "models" and _layer(edge.destination) == "systems"
+        if _layer(edge.source) == "models"
+        and _layer(edge.destination) == "systems"
     }
     assert observed == REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES
 
@@ -567,7 +589,8 @@ def test_models_have_only_reviewed_public_boundary_policy_edges():
     observed = {
         edge
         for edge in _all_edges()
-        if _layer(edge.source) == "models" and _layer(edge.destination) == "boundaries"
+        if _layer(edge.source) == "models"
+        and _layer(edge.destination) == "boundaries"
     }
     assert observed == REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES
 
@@ -586,7 +609,8 @@ def test_only_reviewed_workflows_use_the_private_canonical_helper():
     observed = {
         edge
         for edge in _all_edges()
-        if _layer(edge.source) == "workflows" and edge.destination == "pssolver.core._canonical"
+        if _layer(edge.source) == "workflows"
+        and edge.destination == "pssolver.core._canonical"
     }
     assert observed == REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES
 
@@ -668,7 +692,8 @@ def test_applications_do_not_reach_into_experimental_implementations():
     violations = sorted(
         edge
         for edge in _all_edges()
-        if _layer(edge.source) == "applications" and _layer(edge.destination) == "experimental"
+        if _layer(edge.source) == "applications"
+        and _layer(edge.destination) == "experimental"
     )
     assert violations == []
 
@@ -678,7 +703,8 @@ def test_only_the_frozen_runtime_bridge_reaches_into_experimental_code():
     observed = {
         edge
         for edge in _all_edges()
-        if _layer(edge.source) != "experimental" and _layer(edge.destination) == "experimental"
+        if _layer(edge.source) != "experimental"
+        and _layer(edge.destination) == "experimental"
     }
     assert observed == expected
 
@@ -688,16 +714,26 @@ def test_import_scanner_covers_package_aliases_and_literal_dynamic_imports():
 
     absolute = ast.parse("from pssolver import experimental").body[0]
     relative = ast.parse("from .. import experimental").body[0]
-    symbol = ast.parse("from pssolver.transforms import TensorProductTransformBackend").body[0]
+    symbol = ast.parse(
+        "from pssolver.transforms import TensorProductTransformBackend"
+    ).body[0]
     assert isinstance(absolute, ast.ImportFrom)
     assert isinstance(relative, ast.ImportFrom)
     assert isinstance(symbol, ast.ImportFrom)
 
-    assert "pssolver.experimental" in _from_import_targets(representative_path, absolute)
-    assert "pssolver.experimental" in _from_import_targets(representative_path, relative)
-    assert _from_import_targets(representative_path, symbol) == {"pssolver.transforms"}
+    assert "pssolver.experimental" in _from_import_targets(
+        representative_path, absolute
+    )
+    assert "pssolver.experimental" in _from_import_targets(
+        representative_path, relative
+    )
+    assert _from_import_targets(representative_path, symbol) == {
+        "pssolver.transforms"
+    }
 
-    dynamic = ast.parse('importlib.import_module("pssolver.experimental.hidden")').body[0]
+    dynamic = ast.parse(
+        'importlib.import_module("pssolver.experimental.hidden")'
+    ).body[0]
     assert isinstance(dynamic, ast.Expr)
     assert isinstance(dynamic.value, ast.Call)
     assert _literal_dynamic_import(dynamic.value) == "pssolver.experimental.hidden"

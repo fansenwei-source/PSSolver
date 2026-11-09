@@ -71,8 +71,12 @@ def compose_plane_beris_edwards_simulation(
     """Compose the qualified complete-stress Plane declaration."""
 
     if not isinstance(components, PlaneBerisEdwardsRunComponents):
-        raise TypeError("components must be a PlaneBerisEdwardsRunComponents")
-    equation_system = declare_plane_complete_stress_equation_system(components)
+        raise TypeError(
+            "components must be a PlaneBerisEdwardsRunComponents"
+        )
+    equation_system = declare_plane_complete_stress_equation_system(
+        components
+    )
     effective = components.effective_boundaries
     assignments = []
     for component in _field_components(equation_system, "Q"):
@@ -118,12 +122,16 @@ def compose_plane_beris_edwards_simulation(
         ),
         numerics=components.numerics,
         time_integration=TimeIntegrationSpec(
-            integrator=IntegratorSpec.projected_semi_implicit_euler(dt=components.time_stepping.dt),
+            integrator=IntegratorSpec.projected_semi_implicit_euler(
+                dt=components.time_stepping.dt
+            ),
             refresh=components.time_stepping.spectral_refresh.to_metadata(),
         ),
         discretization_parameters={
             "legacy_derived_boundary_spaces": {
-                "distortion_odd_z": (effective.distortion_odd_z.to_metadata()),
+                "distortion_odd_z": (
+                    effective.distortion_odd_z.to_metadata()
+                ),
             },
         },
         initial_condition=InitialConditionSpec(

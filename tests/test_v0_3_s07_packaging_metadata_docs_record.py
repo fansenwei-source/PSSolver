@@ -8,7 +8,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_3_0_s03_successor_17_s07_packaging_metadata_docs.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_3_0_s03_successor_17_s07_packaging_metadata_docs.json"
+)
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 IMPLEMENTATION = "b7cf4ca02095e8b41ed720809880628d2375cfbb"
 ISSUES = {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26"}

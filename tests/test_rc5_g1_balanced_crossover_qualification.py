@@ -13,8 +13,6 @@ from benchmarks.plan_rc5_g1_balanced_crossover_qualification import (
     CLASSIFICATION,
     SCHEMA,
     build_plan,
-)
-from benchmarks.plan_rc5_g1_balanced_crossover_qualification import (
     main as plan_main,
 )
 
@@ -66,7 +64,8 @@ def test_formal_analyzer_uses_adopted_estimator_not_superseded_maximum(monkeypat
         formal_analyzer,
         "_balanced_groups",
         lambda *args, **kwargs: [
-            {"family": f"family-{index}", "grid": "grid", "passed": True} for index in range(4)
+            {"family": f"family-{index}", "grid": "grid", "passed": True}
+            for index in range(4)
         ],
     )
     result = formal_analyzer.analyze(Path("profiles"), Path("progress"))
@@ -108,26 +107,32 @@ def test_formal_analyzer_rejects_a_failed_balanced_cell(monkeypatch):
 
 
 def test_h100_wrapper_is_prepared_but_cannot_mark_global_complete():
-    job = (ROOT / "jobs/rc5_g1_balanced_crossover_h100.sbatch").read_text(encoding="utf-8")
+    job = (ROOT / "jobs/rc5_g1_balanced_crossover_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
     assert "#SBATCH --gres=gpu:H100:1" in job
     assert "#SBATCH --no-requeue" in job
     assert "run_rc5_g1_checkpoint_tmp_preflight.py" in job
     assert "run_rc5_g1_environment.py" in job
     assert "run_rc5_g1_balanced_crossover_profile_matrix.py" in job
     assert "--authorization-record" in job
-    assert 'test ! -e "${RC5_G1_OUTPUT_ROOT}"' in job
+    assert "test ! -e \"${RC5_G1_OUTPUT_ROOT}\"" in job
     assert "BALANCED_CROSSOVER_COMPLETE" in job
-    assert 'touch "${RC5_G1_OUTPUT_ROOT}/COMPLETE"' not in job
+    assert "touch \"${RC5_G1_OUTPUT_ROOT}/COMPLETE\"" not in job
 
 
 def test_adoption_record_binds_sources_and_requires_new_execution_authority():
     record = json.loads(
-        (ROOT / "notes" / "PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json").read_text(
-            encoding="utf-8"
-        )
+        (
+            ROOT
+            / "notes"
+            / "PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json"
+        ).read_text(encoding="utf-8")
     )
     assert record["classification"] == CLASSIFICATION
-    assert record["parent_commit"] == ("bd129703e6bbc585d0b47a6dddc320a7894551ff")
+    assert record["parent_commit"] == (
+        "bd129703e6bbc585d0b47a6dddc320a7894551ff"
+    )
     assert record["adoption"]["formal_v13_classification_preserved"] == (
         "FAIL_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_GATE"
     )

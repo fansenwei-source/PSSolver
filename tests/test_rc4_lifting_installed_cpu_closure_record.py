@@ -21,7 +21,9 @@ def _record() -> dict[str, object]:
 
 def test_rc436_records_complete_source_and_installed_wheel_closure():
     record = _record()
-    assert record["classification"] == ("PASS_RC4_3_6_INSTALLED_WHEEL_LIFTING_CPU_CLOSURE")
+    assert record["classification"] == (
+        "PASS_RC4_3_6_INSTALLED_WHEEL_LIFTING_CPU_CLOSURE"
+    )
     assert record["installed_wheel_gate"]["passed"] == 11
     assert record["installed_wheel_gate"]["source_shadow_import"] is False
     assert record["source_verification"]["dedicated_source_tests_passed"] == 11
@@ -43,9 +45,11 @@ def test_rc436_freezes_independent_second_order_observations():
     assert convergence["wall_points"] == [16, 32, 64]
     assert all(
         left > right
-        for left, right in zip(convergence["errors"], convergence["errors"][1:], strict=False)
+        for left, right in zip(convergence["errors"], convergence["errors"][1:])
     )
-    assert min(convergence["adjacent_orders"]) > (convergence["minimum_required_adjacent_order"])
+    assert min(convergence["adjacent_orders"]) > (
+        convergence["minimum_required_adjacent_order"]
+    )
     assert convergence["public_lifted_Beris_Edwards_qualified"] is False
 
 

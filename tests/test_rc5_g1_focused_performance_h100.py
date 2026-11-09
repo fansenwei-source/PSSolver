@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import json
-import statistics
 from pathlib import Path
+import statistics
 
 import pytest
-
 from benchmarks.plan_rc5_g1_focused_performance_h100 import (
     FOCUSED_CELLS,
     SCHEMA,
@@ -15,8 +14,6 @@ from benchmarks.plan_rc5_g1_focused_performance_h100 import (
     V5_MANIFEST_SHA256,
     V6_MANIFEST_SHA256,
     build_plan,
-)
-from benchmarks.plan_rc5_g1_focused_performance_h100 import (
     main as plan_main,
 )
 
@@ -40,7 +37,9 @@ def _write_profiles(root: Path) -> None:
     for entry in plan["profile_matrix"]:
         role = entry["provider_role"]
         group = f"{entry['family']}:{entry['grid']}:trial{entry['trial']}"
-        mean = (1.0 + 0.001 * int(entry["trial"])) * (1.01 if role == "candidate" else 1.0)
+        mean = (1.0 + 0.001 * int(entry["trial"])) * (
+            1.01 if role == "candidate" else 1.0
+        )
         samples = [mean] * 60
         final = _hash("final:" + group)
         if role == "candidate" and entry["family"] == "periodic_functional":
@@ -131,7 +130,9 @@ def test_focused_plan_is_exact_order_balanced_and_keeps_original_thresholds():
     assert plan["schema"] == SCHEMA
     assert plan["profile_count"] == 48
     assert len(FOCUSED_CELLS) == 4
-    assert [entry["sequence"] for entry in plan["profile_matrix"]] == list(range(1, 49))
+    assert [entry["sequence"] for entry in plan["profile_matrix"]] == list(
+        range(1, 49)
+    )
     assert len({entry["key"] for entry in plan["profile_matrix"]}) == 48
     for cell in FOCUSED_CELLS:
         rows = [
@@ -141,7 +142,8 @@ def test_focused_plan_is_exact_order_balanced_and_keeps_original_thresholds():
         ]
         assert len(rows) == 12
         orders = [
-            [row["provider_role"] for row in rows if row["trial"] == trial] for trial in range(1, 7)
+            [row["provider_role"] for row in rows if row["trial"] == trial]
+            for trial in range(1, 7)
         ]
         assert orders == [
             ["baseline", "candidate"],
@@ -181,7 +183,9 @@ def test_focused_plan_cli_writes_strict_non_overwriting_json(tmp_path):
 
 def test_focused_slurm_script_is_single_h100_fail_closed_and_not_g1_complete():
     root = Path(__file__).resolve().parents[1]
-    source = (root / "jobs/rc5_g1_focused_performance_h100.sbatch").read_text(encoding="utf-8")
+    source = (root / "jobs/rc5_g1_focused_performance_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
     assert "#SBATCH --partition=hagan-gpu" in source
     assert "#SBATCH --account=hagan-lab" in source
     assert "#SBATCH --qos=medium" in source

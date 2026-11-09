@@ -96,7 +96,9 @@ def _numerics(*, half_spectrum):
         transform_execution_order=TransformExecutionOrder.REAL_FIRST,
         projected_transform_execution=ProjectedTransformExecution.TRUNCATED,
         spectral_storage=(
-            SpectralStorage.HERMITIAN_HALF if half_spectrum else SpectralStorage.FULL_COMPLEX
+            SpectralStorage.HERMITIAN_HALF
+            if half_spectrum
+            else SpectralStorage.FULL_COMPLEX
         ),
         hermitian_axis=1 if half_spectrum else None,
     )
@@ -104,7 +106,8 @@ def _numerics(*, half_spectrum):
 
 def _state(runtime):
     values = {
-        name: runtime.solver.fields[name] for name in (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
+        name: runtime.solver.fields[name]
+        for name in (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
     }
     values.update(runtime.transient_algebraic_state())
     return values

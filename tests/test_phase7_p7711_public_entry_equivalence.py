@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 import platform
 import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -32,16 +32,16 @@ from pssolver.boundaries import (
     neumann_pressure_compatibility,
     neumann_q,
 )
-from pssolver.configuration.public_simulation_runner import (
-    PUBLIC_PLANE_APPLICATION,
-)
+from pssolver.configuration.public_simulation_runner import PUBLIC_PLANE_APPLICATION
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.json")
+RESULT_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.json"
+)
 CASES = (
     ("plane", "legacy_production"),
     ("plane", "compiled_v2"),
@@ -64,7 +64,9 @@ def _oracle_environment() -> dict[str, object]:
         "numpy_version": np.__version__,
         "torch_version": str(torch.__version__),
         "torch_cuda_runtime": torch.version.cuda,
-        "torch_config_sha256": hashlib.sha256(torch.__config__.show().encode("utf-8")).hexdigest(),
+        "torch_config_sha256": hashlib.sha256(
+            torch.__config__.show().encode("utf-8")
+        ).hexdigest(),
     }
 
 
@@ -84,7 +86,10 @@ def _assert_environment_scoped_oracle(
         "channel:legacy_channel",
         "channel:compiled_channel_v2",
     }
-    if environment == oracle["reference_environment"] and key not in superseded_channel_oracles:
+    if (
+        environment == oracle["reference_environment"]
+        and key not in superseded_channel_oracles
+    ):
         assert observed == record["continuous_oracle_sha256"][key]
         return
     # Raw NPY hashes are implementation fingerprints, not portable numerical
@@ -97,7 +102,9 @@ def _assert_environment_scoped_oracle(
         "diagnostics.npy",
     }
     assert all(
-        isinstance(value, str) and len(value) == 64 and not (set(value) - set("0123456789abcdef"))
+        isinstance(value, str)
+        and len(value) == 64
+        and not (set(value) - set("0123456789abcdef"))
         for value in observed.values()
     )
 
@@ -266,7 +273,9 @@ def _assert_workflow_metadata_agrees(
         diagnostics = metadata["diagnostics"]
         assert diagnostics["schema_version"] == 1
         assert diagnostics["application_family"] == (
-            "plane_complete_stress" if application == "plane" else "legacy_channel_active_nematic"
+            "plane_complete_stress"
+            if application == "plane"
+            else "legacy_channel_active_nematic"
         )
         assert diagnostics["runtime_path"] == runtime_path
         assert diagnostics["enabled"] is True
@@ -416,7 +425,9 @@ def _exercise_case(
     )
     for resumed in (direct_resume_directory, public_resume_directory):
         for name in ("Q_2.npy", "u_2.npy", "p_2.npy"):
-            assert (resumed / name).read_bytes() == (public_directory / name).read_bytes()
+            assert (resumed / name).read_bytes() == (
+                public_directory / name
+            ).read_bytes()
         metadata = json.loads((resumed / "metadata.json").read_text())
         assert metadata["restart"]["source_completed_steps"] == 1
         assert metadata["restart"]["source_runtime_path"] == runtime_path
@@ -458,13 +469,17 @@ def test_absolute_oracle_is_scoped_to_its_recorded_software_build():
             changed,
             record,
             key,
-            environment=record["continuous_oracle_contract"]["reference_environment"],
+            environment=record["continuous_oracle_contract"][
+                "reference_environment"
+            ],
         )
 
 
 def test_machine_record_freezes_p7711_scope_and_prior_implementation():
     record = json.loads(RESULT_PATH.read_text())
-    assert record["classification"] == ("PASS_P7_7_11_CPU_BYTE_IDENTITY_AND_RESTART")
+    assert record["classification"] == (
+        "PASS_P7_7_11_CPU_BYTE_IDENTITY_AND_RESTART"
+    )
     assert record["qualified_cases"] == [
         f"{application}:{runtime_path}"
         for application, runtime_path in (
@@ -479,8 +494,12 @@ def test_machine_record_freezes_p7711_scope_and_prior_implementation():
     assert record["continuous_oracle_contract"]["scope"] == (
         "implementation_fingerprint_for_matching_environment"
     )
-    assert record["continuous_oracle_contract"]["cross_environment_raw_sha_required"] is False
-    assert record["continuous_oracle_contract"]["same_environment_byte_identity_required"] is True
+    assert record["continuous_oracle_contract"][
+        "cross_environment_raw_sha_required"
+    ] is False
+    assert record["continuous_oracle_contract"][
+        "same_environment_byte_identity_required"
+    ] is True
     assert record["p7_7_12_complete"] is False
     assert record["phase_8_authorized"] is False
     assert record["qualified_source_sha256"] == {

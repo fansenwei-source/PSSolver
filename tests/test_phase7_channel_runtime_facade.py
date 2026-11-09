@@ -1,9 +1,7 @@
 """P7.4 opt-in Channel runtime, output, checkpoint, and restart contracts."""
 
 from __future__ import annotations
-
 from pathlib import Path
-
 import torch
 
 

@@ -939,7 +939,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "494f7b1159b7862f39c147eac849869e37818c33",
@@ -963,7 +964,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "3b986c91f0311ac2623a3690d7190db26efbbfe4",
@@ -988,7 +990,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "7fd8b31d4223bbb8b6ddb81fa04e85eea7cfed39",
@@ -1014,7 +1017,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "7f5c67fafcbf72a1030fec37ea1157117c1ec130",
@@ -1039,7 +1043,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "57c3ced17c154c0c37d13d4cef7db751ae088326",
@@ -1067,7 +1072,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "c8f8086b9cabc24273681737b87f90466116c6fb",
@@ -1102,7 +1108,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "cf16087fa93183114c17d7ec037bd9c7704d4d9c",
@@ -1129,7 +1136,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "c1ae6a6d2c42ad529da391d6c35b4a315d3df627",
@@ -1158,7 +1166,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "08220dd581749acebaa738a21d946866d6db3ef1",
@@ -1184,7 +1193,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "ad82a1d91e9726f999bf4b35f1e20b08f3b63cbb",
@@ -1211,7 +1221,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "b8769d181a5b6e751d1fa3e718928455e59c6cef",
@@ -1239,7 +1250,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "124e7b05e293784b499172135b992047a9272fd2",
@@ -1269,7 +1281,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "709780ff44204caa6eece6452f3378305298f321",
@@ -1301,7 +1314,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "17e935409f144cbb074555149611a4f2b58e9f1c",
@@ -1325,7 +1339,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "3ac476b2bbb2dd3f4ed7784dc4fb984c466d73a3",
@@ -1350,7 +1365,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "aa2dbd679a53ed81df30fa991266f3602435f43e",
@@ -1376,7 +1392,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "d3a69efadcfec4a06460afcc322481d85a8a8b85",
@@ -1402,7 +1419,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "3a55f0defe0ce90d6aedb3134dbf0f0d10fc03fd",
@@ -1433,7 +1451,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "b454c1c3cf2bc4d96039d908c67d141085beafcf",
@@ -1468,7 +1487,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "8456473cb36e2b05c8c32ed83e35215bf45064d9",
@@ -1496,7 +1516,8 @@
     {
       "coverage": {
         "adapted_current_contract_functions": [],
-        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "adapted_retained_units": [],
+        "coverage": "AST-exact retained units are distinguished from each explicitly registered changed unit. Exact nodeids identify historical coverage.",
         "current_test_functions": [],
         "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
         "historical_file_blob": "b96ad67e1b86ab65113e87b516d1bab41809f5e2",

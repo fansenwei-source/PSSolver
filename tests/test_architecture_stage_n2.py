@@ -8,10 +8,7 @@ import pytest
 import torch
 
 import pssolver
-from pssolver.core import (
-    HomogeneousNeumannBC,
-    PeriodicBC,
-)
+from pssolver.core import HomogeneousNeumannBC, PeriodicBC
 from pssolver.experimental.representations import AlgebraicGenerationState
 
 

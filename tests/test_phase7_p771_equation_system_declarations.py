@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import ast
-import json
 from dataclasses import FrozenInstanceError, replace
+import json
 from pathlib import Path
 
 import pytest
 
-from pssolver.configuration.active_nematics_equation_adapters import (
-    declare_plane_complete_stress_equation_system,
-)
+from pssolver.configuration.active_nematics_equation_adapters import declare_plane_complete_stress_equation_system
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
@@ -17,11 +15,7 @@ from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
 from pssolver.core import FieldRole
-from pssolver.models.active_nematics.equation_systems import (
-    ACTIVE_FORCE_COMPONENTS,
-    COMPLETE_STRESS_FORCE_COMPONENTS,
-    CompleteStressBerisEdwardsEquationRequest,
-)
+from pssolver.models.active_nematics.equation_systems import ACTIVE_FORCE_COMPONENTS, COMPLETE_STRESS_FORCE_COMPONENTS, CompleteStressBerisEdwardsEquationRequest
 from pssolver.models.active_nematics.specifications import (
     BerisEdwardsMaterialRequest,
 )
@@ -40,19 +34,33 @@ from pssolver.systems.stokes import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-EQUATION_DECLARATIONS = ROOT / "pssolver" / "systems" / "equations.py"
-
-
-ACTIVE_NEMATIC_DECLARATIONS = (
-    ROOT / "pssolver" / "models" / "active_nematics" / "equation_systems.py"
+EQUATION_DECLARATIONS = (
+    ROOT / "pssolver" / "systems" / "equations.py"
 )
 
 
-ADAPTERS = ROOT / "pssolver" / "configuration" / "active_nematics_equation_adapters.py"
+ACTIVE_NEMATIC_DECLARATIONS = (
+    ROOT
+    / "pssolver"
+    / "models"
+    / "active_nematics"
+    / "equation_systems.py"
+)
+
+
+ADAPTERS = (
+    ROOT
+    / "pssolver"
+    / "configuration"
+    / "active_nematics_equation_adapters.py"
+)
 
 
 RESULT_PATH = (
-    ROOT / "notes" / "architecture_v0_2" / "phase_7_p771_equation_system_declarations.json"
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_7_p771_equation_system_declarations.json"
 )
 
 
@@ -95,7 +103,9 @@ def _channel_stokes() -> IncompressibleStokesSystemSpec:
         pressure_component="p",
         viscosity=1.0,
         pressure_gauge=PressureGauge.ZERO_MEAN,
-        tangential_zero_mode_policy=(TangentialZeroModePolicy.NOT_APPLICABLE),
+        tangential_zero_mode_policy=(
+            TangentialZeroModePolicy.NOT_APPLICABLE
+        ),
     )
 
 
@@ -193,7 +203,9 @@ def test_complete_stress_declaration_records_the_full_constitutive_chain():
         "nematic_force",
     }
     assert laws["nematic_stress"].parameters["active_prefactor"] == -0.02
-    assert value.parameters["force_law"] == ("complete_one_constant_nematic_stress")
+    assert value.parameters["force_law"] == (
+        "complete_one_constant_nematic_stress"
+    )
     assert value.initial_condition_families == ("extruded_defect_gas",)
 
 
@@ -278,7 +290,9 @@ def test_p771_result_records_scope_identity_and_next_authorization():
 
     assert result["phase"] == "P7.7.1"
     assert result["status"] == "P7_7_1_COMPLETE_P7_7_2_NOT_AUTHORIZED"
-    assert result["classification"] == ("PASS_P7_7_1_GEOMETRY_NEUTRAL_EQUATION_DECLARATIONS")
+    assert result["classification"] == (
+        "PASS_P7_7_1_GEOMETRY_NEUTRAL_EQUATION_DECLARATIONS"
+    )
     assert result["scope"] == {
         "tensor_free": True,
         "geometry_free": True,
@@ -295,7 +309,9 @@ def test_p771_result_records_scope_identity_and_next_authorization():
 
 
 def test_p771_result_preserves_historical_reviewed_source_identities():
-    identities = json.loads(RESULT_PATH.read_text(encoding="utf-8"))["source_identities"]
+    identities = json.loads(
+        RESULT_PATH.read_text(encoding="utf-8")
+    )["source_identities"]
 
     assert len(identities) == 5
     for relative_path, expected in identities.items():

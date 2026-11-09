@@ -36,12 +36,14 @@ def write_canonical_q(
         "schema_version": 1,
         "model": {
             "name": "active_nematics",
-            "Q_convention": (Q_convention_metadata() if convention is None else convention),
+            "Q_convention": (
+                Q_convention_metadata() if convention is None else convention
+            ),
             "parameters": {
                 "S_initial": actual_S if S_initial is None else S_initial,
                 "S_bulk": S_bulk,
             },
-        },
+        }
     }
     (directory / "metadata.json").write_text(json.dumps(metadata))
     return q_path, q

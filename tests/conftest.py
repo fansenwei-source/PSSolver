@@ -67,7 +67,10 @@ assert torch.equal(actual, expected)
         timeout=120,
     )
     if result.returncode != 0:
-        pytest.skip("CPU torch.compile/Inductor toolchain is unavailable in this environment")
+        pytest.skip(
+            "CPU torch.compile/Inductor toolchain is unavailable in this "
+            "environment"
+        )
     return {
         "python": sys.executable,
         "torchinductor_cache": str(cache),

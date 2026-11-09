@@ -1,15 +1,16 @@
 """Public building blocks for the active-nematic PDE model."""
 
 from .active_force import active_force_divergence
+
 from .beris_edwards import (
+    BerisEdwardsQGradientCache,
+    BerisEdwardsQNonlinearModel,
+    BerisEdwardsPointwiseKernels,
     DEFAULT_POINTWISE_EXECUTION,
     POINTWISE_COMPILE_BACKEND,
     POINTWISE_COMPILE_MODE,
     POINTWISE_EXECUTION_MODES,
     STRESS_COMPONENTS,
-    BerisEdwardsPointwiseKernels,
-    BerisEdwardsQGradientCache,
-    BerisEdwardsQNonlinearModel,
     beris_edwards_active_stress_components,
     beris_edwards_algebraic_stress_components,
     beris_edwards_bulk_molecular_field_components,
@@ -23,9 +24,9 @@ from .beris_edwards import (
     q_tensor_contraction,
 )
 from .boundaries import (
+    FiniteQAnchoringFace,
     Q_COMPONENT_METRIC,
     QUADRATIC_FINITE_Q_SURFACE_LAW_ID,
-    FiniteQAnchoringFace,
     QuadraticFiniteQAnchoring,
     finite_homeotropic_q_anchoring,
     finite_planar_q_anchoring,
@@ -35,10 +36,6 @@ from .boundaries import (
     quadratic_finite_q_anchoring,
     strong_homeotropic_q,
     strong_planar_q,
-)
-from .channel_stokes import (
-    CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS,
-    CHANNEL_Q_BOUNDARY_CONDITIONS,
 )
 from .constitutive import (
     ALGEBRAIC_STRESS_COMPONENTS,
@@ -57,6 +54,10 @@ from .constitutive import (
     BerisEdwardsConstitutiveStokesCanaryModel,
     BerisEdwardsPlaneCoupledModel,
 )
+from .channel_stokes import (
+    CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS,
+    CHANNEL_Q_BOUNDARY_CONDITIONS,
+)
 from .fields import Q_COMPONENTS
 from .initial_conditions import (
     aligned_x_band_limited_noise_2d,
@@ -64,8 +65,8 @@ from .initial_conditions import (
     analytic_periodic_defect_gas_2d,
     available_initial_conditions,
     create_initial_condition,
-    extruded_2d_twist,
     extruded_2d_unbiased_rotation,
+    extruded_2d_twist,
     neumann_twist_profile,
     sample_periodic_neutral_defects_2d,
 )
@@ -75,7 +76,6 @@ from .nematics3d_adapter import (
     eigenframe_from_Q,
     q_field_object_from_Q,
 )
-from .public import CompleteStressBerisEdwards
 from .q_tensor import (
     PLANAR_Q_COMPONENTS,
     Q_components,
@@ -87,7 +87,9 @@ from .q_tensor import (
     project_z_invariant_planar_q,
     uniaxial_Q,
 )
+from .public import CompleteStressBerisEdwards
 from .stokes import (
+    BerisEdwardsFreeSlipStokes,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
     PLANE_DISTORTION_ODD_BOUNDARY_CONDITIONS,
@@ -95,7 +97,6 @@ from .stokes import (
     PLANE_PRESSURE_BOUNDARY_CONDITIONS,
     PLANE_Q_BOUNDARY_CONDITIONS,
     PLANE_TANGENTIAL_VELOCITY_BOUNDARY_CONDITIONS,
-    BerisEdwardsFreeSlipStokes,
 )
 
 

@@ -57,7 +57,8 @@ def test_pressure_floor_is_eight_real_dtype_epsilons(
     assert channel_pressure_minimum_relative_tolerance(complex_dtype) == expected
     assert channel_pressure_minimum_relative_tolerance(precision) == expected
     assert CHANNEL_PRESSURE_NORMALIZED_RESIDUAL_DEFINITION == (
-        "active_rms(projected_pcg_recurrence_residual)/active_rms(projected_rhs)"
+        "active_rms(projected_pcg_recurrence_residual)/"
+        "active_rms(projected_rhs)"
     )
 
 
@@ -80,7 +81,9 @@ def test_supported_floor_bounds_recomputed_same_dtype_residual(dtype, shape):
         pressure_fixed_iterations=None,
     )
     operator = ChannelPressureTransposeOperator(solver)
-    complex_dtype = torch.complex64 if dtype is torch.float32 else torch.complex128
+    complex_dtype = (
+        torch.complex64 if dtype is torch.float32 else torch.complex128
+    )
     for seed in (9, 10, 11):
         generator = torch.Generator().manual_seed(seed)
         real = torch.randn((1, *shape), generator=generator, dtype=dtype)
@@ -89,7 +92,9 @@ def test_supported_floor_bounds_recomputed_same_dtype_residual(dtype, shape):
         solver.pressure_guess = None
 
         pressure = solver._solve_pressure(rhs.clone())
-        residual = operator._project_gauge(rhs - operator.apply_pressure_operator(pressure))
+        residual = operator._project_gauge(
+            rhs - operator.apply_pressure_operator(pressure)
+        )
         recomputed = (
             channel_pressure_active_rms(
                 residual,
@@ -101,7 +106,9 @@ def test_supported_floor_bounds_recomputed_same_dtype_residual(dtype, shape):
             ).float64_value
         )
 
-        assert solver.last_pressure_termination_reason == ("relative_tolerance_met")
+        assert solver.last_pressure_termination_reason == (
+            "relative_tolerance_met"
+        )
         assert solver.last_pressure_relative_residual <= floor
         assert recomputed <= floor
 
@@ -202,7 +209,9 @@ def test_public_compilers_reject_sub_floor_tolerance_with_structured_error(
     with pytest.raises(PublicSimulationCompilationError) as captured:
         compile_simulation(simulation)
 
-    assert captured.value.code is (PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT)
+    assert captured.value.code is (
+        PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT
+    )
     assert "below the supported tolerance-mode floor" in str(captured.value)
     assert not (tmp_path / output_name).exists()
 
@@ -233,7 +242,9 @@ def test_public_compilers_accept_floor_and_preserve_fixed_work_exception(
         )
     )
 
-    assert tolerance_mode.source.discretization["pressure_solver"]["relative_tolerance"] == floor
+    assert tolerance_mode.source.discretization["pressure_solver"][
+        "relative_tolerance"
+    ] == floor
     assert fixed_work.source.discretization["pressure_solver"] == {
         "algorithm": "preconditioned_conjugate_gradient",
         "fixed_iterations": 4,

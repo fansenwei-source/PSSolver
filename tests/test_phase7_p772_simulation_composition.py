@@ -1,30 +1,22 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import FrozenInstanceError, replace
 import hashlib
 import json
-import subprocess
-from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
+import subprocess
 
 import pytest
 
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
+from pssolver.configuration.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.core.boundary import (
-    BoundaryAssignment,
-    BoundaryKind,
-    BoundarySemantic,
-    BoundarySide,
-    HomogeneousDirichletBC,
-)
+from pssolver.core.boundary import BoundaryAssignment, BoundaryKind, BoundarySemantic, BoundarySide, HomogeneousDirichletBC
 from pssolver.core.domain import DomainSpec
 from pssolver.geometries import PlaneSlab
 
@@ -35,13 +27,25 @@ ROOT = Path(__file__).resolve().parents[1]
 BOUNDARY_DECLARATIONS = ROOT / "pssolver" / "core" / "boundary.py"
 
 
-SIMULATION_DECLARATIONS = ROOT / "pssolver" / "configuration" / "simulation.py"
+SIMULATION_DECLARATIONS = (
+    ROOT / "pssolver" / "configuration" / "simulation.py"
+)
 
 
-ADAPTERS = ROOT / "pssolver" / "configuration" / "active_nematics_simulation_adapters.py"
+ADAPTERS = (
+    ROOT
+    / "pssolver"
+    / "configuration"
+    / "active_nematics_simulation_adapters.py"
+)
 
 
-RESULT_PATH = ROOT / "notes" / "architecture_v0_2" / "phase_7_p772_simulation_composition.json"
+RESULT_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_7_p772_simulation_composition.json"
+)
 
 
 P772_COMMIT = "2186191d22a007ed39c9655e06ee10f1dfdd8d37"
@@ -77,11 +81,16 @@ def _plane_components(**overrides: object):
         "twist_modes": (1, 2, 3),
     }
     values.update(overrides)
-    return decompose_plane_beris_edwards_run_spec(create_plane_beris_edwards_run_spec(**values))
+    return decompose_plane_beris_edwards_run_spec(
+        create_plane_beris_edwards_run_spec(**values)
+    )
 
 
 def _identity_hashes(value) -> dict[str, str]:
-    return {name: record["sha256"] for name, record in value.identity_metadata().items()}
+    return {
+        name: record["sha256"]
+        for name, record in value.identity_metadata().items()
+    }
 
 
 def _replace_component(value, replacement):
@@ -118,7 +127,10 @@ def test_p772_declarations_are_tensor_and_runtime_free():
         assert not {
             name
             for name in imports
-            if any(name == blocked or name.startswith(f"{blocked}.") for blocked in forbidden)
+            if any(
+                name == blocked or name.startswith(f"{blocked}.")
+                for blocked in forbidden
+            )
         }, path
 
 
@@ -148,11 +160,15 @@ def test_plane_adapter_composes_physical_faces_without_modal_leakage():
     assert ux.semantic is BoundarySemantic.PHYSICAL
     assert uz.semantic is BoundarySemantic.PHYSICAL
     assert pressure.semantic is BoundarySemantic.ALGEBRAIC_COMPATIBILITY
-    assert {face.condition.kind for face in qxx.faces if face.axis == 2} == {BoundaryKind.NEUMANN}
-    assert {face.condition.kind for face in uz.faces if face.axis == 2} == {BoundaryKind.DIRICHLET}
-    assert {face.condition.kind for face in pressure.faces if face.axis == 2} == {
-        BoundaryKind.NEUMANN
-    }
+    assert {
+        face.condition.kind for face in qxx.faces if face.axis == 2
+    } == {BoundaryKind.NEUMANN}
+    assert {
+        face.condition.kind for face in uz.faces if face.axis == 2
+    } == {BoundaryKind.DIRICHLET}
+    assert {
+        face.condition.kind for face in pressure.faces if face.axis == 2
+    } == {BoundaryKind.NEUMANN}
 
     declared = set(value.equation_system.component_names)
     assert set(value.boundaries.component_names) <= declared
@@ -164,9 +180,11 @@ def test_plane_adapter_composes_physical_faces_without_modal_leakage():
         value.boundaries.to_metadata(),
         sort_keys=True,
     )
-    assert value.discretization_parameters["legacy_derived_boundary_spaces"][
-        "distortion_odd_z"
-    ] == (components.effective_boundaries.distortion_odd_z.to_metadata())
+    assert value.discretization_parameters[
+        "legacy_derived_boundary_spaces"
+    ]["distortion_odd_z"] == (
+        components.effective_boundaries.distortion_odd_z.to_metadata()
+    )
 
 
 def test_face_declaration_can_represent_asymmetric_bounded_wall_laws():
@@ -310,11 +328,14 @@ def test_simulation_spec_is_frozen_and_deterministic():
 def test_p772_machine_readable_record_matches_sources_and_scope():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
     assert record["schema_version"] == 1
-    assert record["classification"] == ("PASS_P7_7_2_BOUNDARY_ASSIGNMENT_SIMULATION_COMPOSITION")
+    assert record["classification"] == (
+        "PASS_P7_7_2_BOUNDARY_ASSIGNMENT_SIMULATION_COMPOSITION"
+    )
     assert record["runtime_connection"] is False
     assert record["basis_or_solver_lowering"] is False
     assert record["production_default_changed"] is False
     assert record["phase_8_authorized"] is False
     assert record["source_sha256"] == {
-        relative: _sha256_at_p772(relative) for relative in record["source_sha256"]
+        relative: _sha256_at_p772(relative)
+        for relative in record["source_sha256"]
     }

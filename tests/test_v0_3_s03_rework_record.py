@@ -54,7 +54,9 @@ def test_s03_rework_registry_preserves_the_three_verified_fixes() -> None:
     assert set(record["issue_status_after_rework"].values()) >= {"verified"}
     for issue_id in ("C1-08", "A2-24/C1-15", "V-24"):
         assert issues[issue_id]["status"] == "verified"
-        assert issues[issue_id]["fixed_in"] == record["git_identity"]["implementation_commit"]
+        assert issues[issue_id]["fixed_in"] == record["git_identity"][
+            "implementation_commit"
+        ]
         assert issues[issue_id]["verified_by"] == "R-0009"
     for issue_id in ("C1-05", "C2-18", "S2-17", "V-27", "V-28", "V-29"):
         assert issues[issue_id]["status"] == "verified"

@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import errno
 import hashlib
 import json
 import os
-import stat
-from contextlib import contextmanager
 from pathlib import Path
+import stat
 
 import pytest
 
@@ -23,8 +23,8 @@ from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointError,
     CheckpointExistsError,
-    CheckpointIntegrityError,
     CheckpointIOError,
+    CheckpointIntegrityError,
     CheckpointNotFoundError,
     checkpoint_directory_transaction,
     read_checkpoint_json,
@@ -45,10 +45,16 @@ RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-RC5_R510 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
-RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
+RC5_R510 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
-RC5_G1_GLIBC = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+RC5_G1_GLIBC = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
@@ -196,16 +202,13 @@ def test_payload_resolution_rejects_non_basename_paths(tmp_path, filename):
 def test_payload_resolution_requires_canonical_regular_non_symlink(tmp_path):
     payload = tmp_path / "state.npy"
     payload.write_bytes(b"payload")
-    assert (
-        resolve_checkpoint_payload(
-            tmp_path,
-            "state.npy",
-            operation="checkpoint_import",
-            description="tensor payload",
-            expected_filename="state.npy",
-        )
-        == payload.resolve()
-    )
+    assert resolve_checkpoint_payload(
+        tmp_path,
+        "state.npy",
+        operation="checkpoint_import",
+        description="tensor payload",
+        expected_filename="state.npy",
+    ) == payload.resolve()
 
     with pytest.raises(CheckpointIntegrityError):
         resolve_checkpoint_payload(

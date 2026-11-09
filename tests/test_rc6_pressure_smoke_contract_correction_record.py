@@ -11,7 +11,9 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
-CHECKPOINT_SUCCESSOR_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+CHECKPOINT_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+)
 CONSUMER_REBIND_SUCCESSOR_RECORD = (
     ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
 )
@@ -47,17 +49,16 @@ def test_record_preserves_history_and_registers_the_exact_helper_successor():
         "tests/test_rc6_h100_stage_producer_record.py",
     }
     successor = successors["benchmarks/run_rc6_contract_smokes.py"]
-    assert (
-        successor["predecessor_sha256"]
-        == (
-            json.loads(
-                (ROOT / "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json").read_text(
-                    encoding="utf-8",
-                )
-            )["source_sha256"]["benchmarks/run_rc6_contract_smokes.py"]
-        )
+    assert successor["predecessor_sha256"] == (
+        json.loads(
+            (ROOT / "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json").read_text(
+                encoding="utf-8",
+            )
+        )["source_sha256"]["benchmarks/run_rc6_contract_smokes.py"]
     )
-    assert successor["successor_sha256"] == _sha256(ROOT / "benchmarks/run_rc6_contract_smokes.py")
+    assert successor["successor_sha256"] == _sha256(
+        ROOT / "benchmarks/run_rc6_contract_smokes.py"
+    )
 
 
 def test_record_binds_exact_sources_and_authoritative_label():
@@ -91,6 +92,8 @@ def test_record_is_support_only_and_has_no_push_or_h100_authority():
     scope = record["scope"]
     assert scope["qualification_support_only"] is True
     assert all(
-        value is False for key, value in scope.items() if key != "qualification_support_only"
+        value is False
+        for key, value in scope.items()
+        if key != "qualification_support_only"
     )
     assert all(value is False for value in record["authorization"].values())

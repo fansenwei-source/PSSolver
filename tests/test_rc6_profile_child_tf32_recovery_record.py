@@ -68,6 +68,8 @@ def test_record_is_qualification_only_and_does_not_authorize_push_or_h100():
     scope = record["scope"]
     assert scope["qualification_support_only"] is True
     assert all(
-        value is False for key, value in scope.items() if key != "qualification_support_only"
+        value is False
+        for key, value in scope.items()
+        if key != "qualification_support_only"
     )
     assert all(value is False for value in record["authorization"].values())

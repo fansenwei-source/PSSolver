@@ -5,10 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-
 import pytest
 
-import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 from pssolver import (
     Output,
     Simulation,
@@ -36,6 +34,7 @@ from pssolver.workflows import plane_checkpoint as plane_checkpoint_module
 from pssolver.workflows.plane_checkpoint import (
     upgrade_plane_checkpoint_directory_v1,
 )
+import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "historical_cpu_coverage_v1"
@@ -57,7 +56,9 @@ def _tree(directory: Path) -> dict[str, str]:
 
 
 def _tree_sha256(directory: Path) -> str:
-    encoded = json.dumps(_tree(directory), separators=(",", ":"), sort_keys=True).encode("utf-8")
+    encoded = json.dumps(
+        _tree(directory), separators=(",", ":"), sort_keys=True
+    ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -161,25 +162,25 @@ def test_s08_fixture_manifest_binds_exact_release_outputs():
         "rc2_channel_functional_odd",
         "rc1_plane_lifted",
     }
-    assert _sha256(FIXTURES / "generate_fixtures.py") == MANIFEST["generator"]["sha256"]
-    assert (
-        MANIFEST["generation_environment"]["numerical_build_fingerprint"][
-            "fingerprint_schema_version"
-        ]
-        == 2
-    )
+    assert _sha256(FIXTURES / "generate_fixtures.py") == MANIFEST[
+        "generator"
+    ]["sha256"]
+    assert MANIFEST["generation_environment"][
+        "numerical_build_fingerprint"
+    ]["fingerprint_schema_version"] == 2
     for name, record in MANIFEST["cases"].items():
         directory = FIXTURES / name
         assert len(_tree(directory)) == record["file_count"]
         assert _tree_sha256(directory) == record["tree_sha256"]
-        generation = json.loads((directory / "generation.json").read_text(encoding="utf-8"))
+        generation = json.loads(
+            (directory / "generation.json").read_text(encoding="utf-8")
+        )
         release = MANIFEST["released_sources"][record["source_release"]]
         assert generation["source"]["commit"] == release["commit"]
         assert generation["source"]["pssolver_version"] == release["version"]
-        assert (
-            generation["source"]["numerical_build_fingerprint"]
-            == MANIFEST["generation_environment"]["numerical_build_fingerprint"]
-        )
+        assert generation["source"]["numerical_build_fingerprint"] == MANIFEST[
+            "generation_environment"
+        ]["numerical_build_fingerprint"]
 
 
 def test_authentic_rc1_lifted_plane_rejects_before_tensor_load(
@@ -191,16 +192,16 @@ def test_authentic_rc1_lifted_plane_rejects_before_tensor_load(
     before = _tree(source)
     generation = json.loads((fixture / "generation.json").read_text())
     spec = _plane_source_spec(tmp_path)
-    assert spec.runtime_identity_sha256() == generation["runtime_identity_sha256"]
+    assert spec.runtime_identity_sha256() == generation[
+        "runtime_identity_sha256"
+    ]
     monkeypatch.setattr(
         plane_checkpoint_module,
         "_load_tensor",
         lambda *_args, **_kwargs: pytest.fail("tensor payload load started"),
     )
     target = tmp_path / "forbidden_upgrade"
-    with pytest.raises(
-        ValueError, match=r"private Plane lifting checkpoint.*v0\.4\.x.*maint/v0\.4"
-    ):
+    with pytest.raises(ValueError, match="rc1 lifted Plane checkpoint"):
         upgrade_plane_checkpoint_directory_v1(
             source,
             target,
@@ -235,7 +236,9 @@ def test_earlier_rc1_odd_exact_migration_has_actionable_rejection(
         )
 
     metadata = json.loads((target / "checkpoint.json").read_text())
-    assert metadata["migration_provenance"]["migration_kind"] == ("exact_legacy_upgrade")
+    assert metadata["migration_provenance"]["migration_kind"] == (
+        "exact_legacy_upgrade"
+    )
     assert metadata["migration_provenance"]["trajectory_equivalent"] is True
     with pytest.raises(
         FunctionalCheckpointCompatibilityError,

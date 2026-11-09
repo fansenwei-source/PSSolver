@@ -31,9 +31,12 @@ def test_r0029_result_and_independent_archive_are_bound() -> None:
 
     record = _read(RECORD)
     assert_pytest_migration(
-        "tests/test_v0_3_s09_r0029_rework.py::test_r0029_result_and_independent_archive_are_bound"
+        "tests/test_v0_3_s09_r0029_rework.py::"
+        "test_r0029_result_and_independent_archive_are_bound"
     )
-    assert record["classification"] == ("R0029_REWORK_IMPORTED_AND_DIAGNOSTIC_ENVIRONMENT_HARDENED")
+    assert record["classification"] == (
+        "R0029_REWORK_IMPORTED_AND_DIAGNOSTIC_ENVIRONMENT_HARDENED"
+    )
     assert len(record["sync_result"]["sha256"]) == 64
     assert record["sync_result"]["classification"] == "REWORK_REQUIRED"
     archive = record["independent_archive"]

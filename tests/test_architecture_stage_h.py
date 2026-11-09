@@ -8,24 +8,8 @@ import pytest
 import torch
 
 import pssolver
-from pssolver.core import (
-    BoundarySet,
-    DealiasRule,
-    FieldRole,
-    FieldSpec,
-    HomogeneousDirichletBC,
-    HomogeneousNeumannBC,
-    NumericsConfig,
-    PeriodicBC,
-    Precision,
-    ProjectedTransformExecution,
-    SpectralStorage,
-    TransformExecutionOrder,
-)
-from pssolver.execution import (
-    AlgebraicSystemSpec,
-    build_algebraic_execution_plan,
-)
+from pssolver.core import BoundarySet, DealiasRule, FieldRole, FieldSpec, HomogeneousDirichletBC, HomogeneousNeumannBC, NumericsConfig, PeriodicBC, Precision, ProjectedTransformExecution, SpectralStorage, TransformExecutionOrder
+from pssolver.execution import AlgebraicSystemSpec, build_algebraic_execution_plan
 from pssolver.models.canary import (
     DifferentialAlgebraicChainModel,
     ScalarDiffusionModel,
@@ -50,7 +34,11 @@ GRADIENT_BOUNDARIES = BoundarySet((P, D))
 def _numerics(*, half_spectrum=False):
     return NumericsConfig(
         precision=Precision.FLOAT64,
-        dealias_rule=(DealiasRule.CUBIC_HALF if half_spectrum else DealiasRule.NONE),
+        dealias_rule=(
+            DealiasRule.CUBIC_HALF
+            if half_spectrum
+            else DealiasRule.NONE
+        ),
         transform_execution_order=TransformExecutionOrder.REAL_FIRST,
         projected_transform_execution=(
             ProjectedTransformExecution.TRUNCATED
@@ -58,7 +46,9 @@ def _numerics(*, half_spectrum=False):
             else ProjectedTransformExecution.FULL
         ),
         spectral_storage=(
-            SpectralStorage.HERMITIAN_HALF if half_spectrum else SpectralStorage.FULL_COMPLEX
+            SpectralStorage.HERMITIAN_HALF
+            if half_spectrum
+            else SpectralStorage.FULL_COMPLEX
         ),
         hermitian_axis=0 if half_spectrum else None,
     )

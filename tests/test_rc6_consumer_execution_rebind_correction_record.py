@@ -8,7 +8,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
+RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -41,6 +43,8 @@ def test_record_is_qualification_only_and_has_no_push_or_h100_authority():
     scope = record["scope"]
     assert scope["qualification_support_only"] is True
     assert all(
-        value is False for key, value in scope.items() if key != "qualification_support_only"
+        value is False
+        for key, value in scope.items()
+        if key != "qualification_support_only"
     )
     assert all(value is False for value in record["authorization"].values())

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from argparse import Namespace
 import hashlib
 import json
-from argparse import Namespace
 from pathlib import Path
 
 import pytest
@@ -18,7 +18,9 @@ from benchmarks.analyze_public_simulation_h100_qualification import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-PLAN_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p7712_h100_qualification_plan.json")
+PLAN_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p7712_h100_qualification_plan.json"
+)
 
 
 EXPECTED_COMMIT = "a" * 40
@@ -179,7 +181,9 @@ def test_plan_freezes_exact_scope_and_reused_evidence():
 def test_analyzer_accepts_the_exact_frozen_matrix():
     plan = _plan()
     result = analyze(plan, _reports(plan), expected_commit=EXPECTED_COMMIT)
-    assert result["classification"] == ("PASS_P7_7_12_SINGLE_H100_NON_REGRESSION")
+    assert result["classification"] == (
+        "PASS_P7_7_12_SINGLE_H100_NON_REGRESSION"
+    )
     assert result["qualification_complete"] is True
     assert result["report_count"] == 36
     assert result["eligible_for_phase_8_planning"] is True

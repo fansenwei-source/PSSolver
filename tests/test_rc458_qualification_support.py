@@ -120,7 +120,9 @@ def _auxiliary() -> dict[str, object]:
         "consumer_failed": 0,
         "consumer_xfailed": 0,
         "consumer_skipped": 1,
-        "consumer_skip_node_id": ("tests/test_warmup_experiments.py::test_r5_benchmark"),
+        "consumer_skip_node_id": (
+            "tests/test_warmup_experiments.py::test_r5_benchmark"
+        ),
     }
 
 

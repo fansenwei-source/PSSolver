@@ -10,7 +10,10 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_97_s18_r4_step_progress.json"
+RECORD = (
+    ROOT
+    / "notes/PSSolver_v0_3_0_s03_successor_97_s18_r4_step_progress.json"
+)
 
 
 def _read() -> dict[str, object]:

@@ -9,11 +9,12 @@ spectral solver do not reinterpret the choice.
 
 from __future__ import annotations
 
-import json
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+import json
 from typing import Protocol, runtime_checkable
 
+from pssolver.core._canonical import canonical_json
 from pssolver.configuration import (
     PlaneBerisEdwardsRunSpec,
     PlaneRuntimePath,
@@ -24,17 +25,14 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
+from pssolver.execution.state import RuntimeState
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
-from pssolver.core._canonical import canonical_json
-from pssolver.execution.state import RuntimeState
+from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.integrators.state_backed import (
     _integrator_completed_steps,
-)
-from pssolver.integrators.state_backed import (
     _restore_integrator_progress as _restore_progress,
 )
-from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.operators.lifting import (
     FreshInitialConditioningPolicy,
     strict_no_automatic_conditioning,
@@ -48,7 +46,9 @@ def _decompose_run_spec(run_spec: PlaneBerisEdwardsRunSpec):
 def _compose_run_spec_simulation(
     run_spec: PlaneBerisEdwardsRunSpec,
 ) -> SimulationSpec:
-    return compose_plane_beris_edwards_simulation(_decompose_run_spec(run_spec))
+    return compose_plane_beris_edwards_simulation(
+        _decompose_run_spec(run_spec)
+    )
 
 
 def _require_runtime_surface(solver: object, projector: object) -> None:
@@ -85,12 +85,17 @@ class PlaneRuntimeBuildRequest:
             self.fresh_initial_conditioning,
             FreshInitialConditioningPolicy,
         ):
-            raise TypeError("fresh_initial_conditioning must be FreshInitialConditioningPolicy")
+            raise TypeError(
+                "fresh_initial_conditioning must be "
+                "FreshInitialConditioningPolicy"
+            )
         if not isinstance(self.apply_fresh_initial_conditioning, bool):
             raise TypeError("apply_fresh_initial_conditioning must be a bool")
         if self.application_simulation is not None:
             if not isinstance(self.application_simulation, SimulationSpec):
-                raise TypeError("application_simulation must be SimulationSpec or None")
+                raise TypeError(
+                    "application_simulation must be SimulationSpec or None"
+                )
             baseline = _compose_run_spec_simulation(self.run_spec)
             candidate = self.application_simulation
             if (
@@ -123,14 +128,18 @@ class PlaneRuntimeBuildRequest:
             "canonical_sha256",
         )
         if any(actual.get(key) != expected[key] for key in identity_keys):
-            raise ValueError("mixed Plane runtime configuration authorities are forbidden")
+            raise ValueError(
+                "mixed Plane runtime configuration authorities are forbidden"
+            )
         runtime_selection = metadata.get("runtime_selection")
         expected_selection = self.run_spec.runtime_selection_metadata()
         if (
             not isinstance(runtime_selection, Mapping)
             or dict(runtime_selection) != expected_selection
         ):
-            raise ValueError("runtime selection metadata must come from the resolved run spec")
+            raise ValueError(
+                "runtime selection metadata must come from the resolved run spec"
+            )
 
     @property
     def simulation(self) -> SimulationSpec:
@@ -260,7 +269,9 @@ class LegacyPlaneRuntimeAdapter:
         return {
             "last_pressure_iterations": int(model.last_pressure_iterations),
             "last_pressure_residual": float(model.last_pressure_residual),
-            "last_pressure_relative_residual": float(model.last_pressure_relative_residual),
+            "last_pressure_relative_residual": float(
+                model.last_pressure_relative_residual
+            ),
         }
 
     def backend_restart_metadata(self) -> dict[str, object]:
@@ -293,7 +304,9 @@ class LegacyPlaneRuntimeAdapter:
         lifting = plane_lifting_restart_metadata(self)
         if lifting is not None:
             metadata["static_lifting"] = lifting
-            metadata["fresh_construction"] = plane_lifting_fresh_construction_provenance(self)
+            metadata["fresh_construction"] = (
+                plane_lifting_fresh_construction_provenance(self)
+            )
         return metadata
 
 
@@ -345,8 +358,12 @@ def plane_lifting_fresh_construction_provenance(
         None,
     )
     if not isinstance(value, Mapping):
-        raise RuntimeError("static lifting fresh-construction provenance is missing")
-    return json.loads(canonical_json(dict(value)))
+        raise RuntimeError(
+            "static lifting fresh-construction provenance is missing"
+        )
+    return json.loads(
+        canonical_json(dict(value))
+    )
 
 
 def verify_plane_lifting_identity(
@@ -371,7 +388,9 @@ def _restore_integrator_progress(
         spectral_refresh_interval=spectral_refresh_interval,
         integrator_step_count=integrator_step_count,
         integrator_refresh_count=integrator_refresh_count,
-        mismatch_message=("restored spectral-refresh counters are inconsistent"),
+        mismatch_message=(
+            "restored spectral-refresh counters are inconsistent"
+        ),
     )
 
 
@@ -403,10 +422,14 @@ def build_plane_beris_edwards_runtime(
         lifting_plan is not None
         and execution.runtime_path is not PlaneRuntimePath.LEGACY_PRODUCTION
     ):
-        raise ValueError("static Plane lifting is qualified only for legacy_production")
+        raise ValueError(
+            "static Plane lifting is qualified only for legacy_production"
+        )
     if execution.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
         if lifting_plan is not None and legacy_builder is not None:
-            raise ValueError("static Plane lifting requires the package-owned legacy builder")
+            raise ValueError(
+                "static Plane lifting requires the package-owned legacy builder"
+            )
         if legacy_builder is None:
             from .plane_legacy import build_legacy_plane_runtime
 
@@ -415,8 +438,12 @@ def build_plane_beris_edwards_runtime(
                 device=request.device,
                 initial_values=request.initial_values,
                 lifting_plan=lifting_plan,
-                fresh_initial_conditioning=(request.fresh_initial_conditioning),
-                apply_fresh_initial_conditioning=(request.apply_fresh_initial_conditioning),
+                fresh_initial_conditioning=(
+                    request.fresh_initial_conditioning
+                ),
+                apply_fresh_initial_conditioning=(
+                    request.apply_fresh_initial_conditioning
+                ),
             )
         else:
             solver, projector = legacy_builder()
@@ -430,7 +457,9 @@ def build_plane_beris_edwards_runtime(
             )
         adapter = compiled_builder()
         if not isinstance(adapter, PlaneRuntimeAdapterProtocol):
-            raise TypeError("compiled_builder must return PlaneRuntimeAdapterProtocol")
+            raise TypeError(
+                "compiled_builder must return PlaneRuntimeAdapterProtocol"
+            )
         if adapter.runtime_path is not PlaneRuntimePath.COMPILED_V2:
             raise ValueError("compiled_builder returned the wrong runtime path")
         return adapter

@@ -12,7 +12,9 @@ from pssolver.configuration.application_registry import APPLICATIONS
 from pssolver.core._identifiers import require_python_identifier
 
 
-_VALID_DECLARATION_KINDS = frozenset({"model", "geometry", "boundary_policy"})
+_VALID_DECLARATION_KINDS = frozenset(
+    {"model", "geometry", "boundary_policy"}
+)
 
 
 def _identifier(value: object, description: str) -> str:
@@ -111,8 +113,12 @@ class PublicCapabilityCatalog:
             "schema_version": 1,
             "models": [item.to_metadata() for item in self.models],
             "geometries": [item.to_metadata() for item in self.geometries],
-            "boundary_policies": [item.to_metadata() for item in self.boundary_policies],
-            "qualified_combinations": [item.to_metadata() for item in self.qualified_combinations],
+            "boundary_policies": [
+                item.to_metadata() for item in self.boundary_policies
+            ],
+            "qualified_combinations": [
+                item.to_metadata() for item in self.qualified_combinations
+            ],
             "qualified_policy_equivalences": [
                 {
                     "requested_policy": requested,
@@ -140,7 +146,9 @@ _MODELS = (
     DeclarationCapability(
         kind="model",
         key="complete_stress_beris_edwards",
-        constructor=("pssolver.models.active_nematics.CompleteStressBerisEdwards"),
+        constructor=(
+            "pssolver.models.active_nematics.CompleteStressBerisEdwards"
+        ),
         qualified_applications=(
             _PLANE_APPLICATION,
             _PERIODIC_APPLICATION,

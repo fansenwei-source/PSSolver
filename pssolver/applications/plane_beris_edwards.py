@@ -45,22 +45,15 @@ replaces the paper's inertial momentum dynamics, and the initialization and
 spectral discretization are not paper-identical.
 """
 
+from collections.abc import Iterable, Sequence
 import hashlib
 import json
 import platform
-from collections.abc import Iterable, Sequence
 from pathlib import Path
 
 import numpy as np
 import torch
-from tqdm import trange
-
-from pssolver.configuration import (
-    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
-    PLANE_FREE_SLIP_BOUNDARIES,
-    PlaneBerisEdwardsRunSpec,
-    parse_plane_beris_edwards_run_spec,
-)
+from pssolver.configuration import PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES, PLANE_FREE_SLIP_BOUNDARIES, PlaneBerisEdwardsRunSpec, parse_plane_beris_edwards_run_spec
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
@@ -69,19 +62,31 @@ from pssolver.configuration.execution_device import (
     execution_device_normalization,
     scoped_tf32_execution,
 )
-from pssolver.configuration.package_construction import (
-    plan_package_runtime_construction,
-)
-from pssolver.configuration.plane_beris_edwards_component_graph import (
-    PlaneBerisEdwardsRunComponents,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.errors import SimulationRestartError
 from pssolver.io.checkpoint import CheckpointError
+from pssolver.configuration.package_construction import (
+    plan_package_runtime_construction,
+)
+from pssolver.configuration.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
+from pssolver.configuration.plane_beris_edwards_component_graph import (
+    PlaneBerisEdwardsRunComponents,
+)
+from pssolver.runtime.plane_beris_edwards import PlaneRuntimeBuildRequest, plane_physical_component
+from pssolver.runtime.package_construction import (
+    PackageRuntimeConstructionInput,
+    build_package_simulation_runtime,
+)
+from pssolver.workflows import (
+    PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PlaneBerisEdwardsWorkflow,
+    PlaneWorkflowResult,
+    plane_run_spec_dynamics_identity,
+    read_plane_checkpoint_header,
+)
 from pssolver.models.active_nematics import (
     BerisEdwardsPointwiseKernels,
     Q_convention_metadata,
@@ -93,21 +98,7 @@ from pssolver.operators.projection import (
     DEALIAS_RULE_FRACTIONS,
 )
 from pssolver.planning import TransformKind
-from pssolver.runtime.package_construction import (
-    PackageRuntimeConstructionInput,
-    build_package_simulation_runtime,
-)
-from pssolver.runtime.plane_beris_edwards import (
-    PlaneRuntimeBuildRequest,
-    plane_physical_component,
-)
-from pssolver.workflows import (
-    PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PlaneBerisEdwardsWorkflow,
-    PlaneWorkflowResult,
-    plane_run_spec_dynamics_identity,
-    read_plane_checkpoint_header,
-)
+from tqdm import trange
 
 
 def _reject_restart(
@@ -215,9 +206,16 @@ def _run_plane_beris_edwards_owned(
     q_assignment = application_simulation.boundaries.for_component("Qxx")
     q_physical_boundary_conditions = []
     for axis in range(application_simulation.geometry.domain.ndim):
-        axis_kinds = {face.condition.kind.value for face in q_assignment.faces if face.axis == axis}
+        axis_kinds = {
+            face.condition.kind.value
+            for face in q_assignment.faces
+            if face.axis == axis
+        }
         if len(axis_kinds) != 1:
-            raise ValueError("Plane Q metadata requires matching boundary kinds on each axis pair")
+            raise ValueError(
+                "Plane Q metadata requires matching boundary kinds on each "
+                "axis pair"
+            )
         q_physical_boundary_conditions.append(next(iter(axis_kinds)))
     transform_boundary_kind = {
         TransformKind.FFT: "periodic",
@@ -225,7 +223,8 @@ def _run_plane_beris_edwards_owned(
         TransformKind.DST: "dirichlet",
     }
     q_evolved_boundary_conditions = tuple(
-        transform_boundary_kind[kind] for kind in lowering_plan.basis_for("Qxx").transform_kinds
+        transform_boundary_kind[kind]
+        for kind in lowering_plan.basis_for("Qxx").transform_kinds
     )
     q_physical_boundary_conditions = tuple(q_physical_boundary_conditions)
     q_wall_model_note = (
@@ -278,7 +277,9 @@ def _run_plane_beris_edwards_owned(
         "cuda_device_name": cuda_device_name,
         "cuda_total_memory_bytes": cuda_total_memory_bytes,
     }
-    pointwise_kernels = BerisEdwardsPointwiseKernels(execution.pointwise_execution)
+    pointwise_kernels = BerisEdwardsPointwiseKernels(
+        execution.pointwise_execution
+    )
     pointwise_execution_metadata = pointwise_kernels.metadata()
 
     Nx, Ny, Nz = domain.shape
@@ -291,7 +292,9 @@ def _run_plane_beris_edwards_owned(
     alignment_parameter = material.flow_alignment
     zero_mode_policy = stokes.tangential_zero_mode_policy.value
     dealias_rule = numerics.dealias_rule.value
-    projected_transform_execution = numerics.projected_transform_execution.value
+    projected_transform_execution = (
+        numerics.projected_transform_execution.value
+    )
     spectral_storage = numerics.spectral_storage.value
     transform_execution_order = numerics.transform_execution_order.value
     projected_transform_execution_metadata = {
@@ -299,10 +302,14 @@ def _run_plane_beris_edwards_owned(
         "effective": projected_transform_execution,
         "fallback_allowed": False,
         "fallback_reason": None,
-        "truncated_real_basis_axes": (projected_transform_execution == "truncated"),
+        "truncated_real_basis_axes": (
+            projected_transform_execution == "truncated"
+        ),
         "spectral_storage": spectral_storage,
         "backend_storage_shape_preserved": True,
-        "full_spectral_storage_preserved": (spectral_storage == "full_complex"),
+        "full_spectral_storage_preserved": (
+            spectral_storage == "full_complex"
+        ),
     }
     spectral_shape = [
         Nx,
@@ -336,7 +343,9 @@ def _run_plane_beris_edwards_owned(
     implementation_provenance = {
         "schema_version": 1,
         "files": {
-            relative_path: file_sha256(_PROJECT_ROOT / relative_path)
+            relative_path: file_sha256(
+                _PROJECT_ROOT / relative_path
+            )
             for relative_path in IMPLEMENTATION_SOURCE_FILES
         },
     }
@@ -369,7 +378,9 @@ def _run_plane_beris_edwards_owned(
             "Q_convention": Q_convention_metadata(),
             "q_dynamics": {
                 "name": "Beris-Edwards (Shendruk parameterization)",
-                "implementation": ("pssolver.models.active_nematics.BerisEdwardsQNonlinearModel"),
+                "implementation": (
+                    "pssolver.models.active_nematics.BerisEdwardsQNonlinearModel"
+                ),
                 "equation": "(partial_t+u.grad)Q-S(E,Omega,Q)=H/gamma",
                 "flow_alignment_form": "full_beris_edwards",
                 "molecular_field": "one_constant_landau_de_gennes",
@@ -399,20 +410,33 @@ def _run_plane_beris_edwards_owned(
                 },
             },
             "flow_dynamics": {
-                "momentum_equation": ("0=-grad(p)+eta*lap(u)-fric*u+div(Pi_nematic)"),
+                "momentum_equation": (
+                    "0=-grad(p)+eta*lap(u)-fric*u+div(Pi_nematic)"
+                ),
                 "regime": "quasistatic_incompressible_stokes_brinkman",
-                "nematic_stress": ("complete_one_constant_beris_edwards_up_to_isotropic_pressure"),
+                "nematic_stress": (
+                    "complete_one_constant_beris_edwards_up_to_isotropic_pressure"
+                ),
                 "stress_components": [
                     "reactive",
                     "one_constant_distortion",
                     "active",
                 ],
-                "reactive_stress": ("2*lambda*M*(Q:H)-lambda*(H*M+M*H)+Q*H-H*Q; M=Q+I/3"),
-                "distortion_stress": ("-L1*(partial_i Q_kl)*(partial_j Q_kl)"),
+                "reactive_stress": (
+                    "2*lambda*M*(Q:H)-lambda*(H*M+M*H)+Q*H-H*Q; "
+                    "M=Q+I/3"
+                ),
+                "distortion_stress": (
+                    "-L1*(partial_i Q_kl)*(partial_j Q_kl)"
+                ),
                 "active_stress": "beta*alpha*Q; beta=-1 gives -zeta*Q",
                 "molecular_field_in_stress": "raw_H_not_H_over_gamma",
-                "molecular_field_linear_space": (execution.molecular_field_linear_space),
-                "stress_divergence_sum_space": (execution.stress_divergence_sum_space),
+                "molecular_field_linear_space": (
+                    execution.molecular_field_linear_space
+                ),
+                "stress_divergence_sum_space": (
+                    execution.stress_divergence_sum_space
+                ),
                 "pointwise_execution": execution.pointwise_execution,
                 "isotropic_stress": "absorbed_into_incompressible_pressure",
                 "viscous_stress": "handled_by_eta_laplacian_in_stokes_operator",
@@ -438,7 +462,9 @@ def _run_plane_beris_edwards_owned(
         "boundary_conditions": {
             "Q": q_physical_boundary_conditions,
             "Q_assignment": [
-                application_simulation.boundaries.for_component(component).to_metadata()
+                application_simulation.boundaries.for_component(
+                    component
+                ).to_metadata()
                 for component in (
                     lifting_plan.component_order
                     if lifting_plan is not None
@@ -446,7 +472,9 @@ def _run_plane_beris_edwards_owned(
                 )
             ],
             "Q_evolved_representation": (
-                "homogeneous_remainder" if lifting_plan is not None else "physical_field"
+                "homogeneous_remainder"
+                if lifting_plan is not None
+                else "physical_field"
             ),
             "Q_evolved_boundary_conditions": q_evolved_boundary_conditions,
             "velocity_tangential": U_TANGENTIAL_BC,
@@ -460,7 +488,9 @@ def _run_plane_beris_edwards_owned(
             "dealiasing": {
                 "rule": dealias_rule,
                 "fraction": DEALIAS_RULE_FRACTIONS[dealias_rule],
-                "projected_transform_execution": (projected_transform_execution_metadata),
+                "projected_transform_execution": (
+                    projected_transform_execution_metadata
+                ),
                 "nematic_force_evaluation": (
                     "project_H_then_algebraic_and_distortion_stresses_then_force"
                 ),
@@ -476,8 +506,12 @@ def _run_plane_beris_edwards_owned(
             "zero_mode_force": "total_nematic_tangential_force",
             "pressure_solver": "free_slip_modal_schur_complement",
             "pressure_residual_diagnostics": diagnostics_enabled,
-            "molecular_field_linear_space": (execution.molecular_field_linear_space),
-            "stress_divergence_sum_space": (execution.stress_divergence_sum_space),
+            "molecular_field_linear_space": (
+                execution.molecular_field_linear_space
+            ),
+            "stress_divergence_sum_space": (
+                execution.stress_divergence_sum_space
+            ),
             "pointwise_kernels": pointwise_execution_metadata,
             "q_gradient_reuse": {
                 "enabled": not execution.disable_q_gradient_reuse,
@@ -490,10 +524,14 @@ def _run_plane_beris_edwards_owned(
                 "physical_shape": [Nx, Ny, Nz],
                 "spectral_shape": spectral_shape,
                 "hermitian_axis": (
-                    numerics.hermitian_axis if spectral_storage == "hermitian_half" else None
+                    numerics.hermitian_axis
+                    if spectral_storage == "hermitian_half"
+                    else None
                 ),
                 "basis_and_normalization_changed": False,
-                "projected_transform_execution": (projected_transform_execution),
+                "projected_transform_execution": (
+                    projected_transform_execution
+                ),
             },
             "precision": {
                 "real_dtype": real_dtype_name,
@@ -502,14 +540,18 @@ def _run_plane_beris_edwards_owned(
             },
             "spectral_refresh": {
                 "mode": time_stepping.spectral_refresh.mode,
-                "requested_interval_time": (time_stepping.spectral_refresh.requested_interval_time),
+                "requested_interval_time": (
+                    time_stepping.spectral_refresh.requested_interval_time
+                ),
                 "requested_interval_steps": (
                     time_stepping.spectral_refresh.requested_interval_steps
                 ),
                 "effective_interval_steps": (
                     time_stepping.spectral_refresh.effective_interval_steps
                 ),
-                "effective_interval_time": (time_stepping.spectral_refresh.effective_interval_time),
+                "effective_interval_time": (
+                    time_stepping.spectral_refresh.effective_interval_time
+                ),
                 "phase_origin_step": 0,
             },
         },
@@ -537,8 +579,12 @@ def _run_plane_beris_edwards_owned(
         "dtype": real_dtype_name,
         "transform_execution_order": transform_execution_order,
         "spectral_storage": spectral_storage,
-        "molecular_field_linear_space": (execution.molecular_field_linear_space),
-        "stress_divergence_sum_space": (execution.stress_divergence_sum_space),
+        "molecular_field_linear_space": (
+            execution.molecular_field_linear_space
+        ),
+        "stress_divergence_sum_space": (
+            execution.stress_divergence_sum_space
+        ),
         "pointwise_execution": execution.pointwise_execution,
         "tf32": execution.tf32,
         "q_boundary_conditions": q_physical_boundary_conditions,
@@ -597,7 +643,10 @@ def _run_plane_beris_edwards_owned(
                 "tangential plug-mode treatment is a modeling choice: zero_mean "
                 "removes total forcing, while friction adds drag"
             ),
-            ("initial condition is PSSolver-constructed and not verified paper-identical"),
+            (
+                "initial condition is PSSolver-constructed and not verified "
+                "paper-identical"
+            ),
             (
                 "staged spectral filtering differs from the paper's "
                 "finite-difference/LB discretization"
@@ -626,7 +675,9 @@ def _run_plane_beris_edwards_owned(
     # creating an output directory, generating Q, or constructing either solver.
     if is_restart:
         try:
-            restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)
+            restart_header = read_plane_checkpoint_header(
+                workflow_spec.restart_from
+            )
         except SimulationRestartError:
             raise
         except CheckpointError:
@@ -649,7 +700,9 @@ def _run_plane_beris_edwards_owned(
                     "target_runtime_path": execution.runtime_path.value,
                 },
             )
-        if restart_header.format_version == (PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION):
+        if restart_header.format_version == (
+            PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+        ):
             _reject_restart(
                 "legacy Plane checkpoint requires explicit identity upgrade",
                 reason="legacy_identity_upgrade_required",
@@ -662,9 +715,13 @@ def _run_plane_beris_edwards_owned(
                 reason="compatibility_identity_missing",
                 step=restart_step,
             )
-        checkpoint_forward = checkpoint_identity.forward_dynamics.to_metadata()["payload"]
+        checkpoint_forward = (
+            checkpoint_identity.forward_dynamics.to_metadata()["payload"]
+        )
         checkpoint_run_spec = checkpoint_forward.get("run_spec_dynamics")
-        target_run_spec = plane_run_spec_dynamics_identity(run_spec).to_metadata()
+        target_run_spec = plane_run_spec_dynamics_identity(
+            run_spec
+        ).to_metadata()
         if checkpoint_run_spec != target_run_spec:
             _reject_restart(
                 "checkpoint forward dynamics does not match target",
@@ -681,7 +738,9 @@ def _run_plane_beris_edwards_owned(
         elif isinstance(checkpoint_lifting, dict):
             lifting_identity = checkpoint_lifting.get("lifting")
             checkpoint_lifting_plan_sha256 = (
-                lifting_identity.get("plan_sha256") if isinstance(lifting_identity, dict) else None
+                lifting_identity.get("plan_sha256")
+                if isinstance(lifting_identity, dict)
+                else None
             )
         else:
             checkpoint_lifting_plan_sha256 = None
@@ -705,10 +764,16 @@ def _run_plane_beris_edwards_owned(
     metadata["initial_condition"]["runtime_construction_only"] = is_restart
     metadata["initial_condition"]["artifacts_written"] = not is_restart
     if is_restart:
-        metadata["initial_condition"]["trajectory_state_source"] = "authenticated_checkpoint"
-        metadata["initial_condition"]["checkpoint_path"] = str(workflow_spec.restart_from.resolve())
+        metadata["initial_condition"]["trajectory_state_source"] = (
+            "authenticated_checkpoint"
+        )
+        metadata["initial_condition"]["checkpoint_path"] = str(
+            workflow_spec.restart_from.resolve()
+        )
     else:
-        metadata["initial_condition"]["trajectory_state_source"] = "generated_initial_condition"
+        metadata["initial_condition"]["trajectory_state_source"] = (
+            "generated_initial_condition"
+        )
     if emit_metadata:
         print(json.dumps(metadata, indent=2))
     if invocation.dry_run:
@@ -768,18 +833,20 @@ def _run_plane_beris_edwards_owned(
         production_metadata=metadata,
         initial_values=initial_values,
         device=device,
-        application_simulation=(application_simulation if lifting_plan is not None else None),
+        application_simulation=(
+            application_simulation if lifting_plan is not None else None
+        ),
         fresh_initial_conditioning=fresh_initial_conditioning,
         apply_fresh_initial_conditioning=not is_restart,
     )
     construction = PackageRuntimeConstructionInput(
-        plan=plan_package_runtime_construction(application_simulation),
-        request=runtime_request,
-    )
+            plan=plan_package_runtime_construction(application_simulation),
+            request=runtime_request,
+        )
     metadata["runtime_construction"] = {
-        "plan": construction.plan.to_metadata(),
-        "input": construction.to_metadata(),
-    }
+            "plan": construction.plan.to_metadata(),
+            "input": construction.to_metadata(),
+        }
     runtime_adapter = build_package_simulation_runtime(construction)
     spectral_projector = runtime_adapter.projector
     metadata["runtime_selection"] = {
@@ -787,8 +854,13 @@ def _run_plane_beris_edwards_owned(
         **runtime_adapter.to_metadata(),
     }
     if lifting_plan is not None:
-        metadata["initial_condition"]["evolved_remainder_sha256"] = tensor_sha256(
-            tuple(runtime_adapter.fields[name] for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz"))
+        metadata["initial_condition"]["evolved_remainder_sha256"] = (
+            tensor_sha256(
+                tuple(
+                    runtime_adapter.fields[name]
+                    for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+                )
+            )
         )
     metadata["initial_condition"]["projected_q_sha256"] = tensor_sha256(
         tuple(
@@ -796,17 +868,24 @@ def _run_plane_beris_edwards_owned(
             for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
         )
     )
-    q_runtime_boundaries = runtime_adapter.fields.get_boundary_conditions("Qxx")
-    metadata["retained_q_modes"] = spectral_projector.retained_axis_counts(q_runtime_boundaries)
-    metadata["retained_normal_velocity_modes"] = spectral_projector.retained_axis_counts(
-        U_NORMAL_BC
+    q_runtime_boundaries = runtime_adapter.fields.get_boundary_conditions(
+        "Qxx"
+    )
+    metadata["retained_q_modes"] = (
+        spectral_projector.retained_axis_counts(q_runtime_boundaries)
+    )
+    metadata["retained_normal_velocity_modes"] = (
+        spectral_projector.retained_axis_counts(U_NORMAL_BC)
     )
     if not is_restart:
         output_dir.mkdir(parents=True, exist_ok=True)
         np.save(
             output_dir / "Q2D_initial.npy",
             np.stack(
-                [q_2d[name].numpy() for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")],
+                [
+                    q_2d[name].numpy()
+                    for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+                ],
                 axis=-1,
             ),
         )
@@ -912,7 +991,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     run_spec = parse_args(argv)
     components = decompose_plane_beris_edwards_run_spec(run_spec)
-    progress = None if components.invocation.dry_run else trange(components.workflow.steps)
+    progress = (
+        None
+        if components.invocation.dry_run
+        else trange(components.workflow.steps)
+    )
     result = run_plane_beris_edwards(
         run_spec,
         progress=progress,

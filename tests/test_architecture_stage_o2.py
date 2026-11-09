@@ -3,17 +3,13 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
-
 import pytest
 
 import pssolver
-from pssolver.configuration import (
-    PlaneRuntimePath,
-    create_plane_beris_edwards_run_spec,
-)
+from pssolver.configuration import PlaneRuntimePath, create_plane_beris_edwards_run_spec
 from pssolver.runtime import (
     LegacyPlaneRuntimeAdapter,
     PlaneRuntimeAdapterProtocol,
@@ -121,7 +117,9 @@ def test_omitted_runtime_path_remains_legacy_and_canary_is_explicit(tmp_path):
 
     assert default.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION
     assert default.runtime_selection_metadata() == {
-        "authority": ("pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path"),
+        "authority": (
+            "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path"
+        ),
         "requested": "legacy_production",
         "effective": "legacy_production",
         "default": "legacy_production",
@@ -150,9 +148,7 @@ def test_legacy_adapter_implements_narrow_protocol_and_delegates(tmp_path):
     assert adapter.completed_steps == 0
     assert builder_calls == 1
 
-    def callback(_solver, _step):
-        return None
-
+    callback = lambda _solver, _step: None
     adapter.advance(2, pre_update_callback=callback)
     adapter.synchronize_for_observation()
     assert solver.advance_calls == [(2, None, callback)]

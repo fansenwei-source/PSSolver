@@ -11,11 +11,7 @@ import pssolver
 from pssolver import compile_simulation, run_simulation
 from pssolver.applications import (
     channel_beris_edwards as channel_application,
-)
-from pssolver.applications import (
     periodic_beris_edwards as periodic_application,
-)
-from pssolver.applications import (
     plane_beris_edwards as plane_application,
 )
 from pssolver.functional import (
@@ -25,12 +21,11 @@ from pssolver.functional import (
 )
 from pssolver.io.checkpoint import (
     CheckpointError,
-    CheckpointIntegrityError,
     CheckpointIOError,
+    CheckpointIntegrityError,
     CheckpointNotFoundError,
 )
-from pssolver.workflows import channel_beris_edwards as channel_workflow
-from pssolver.workflows import periodic_beris_edwards as periodic_workflow
+from pssolver.workflows import channel_beris_edwards as channel_workflow, periodic_beris_edwards as periodic_workflow
 from tests.test_phase8_p82_periodic_application import (
     _simulation as periodic_simulation,
 )
@@ -63,7 +58,9 @@ def test_missing_snapshot_is_both_public_input_and_file_not_found(
 ):
     simulation = simulation_factory(tmp_path, output_name=f"missing_{module.__name__}")
     compiled = compile_simulation(simulation)
-    snapshot = Path(compiled.source.initial_condition.parameters["directory"]) / "Q_0.npy"
+    snapshot = Path(
+        compiled.source.initial_condition.parameters["directory"]
+    ) / "Q_0.npy"
     snapshot.unlink()
 
     with pytest.raises(pssolver.SimulationInputFileNotFoundError) as caught:

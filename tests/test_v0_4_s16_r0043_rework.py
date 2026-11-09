@@ -35,7 +35,9 @@ def test_r0043_findings_are_claimed_at_the_exact_fix_sources():
 
 def test_successor_72_corrects_completion_forward_without_overclaiming_r8():
     record = _read(RECORD)
-    assert record["forward_corrections"]["successor_70_overclaim"]["immutable"] is True
+    assert record["forward_corrections"]["successor_70_overclaim"][
+        "immutable"
+    ] is True
     assert record["r7"]["converted_to_shared_helper"] == 55
     assert set(record["r7"]["justified_exact_local_encoders"]) == {
         "pssolver/io/checkpoint_identity.py"

@@ -9,7 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
-WINDOW_RECOVERY = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json")
+WINDOW_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
+)
 
 
 def _sha256(path: Path) -> str:

@@ -92,7 +92,8 @@ def _numerics() -> NumericsConfig:
 
 def _complete_state(runtime):
     state = {
-        name: runtime.solver.fields[name] for name in (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
+        name: runtime.solver.fields[name]
+        for name in (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
     }
     state.update(runtime.transient_algebraic_state())
     return state
@@ -116,9 +117,10 @@ def _random_complete_state():
 
 
 def test_stage_q1_keeps_compile_policy_out_of_physical_models_and_production():
-    constitutive = (PROJECT_ROOT / "pssolver/models/active_nematics/constitutive.py").read_text(
-        encoding="utf-8"
-    )
+    constitutive = (
+        PROJECT_ROOT
+        / "pssolver/models/active_nematics/constitutive.py"
+    ).read_text(encoding="utf-8")
     assert "torch.compile" not in constitutive
     assert not hasattr(pssolver, "BerisEdwardsPlaneExplicitRHSExecutor")
     for relative in (

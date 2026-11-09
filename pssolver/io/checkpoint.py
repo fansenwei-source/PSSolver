@@ -7,25 +7,27 @@ updates, and accidental schema downgrades before any tensor payload is opened.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+from contextlib import contextmanager
 import ctypes
+from dataclasses import dataclass
 import errno
 import hashlib
 import json
 import logging
 import os
+from pathlib import Path
 import platform
 import secrets
 import shutil
 import stat
 import sys
-from collections.abc import Iterator, Mapping
-from contextlib import contextmanager
-from dataclasses import dataclass
-from pathlib import Path
+from typing import Iterator
 
 import numpy as np
 
-from pssolver.core._canonical import canonical_json, canonical_sha256
+from pssolver.core._canonical import canonical_json
+from pssolver.core._canonical import canonical_sha256
 
 
 METADATA_SHA256_KEY = "metadata_sha256"
@@ -435,7 +437,9 @@ def _new_staging_directory(target: Path, *, operation: str) -> Path:
             operation=operation,
         )
     for _attempt in range(128):
-        staging = stable_parent / (f".{target.name}.tmp-{secrets.token_hex(12)}")
+        staging = stable_parent / (
+            f".{target.name}.tmp-{secrets.token_hex(12)}"
+        )
         try:
             os.mkdir(staging, 0o777)
         except FileExistsError:
@@ -511,8 +515,18 @@ def _remove_staging_tree(staging: Path, *, operation: str) -> None:
             for name in directories:
                 path = root_path / name
                 if not path.is_symlink():
-                    path.chmod(path.lstat().st_mode | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        staging.chmod(staging.lstat().st_mode | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+                    path.chmod(
+                        path.lstat().st_mode
+                        | stat.S_IRUSR
+                        | stat.S_IWUSR
+                        | stat.S_IXUSR
+                    )
+        staging.chmod(
+            staging.lstat().st_mode
+            | stat.S_IRUSR
+            | stat.S_IWUSR
+            | stat.S_IXUSR
+        )
         shutil.rmtree(staging)
     except FileNotFoundError:
         return
@@ -666,7 +680,9 @@ def _checkpoint_tree_digest(directory: Path, *, operation: str) -> str:
                 with os.scandir(path) as entries:
                     children = sorted(entries, key=lambda entry: entry.name)
                 for child in children:
-                    child_relative = child.name if not relative else f"{relative}/{child.name}"
+                    child_relative = (
+                        child.name if not relative else f"{relative}/{child.name}"
+                    )
                     visit(path / child.name, child_relative)
                 return
             if not stat.S_ISREG(path_stat.st_mode):
@@ -748,7 +764,10 @@ class _OwnedPlaceholder:
             raise _io_error(
                 exc,
                 operation=operation,
-                message=(f"checkpoint publication placeholder cannot be removed: {self.target}"),
+                message=(
+                    "checkpoint publication placeholder cannot be removed: "
+                    f"{self.target}"
+                ),
             ) from exc
         finally:
             self.close()
@@ -759,7 +778,11 @@ def _claim_placeholder(target: Path, *, operation: str) -> _OwnedPlaceholder:
 
     import fcntl
 
-    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
     descriptor: int | None = None
     marker_descriptor: int | None = None
     ownership_transferred = False
@@ -1196,8 +1219,9 @@ def checkpoint_directory_transaction(
             backend=publication_backend,
         )
     except BaseException as exc:
-        if not isinstance(exc, _AmbiguousCheckpointPublication) and (
-            staging.exists() or staging.is_symlink()
+        if (
+            not isinstance(exc, _AmbiguousCheckpointPublication)
+            and (staging.exists() or staging.is_symlink())
         ):
             _remove_staging_tree(staging, operation=operation)
         if isinstance(exc, OSError) and not isinstance(exc, CheckpointError):
@@ -1241,7 +1265,9 @@ def seal_checkpoint_metadata(
     if METADATA_SHA256_KEY in metadata:
         raise ValueError("checkpoint metadata is already sealed")
     try:
-        sealed = json.loads(canonical_json(dict(metadata)))
+        sealed = json.loads(
+            canonical_json(dict(metadata))
+        )
     except (TypeError, ValueError) as exc:
         raise ValueError("checkpoint metadata must be JSON-compatible") from exc
     sealed[METADATA_SHA256_KEY] = checkpoint_metadata_sha256(sealed)
@@ -1313,7 +1339,9 @@ def require_sealed_upgrade_provenance(
             "checkpoint migration provenance kind is invalid",
             operation=operation,
         )
-    if value.get("source_integrity_status") != (CHECKPOINT_INTEGRITY_UNSEALED_LEGACY):
+    if value.get("source_integrity_status") != (
+        CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+    ):
         raise CheckpointCompatibilityError(
             "checkpoint upgrade source must be marked unsealed_legacy",
             operation=operation,

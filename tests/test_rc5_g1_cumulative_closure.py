@@ -1,14 +1,12 @@
 """Fail-closed tests for the rc5 G-1 CPU-only cumulative closure."""
 
 from __future__ import annotations
-
 import hashlib
 from pathlib import Path
 
 import pytest
-
-from benchmarks.rc5_g1_cumulative_evidence import verify_archive
 from benchmarks.verify_rc5_g1_cumulative_archive import main as verify_main
+from benchmarks.rc5_g1_cumulative_evidence import verify_archive
 
 
 def _hash(label: str) -> str:

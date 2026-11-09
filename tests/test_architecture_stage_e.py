@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import math
 from collections.abc import Mapping
 from dataclasses import dataclass
-
+import math
 import torch
 
 import pssolver
@@ -62,7 +61,6 @@ def _manual_initial(solver, boundaries, modes, amplitude):
             solver.L,
             modes,
             boundaries.axes,
-            strict=False,
         )
     ):
         if condition.kind.value == "periodic":
@@ -90,7 +88,10 @@ class _ManualScalarRHS(torch.nn.Module):
         if isinstance(self.model, ScalarDiffusionModel):
             rhs = torch.zeros_like(phi)
         else:
-            rhs = self.model.linear_reaction * phi - self.model.cubic_reaction * phi.pow(3)
+            rhs = (
+                self.model.linear_reaction * phi
+                - self.model.cubic_reaction * phi.pow(3)
+            )
         return self.projector.forward_transform(
             rhs,
             self.boundaries,
@@ -114,7 +115,9 @@ def _canary_cases():
         ),
     )
 
-    plane_boundaries = BoundarySet((PeriodicBC(), HomogeneousNeumannBC()))
+    plane_boundaries = BoundarySet(
+        (PeriodicBC(), HomogeneousNeumannBC())
+    )
     allen_cahn = AllenCahnModel(
         plane_boundaries,
         diffusivity=0.15,

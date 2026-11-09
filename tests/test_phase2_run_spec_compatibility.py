@@ -10,13 +10,13 @@ from __future__ import annotations
 
 import argparse
 import ast
+from dataclasses import FrozenInstanceError, MISSING, fields, replace
+from enum import Enum
 import hashlib
 import inspect
 import json
-import pickle
-from dataclasses import MISSING, FrozenInstanceError, fields, replace
-from enum import Enum
 from pathlib import Path
+import pickle
 
 import pytest
 
@@ -172,7 +172,8 @@ def _explicit_member_contract() -> list[dict[str, object]]:
     class_node = next(
         node
         for node in tree.body
-        if isinstance(node, ast.ClassDef) and node.name == "PlaneBerisEdwardsRunSpec"
+        if isinstance(node, ast.ClassDef)
+        and node.name == "PlaneBerisEdwardsRunSpec"
     )
     observed = []
     for node in class_node.body:
@@ -205,13 +206,16 @@ def test_run_spec_dataclass_surface_matches_v1_oracle():
 
     assert PlaneBerisEdwardsRunSpec.__module__ == oracle["module"]
     assert PlaneBerisEdwardsRunSpec.__qualname__ == oracle["qualname"]
-    assert [_dataclass_field_contract(item) for item in observed_fields] == (oracle["fields"])
+    assert [_dataclass_field_contract(item) for item in observed_fields] == (
+        oracle["fields"]
+    )
     assert list(PlaneBerisEdwardsRunSpec.__slots__) == oracle["slots"]
     assert list(PlaneBerisEdwardsRunSpec.__match_args__) == oracle["match_args"]
 
     parameters = PlaneBerisEdwardsRunSpec.__dataclass_params__
     observed_parameters = {
-        name: getattr(parameters, name) for name in oracle["dataclass_parameters"]
+        name: getattr(parameters, name)
+        for name in oracle["dataclass_parameters"]
     }
     assert observed_parameters == oracle["dataclass_parameters"]
 
@@ -258,13 +262,18 @@ def test_run_spec_value_semantics_repr_and_pickle_are_frozen():
     restored = pickle.loads(pickle.dumps(left))
     assert restored == left
     assert type(restored) is PlaneBerisEdwardsRunSpec
-    legacy_global = b"cpssolver.configuration.plane_beris_edwards\nPlaneBerisEdwardsRunSpec\n."
+    legacy_global = (
+        b"cpssolver.configuration.plane_beris_edwards\n"
+        b"PlaneBerisEdwardsRunSpec\n."
+    )
     assert pickle.loads(legacy_global) is PlaneBerisEdwardsRunSpec
 
 
 def test_run_spec_explicit_member_inventory_and_return_types_are_frozen():
     oracle = API_ORACLE["run_spec"]["explicit_members"]
-    expected_shape = [{"kind": item["kind"], "name": item["name"]} for item in oracle]
+    expected_shape = [
+        {"kind": item["kind"], "name": item["name"]} for item in oracle
+    ]
     assert _explicit_member_contract() == expected_shape
 
     spec = _spec()
@@ -295,17 +304,25 @@ def test_run_spec_explicit_member_inventory_and_return_types_are_frozen():
     assert spec.numerics.to_metadata() == expected["numerics"]
     assert spec.to_metadata() == expected
     assert spec.canonical_sha256() == default_case["canonical_sha256"]
-    assert spec.runtime_identity_metadata() == (default_case["expected_runtime_identity_metadata"])
-    assert spec.runtime_identity_sha256() == (default_case["runtime_identity_sha256"])
+    assert spec.runtime_identity_metadata() == (
+        default_case["expected_runtime_identity_metadata"]
+    )
+    assert spec.runtime_identity_sha256() == (
+        default_case["runtime_identity_sha256"]
+    )
     assert spec.identity_metadata() == default_case["expected_identity_metadata"]
-    assert (
-        spec.runtime_selection_metadata() == (default_case["expected_runtime_selection_metadata"])
+    assert spec.runtime_selection_metadata() == (
+        default_case["expected_runtime_selection_metadata"]
     )
 
 
 def test_factory_parse_signatures_and_configuration_exports_match_v1_oracle():
-    assert _signature_contract(create_plane_beris_edwards_run_spec) == (API_ORACLE["factory"])
-    assert _signature_contract(parse_plane_beris_edwards_run_spec) == (API_ORACLE["parse_function"])
+    assert _signature_contract(create_plane_beris_edwards_run_spec) == (
+        API_ORACLE["factory"]
+    )
+    assert _signature_contract(parse_plane_beris_edwards_run_spec) == (
+        API_ORACLE["parse_function"]
+    )
     assert list(configuration.__all__) == API_ORACLE["configuration_exports"]
     for name in configuration.__all__:
         assert getattr(configuration, name) is getattr(configuration_module, name)
@@ -316,14 +333,22 @@ def test_parser_semantic_contract_matches_v1_oracle():
     parser = configuration_module._parser()
     oracle = API_ORACLE["parser"]
     help_actions = [action for action in parser._actions if action.dest == "help"]
-    domain_actions = [action for action in parser._actions if action.dest != "help"]
+    domain_actions = [
+        action for action in parser._actions if action.dest != "help"
+    ]
 
     assert parser.allow_abbrev is oracle["allow_abbrev"]
     assert len(domain_actions) == oracle["domain_action_count"]
-    observed_actions = [_argparse_action_contract(action) for action in domain_actions]
-    runtime_action = next(action for action in observed_actions if action["dest"] == "runtime_path")
+    observed_actions = [
+        _argparse_action_contract(action) for action in domain_actions
+    ]
+    runtime_action = next(
+        action for action in observed_actions
+        if action["dest"] == "runtime_path"
+    )
     oracle_runtime_action = next(
-        action for action in oracle["domain_actions"] if action["dest"] == "runtime_path"
+        action for action in oracle["domain_actions"]
+        if action["dest"] == "runtime_path"
     )
     assert runtime_action["choices"] == [
         *(name for name in oracle_runtime_action["choices"] if name != "separated_canary"),
@@ -342,7 +367,9 @@ def test_parser_semantic_contract_matches_v1_oracle():
         for group in parser._mutually_exclusive_groups
     ]
     assert observed_groups == oracle["mutually_exclusive_groups"]
-    factory_names = {parameter["name"] for parameter in API_ORACLE["factory"]["parameters"]}
+    factory_names = {
+        parameter["name"] for parameter in API_ORACLE["factory"]["parameters"]
+    }
     assert {action.dest for action in domain_actions} == factory_names
 
 
@@ -360,10 +387,14 @@ def test_schema_v1_metadata_and_hash_golden_cases(case):
     assert _canonical_json(metadata) == case["expected_canonical_json"]
     assert spec.canonical_sha256() == case["canonical_sha256"]
     assert runtime_metadata == case["expected_runtime_identity_metadata"]
-    assert _canonical_json(runtime_metadata) == (case["expected_runtime_identity_json"])
+    assert _canonical_json(runtime_metadata) == (
+        case["expected_runtime_identity_json"]
+    )
     assert spec.runtime_identity_sha256() == case["runtime_identity_sha256"]
     assert spec.identity_metadata() == case["expected_identity_metadata"]
-    assert spec.runtime_selection_metadata() == (case["expected_runtime_selection_metadata"])
+    assert spec.runtime_selection_metadata() == (
+        case["expected_runtime_selection_metadata"]
+    )
 
 
 IDENTITY_MUTATIONS = {
@@ -400,13 +431,19 @@ IDENTITY_MUTATIONS = {
     "zero_mode_policy": {"zero_mode_policy": "friction"},
     "friction_mode_fric": {"friction_mode_fric": 0.2},
     "dealias_rule": {"dealias_rule": "two_thirds"},
-    "projected_transform_execution": {"projected_transform_execution": "full"},
+    "projected_transform_execution": {
+        "projected_transform_execution": "full"
+    },
     "beta": {"beta": -0.9},
     "initial_s": {"initial_s": 0.25},
     "device": {"device": "cpu"},
     "dtype": {"dtype": "float64"},
-    "molecular_field_linear_space": {"molecular_field_linear_space": "physical"},
-    "stress_divergence_sum_space": {"stress_divergence_sum_space": "physical"},
+    "molecular_field_linear_space": {
+        "molecular_field_linear_space": "physical"
+    },
+    "stress_divergence_sum_space": {
+        "stress_divergence_sum_space": "physical"
+    },
     "pointwise_execution": {"pointwise_execution": "eager"},
     "transform_execution_order": {"transform_execution_order": "legacy"},
     "spectral_storage": {"spectral_storage": "full_complex"},
@@ -424,7 +461,9 @@ IDENTITY_MUTATIONS = {
 
 
 def _alternate_boundaries() -> PlaneFreeSlipBoundaryConditions:
-    alternate_q = BoundarySet((PeriodicBC(), PeriodicBC(), HomogeneousDirichletBC()))
+    alternate_q = BoundarySet(
+        (PeriodicBC(), PeriodicBC(), HomogeneousDirichletBC())
+    )
     return replace(PLANE_FREE_SLIP_BOUNDARIES, q=alternate_q)
 
 
@@ -469,11 +508,20 @@ def test_each_field_preserves_the_frozen_identity_partition(
     partition,
 ):
     baseline, changed = _identity_pair(field_name)
-    canonical_changed = baseline.canonical_sha256() != changed.canonical_sha256()
-    runtime_changed = baseline.runtime_identity_sha256() != changed.runtime_identity_sha256()
+    canonical_changed = (
+        baseline.canonical_sha256() != changed.canonical_sha256()
+    )
+    runtime_changed = (
+        baseline.runtime_identity_sha256()
+        != changed.runtime_identity_sha256()
+    )
 
-    assert canonical_changed is (partition in {"canonical_and_runtime", "canonical_only"})
-    assert runtime_changed is (partition in {"canonical_and_runtime", "runtime_only"})
+    assert canonical_changed is (
+        partition in {"canonical_and_runtime", "canonical_only"}
+    )
+    assert runtime_changed is (
+        partition in {"canonical_and_runtime", "runtime_only"}
+    )
 
 
 def test_shendruk_raw_requests_preserve_resolved_identity_behavior():
@@ -485,9 +533,14 @@ def test_shendruk_raw_requests_preserve_resolved_identity_behavior():
     assert paper.frank_k != paper_changed_raw_k.frank_k
     assert paper.to_metadata() == paper_changed_raw_k.to_metadata()
     assert paper.canonical_sha256() == paper_changed_raw_k.canonical_sha256()
-    assert paper.runtime_identity_sha256() == paper_changed_raw_k.runtime_identity_sha256()
+    assert (
+        paper.runtime_identity_sha256()
+        == paper_changed_raw_k.runtime_identity_sha256()
+    )
     assert paper.to_metadata() == paper_changed_upper_bound.to_metadata()
-    assert paper.canonical_sha256() != (paper_changed_lower_bound.canonical_sha256())
+    assert paper.canonical_sha256() != (
+        paper_changed_lower_bound.canonical_sha256()
+    )
 
     fixed = _spec(parameterization="fixed-k")
     fixed_changed_k = _spec(parameterization="fixed-k", frank_k=0.02)
@@ -497,7 +550,10 @@ def test_shendruk_raw_requests_preserve_resolved_identity_behavior():
         coefficient_max=0.06,
     )
     assert fixed.canonical_sha256() != fixed_changed_k.canonical_sha256()
-    assert fixed.runtime_identity_sha256() != fixed_changed_k.runtime_identity_sha256()
+    assert (
+        fixed.runtime_identity_sha256()
+        != fixed_changed_k.runtime_identity_sha256()
+    )
     assert fixed.to_metadata() == fixed_changed_bounds.to_metadata()
 
 
@@ -512,7 +568,10 @@ def test_dormant_friction_request_remains_bound_into_both_identities():
     }
     assert changed.to_metadata()["zero_mode"]["friction_mode_fric"] == 0.2
     assert default.canonical_sha256() != changed.canonical_sha256()
-    assert default.runtime_identity_sha256() != changed.runtime_identity_sha256()
+    assert (
+        default.runtime_identity_sha256()
+        != changed.runtime_identity_sha256()
+    )
 
 
 @pytest.mark.parametrize(
@@ -553,7 +612,9 @@ def test_dry_run_keeps_requested_and_effective_friction_distinct(
     assert metadata["configuration"] == spec.identity_metadata()
     assert metadata["runtime_selection"] == spec.runtime_selection_metadata()
     assert spec.to_metadata()["zero_mode"]["friction_mode_fric"] == 0.2
-    assert metadata["model"]["parameters"]["fric"] == (expected_effective_friction)
+    assert metadata["model"]["parameters"]["fric"] == (
+        expected_effective_friction
+    )
     assert metadata["friction"] == expected_effective_friction
     assert not output_dir.exists()
 
@@ -569,9 +630,15 @@ def test_path_spelling_is_not_resolved_but_is_excluded_from_runtime_identity():
     )
 
     assert spelled.to_metadata()["output_dir"] == "oracle/a/../run"
-    assert spelled.to_metadata()["workflow"]["restart_from"] == "oracle/c/../checkpoint"
+    assert (
+        spelled.to_metadata()["workflow"]["restart_from"]
+        == "oracle/c/../checkpoint"
+    )
     assert spelled.canonical_sha256() != normalized.canonical_sha256()
-    assert spelled.runtime_identity_sha256() == normalized.runtime_identity_sha256()
+    assert (
+        spelled.runtime_identity_sha256()
+        == normalized.runtime_identity_sha256()
+    )
 
 
 def test_v1_checkpoint_header_binds_the_default_runtime_identity():
@@ -593,7 +660,10 @@ def test_alternate_boundary_request_changes_identity_but_not_runtime_globals():
     assert changed.boundaries == requested
     assert changed.to_metadata()["boundaries"] == requested.to_metadata()
     assert changed.canonical_sha256() != default.canonical_sha256()
-    assert changed.runtime_identity_sha256() != default.runtime_identity_sha256()
+    assert (
+        changed.runtime_identity_sha256()
+        != default.runtime_identity_sha256()
+    )
 
     from pssolver.applications import plane_beris_edwards as application
     from pssolver.runtime import plane_legacy
@@ -602,7 +672,9 @@ def test_alternate_boundary_request_changes_identity_but_not_runtime_globals():
     assert plane_legacy.Q_BOUNDARIES == qualified_legacy["q"]
     assert application.Q_BC != requested.to_legacy()["q"]
     assert plane_legacy.Q_BOUNDARIES != requested.to_legacy()["q"]
-    assert "run_spec.boundaries" not in inspect.getsource(plane_legacy.build_legacy_plane_runtime)
+    assert "run_spec.boundaries" not in inspect.getsource(
+        plane_legacy.build_legacy_plane_runtime
+    )
 
 
 def test_factory_cli_and_direct_constructor_keep_current_validation_timing(

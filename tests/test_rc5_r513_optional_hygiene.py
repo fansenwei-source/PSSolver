@@ -39,7 +39,9 @@ def _plane_spec(tmp_path: Path, **overrides: object):
 
 
 def _matching_checkpoint_header(spec, *, completed_steps: int):
-    run_spec_identity = plane_application.plane_run_spec_dynamics_identity(spec).to_metadata()
+    run_spec_identity = plane_application.plane_run_spec_dynamics_identity(
+        spec
+    ).to_metadata()
     forward = SimpleNamespace(
         to_metadata=lambda: {
             "kind": "forward_dynamics",

@@ -6,7 +6,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_3_0_s03_successor_105_s18_r5_frozen_proxy_test.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_3_0_s03_successor_105_s18_r5_frozen_proxy_test.json"
+)
 
 
 def _sha256(relative: str) -> str:

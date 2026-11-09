@@ -9,8 +9,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
-SUCCESSOR_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
-CHECKPOINT_SUCCESSOR_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
+)
+CHECKPOINT_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+)
 CONSUMER_REBIND_SUCCESSOR_RECORD = (
     ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
 )
@@ -27,24 +31,14 @@ def _sha256(path: Path) -> str:
 def test_stage_producer_record_freezes_exact_order_and_fail_closed_execution():
     contract = _record()["stage_contract"]
     assert contract["ordered_stages"] == [
-        "environment",
-        "cuda_only",
-        "contract_smokes",
-        "tf32_scope",
-        "current_checkpoints",
-        "released_checkpoints",
-        "numerical",
-        "profiles",
-        "consumer",
-        "assemble",
-        "analyze",
+        "environment", "cuda_only", "contract_smokes", "tf32_scope",
+        "current_checkpoints", "released_checkpoints", "numerical", "profiles",
+        "consumer", "assemble", "analyze",
     ]
     assert contract["stage_count"] == 11
     for key in (
-        "shell_free_argv",
-        "python_executable_and_helper_sha256_frozen_at_plan_creation",
-        "fail_fast",
-        "atomic_json",
+        "shell_free_argv", "python_executable_and_helper_sha256_frozen_at_plan_creation",
+        "fail_fast", "atomic_json",
     ):
         assert contract[key] is True
     assert contract["temporary_json_residue_allowed"] is False
@@ -55,10 +49,7 @@ def test_stage_producer_record_does_not_claim_h100_or_release_authority():
     record = _record()
     assert record["local_validation"]["h100_executed"] is False
     assert record["local_validation"]["focused_tests"] == {
-        "passed": 62,
-        "failed": 0,
-        "skipped": 0,
-        "xfailed": 0,
+        "passed": 62, "failed": 0, "skipped": 0, "xfailed": 0,
     }
     assert record["local_validation"]["full_cpu_suite"] == {
         "passed": 3994,

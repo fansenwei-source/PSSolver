@@ -8,7 +8,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "notes" / "architecture_v0_2" / "phase_8_p82_periodic_complete_stress.json"
+RECORD = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_8_p82_periodic_complete_stress.json"
+)
 
 
 def _sha256(path: Path) -> str:

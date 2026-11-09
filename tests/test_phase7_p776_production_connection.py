@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
 from pssolver.applications import plane_beris_edwards as plane_application
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
@@ -15,19 +16,22 @@ from pssolver.configuration.plane_beris_edwards import (
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
 )
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p776_production_connection.json")
+RESULT_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p776_production_connection.json"
+)
 
 
 PLANE_APPLICATION = ROOT / "pssolver/applications/plane_beris_edwards.py"
 
 
-CHANNEL_APPLICATION = ROOT / ("pssolver/applications/channel_active_nematics.py")
+CHANNEL_APPLICATION = ROOT / (
+    "pssolver/applications/channel_active_nematics.py"
+)
 
 
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
@@ -49,7 +53,10 @@ def _rc456_successor(relative: str, historical: str) -> str:
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if registration is not None and registration["historical_sha256"] == resolved:
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
             resolved = registration["current_sha256"]
     return resolve_s03_successor(relative, resolved)
 
@@ -106,7 +113,9 @@ def test_plane_production_entry_passes_typed_package_construction(
         spy,
     )
     output = tmp_path / runtime_path
-    result = plane_application.run_plane_beris_edwards(_plane_spec(output, runtime_path))
+    result = plane_application.run_plane_beris_edwards(
+        _plane_spec(output, runtime_path)
+    )
 
     assert result.final_step == 2
     assert len(captured) == 1

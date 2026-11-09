@@ -17,7 +17,9 @@ from pssolver.runtime import plane_beris_edwards as runtime_selector
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_SELECTOR_PATH = PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py"
+RUNTIME_SELECTOR_PATH = (
+    PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py"
+)
 FLAT_SELECTOR_READS = {"disable_q_gradient_reuse", "runtime_path"}
 CANARY_MODULE = "pssolver.experimental.plane_shadow_driver"
 
@@ -89,7 +91,8 @@ def _run_spec_reads() -> set[str]:
     function = next(
         node
         for node in tree.body
-        if isinstance(node, ast.FunctionDef) and node.name == "build_plane_beris_edwards_runtime"
+        if isinstance(node, ast.FunctionDef)
+        and node.name == "build_plane_beris_edwards_runtime"
     )
     return {
         node.attr

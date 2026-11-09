@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import FrozenInstanceError
 import hashlib
 import json
-import sys
-from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
+import sys
 from types import ModuleType, SimpleNamespace
 
 import numpy as np
@@ -23,6 +23,7 @@ from pssolver import (
     compile_simulation,
     run_simulation,
 )
+from dataclasses import replace
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
@@ -35,7 +36,9 @@ from pssolver.configuration.plane_beris_edwards_components import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p7710_public_runner_result.json")
+RESULT_PATH = ROOT / (
+    "notes/architecture_v0_2/phase_7_p7710_public_runner_result.json"
+)
 
 
 REVIEWED_SOURCES = (
@@ -114,7 +117,9 @@ def test_public_runner_keeps_application_imports_lazy():
     path = ROOT / "pssolver/api/runner.py"
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     top_level = {
-        node.module for node in tree.body if isinstance(node, ast.ImportFrom) and node.module
+        node.module
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom) and node.module
     }
     assert not {
         name
@@ -137,7 +142,9 @@ def test_root_exports_public_result_contract():
 
 def test_machine_record_binds_p7710_scope_and_source_identity():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
-    assert record["classification"] == ("PASS_P7_7_10_COMMON_RUNNER_AND_RESULT_PROTOCOL")
+    assert record["classification"] == (
+        "PASS_P7_7_10_COMMON_RUNNER_AND_RESULT_PROTOCOL"
+    )
     assert record["qualified_applications"] == [
         "plane_complete_stress_beris_edwards",
         "channel_legacy_active_force_active_nematics",

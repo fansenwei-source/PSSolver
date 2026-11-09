@@ -14,19 +14,24 @@ from .simulation import SimulationSpec
 from .simulation_binding import bind_simulation_runtime
 
 
-_PACKAGE_FACTORY = "pssolver.runtime.package_construction.build_package_simulation_runtime"
+_PACKAGE_FACTORY = (
+    "pssolver.runtime.package_construction.build_package_simulation_runtime"
+)
 _IMPLEMENTATION_BUILDERS = {
     RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS: (
-        "pssolver.runtime.channel_beris_edwards.build_channel_beris_edwards_runtime"
+        "pssolver.runtime.channel_beris_edwards."
+        "build_channel_beris_edwards_runtime"
     ),
     RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS: (
-        "pssolver.runtime.periodic_beris_edwards.build_periodic_beris_edwards_runtime"
+        "pssolver.runtime.periodic_beris_edwards."
+        "build_periodic_beris_edwards_runtime"
     ),
     RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION: (
         "pssolver.runtime.plane_legacy.build_legacy_plane_runtime"
     ),
     RuntimeConstructionKind.PLANE_COMPILED_V2: (
-        "pssolver.runtime.plane_application_bridge.build_package_compiled_plane_runtime"
+        "pssolver.runtime.plane_application_bridge."
+        "build_package_compiled_plane_runtime"
     ),
 }
 

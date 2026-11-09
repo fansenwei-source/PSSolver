@@ -8,8 +8,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json")
-SUCCESSOR = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+)
+SUCCESSOR = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+)
 
 
 def _sha256(path: Path) -> str:

@@ -1,10 +1,10 @@
 """Registry parity, retaining the reachable pre-switch binding as control."""
 
 import ast
-import importlib
-import inspect
 from dataclasses import FrozenInstanceError
 from enum import Enum
+import importlib
+import inspect
 from pathlib import Path
 
 import pytest
@@ -23,6 +23,8 @@ def _resolve(path):
 
 
 def _binding_table():
+    # Evaluate only the existing literal table (enum members and constants),
+    # never execute a numerical kernel or a copy of the binding dispatcher.
     from tests.v0_5_s24_registry_reference import retained_runtime_bindings
 
     return retained_runtime_bindings()
@@ -35,10 +37,9 @@ def test_shadow_matches_all_compiler_metadata_and_order():
     assert [tuple(row) for row in observed] == [tuple(row) for row in expected]
     assert tuple(shadow.APPLICATION_BY_PAIR) == tuple(compiler._PUBLIC_COMPILER_REGISTRY)
     assert len(shadow.APPLICATIONS) == len(shadow.APPLICATION_BY_PAIR) == 3
-    for entry, combination in zip(shadow.APPLICATIONS, available_combinations(), strict=False):
+    for entry, combination in zip(shadow.APPLICATIONS, available_combinations()):
         assert combination.to_metadata() == {
-            **entry.compiler_metadata(),
-            "runtime_paths": list(entry.runtime_paths),
+            **entry.compiler_metadata(), "runtime_paths": list(entry.runtime_paths),
             "qualified": True,
         }
 
@@ -68,15 +69,12 @@ def test_shadow_is_immutable_tensor_free_and_not_public():
     assert not any(isinstance(node, ast.Import) for node in ast.walk(tree))
 
 
-@pytest.mark.parametrize(
-    "pair",
-    [
-        ("unknown", "plane_slab"),
-        ("complete_stress_beris_edwards", "unknown"),
-        ("legacy_active_force_active_nematics", "periodic_box"),
-        ("legacy_active_force_active_nematics", "plane_slab"),
-    ],
-)
+@pytest.mark.parametrize("pair", [
+    ("unknown", "plane_slab"),
+    ("complete_stress_beris_edwards", "unknown"),
+    ("legacy_active_force_active_nematics", "periodic_box"),
+    ("legacy_active_force_active_nematics", "plane_slab"),
+])
 def test_unregistered_shadow_keys_fail_closed_without_fallback(pair):
     assert shadow.APPLICATION_BY_PAIR.get(pair) is None
     with pytest.raises(KeyError):

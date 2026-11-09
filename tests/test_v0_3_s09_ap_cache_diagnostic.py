@@ -1,13 +1,12 @@
 from __future__ import annotations
-
 import ast
+from contextlib import contextmanager
+import json
 import hashlib
 import itertools
-import json
+from pathlib import Path
 import subprocess
 import textwrap
-from contextlib import contextmanager
-from pathlib import Path
 
 from benchmarks.analyze_v0_3_s09_ap_cache_diagnostic import _ratio_summary, analyze
 from benchmarks.analyze_v0_3_s09_h100 import _profile_center
@@ -53,7 +52,8 @@ def _historical_candidate_pressure_source() -> str:
     class_node = next(
         node
         for node in tree.body
-        if isinstance(node, ast.ClassDef) and node.name == "ChannelNoSlipModalStokesSolver"
+        if isinstance(node, ast.ClassDef)
+        and node.name == "ChannelNoSlipModalStokesSolver"
     )
     method = next(
         node
@@ -61,8 +61,12 @@ def _historical_candidate_pressure_source() -> str:
         if isinstance(node, ast.FunctionDef) and node.name == "_solve_pressure"
     )
     lines = source.splitlines(keepends=True)
-    method_source = textwrap.dedent("".join(lines[method.lineno - 1 : method.end_lineno]))
-    assert hashlib.sha256(method_source.encode("utf-8")).hexdigest() == (CANDIDATE_METHOD_SHA256)
+    method_source = textwrap.dedent(
+        "".join(lines[method.lineno - 1 : method.end_lineno])
+    )
+    assert hashlib.sha256(method_source.encode("utf-8")).hexdigest() == (
+        CANDIDATE_METHOD_SHA256
+    )
     return method_source
 
 
@@ -146,9 +150,9 @@ def test_roles_use_all_six_permutations_and_bind_exact_provider_identities() -> 
                 )
                 for trial in range(1, 7)
             ]
-            assert set(orders) == set(
-                itertools.permutations(("baseline", "candidate_cache_on", "candidate_revert_proxy"))
-            )
+            assert set(orders) == set(itertools.permutations((
+                "baseline", "candidate_cache_on", "candidate_revert_proxy"
+            )))
             for role in ("baseline", "candidate_cache_on", "candidate_revert_proxy"):
                 assert [order.index(role) for order in orders].count(0) == 2
                 assert [order.index(role) for order in orders].count(1) == 2
@@ -215,7 +219,9 @@ def test_trial_ratio_uses_exact_frozen_profile_center() -> None:
     summary = _ratio_summary(reference, observed)
     assert summary["six_trial_ratios"] == expected
     assert summary["six_trial_ratios"] == [2.0] * 6
-    assert summary["six_trial_ratios"][0] != (observed[0]["mean"] / reference[0]["mean"])
+    assert summary["six_trial_ratios"][0] != (
+        observed[0]["mean"] / reference[0]["mean"]
+    )
 
 
 def test_analyzer_is_descriptive_and_requires_all_cache_proofs(tmp_path: Path) -> None:
@@ -269,12 +275,16 @@ def test_analyzer_is_descriptive_and_requires_all_cache_proofs(tmp_path: Path) -
     assert result["profile_count"] == 72
     assert result["all_revert_proxy_proofs_passed"] is True
     assert result["candidate_cache_on_revert_proxy_state_byte_identity"] is True
-    assert result["trial_ratio_estimator"] == ("frozen_profile_center_six_fixed_block_means_median")
+    assert result["trial_ratio_estimator"] == (
+        "frozen_profile_center_six_fixed_block_means_median"
+    )
     assert len(result["groups"]) == 4
 
 
 def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
-    job = (ROOT / "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch").read_text(encoding="utf-8")
+    job = (ROOT / "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
     assert "#SBATCH --gres=gpu:H100:1" in job
     assert "#SBATCH --job-name=pssolver-v03-s09-apdiag" in job
     assert "pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261026_v1/logs" in job
@@ -292,7 +302,7 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
     assert "export CXX=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++" in job
     assert "source /opt/ohpc/admin/lmod/lmod/init/bash" in job
     assert "module load cuda/12.1" in job
-    assert "trap 'rm -rf \"${node_root}\"' EXIT" in job
+    assert 'trap \'rm -rf "${node_root}"\' EXIT' in job
     assert 'export TMPDIR="${pytest_tmp}"' in job
     assert "cc-version.txt" in job
     assert "module-list.txt" in job
@@ -306,6 +316,8 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
 
 
 def test_runner_accepts_normal_venv_python_symlinks_but_support_is_regular() -> None:
-    runner = (ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py").read_text(encoding="utf-8")
+    runner = (ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py").read_text(
+        encoding="utf-8"
+    )
     assert "if not python.is_file():" in runner
     assert "if not path.is_file() or path.is_symlink():" in runner

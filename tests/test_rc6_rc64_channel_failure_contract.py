@@ -32,7 +32,9 @@ class _FailingPlaneAdapter:
     def __init__(self, error: SimulationExecutionError) -> None:
         self._error = error
         self.completed_steps = 0
-        self.solver = SimpleNamespace(integrator=SimpleNamespace(refresh_count=0))
+        self.solver = SimpleNamespace(
+            integrator=SimpleNamespace(refresh_count=0)
+        )
         self.projector = object()
         self.fields = {}
 
@@ -139,7 +141,9 @@ def test_functional_convergence_error_has_complete_finite_execution_metadata():
     assert metadata["application_family"] == "channel_pressure"
     assert metadata["stage"] == "pressure_solve"
     assert metadata["step"] == 0
-    assert SimulationExecutionError.to_metadata(error)["details"] == dict(error.details)
+    assert SimulationExecutionError.to_metadata(error)["details"] == dict(
+        error.details
+    )
     json.dumps(metadata, allow_nan=False, sort_keys=True)
 
 

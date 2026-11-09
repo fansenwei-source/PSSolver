@@ -23,7 +23,9 @@ def declare_plane_complete_stress_equation_system(
     """Adapt the qualified Plane physical request without geometry leakage."""
 
     if not isinstance(components, PlaneBerisEdwardsRunComponents):
-        raise TypeError("components must be a PlaneBerisEdwardsRunComponents")
+        raise TypeError(
+            "components must be a PlaneBerisEdwardsRunComponents"
+        )
     return CompleteStressBerisEdwardsEquationRequest(
         material=components.physics.material,
         ldg_l1=components.preset.ldg_l1,

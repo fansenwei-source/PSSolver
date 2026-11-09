@@ -4,26 +4,17 @@ from __future__ import annotations
 
 import hashlib
 import json
-import statistics
 from pathlib import Path
+import statistics
 
 import pytest
 
-from benchmarks.analyze_rc5_g1_paired_block_replay import (
-    FAIL_CLASSIFICATION,
-    PASS_CLASSIFICATION,
-    analyze,
-)
-from benchmarks.analyze_rc5_g1_paired_block_replay import (
-    main as analyze_main,
-)
+from benchmarks.analyze_rc5_g1_paired_block_replay import FAIL_CLASSIFICATION, PASS_CLASSIFICATION, analyze, main as analyze_main
 from benchmarks.plan_rc5_g1_paired_block_contract import (
     BLOCK_COUNT,
     BLOCK_SIZE,
     CLASSIFICATION,
     build_plan,
-)
-from benchmarks.plan_rc5_g1_paired_block_contract import (
     main as plan_main,
 )
 
@@ -178,7 +169,9 @@ def _write_matrix(root: Path, *, candidate_factor: float = 1.02) -> tuple[Path, 
         }
         path = profiles / f"{entry['key']}.json"
         path.write_text(json.dumps(profile, allow_nan=False), encoding="utf-8")
-        completed.append({"key": entry["key"], "sequence": sequence, "sha256": _sha256(path)})
+        completed.append(
+            {"key": entry["key"], "sequence": sequence, "sha256": _sha256(path)}
+        )
         (progress / f"{sequence:03d}.json").write_text(
             json.dumps(
                 {
@@ -236,7 +229,9 @@ def test_common_mode_spikes_are_retained_and_do_not_create_a_false_regression(tm
     assert result["formal_requalification_performed"] is False
     assert result["qualification_complete"] is False
     assert all(group["passed"] for group in result["groups"])
-    assert sum(group["cv_reference_exceedance_profile_count"] for group in result["groups"]) == 48
+    assert sum(
+        group["cv_reference_exceedance_profile_count"] for group in result["groups"]
+    ) == 48
     assert all(
         len(pair["fixed_block_ratios"]) == 6
         for group in result["groups"]
@@ -285,23 +280,19 @@ def test_clis_are_atomic_and_refuse_overwrite(tmp_path):
 
     profiles, progress = _write_matrix(tmp_path / "matrix")
     analysis_output = tmp_path / "analysis.json"
-    assert (
-        analyze_main(
-            [
-                "--profile-root",
-                str(profiles),
-                "--progress-root",
-                str(progress),
-                "--output",
-                str(analysis_output),
-            ]
-        )
-        == 0
-    )
-    assert (
-        json.loads(analysis_output.read_text(encoding="utf-8"))["classification"]
-        == PASS_CLASSIFICATION
-    )
+    assert analyze_main(
+        [
+            "--profile-root",
+            str(profiles),
+            "--progress-root",
+            str(progress),
+            "--output",
+            str(analysis_output),
+        ]
+    ) == 0
+    assert json.loads(analysis_output.read_text(encoding="utf-8"))[
+        "classification"
+    ] == PASS_CLASSIFICATION
     with pytest.raises(FileExistsError):
         analyze_main(
             [
@@ -317,9 +308,11 @@ def test_clis_are_atomic_and_refuse_overwrite(tmp_path):
 
 def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     record = json.loads(
-        (ROOT / "notes" / "PSSolver_v0_2_0rc5_g1_paired_block_contract_v13.json").read_text(
-            encoding="utf-8"
-        )
+        (
+            ROOT
+            / "notes"
+            / "PSSolver_v0_2_0rc5_g1_paired_block_contract_v13.json"
+        ).read_text(encoding="utf-8")
     )
     assert record["classification"] == CLASSIFICATION
     replay = record["v10_post_hoc_replay"]
@@ -346,7 +339,9 @@ def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     for relative, expected in record["source_sha256"].items():
         assert _sha256(ROOT / relative) == expected
 
-    job = (ROOT / "jobs" / "rc5_g1_paired_block_h100.sbatch").read_text(encoding="utf-8")
+    job = (ROOT / "jobs" / "rc5_g1_paired_block_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
     assert "#SBATCH --gres=gpu:H100:1" in job
     assert "#SBATCH --no-requeue" in job
     assert "run_rc5_g1_checkpoint_tmp_preflight.py" in job
@@ -354,4 +349,4 @@ def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     assert "run_rc5_g1_paired_block_profile_matrix.py" in job
     assert "--authorization-record" in job
     assert "PAIRED_BLOCK_COMPLETE" in job
-    assert 'touch "${RC5_G1_OUTPUT_ROOT}/COMPLETE"' not in job
+    assert "touch \"${RC5_G1_OUTPUT_ROOT}/COMPLETE\"" not in job

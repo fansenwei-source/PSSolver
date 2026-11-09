@@ -30,8 +30,12 @@ def test_p80_is_planning_only_and_binds_the_phase7_closure() -> None:
 
     assert plan["schema_version"] == 1
     assert plan["phase"] == "P8.0"
-    assert plan["status"] == ("P8_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED")
-    assert plan["classification"] == ("PASS_P8_0_CAPABILITY_EXPANSION_PLAN")
+    assert plan["status"] == (
+        "P8_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED"
+    )
+    assert plan["classification"] == (
+        "PASS_P8_0_CAPABILITY_EXPANSION_PLAN"
+    )
     assert baseline["commit"] == "f8789461ee71391885d5e04c6906a13bc83a26b0"
     assert _sha256(closure) == baseline["phase_7_record_sha256"]
     assert baseline["phase_7_complete"] is True
@@ -76,14 +80,17 @@ def test_p80_separates_public_gaps_from_new_boundary_physics() -> None:
     plan = _plan()
     gaps = {entry["id"]: entry for entry in plan["capability_gaps"]}
     policies = {
-        entry["name"]: entry for entry in plan["current_public_surface"]["boundary_policies"]
+        entry["name"]: entry
+        for entry in plan["current_public_surface"]["boundary_policies"]
     }
 
     assert len(gaps) == 8
     assert policies["no_slip_velocity"]["status"] == (
         "qualified_inside_channel_application_but_not_public_policy"
     )
-    assert policies["periodic"]["status"] == ("implicit_from_axis_topology")
+    assert policies["periodic"]["status"] == (
+        "implicit_from_axis_topology"
+    )
     assert gaps["P8-GAP-003"]["first_owner"] == "P8.1"
     assert gaps["P8-GAP-007"]["first_owner"] == "P8.4"
     assert gaps["P8-GAP-008"]["first_owner"] == "P8.5"
@@ -117,11 +124,16 @@ def test_p80_freezes_slice_order_and_non_regression_contract() -> None:
     assert non_regression["existing_boundary_laws_may_change"] is False
     assert non_regression["existing_checkpoint_schema_may_change"] is False
     assert non_regression["hot_loop_registry_dispatch_allowed"] is False
-    assert non_regression["silent_runtime_or_capability_fallback_allowed"] is False
+    assert (
+        non_regression["silent_runtime_or_capability_fallback_allowed"]
+        is False
+    )
 
 
 def test_future_verbatim_archive_lists_p80_without_regenerating_the_pdf() -> None:
-    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(encoding="utf-8")
+    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(
+        encoding="utf-8"
+    )
     names = (
         "phase_7_final_closure.json",
         "phase_8_p80_capability_expansion_plan.md",

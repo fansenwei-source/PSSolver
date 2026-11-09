@@ -26,10 +26,16 @@ RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
-RC5_R510 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
-RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
+RC5_R510 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
-RC5_G1_GLIBC = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+RC5_G1_GLIBC = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
@@ -67,7 +73,9 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
         V021_N1,
         V022_V17,
     ):
-        registration = _read(record_path).get("historical_successor_sources", {}).get(relative)
+        registration = _read(record_path).get(
+            "historical_successor_sources", {}
+        ).get(relative)
         if registration is None:
             continue
         if registration["historical_sha256"] == resolved:
@@ -79,7 +87,9 @@ def test_rc451_is_analysis_only_and_runs_all_ten_frozen_probes():
     record = _read(RECORD)
     assert record["schema_version"] == 1
     assert record["stage"] == "RC4.5.1"
-    assert record["classification"] == ("RC4_5_1_RESIDUAL_ADJUDICATION_COMPLETE")
+    assert record["classification"] == (
+        "RC4_5_1_RESIDUAL_ADJUDICATION_COMPLETE"
+    )
     assert record["analysis_only"] is True
     assert record["h100_job_submitted"] is False
     assert record["runtime_source_modified"] is False
@@ -120,7 +130,9 @@ def test_rc451_outcomes_cover_exactly_the_nine_residuals():
         if issue != "B21"
     )
     assert outcomes["B11"]["h100_followup_required"] is True
-    assert record["summary"]["next_stage"] == ("RC4.5.2_checkpoint_transactionality")
+    assert record["summary"]["next_stage"] == (
+        "RC4.5.2_checkpoint_transactionality"
+    )
 
 
 def test_rc451_checkpoint_probes_preserve_positive_gates_and_find_residuals():
@@ -134,7 +146,8 @@ def test_rc451_checkpoint_probes_preserve_positive_gates_and_find_residuals():
 
     c02 = probes["C02"]
     assert all(
-        value["type"] == "ValueError" for value in c02["production_filename_path_checks"].values()
+        value["type"] == "ValueError"
+        for value in c02["production_filename_path_checks"].values()
     )
     assert c02["target_mutation_before_payload_open"] is False
 
@@ -146,15 +159,24 @@ def test_rc451_checkpoint_probes_preserve_positive_gates_and_find_residuals():
     assert c03["cleanup"]["target_exists"] is False
     assert c03["cleanup"]["residual_entries"] == []
     assert all(
-        value["uses_atomic_replace"] is True for value in c03["writer_source_inventory"].values()
+        value["uses_atomic_replace"] is True
+        for value in c03["writer_source_inventory"].values()
     )
 
     c04 = probes["C04"]
     observed = c04["observed"]
-    assert observed["existing_target"]["type"] == ("FunctionalCheckpointExistsError")
-    assert observed["missing_target"]["type"] == ("FunctionalCheckpointNotFoundError")
-    assert observed["future_format"]["type"] == ("FunctionalCheckpointCompatibilityError")
-    assert observed["payload_tamper"]["type"] == ("FunctionalCheckpointIntegrityError")
+    assert observed["existing_target"]["type"] == (
+        "FunctionalCheckpointExistsError"
+    )
+    assert observed["missing_target"]["type"] == (
+        "FunctionalCheckpointNotFoundError"
+    )
+    assert observed["future_format"]["type"] == (
+        "FunctionalCheckpointCompatibilityError"
+    )
+    assert observed["payload_tamper"]["type"] == (
+        "FunctionalCheckpointIntegrityError"
+    )
     assert observed["parent_is_file"]["type"] == "FileExistsError"
     assert c04["parent_filesystem_error_translated"] is False
 
@@ -205,7 +227,9 @@ def test_known_issue_matrix_registers_rc451_and_later_scoped_closures():
     progress = matrix["progress"]
     assert progress["rc4_5_1_analysis_authorized"] is True
     assert progress["rc4_5_1_analysis_complete"] is True
-    assert progress["rc4_5_1_classification"] == ("RC4_5_1_RESIDUAL_ADJUDICATION_COMPLETE")
+    assert progress["rc4_5_1_classification"] == (
+        "RC4_5_1_RESIDUAL_ADJUDICATION_COMPLETE"
+    )
     assert progress["rc4_5_1_analysis_record_sha256"] == _sha256(RECORD)
     assert progress["eligible_for_rc4_5_2_contract"] is True
     assert progress["rc4_5_2_contract_complete"] is True
@@ -215,14 +239,23 @@ def test_known_issue_matrix_registers_rc451_and_later_scoped_closures():
     assert progress["eligible_for_rc4_5_5_implementation"] is True
     assert progress["rc4_5_implementation_authorized"] is True
     issues = {item["id"]: item for item in matrix["items"]}
-    assert all(issues[issue]["state"] == "partial_residual" for issue in ("B7", "B24"))
+    assert all(
+        issues[issue]["state"] == "partial_residual"
+        for issue in ("B7", "B24")
+    )
     assert issues["B27"]["state"] == "closed_verified"
-    assert all(issues[issue]["state"] == "closed_verified" for issue in ("B9", "B21"))
+    assert all(
+        issues[issue]["state"] == "closed_verified"
+        for issue in ("B9", "B21")
+    )
     assert issues["B11"]["state"] == "partial_residual"
     assert progress["rc4_5_8_h100_complete"] is True
     assert progress["rc4_5_complete"] is True
     assert progress["rc4_complete"] is True
     assert progress["eligible_for_rc4_release_preparation"] is True
-    assert all(issues[issue]["state"] == "partial_residual" for issue in ("B13", "B17"))
+    assert all(
+        issues[issue]["state"] == "partial_residual"
+        for issue in ("B13", "B17")
+    )
     assert issues["B15"]["state"] == "closed_verified"
     assert matrix["post_release"]["classification"] == "FAIL"

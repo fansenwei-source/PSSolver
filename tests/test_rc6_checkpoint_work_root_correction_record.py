@@ -23,9 +23,9 @@ def _record() -> dict[str, object]:
 
 
 def _current_sha256(relative: str, expected: str) -> str:
-    registration = json.loads(CONSUMER_REBIND_SUCCESSOR_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
+    registration = json.loads(
+        CONSUMER_REBIND_SUCCESSOR_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"].get(relative)
     if registration is None:
         return expected
     assert registration["predecessor_sha256"] == expected
@@ -53,6 +53,8 @@ def test_record_is_qualification_only_and_has_no_push_or_h100_authority():
     scope = record["scope"]
     assert scope["qualification_support_only"] is True
     assert all(
-        value is False for key, value in scope.items() if key != "qualification_support_only"
+        value is False
+        for key, value in scope.items()
+        if key != "qualification_support_only"
     )
     assert all(value is False for value in record["authorization"].values())

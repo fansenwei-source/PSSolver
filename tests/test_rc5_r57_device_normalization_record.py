@@ -13,33 +13,57 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-R5_10_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
-R5_11_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
-R5_12_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json")
+R5_10_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
+R5_11_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 G1_HISTORICAL_AUDIT_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
 )
-RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
-RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
-RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
-RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
-RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
-RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
+RC6_R2_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+)
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
+RC6_R5_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+)
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
-    registration = json.loads(G1_HISTORICAL_AUDIT_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
+    registration = json.loads(
+        G1_HISTORICAL_AUDIT_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"].get(relative)
     if registration is None:
         return resolved
     accepted = registration.get(
@@ -158,7 +182,9 @@ def _sha256(path: Path) -> str:
 def test_r57_record_declares_cpu_closure_without_scope_expansion():
     record = _record()
     assert record["status"] == "implementation_complete_cpu_verified"
-    assert record["classification"] == ("PASS_R5_7_EXECUTION_DEVICE_NORMALIZATION_CPU_CLOSURE")
+    assert record["classification"] == (
+        "PASS_R5_7_EXECUTION_DEVICE_NORMALIZATION_CPU_CLOSURE"
+    )
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
         "implementation_commit": "2d67ba27de7e55c39382cbd3eadcfbf0541e3ba5",
@@ -194,7 +220,9 @@ def test_r57_record_binds_installed_wheel_artifacts_and_identity():
     )
     assert evidence["source_archive_sha256"]
     assert evidence["wheel_sha256"]
-    assert Path(evidence["pssolver_import"]).is_relative_to(Path(evidence["directory"]) / "venv")
+    assert Path(evidence["pssolver_import"]).is_relative_to(
+        Path(evidence["directory"]) / "venv"
+    )
     assert evidence["pip_check"] == "PASS"
     assert evidence["source_shadow_import"] is False
 
@@ -203,9 +231,15 @@ def test_r57_record_binds_source_and_installed_cpu_results():
     validation = _record()["validation"]
     assert validation["r5_7_regression_cpu"] == "23 passed, 0 failed"
     assert validation["historical_successor_cpu"] == "205 passed, 0 failed"
-    assert validation["source_full_cpu"] == ("3546 passed, 7 skipped, 0 failed")
-    assert validation["installed_wheel_targeted_cpu"] == ("23 passed, 0 failed")
-    assert validation["installed_wheel_applicable_full_cpu"] == ("3539 passed, 7 skipped, 0 failed")
+    assert validation["source_full_cpu"] == (
+        "3546 passed, 7 skipped, 0 failed"
+    )
+    assert validation["installed_wheel_targeted_cpu"] == (
+        "23 passed, 0 failed"
+    )
+    assert validation["installed_wheel_applicable_full_cpu"] == (
+        "3539 passed, 7 skipped, 0 failed"
+    )
     exclusion = validation["installed_wheel_source_only_exclusion"]
     assert exclusion["path"] == "tests/test_phase8_p861_local_cumulative_audit.py"
     assert exclusion["test_count"] == 7

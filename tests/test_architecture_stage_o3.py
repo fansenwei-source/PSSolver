@@ -4,20 +4,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
 
 import pssolver
 from pssolver.configuration import create_plane_beris_edwards_run_spec
-from pssolver.workflows import (
-    PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PLANE_WORKFLOW_SCHEMA_VERSION,
-    load_plane_checkpoint,
-)
+from pssolver.workflows import PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION, PLANE_WORKFLOW_SCHEMA_VERSION, load_plane_checkpoint
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -119,7 +115,10 @@ def test_runtime_identity_excludes_workflow_but_binds_numerics(tmp_path):
     )
 
     assert left.runtime_identity_sha256() == right.runtime_identity_sha256()
-    assert left.runtime_identity_sha256() == changed_workflow.runtime_identity_sha256()
+    assert (
+        left.runtime_identity_sha256()
+        == changed_workflow.runtime_identity_sha256()
+    )
     assert left.runtime_identity_sha256() != changed.runtime_identity_sha256()
 
 
@@ -141,7 +140,9 @@ def test_shared_workflow_preserves_output_contract_and_complete_is_last(tmp_path
     assert metadata["workflow"] == {
         "schema_version": PLANE_WORKFLOW_SCHEMA_VERSION,
         "runtime_path": "legacy_production",
-        "checkpoint_format_version": (PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION),
+        "checkpoint_format_version": (
+            PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+        ),
         "cross_backend_restart_supported": False,
         "start_step": 0,
         "requested_additional_steps": 3,
@@ -150,7 +151,9 @@ def test_shared_workflow_preserves_output_contract_and_complete_is_last(tmp_path
         "checkpoint_steps": [],
         "final_step": 3,
     }
-    assert (output / "COMPLETE").stat().st_mtime_ns >= (output / "metadata.json").stat().st_mtime_ns
+    assert (output / "COMPLETE").stat().st_mtime_ns >= (
+        output / "metadata.json"
+    ).stat().st_mtime_ns
     assert not tuple(output.glob(".*.tmp"))
     assert np.load(output / "Q_3.npy").shape == (8, 8, 8, 5)
     assert np.load(output / "u_3.npy").shape == (8, 8, 8, 3)
@@ -181,7 +184,9 @@ def test_same_backend_split_restart_is_byte_exact(tmp_path, runtime_path):
     )
 
     for prefix in ("Q", "u", "p"):
-        assert _sha256(continuous / f"{prefix}_6.npy") == _sha256(resumed / f"{prefix}_6.npy")
+        assert _sha256(continuous / f"{prefix}_6.npy") == _sha256(
+            resumed / f"{prefix}_6.npy"
+        )
     metadata = json.loads((resumed / "metadata.json").read_text())
     assert metadata["restart"]["source_completed_steps"] == 3
     assert metadata["restart"]["source_runtime_path"] == runtime_path

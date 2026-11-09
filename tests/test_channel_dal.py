@@ -3,9 +3,7 @@ import json
 import numpy as np
 
 from pssolver import write_run_metadata
-from pssolver.models.active_nematics import (
-    Q_convention_metadata,
-)
+from pssolver.models.active_nematics import Q_convention_metadata
 
 
 def _write_Q_input(
@@ -26,7 +24,9 @@ def _write_Q_input(
         "schema_version": 1,
         "model": {
             "name": model_name,
-            "Q_convention": (Q_convention_metadata() if convention is None else convention),
+            "Q_convention": (
+                Q_convention_metadata() if convention is None else convention
+            ),
             "parameters": {
                 "S_initial": actual_S if declared_S is None else declared_S,
                 "S_bulk": actual_S if declared_S is None else declared_S,

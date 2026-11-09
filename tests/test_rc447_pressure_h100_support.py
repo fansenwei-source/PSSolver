@@ -1,13 +1,8 @@
 """Synthetic, fail-closed tests for RC4.4.7 H100 qualification support."""
 
 from __future__ import annotations
-
 import torch
-
-from benchmarks.qualify_rc447_pressure_cuda import (
-    Gate,
-    _fields_byte_identical,
-)
+from benchmarks.qualify_rc447_pressure_cuda import Gate, _fields_byte_identical
 from benchmarks.run_rc447_cuda_tests import NODE_IDS, classify
 
 
@@ -50,9 +45,15 @@ def test_restart_field_comparison_uses_public_keys_and_named_lookup():
                 raise KeyError("field keys must be str")
             return self._values[name]
 
-    left = FieldsWithoutIteration({"Q": torch.tensor([1.0]), "u": torch.tensor([2.0])})
-    same_reordered = FieldsWithoutIteration({"u": torch.tensor([2.0]), "Q": torch.tensor([1.0])})
-    changed = FieldsWithoutIteration({"Q": torch.tensor([1.0]), "u": torch.tensor([3.0])})
+    left = FieldsWithoutIteration(
+        {"Q": torch.tensor([1.0]), "u": torch.tensor([2.0])}
+    )
+    same_reordered = FieldsWithoutIteration(
+        {"u": torch.tensor([2.0]), "Q": torch.tensor([1.0])}
+    )
+    changed = FieldsWithoutIteration(
+        {"Q": torch.tensor([1.0]), "u": torch.tensor([3.0])}
+    )
     missing = FieldsWithoutIteration({"Q": torch.tensor([1.0])})
 
     assert _fields_byte_identical(left, same_reordered) is True

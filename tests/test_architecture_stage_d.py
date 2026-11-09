@@ -3,22 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-
 import torch
 
 import pssolver
 from pssolver import SpectralSolver
-from pssolver.core import (
-    DealiasRule,
-    FieldRole,
-    FieldSpec,
-    NumericsConfig,
-    Precision,
-    ProblemSpec,
-    ProjectedTransformExecution,
-    SpectralStorage,
-    TransformExecutionOrder,
-)
+from pssolver.core import DealiasRule, FieldRole, FieldSpec, NumericsConfig, Precision, ProblemSpec, ProjectedTransformExecution, SpectralStorage, TransformExecutionOrder
 
 
 @dataclass(frozen=True)
@@ -60,9 +49,13 @@ def _scalar_problem(
 ):
     specs = [FieldSpec.scalar("phi", FieldRole.EVOLVED, boundaries)]
     if include_algebraic:
-        specs.append(FieldSpec.scalar("response", FieldRole.ALGEBRAIC, boundaries))
+        specs.append(
+            FieldSpec.scalar("response", FieldRole.ALGEBRAIC, boundaries)
+        )
     if include_diagnostic:
-        specs.append(FieldSpec.scalar("energy", FieldRole.DIAGNOSTIC, boundaries))
+        specs.append(
+            FieldSpec.scalar("energy", FieldRole.DIAGNOSTIC, boundaries)
+        )
     return ProblemSpec(
         ScalarRuntimeModel(tuple(specs)),
         geometry,
@@ -88,7 +81,9 @@ def _manual_solver(problem, boundary_conditions, *, dt, initial):
         dt=dt,
         device="cpu",
         dtype=dtype,
-        transform_execution_order=(problem.numerics.transform_execution_order.value),
+        transform_execution_order=(
+            problem.numerics.transform_execution_order.value
+        ),
         spectral_storage=problem.numerics.spectral_storage.value,
         hermitian_axis=problem.numerics.hermitian_axis,
     )

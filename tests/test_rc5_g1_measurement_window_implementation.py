@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-
 from benchmarks.plan_rc5_g1_measurement_window_recovery import build_plan
 
 
@@ -45,7 +44,9 @@ def _formal_memory(value: int) -> dict[str, int]:
 def _profile(entry: dict[str, object], plan: dict[str, object]) -> dict[str, object]:
     role = str(entry["provider_role"])
     group = f"{entry['family']}:{entry['grid']}:trial{entry['trial']}"
-    mean = (1.0 + 0.001 * int(entry["trial"])) * (1.01 if role == "candidate" else 1.0)
+    mean = (1.0 + 0.001 * int(entry["trial"])) * (
+        1.01 if role == "candidate" else 1.0
+    )
     samples = [mean] * 60
     initial = _hash("initial:" + group)
     final = _hash("final:" + group)
@@ -64,7 +65,9 @@ def _profile(entry: dict[str, object], plan: dict[str, object]) -> dict[str, obj
                 ],
                 "source_keys": {
                     "pressure_iteration_count": "last_pressure_iterations",
-                    "pressure_relative_residual": ("last_pressure_relative_residual"),
+                    "pressure_relative_residual": (
+                        "last_pressure_relative_residual"
+                    ),
                 },
                 "pressure_iteration_count": 12,
                 "pressure_relative_residual": 1.0e-11,

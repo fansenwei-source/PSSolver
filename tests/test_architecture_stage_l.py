@@ -1,13 +1,11 @@
 """Qualification tests for the Stage L production/shadow trajectory gate."""
 
 from __future__ import annotations
-
 import json
 import os
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
-
 import pytest
 
 import pssolver
@@ -122,7 +120,10 @@ def _production_command(
 )
 def production_reference(tmp_path_factory, request):
     spectral_storage, projected_execution = request.param
-    directory = tmp_path_factory.mktemp(f"stage_l_reference_{spectral_storage}") / "production"
+    directory = (
+        tmp_path_factory.mktemp(f"stage_l_reference_{spectral_storage}")
+        / "production"
+    )
     subprocess.run(
         _production_command(
             directory,

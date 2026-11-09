@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import FrozenInstanceError, dataclass
+import json
 from types import SimpleNamespace
 
 import pytest
 import torch
 
+from pssolver.Field import Fields
 from pssolver.adapters import compare_spectral_plan_to_runtime
 from pssolver.core import (
     BoundarySet,
@@ -27,7 +28,6 @@ from pssolver.core import (
     SpectralStorage,
     TransformExecutionOrder,
 )
-from pssolver.Field import Fields
 from pssolver.geometries import PeriodicBox, PlaneSlab
 from pssolver.models.active_nematics.stokes import (
     PLANE_Q_BOUNDARY_CONDITIONS,
@@ -65,7 +65,9 @@ class DeclaredModel:
 
 def _active_like_plane_model(*, include_diagnostic=True):
     q_boundaries = _plane_boundaries(HomogeneousNeumannBC())
-    normal_velocity_boundaries = _plane_boundaries(HomogeneousDirichletBC())
+    normal_velocity_boundaries = _plane_boundaries(
+        HomogeneousDirichletBC()
+    )
     specs = [
         FieldSpec(
             name="Q",
@@ -159,7 +161,8 @@ def _fields_for_plan(plan, backend):
     )
     fields.set_transform_backend(backend)
     fields.name_to_idx = {
-        component.component_name: component.storage_index for component in plan.stored_components
+        component.component_name: component.storage_index
+        for component in plan.stored_components
     }
     fields.boundary_conditions = [
         tuple(condition.kind.value for condition in component.boundaries.axes)
@@ -178,25 +181,21 @@ def test_plane_plan_resolves_layout_storage_and_transform_families():
     assert plan.geometry_name == "plane_slab"
     assert plan.physical_shape == (12, 10, 8)
     assert plan.spectral_shape == (12, 6, 8)
-    assert plan.numerics.spectral_storage.value == (DEFAULT_PLANE_SPECTRAL_STORAGE)
+    assert plan.numerics.spectral_storage.value == (
+        DEFAULT_PLANE_SPECTRAL_STORAGE
+    )
     assert plan.numerics.hermitian_axis == PLANE_HERMITIAN_AXIS
     assert tuple(axis.hermitian_packed for axis in plan.axes) == (
         False,
         True,
         False,
     )
-    assert tuple(component.component_name for component in plan.stored_components) == (
-        "Qxx",
-        "Qxy",
-        "Qxz",
-        "Qyy",
-        "Qyz",
-        "ux",
-        "uy",
-        "uz",
-        "p",
-    )
-    assert tuple(component.storage_index for component in plan.stored_components) == tuple(range(9))
+    assert tuple(
+        component.component_name for component in plan.stored_components
+    ) == ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz", "ux", "uy", "uz", "p")
+    assert tuple(
+        component.storage_index for component in plan.stored_components
+    ) == tuple(range(9))
 
     qxx = plan.stored_components[0]
     uz = plan.stored_components[7]
@@ -214,10 +213,9 @@ def test_plane_plan_resolves_layout_storage_and_transform_families():
     assert qxx.computed_axis_sizes == (12, 6, 4)
     assert uz.retained_mode_counts == (5, 3, 3)
     assert uz.computed_axis_sizes == (12, 6, 3)
-    assert (
-        tuple(condition.kind.value for condition in qxx.boundaries.axes)
-        == PLANE_Q_BOUNDARY_CONDITIONS
-    )
+    assert tuple(
+        condition.kind.value for condition in qxx.boundaries.axes
+    ) == PLANE_Q_BOUNDARY_CONDITIONS
 
 
 def test_diagnostic_components_are_declared_but_not_runtime_stored():
@@ -241,17 +239,18 @@ def test_runtime_storage_is_role_ordered_without_reordering_field_declarations()
         )
     )
     domain = DomainSpec((8, 6, 4), (8.0, 6.0, 4.0))
-    plan = assemble_spectral_plan(ProblemSpec(model, PlaneSlab(domain), _numerics()))
+    plan = assemble_spectral_plan(
+        ProblemSpec(model, PlaneSlab(domain), _numerics())
+    )
 
     assert tuple(field.name for field in plan.fields) == (
         "pressure",
         "phase",
         "measure",
     )
-    assert tuple(component.component_name for component in plan.stored_components) == (
-        "phase",
-        "pressure",
-    )
+    assert tuple(
+        component.component_name for component in plan.stored_components
+    ) == ("phase", "pressure")
 
 
 def test_plan_is_immutable_and_metadata_is_an_independent_json_value():
@@ -271,7 +270,9 @@ def test_assembly_uses_the_problem_snapshot_not_a_later_model_mutation():
         def __init__(self):
             self.name = "before"
             self.coefficient = 2.0
-            self.specs = _active_like_plane_model(include_diagnostic=False).field_specs()
+            self.specs = _active_like_plane_model(
+                include_diagnostic=False
+            ).field_specs()
 
         def field_specs(self):
             return self.specs
@@ -327,7 +328,9 @@ def test_plane_shadow_comparison_matches_backend_projector_and_fields():
 
 def test_periodic_box_plan_matches_a_full_complex_backend():
     boundaries = _boundaries(PeriodicBC(), PeriodicBC())
-    model = DeclaredModel((FieldSpec.scalar("phase", FieldRole.EVOLVED, boundaries),))
+    model = DeclaredModel(
+        (FieldSpec.scalar("phase", FieldRole.EVOLVED, boundaries),)
+    )
     domain = DomainSpec((9, 7), (9.0, 7.0))
     problem = ProblemSpec(
         model,
@@ -393,7 +396,9 @@ def test_planned_dealias_counts_match_the_qualified_runtime_projector(
     hermitian_axis,
 ):
     boundaries = _plane_boundaries(HomogeneousDirichletBC())
-    model = DeclaredModel((FieldSpec.scalar("phase", FieldRole.EVOLVED, boundaries),))
+    model = DeclaredModel(
+        (FieldSpec.scalar("phase", FieldRole.EVOLVED, boundaries),)
+    )
     domain = DomainSpec(shape, tuple(float(size) for size in shape))
     problem = ProblemSpec(
         model,
@@ -467,7 +472,9 @@ def test_shadow_comparison_reports_field_order_and_boundary_mismatches():
     backend = _backend_for_plan(plan)
     fields = _fields_for_plan(plan, backend)
     names = tuple(fields.name_to_idx)
-    fields.name_to_idx = {name: index for index, name in enumerate(reversed(names))}
+    fields.name_to_idx = {
+        name: index for index, name in enumerate(reversed(names))
+    }
     fields.boundary_conditions[0] = (
         "periodic",
         "periodic",

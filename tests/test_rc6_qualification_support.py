@@ -1,11 +1,9 @@
 """Synthetic contracts for the RC6 single-H100 qualification support."""
 
 from __future__ import annotations
-
 import hashlib
 import json
 from pathlib import Path
-
 from benchmarks.plan_rc6_single_h100_qualification import (
     CONSUMER_SOURCE,
     CONSUMER_WHEEL_SHA256,
@@ -220,11 +218,9 @@ def test_rc6_profile_command_plan_is_complete_order_balanced_and_shell_free(tmp_
     assert len({row["key"] for row in command["rows"]}) == 192
     assert len({row["compiler_cache"] for row in command["rows"]}) == 192
     assert len({row["tf32_bootstrap_output"] for row in command["rows"]}) == 192
-    assert all(
-        isinstance(row["command"], list) and "-c" not in row["command"] for row in command["rows"]
-    )
+    assert all(isinstance(row["command"], list) and "-c" not in row["command"] for row in command["rows"])
     plan = build_plan()
-    for entry, row in zip(plan["profile_matrix"], command["rows"], strict=False):
+    for entry, row in zip(plan["profile_matrix"], command["rows"]):
         assert row["provider_role"] == entry["provider_role"]
         assert row["command"][row["command"].index("--device") + 1] == "cuda"
         assert row["command"][1].endswith("run_rc6_profile_child.py")

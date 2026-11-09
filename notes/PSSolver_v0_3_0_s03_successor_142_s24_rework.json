@@ -1,0 +1,907 @@
+{
+  "classification": "S24_R0074_REWORK_LOCAL_CANDIDATE",
+  "date": "2026-11-09",
+  "decisions": [
+    "D-0041",
+    "D-0042",
+    "D-0045",
+    "D-0047"
+  ],
+  "environment_recovery": {
+    "accepted_deps_manifest_sha256": "d2dbb5faafc666d0414e2985c016aa8ca976e6033e5d9fc292ec9d623089ffdc",
+    "all_dependency_runs_readonly_sandbox": true,
+    "backup_retained": true,
+    "before_after_each_batch": true,
+    "removed_cache_sha256": "661837d4ca4843198ba4c3996432a04850eb5b4c6a836702131b525381516b89"
+  },
+  "git_identity": {
+    "implementation_parent": "ac1eeeed93bf5da867fd36855c632c361fe5c225"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "pssolver/api/capabilities.py": {
+      "current_sha256": "b0314f04318dc02ef41299841494a6a99be3d4ece70cb0a47408167ea3eeae07",
+      "historical_sha256": "2a7a2c878f0f9dfc585b508856812614ae2494566bb30188a791b286ced5d7a5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/api/runner.py": {
+      "current_sha256": "11fdc5098b13975af34f6f073174ce7619e63d33347d1a59a62e6aaea8b1ed62",
+      "historical_sha256": "b3a4dee597c5584ac948fce83ab5ffc4f9fb1cb4068ef5cc029ae3b0973457ce",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "current_sha256": "68e0344141c14bf2f11a65d7f5197c1f9197d882950d579103a6dfb565662099",
+      "historical_sha256": "e19d54788ccb8bad1ed05364cc554a8c1f20d563e870fee51a0aa51ae1f36694",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/active_nematics_equation_adapters.py": {
+      "current_sha256": "d53d0233042a5a008760df0178aab157e3bcea442d14595612a90c2ac1bc51de",
+      "historical_sha256": "6b0779318f515a2f335ff6a343ef503e1c9ea73134db860f3e0421ad91aa4fde",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/active_nematics_simulation_adapters.py": {
+      "current_sha256": "477ff3a0a4da6bda8ad92acc120713b837a1e3d95d7e635633b27b54f3ed093a",
+      "historical_sha256": "9c3fe191c3986b66c1ed4448a51b298843cfe43537df38cfe6aaeb6ec306be21",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/application_registry.py": {
+      "current_sha256": "1baa98e60e72999f94bf44003e76f8c22eb72a5981455d95bb2988bfd4c6e949",
+      "historical_sha256": "ffb37f485bbf6e23561180b30f1230e3cbc186bf67691bc182427b61d099bd04",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/package_construction.py": {
+      "current_sha256": "d7a68438665256055c0fb869e49385388257c597f2cb8887c9858d34ec65ffd3",
+      "historical_sha256": "5778f9ee00ffb2987bb59b2c53f6e9f03145b7b1c062ad72da4614e297c9511b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/plane_beris_edwards.py": {
+      "current_sha256": "a7441a74361f25c312e996538e81ca29c72c4e38b3c70e7ca86bcdf77ca10972",
+      "historical_sha256": "6ddf89ec3a2e5a0acf53601fae09763c409c4fb5ac6c4e4ce87e3b992af2ceca",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/plane_beris_edwards_component_graph.py": {
+      "current_sha256": "402c02de2f1243404119088428aad435705a472bdddedb72406e6c32bd5e2417",
+      "historical_sha256": "5b63f84b0a091bb1318f26425e6b1343b693d22512b5cd5b70914cf89ceedcad",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "current_sha256": "f09980b9ee5ccc84392da9daa3230a058c07b7d438d76ac81db923761879c9d5",
+      "historical_sha256": "0505c963eeb96142ca118733e72c5350a02654c518a78af71100e286fde9e426",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/public_simulation_runner.py": {
+      "current_sha256": "2c8c5fe155746fc32478d7806d9745ca247be76156aa4d479dfeafcf88b96f98",
+      "historical_sha256": "bae55b5eba006f49d5e25f8a2bf688ef071158da25768aac3b103c6f55bf591a",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/configuration/simulation_lowering.py": {
+      "current_sha256": "fc691532ce4f2ecadce82bcccae5fb90faccd8aee34f53969ec6dcdc152ca726",
+      "historical_sha256": "16df142b8a994450e6b852f22c601299ab87b4c9a628c8dada4332f671855482",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/functional/channel_activity.py": {
+      "current_sha256": "aeb6063cd6d7143b0c2abf8f1704c0978129fae8c9aff92dbc9feb98bcfe1200",
+      "historical_sha256": "6e1d9c74d3bcb6a809765ab46bcff82d0d499e63d73959fa96bfb86f8d8e0cb2",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/io/_retired_checkpoint.py": {
+      "current_sha256": "db931d525028db9f8a905b631e2926a347f532838340fa1b42d21f11426d3381",
+      "historical_sha256": "e92d197eac04df7058b13b2e3215d4335babbac22a6fd539d95981cc2a03ca41",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/io/checkpoint.py": {
+      "current_sha256": "3209468642b39832c79551b15352af5190cd7576f4fcaf77cacab76f12b3fd55",
+      "historical_sha256": "9db6b0acf5652c52c27190064e02937137562ab46a243cb50f067e463daaba32",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/models/active_nematics/__init__.py": {
+      "current_sha256": "e812210ef913c985d3a78d10fb8318df9004ce93fb735d3b6b3c8e47f7e0ef31",
+      "historical_sha256": "ceb174e2c59436b73ae59dc1343ffc66c6887230810401e5db2eae862174b995",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/models/active_nematics/equation_systems.py": {
+      "current_sha256": "e3f38644faa1e2306a59b611d3ae5e284cedcd32d44eff975f53d6847602beca",
+      "historical_sha256": "37b5ab49bf03a60daf003269548a4f044944b812b38c0e662f2542b5bd3f1558",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/models/active_nematics/public.py": {
+      "current_sha256": "4a6fbc8dbe0cc136b1c619a8e6144fa0b3de741541a3619d579a3070614e960a",
+      "historical_sha256": "7195684d343d93ad3d91774b5326beddead552e4a336fcd98adfb4ac28965e2f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/planning/construction.py": {
+      "current_sha256": "02f6dd365d286fae30325faec7666b3480e25c619f365850439b73f10fd27514",
+      "historical_sha256": "385ac257503e5059f08463361c2a00f4553e9e51ebcb0a3c3ec453e675094ec3",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/runtime/__init__.py": {
+      "current_sha256": "51d3abab11a182c244a43c0285d658eae6fef8bb6080d3d6074cfc1c5e695d1d",
+      "historical_sha256": "53dd5a3ac1f8e2ec78b677bd1fc42fb757d36a730e7f26a7562af3725bf5acb2",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/runtime/package_construction.py": {
+      "current_sha256": "b1fc26207b01ff933c9583c86145ca41ac1dfb0923a40d044e5152cdec213ded",
+      "historical_sha256": "486143ccafa5466f12c42df75ac56ac716e1e3db92f391417e8a51f598b44dc1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/runtime/plane_beris_edwards.py": {
+      "current_sha256": "1f5b7095509e6fd1d4c9cf3063cd7b2d578d04a0ce0d12f649381ffcf6c27b8a",
+      "historical_sha256": "37195d5af22724fdcc3e54cf9496f0b86bd22510e953eb4d0196c16d1d341b98",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/runtime/simulation_construction.py": {
+      "current_sha256": "e5b1504a3433d69e0b76ad17759995b12a56533399f2432e0f10c92bd74b68bf",
+      "historical_sha256": "91d773b7e5d26aa75755c0be09ff073b15d1da9a6f1f89d62434a5ecae06da93",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/workflows/__init__.py": {
+      "current_sha256": "9321c2d924d7349d87312ddfca2bad8939adaf62a2c457952a573b1ad0b160e6",
+      "historical_sha256": "a3326e03ca6ed56289f314626c16301a57ce9d2302f672cb27f7b07e71f502f6",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "current_sha256": "c740a4423e733bf44a18ce1a28147e46da941c38972fd58c7e0b96c39d3eadc9",
+      "historical_sha256": "36e5da8669838eaf0463265d5f79ec28119dad6cbd2da9094821546991941ce8",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "qualification/s24_consumers.json": {
+      "current_sha256": "aa5c49f2de8a85e5000718c550b0382d29d3255fae3dad1aa01a6578c7de45d6",
+      "historical_sha256": "170eba4f25044263ab7805fa409f54362d678c14859296149a9cb954d126a665",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "qualification/s24_test_disposition.json": {
+      "current_sha256": "f79da0b2c85e9b93054a11464fc9bd1b5a3ece366465b10dee1443550f23e0f2",
+      "historical_sha256": "7876514a8336c652c42bade47a8b8c9ec0c19a56a9c20c393ece40ac9c48b850",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "14e4393e98349aa495bf77c2f863230f756b0aae8c652f7e4c4a19d11922d0b5",
+      "historical_sha256": "067f7ac7ff2f5e59843f718d183ca94a776fee15a7e874c9c39cfcf67d221be5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/conftest.py": {
+      "current_sha256": "87bddf66a261274c0797af32e4fc852c60063c8ffc3c7dcea55436ac49a74a8c",
+      "historical_sha256": "3e2133749b2181427d89dd801d2e020c71f49c1a02232412f77e6279d4829658",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_analyze_rc5_g1_h100.py": {
+      "current_sha256": "a4ec570656346264e01f7947b84e24e62b808d43654d6b61f8a46be7c93300b7",
+      "historical_sha256": "851b986d02611ccd76d41cd801fd38970c9eeb3c8a1384d0d1a8bee395ab32e2",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_import_boundaries.py": {
+      "current_sha256": "c874c7cd35926d9602395cfc4c6686d6e1c51aa7e0f75929d2f04e41ec6fd967",
+      "historical_sha256": "a8e5355c9d4aa12380c1551ef2f47fc330a49d69fecf1f53af2c4ca22e6d3a71",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_c.py": {
+      "current_sha256": "cff7caf82acb9c9c88568ae2663dde2ad720c3ee977f0a417d62e5afc5b54d26",
+      "historical_sha256": "45130852839b95177b2729a0dc589cf3ab0160bb6f10dd7b0f9ed2aae9fc877c",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_d.py": {
+      "current_sha256": "e127d22401803d8f527fb6148ea4a04c4071885c62f8fcf13ff01e74e3462a9c",
+      "historical_sha256": "cfea31fd172ff9bdab8ba23e43a273fc4ab9ded3d1d6e825da04e976c4d5ff93",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_e.py": {
+      "current_sha256": "599a72bb406e3030062bfa5fe83886c909289b1aa0a1e65db95c6b32cac2647f",
+      "historical_sha256": "29fbe66849dc694a718dd448c490c8da9aef9239f77622d504a712652ef1267a",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_f.py": {
+      "current_sha256": "b75d2e28c3eb081125822996e1b269cdd41a3d80e2fc3c0bacba885d586f8811",
+      "historical_sha256": "1caff966d4d5c234edecc80278de65baa572d14c650e158e5204280719ec1c4f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_g.py": {
+      "current_sha256": "9df0b7dd9694f992516c98b4be23c98bb00b6d1511b41b038ce3b00f27637ebb",
+      "historical_sha256": "bc1f6dd0981b6e6238bddaea886925b1d84d6fe080fa1f7ca6db9a62e82f8ebd",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_h.py": {
+      "current_sha256": "471eed3faa9fa9daba11d53f2e843b5f356341069064fdeaf594f4d154184456",
+      "historical_sha256": "bed6864cd39e79dce8ec9c573950a339eedcb219865cd5d8f542a7d9cd611b48",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_i.py": {
+      "current_sha256": "561ffa611e33d64c4733e64b4ec96bace94b6dee8e120d4eb2891d2f49b81dde",
+      "historical_sha256": "7117862581399ea79e3ecce4d6ad65221fc570406f871cd0b2cee57a3f8fab49",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_j.py": {
+      "current_sha256": "4d9711c4083342c43f5f1bef7f88a8003d2bd3b7972d38769514fd74cfb418e9",
+      "historical_sha256": "4a8af320a743576c5d4d7db6728ad1f2d72148b33edaeda1ba2a3acce56cb53a",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_k.py": {
+      "current_sha256": "c8d7099913490a6ba26eb08a0df76d8c0e752843c2d25398954386b4ad74063e",
+      "historical_sha256": "6fe18fe85cd4af22178441ea896a1a22158ac3e4648a93354781ba8c70e9a95d",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_l.py": {
+      "current_sha256": "c020ef1a53b3c52a99f24d73aba47135cfa016464734d934626c6fdf04422565",
+      "historical_sha256": "373bd00dbe7e99ec8c6a1b42187fcf3f2480b241970661adb1698b6f7d5c9898",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_n1.py": {
+      "current_sha256": "f906c6f2066f6787b82105b185d393ef613cd11be6360278657505cd274e51ad",
+      "historical_sha256": "800e0f6ab78a77899aa191caf0ad9b1c3c21a9c46850307010f7f47606781427",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_n2.py": {
+      "current_sha256": "6a2dc53151b108b49f45ebdb862adcec60bc82110e248f0eef3ba36723e79fb4",
+      "historical_sha256": "b69564be266d5c316f6645fead0329ce41558c7b84ea495bbe7366a542824014",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_n3.py": {
+      "current_sha256": "297396cb4b2036525348cc2b9575c89ed1aa6c53e4b80f1bd0dae03cd0d91f10",
+      "historical_sha256": "abbcc201553340467afd2a4adf78b5da05a635d3c561f85dea8523ed96c12781",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_n4.py": {
+      "current_sha256": "a0447212dc3fec5c21425bfdda34537112b244eb51e604e2f1943e7ca148cab3",
+      "historical_sha256": "7f9a59fb68b74e265db72591a8e5d583bdf314c7be8e2bb5fc3d806a40412791",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_o2.py": {
+      "current_sha256": "603fe871d6b4e45e0d461f9a29866d0b1706c2e54619d9d7e8c21528acea8b30",
+      "historical_sha256": "96605afdfaebdb6a43ec701600e27f0f0b72f065167410b82dc540e1cceac772",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_o3.py": {
+      "current_sha256": "a3a2be8fff4b53af74e610b25a3a17f847a3c4094dd8b4fb477a8bc115880f8f",
+      "historical_sha256": "fc8b483dfa9b495c6bc79586da710307f5dc44cf6e012881a5b8daa450d7994e",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_o433.py": {
+      "current_sha256": "e82d38ca3010e8d361334d396bc746ee3a3cf735eeb844df395e00c7e9063aa5",
+      "historical_sha256": "77d6a666cccb313d5e39cf66a173eb0863f708d527c53344dca7a17b81b118fd",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_q1.py": {
+      "current_sha256": "7b50474b7a487bcfbab4cd227bd6045c146933f2ef756ad717560dd9e7b0432e",
+      "historical_sha256": "bd37a6608e59889595e97835c0078af9d66a30c7e5f0f99b72dec5c713ac764e",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_q4.py": {
+      "current_sha256": "bc06b434a372b8f5b91d227b7d9ab9c7426a400b6178c58eadac275a23189d83",
+      "historical_sha256": "3ca376146b78cc3ced55b763af3db271296f650febf8743760c63af6d94c8860",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_architecture_stage_r.py": {
+      "current_sha256": "918d759c8f514f5420a0ba7591e69f43b846df09fabda53f6e76ed3a626c06c0",
+      "historical_sha256": "4f1f5457eb3050051d46bb97e1bf0da1d7a28c080d4ec1b46b09151c24db07ef",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_auxiliary_canonical_metadata.py": {
+      "current_sha256": "4969473aecb3d7d2b6292dc28ad7e1679947dea4d071a4d18845a61f5a3113dc",
+      "historical_sha256": "d194f3fcd88d31a79cbe4b40b1743c368036c2529bd0139f0c224c2475a7da9b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_channel_dal.py": {
+      "current_sha256": "36c6ac0f782c6d33937dc909d6519af40f83e2e9703416fc3885f9ccb56dc368",
+      "historical_sha256": "c1f6a315bdb17be38fe6bb04a6156d4084066d52a47623c3d276aa450f1a1171",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_channel_no_slip_modal_stokes.py": {
+      "current_sha256": "c86306f1c15de71b9a8a03be53b46979a0c633d625328758e073535e532b854e",
+      "historical_sha256": "3952e5628dcb6f41a3e61ef23492c326cb4bcf6769bfc09bb4cf2c73f091c01c",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_plane_runtime_selector_migration.py": {
+      "current_sha256": "a428cf34a960134d57cb263b1a9687bcbd7be43b83d85011ecaf3603559f657d",
+      "historical_sha256": "579b56f6be4bf0bb3cb93f8d8919c9c5d3b0f771614dc38e668e07f13eea5e6f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_plane_shared_declaration_compatibility.py": {
+      "current_sha256": "217d2745b145659018c325d0941cbb7913643fce88fc9d9721055348dfc33275",
+      "historical_sha256": "fbabf1e049e9e237e25a0e58dca8aa6bf4be20392d2fa11af3ab20a7e58dad20",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_run_spec_compatibility.py": {
+      "current_sha256": "b4c2bd6d9adeabda8723cda41a3f39ffabcfda00c0de4ea18f6e81c6bf5d5cb7",
+      "historical_sha256": "f44e26153087403a568f8c522dbaec37e65705ce1c653e49eee992f3b894ec1d",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_run_spec_components.py": {
+      "current_sha256": "44c1ef6ec7bc718409fd45005146cbddef4d3d0c7c4e166e4a3b1303870f5e39",
+      "historical_sha256": "7d1dcb02903db01d18586b91c5ac9e7dbd604cb9fa32d879b1dda668cb68c24f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_run_spec_decomposition.py": {
+      "current_sha256": "34ef0141af9c6ee9f73f083aff0337f62c18048168b1929666cc79877030d8b5",
+      "historical_sha256": "71ed22e2244c077bee51cb453e1a244dcc02e69234c62dd5d42e5c5761cb5a14",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_schema_v1_serializer_compatibility.py": {
+      "current_sha256": "6672d89497212403c5ecd0adee3fa4a726da6a220e3b5945b8bd945c96880f36",
+      "historical_sha256": "aa37e859602359997f0dbe48c827547af58efb72d823230e27d82ce2c50d745f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase2_system_declaration_restart_provenance.py": {
+      "current_sha256": "8b8da4808d8f8877514e8816c431ab5a5c572aacda317cc8c9e4a566998c5787",
+      "historical_sha256": "70b734298ae208b8d87867747df1409d7bde44667611b4401bc57cb04b242ed7",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase3_canary_connection.py": {
+      "current_sha256": "5106b3f16d38cf42db18385c8cc8f0e8ab586ebaa064a3f1547b1c54a5810e9f",
+      "historical_sha256": "4ac0245d181b310c9ab2571d94ff407cc1b4cdcedba9ba99e3ac392bce0e3fa5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_channel_h100_support.py": {
+      "current_sha256": "3ecc0cee33c2e982df6c215c2e668f23695f36ab72e861af8b4c3563979f72d6",
+      "historical_sha256": "4c6565cf070f2d8fb3e26dc8f7a84d841d79966981d45799ebd32024bdcf687f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_channel_local_closure.py": {
+      "current_sha256": "0eea1a6a17696c54e6b66b48a91050b211603ab4a9291c125be084897caf5a62",
+      "historical_sha256": "2f3c1d8f95387b067b947c89fb30ee8be6b48f8bcedeb281678f55682097d3c5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_channel_planning.py": {
+      "current_sha256": "2b5cc0175164a375fcd2a1dc4a68bd5e1ba81ce95b8ff95609737b757e58a73d",
+      "historical_sha256": "de6710198185b34e5f5d69a2e74db5e095ddc0ad88688b471a00e56ce6b1b7f0",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_channel_run_spec.py": {
+      "current_sha256": "cd80be9f0e9655db4bed5cd089e581ba37f825e4e6a2ba5424172e1f6e1d7139",
+      "historical_sha256": "3b5743a7137ed141e0ba2ac749a33d17377c0a4109db519d4ebb7c061139a2a1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_channel_runtime_facade.py": {
+      "current_sha256": "e5f1b18c56ed9a4f6b65fc8df910dd51f54d058979f678c863f2b391a6af7625",
+      "historical_sha256": "c396d11ed794538786fc4aba738cb5fcc6f1cbcaba3ab5a4f872444b835ddf73",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p770_model_geometry_coupling_inventory.py": {
+      "current_sha256": "b70f952c87bce330428a4b7fc68e4cbff513868e8d410a6ad037d97dd5b448df",
+      "historical_sha256": "952d2e221fcd6dc34520e6bbb05f26e0b45d4c14c0ec587678e848727e33dce1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p7710_public_runner_result.py": {
+      "current_sha256": "4ef19ca5ce8ec555a1573283ec10ebc8a1e4e07f60f201944f8dfc5a3a4aeb72",
+      "historical_sha256": "324efe7c3838e5cd7913862ca7c091142b45dd3c64e71b44c4c62e7edce0a5d3",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p7711_public_entry_equivalence.py": {
+      "current_sha256": "27cf8c701561287c0c9bcb179b9a0777841b94431163f4a16fb7905754f1542c",
+      "historical_sha256": "da448628f059876253a097bf93978de434730f2f88a8c07fdf2c2b564539a909",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p7712_h100_qualification.py": {
+      "current_sha256": "8282b1c02d56cba898d0ea57e807f8a3b09f5ea83b904a780fa0c9a2243b7e85",
+      "historical_sha256": "fa9c297eb757be0be3b4e0c113fd328466417d08f492a29878c47a0a45c0aa08",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p7712_h100_recovery.py": {
+      "current_sha256": "3ca3152f7fe364120e202091e6af8737677ae5f91603c457a807862d6caf9771",
+      "historical_sha256": "ebc5e033b0b67972a6a2031be4792b8d2f2be3f584c1efb909f0e4b346fc1ea8",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p771_equation_system_declarations.py": {
+      "current_sha256": "995d8d578e872f9df550b010d5770e182149048c4f79975cd79c781f7b997579",
+      "historical_sha256": "f40a0837334ec41d8751598e31d2dffca80da670888c345355e97889f2b998a9",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p772_simulation_composition.py": {
+      "current_sha256": "ae4e0c749ff64f49a8d1444b144b8b23adc82e4ff2549eb1ed0a957267c6fde9",
+      "historical_sha256": "c26e7e6bd0573c5f3f548a3b235ee0df30799bf1f875a09316bef3719709dadc",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p773_simulation_lowering.py": {
+      "current_sha256": "9d9187b31e61b4ddf5cd0b63ab149e49cd868fd9f0da025ffcbc2351aad15fdc",
+      "historical_sha256": "4a78940bf4a9c575401d6f4936d34607ca6cfe02ef80260109b8aa2ed8c60855",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p774_runtime_construction_binding.py": {
+      "current_sha256": "bb6655ced1c4435330852f0c9dfd8690c4d68dcbbdedb3ae7e3790750f4125d4",
+      "historical_sha256": "ad774d44cf340c495f2bd04bb1801dbfdaf191a2e508597d0a2513491f9093e4",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p775_package_construction.py": {
+      "current_sha256": "5f6b1aade926ab8bd7b4c954864e41226e2e77508ecfdd97ee5e5b3a048ba407",
+      "historical_sha256": "89c063ea24c31f28f9290ad16a8afc95ef12e95a96025b234240822bc902d3c2",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p776_h100_closure.py": {
+      "current_sha256": "8981dd8cefbf0624fd74619c57b9ae997c4a882d08d07d8818135ef55fbec5f0",
+      "historical_sha256": "de06ec7a4057a8586ada62f0ad40a3c56ff6395de1c6be679341f2eb447ae049",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p776_production_connection.py": {
+      "current_sha256": "72470d4c2c7233e2e30c7b24089b3b83faef5db7c1f57ae128e13e60fe4dd56a",
+      "historical_sha256": "fedde8d13b9329c4366c58310bd63518cd2915a18cd7fb82a045f047b0b3d3a0",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p779_public_runner_connection.py": {
+      "current_sha256": "9a5114b93e32c7d9dcf3a274b76f4b6f456e6a651355bd471271df929e1df951",
+      "historical_sha256": "e362ef12e67b21259450ac9f4fc603c35dd9fbcea326c3fc466fe9e5ce6cfd8f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase7_p779_two_combination_compiler.py": {
+      "current_sha256": "73f5bd3566459d60c357419d6ae941d570df34503e4afa3090195b67ba94035f",
+      "historical_sha256": "a232b3bfc29de1ee1b0ea5026bee4ac7262c2c8942357ddf876ac62d9cf7ea29",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase8_p80_capability_expansion_plan.py": {
+      "current_sha256": "1b43086a9734d4a9581d9c1fe102f691f2d3a85d95a05be8d6a961d97a1b4f25",
+      "historical_sha256": "4971ff20b7a9367bea9e3ea85639754ea7e61b33a25b825573ebc62c9127929f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase8_p81_public_surface_catalog.py": {
+      "current_sha256": "b2ba6ad05ae7c702d02bc5e4ffacef98353a3c0a8c540859cf6a9b0416ba8979",
+      "historical_sha256": "0ed15c8e2f7db989c873f18d6ae23bb09a274ef3e8e64f9b723e8a533659a5eb",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase8_p82_local_candidate_record.py": {
+      "current_sha256": "8aec815cd2e0c02c22cfd65812e393637c7aaf16752289d6f4016e1a8972e934",
+      "historical_sha256": "4f23fab0cd2be760f6f0ecfde0ed7d847f075ce3ef8ca082329e8096f4c2c668",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {
+      "current_sha256": "8447cf565c44b7e8774beee261f2bce8bc86d3b757521268109ef6165a973726",
+      "historical_sha256": "0e9f9da44f15602387ec2e84f9f37e8dbb3264f800fa7d92b741ccbe8f4aec17",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase8_p860_closure_plan.py": {
+      "current_sha256": "353f32262ff33a38abf7d05ddfe5a6bafa2faa7c68d66e72381caec638d97f78",
+      "historical_sha256": "ff2eea57c3d57e38e4c36a412755a4c3df9bf0c36ebaaab613b5860e9935f251",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase8_p861_local_cumulative_audit.py": {
+      "current_sha256": "15cca5b31f6edd1830db84a4e854f5935318ccb17ce9495ca5883484a7727372",
+      "historical_sha256": "090685606e30f16a509cd7331b282cc9e34d4ceef5d0790e6aedeb134ee7e7b3",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase9_p90_control_contract_freeze.py": {
+      "current_sha256": "bf1ac8cc83fb9de638955af605471c762a54eaace0ef42750595ff8a16cd5709",
+      "historical_sha256": "bcbf7022ab740a851f51774e4321d10e999416e7fa9144af85edf281520226e6",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_phase9_p96_closure_and_p970_plan.py": {
+      "current_sha256": "9e46fe85ebe0e6a7a5753a64a02cce6a737e7486afd96ad807a05ba64c881de5",
+      "historical_sha256": "3e68c6b8a1906855e68adde8b6211260e22fce1aa2d21561803795e8a73bd6ab",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_plan_rc5_g1_h100.py": {
+      "current_sha256": "3c2f000f732c45b5d521e3dfb52568aea91ba27527e8b2d90b0e0f1d6364dc0c",
+      "historical_sha256": "6da1810b1b0bf7e836e65995622dd1524c723ccff294af730060cb35e921b082",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc426_cross_device_checkpoint_harness.py": {
+      "current_sha256": "e802630c44522cdca06c8c4e73d66ce5597941120dd0d734971a892c9ba62cca",
+      "historical_sha256": "2574b40624d736d360caa0f22fee24ddd04d64deed3145c9b599c8e9a04237aa",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "current_sha256": "a86fe9e938e4d5145c8f670df03836542baf1aa48f81dc11ebab7407e274faf8",
+      "historical_sha256": "56b4975f833af63b6e7dd5591dd6546e41cf941f5a1b7ec43707b27f85a2598c",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "current_sha256": "610faa23a5f4b9fa9b1b3f1ef8065e60a88ccb149473d3fafa4e83169577db3e",
+      "historical_sha256": "166b8ce5453b6d1e5ce3bd78060e2e6c10c92e0c4c1a0feca47ef07bd58cae2e",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "current_sha256": "630a619984193bee99955fc6914b557277b866fb79a72ae6ce1c963af5c16b70",
+      "historical_sha256": "8f4c93fb0e29daebf560fd301eeaa394cb53b31add227351d7b429c0baa1d16e",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "current_sha256": "787ca339c26f7d8300848f4ec47fc49ffd43735f0a76c74ee5297f39a84bb403",
+      "historical_sha256": "5ad62ede110e81d2c39135f8ef8e76033ced94db117b12e50d8c9908a288fd4b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "current_sha256": "67957fe5b18630f58cee31143a77b320dd611a06fc14777b61257c40a13ce937",
+      "historical_sha256": "d5025ac0cea8506548b0a242c09c0f1516abc89d97c0c8a7955f4ebef9999619",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc458_qualification_support.py": {
+      "current_sha256": "bf06fc71f011c287a7ca2366c001fd4a788d8376a6369ec8ab171b18b40eb912",
+      "historical_sha256": "206ebe5a5006102979e3bdcd84bfe82375c0ff614d7c2152684cf0f48556a6fc",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc458_reserved_memory_recovery.py": {
+      "current_sha256": "263d5a6019a4d1cb54e934feb0b8b99a99ddd18a54d5ae938d60e900d8b4864e",
+      "historical_sha256": "b0af537fe4a929d636dab112f5558d387f102b72c9b0af42f847209b165106f5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc458_transform_counter_recovery.py": {
+      "current_sha256": "c086ff95006ebf18ab3c855b75b94ede3a6941e309dde9d4869597f9b3f37da4",
+      "historical_sha256": "76f1c2d4bbff441717a6371b21f07317d7454c539c4188d2ad087272a626d64b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_checkpoint_identity_primitives.py": {
+      "current_sha256": "21a6ed3b49cebfdc0f7841d26a4cc18ef47cf7f07c6c2bb81c823890d214611b",
+      "historical_sha256": "f68c3130da1852174edc5a363b2a33e272cce247982da5fbcb2caa92b7a04d6f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "current_sha256": "8c4063aaf17e7c4ce377595ef8fdd33cc48ceeab24572eea75cc67dc58dcd2f4",
+      "historical_sha256": "cd2361d477c528facfcd9535f98af1abbfe15fcd2cfecda2595b325bab8a8df8",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_lifting_installed_cpu_closure_record.py": {
+      "current_sha256": "8a683b61a5e97a175d1066cee002aca7916f049dba80710edbb07ba86e85e5f4",
+      "historical_sha256": "742e5fb1d74141a98948bf9fa588bb40d19cd62e6b9a4364a840d9ffa0ae2711",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_lifting_installed_wheel.py": {
+      "current_sha256": "0bcaf180e73e9f35e255ef11c4870c691457af56aabceb6a212f7a322fda0d4f",
+      "historical_sha256": "053d004aa01b2667cc6c4146c929e6701d00f05e40b70162c6bc31318faa2228",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "current_sha256": "e5686870d10bc65aedbaa5af707d9fa3b36d29342aa63604c3b4fe41832f2711",
+      "historical_sha256": "a350cf6b6aa61b108fb12c9cceb2fee04b05b2d6518efe12efcc0427f9883734",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_pressure_h100_qualification_plan.py": {
+      "current_sha256": "bdc77ccf84b52191604fb15b802918ddc96fe9ac81ffda2f6cb3975ee785587a",
+      "historical_sha256": "fc6e6d77becee75133da50fa14f5751ebae544e8395fb4b23af2ec64dc04e4d1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection.py": {
+      "current_sha256": "7e0d190d511d2f98898069c7a2033f9fc18e08372b7e8260918ad66cf1abf73e",
+      "historical_sha256": "5a5e326054762ccbed69929f87268c1e86d2819531832388aa54e079657f98ea",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "current_sha256": "ea5959040f0dec7d05768e1195732f84536fa93b73de5dcdc819c39ec5b70604",
+      "historical_sha256": "c9650c7e289bde39bcda906e9784b36cd9d9fa399e2731a487ae7bbaff8c16b6",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "current_sha256": "240345360b07a567eb144e5de0582c56df42295cff9eb728feb2dc430d46dca2",
+      "historical_sha256": "fb2d69dc24aa2ca9862165144ddb8a55cb07f61076a1b189d8032d89f26cca48",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_balanced_crossover_qualification.py": {
+      "current_sha256": "e16d40f971dcb71acbc0d59e8e687ae425c28fcd0f6c7e028c89e3182ea5d3ce",
+      "historical_sha256": "2185d205e433cd13c20b8327d8e5be49feb12466ed56975bcea71a5d9d36b92a",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_consumer_recovery_record.py": {
+      "current_sha256": "9c87ec8159d2d6621c7d2bbcc032816a546654461484e508e7d02216cd2d7a64",
+      "historical_sha256": "69b9580f86178e3449da59e8e7ef35c37c9d77c478216e13f209c60f07b23b19",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_cumulative_closure.py": {
+      "current_sha256": "b1b452107a448681f5ec57306952d2cd6a1489a0bd781e2a1c77eab3ec8b25a2",
+      "historical_sha256": "abee3bc8f56481660110d565f25adb063d9f121ece499c952fbafd1adbfcfda1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_focused_performance_h100.py": {
+      "current_sha256": "bb005f6b96fde5818202065d7ea1b14b4328a4c0b244ec02df59c0c5ef1606f2",
+      "historical_sha256": "56c8704844de19d15588cc2ecbb0ca1acea97306ae9fcb02ea6881f6c0edf271",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_focused_performance_recovery_record.py": {
+      "current_sha256": "9a5802a77561fd8424e06ab8d38745c72c6e690a400a6ab5aaacfe840028ebac",
+      "historical_sha256": "d86b6a106b59855bfc952b1ded52ae987721083b6af21bb919bafa371af73ae8",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_measurement_window_implementation.py": {
+      "current_sha256": "7472678ac933ec561dd0527483ef39aa383f1928825f76ce4d0f7986c9523dec",
+      "historical_sha256": "2894f2cb0735165df2bc88685553221250a39803a5dc38452503e595b20b90e7",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_measurement_window_implementation_record.py": {
+      "current_sha256": "335620c1de5cb57b01d4568646debb0380c11d6316f7d0056ecabbf5aca1d23f",
+      "historical_sha256": "1e7ee05979c24ad094ed5db5b10052180b3ee23e33b57993863b44ceebaa3719",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_measurement_window_lifecycle_recovery_record.py": {
+      "current_sha256": "6785a58bc3ca971729a7acdd9ebdfc01e30a5bd8691f810da0877e6e9734bcc6",
+      "historical_sha256": "e04ecb02cfe1b3861f59573130671d5547b1f01c0f74272e81cf12e38f1b4147",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_paired_block_contract.py": {
+      "current_sha256": "c3bfe95cf128840eb18de89d48e9ee10c00a9216a8da64ffd5c3087d1a0b2125",
+      "historical_sha256": "958c44a37ce2137cb280411d542bed859bb323e4fb0dff56ef53492e4fbe7f7a",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_qualification_support_record.py": {
+      "current_sha256": "8f35b0b7f325ca42f505e3a6923c5460f1de4e6caa2c538df2cfc92041a54013",
+      "historical_sha256": "bed12b682102bf83ce1a04dac302c45a1df258a346da8af363dd9e3a5fb404cd",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_g1_timing_instrumentation.py": {
+      "current_sha256": "a9b96ad2b665085f7ff96953c37abf326e9ef7b48aff25b71a2c2b4cfdd2a4ea",
+      "historical_sha256": "05b993493ccc33c9c23979acdfef7804a57f2ee3722b7bb36ba6901150b716ef",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "current_sha256": "fd7e5b3e88895312391f9011c05eaa225e9b80913d2ab2c99c7ac5acfeef43dc",
+      "historical_sha256": "3eeb0687511012222e5a99ee824dff3a9288e64b37ba54c4eb18a60049bc8d00",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r513_optional_hygiene.py": {
+      "current_sha256": "4d2fe65c727a820c3e35222584a6b5436ed3a5be7f6bf0e7152fdf511a475cd3",
+      "historical_sha256": "51a4ca48352c34f1d1ea4d73289dda509190c5e072e619ee9ad4334744a1eaf4",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "current_sha256": "5df7796932234edd3fe9840bce2947ffd2826cd652314c1afc8a46b18f6444a3",
+      "historical_sha256": "e9e0e5c8f4381e5784146e845d8ee42c11a5a8da481ed7bf153b6de97baf32b1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "current_sha256": "27c0831490725a8debdf38fc83790b90513d4d7d2b835a3d08500f0f9e796f37",
+      "historical_sha256": "41124a70dfcce23cd2a09691c9e2c56809e9f064060aa14f55c660504a678d2d",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "current_sha256": "d78b14e9c3a2dcaf26086d92e5f64578132d33a9256fe390c35729f52086d5aa",
+      "historical_sha256": "5fa2aeb902dd4ba17e71ba3d2f8fbafc8871c5c3d3dde056eea04dac13d73ca7",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r53_legacy_channel_checkpoint.py": {
+      "current_sha256": "0374650cad4d316221a6d31ce303321214c7a177a273ae3dabbb2823662d1c36",
+      "historical_sha256": "806338a280061cc7490d0b084e12de38d7ac9592863bfbc43049963699096a53",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "current_sha256": "1a2482248bcdea89781c95282def9c5a87bbe05d023b53575060ef73490b5c9b",
+      "historical_sha256": "aa2cbccd38b075dd348968903e99b820b96b7aa8bdcaabbb82690dab316ce5e6",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r57_device_normalization.py": {
+      "current_sha256": "d18a92843ab3f1e90fd2f5087747edb72d505f2d32fd9d66958265a9e23c0af6",
+      "historical_sha256": "3d1e640629a989c3934ca05538e5934b3ba9be916e3b049168f4a1746b55e06a",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "current_sha256": "99b53f24861fd3b08dea6a3722fad8086fbaee6315a81c6d20cbd663ed170317",
+      "historical_sha256": "3c92482a955f3bc8c021b43dabd7ffb3c09ca07c1451cbe6831365858d36178d",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_2_pressure_floor_contract.py": {
+      "current_sha256": "e43aee0a6395af4fd73d9df36e5dcd3405d6ccbf0f7012f27580c76e7aa72eb0",
+      "historical_sha256": "4208ff2700dd7d84f7ee743e1232378b722a37fd1e41b580eb0323c686e55d61",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "current_sha256": "9d5fee1797a5ac2f1c44757708b239ebf299a29d7debc79045c63bb5b737ca07",
+      "historical_sha256": "98d0e2c03f29354b00c8f6defd6aa92e0c020111ff83270fcfbddf99398768d7",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "current_sha256": "502aa2bbea001216800520bb9d1b5975e0139aae4b3b4692a55a11e0844b5c8e",
+      "historical_sha256": "e81fc16554f78c3a7169cffd06882ea5c801abe3b5fd4c00734d1ad356dfdcf5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "current_sha256": "2593ed4a795bd629c7d017266c348f0b323a7d75d534851d0471b14b4dc5bbe1",
+      "historical_sha256": "0f32314a9fc00278c9dfb35d66d59c1a09d6324a21c74027fbcc46af744a919b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_checkpoint_work_root_correction_record.py": {
+      "current_sha256": "8d624c682467ea42b85f207928f3a335b1c92e138807ba716f880d98c36952ec",
+      "historical_sha256": "75c5635de7cfe797257a28cd61d627a39896ea2a67b47ae31be6bf151a578e93",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_consumer_execution_rebind_correction_record.py": {
+      "current_sha256": "66cf069dd51a0e83a9128d20f14ae622ec542e8dc22eca771843d7b8a2bd8efd",
+      "historical_sha256": "179f5ff1c3ec886d8ca45d5d6737f3e88913eeec163c77bfaed786055b2d7382",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_h100_stage_producer_record.py": {
+      "current_sha256": "8b8517b3d5bacecf2bcc1bfa9a2672b17a80df571a3442d68bcb4c5c12a3e007",
+      "historical_sha256": "911b1850ca9a0b56fa4199c60f1e15e552b1b390cd38809ad7ea396ad4997d73",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_h100_stage_producers.py": {
+      "current_sha256": "1e8f393e97d622e99bb61e44ce047e253fd8b3a9efad092b4adcc8a28989c38c",
+      "historical_sha256": "459be125d091dcd98fcefcd2be5df25a0ba0b4f2762a71fef275f167a22d85e5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_nvcc_bootstrap_recovery_record.py": {
+      "current_sha256": "0fbb224c35bfff2e875a97fb3ed6c1459f552ba8ad043a89790434bdc5326921",
+      "historical_sha256": "ef4173add68a9cc31f2493f403e52879a0df8df57c27cc51d1e31de2f192021f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": {
+      "current_sha256": "b5827d7f4d4e3e051a3750aa8ce67a436acd649f0e712075dfa018309c8dff58",
+      "historical_sha256": "c29d019a343c17709ca5bd7759303ecd696d35a4551243d6e6c57d7f7bb19cad",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_profile_child_tf32_recovery_record.py": {
+      "current_sha256": "f4515fd8d7d5101d7eda6e9e5c8918f154540103127f96239d1610c8c5744310",
+      "historical_sha256": "71e6add651be144e99d7d9296a4d5bb087e6ddb27d7fa2f9e75a6728dd81c5fd",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_qualification_support.py": {
+      "current_sha256": "7767844fcf0a86941002729d78e110164f77f44fbc7e3c71247196d2ce60ffdb",
+      "historical_sha256": "c76011552e6369a3f47a72ec32ec22e6dfd93e8879a864f45e4fa9c91dcba076",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_qualification_support_record.py": {
+      "current_sha256": "14398cd06c5feb588fbd09a5421173af1228de983d6d3efe532a93539d6d9079",
+      "historical_sha256": "9c72737e9a30ff340c559a9167c7513fd1e6cf36004d4dcdc38fb2f106fa242f",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_rc6_rc64_channel_failure_contract.py": {
+      "current_sha256": "f6a8e41462bee40d2b81af7a1c25228db4d67b579f6edf9e34aa76a06dbbfb78",
+      "historical_sha256": "3658fff76d273b412cd2f5f1b3a08f10b6de9d7107defe5b5dd8e302066a693b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_release_v0_2.py": {
+      "current_sha256": "aa0172df5ef89f4ed5109346125bad23efaad1bb4b2ca1c78e6e270725823c21",
+      "historical_sha256": "6bd96a4e430805a89d281309f7012902939ad861056749f91ec7a85d424f241d",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_release_v0_2_rc5.py": {
+      "current_sha256": "fcc2a88bb8c0811b806717918862b224da418a3e6f38d301c8c01b4ef3ef5581",
+      "historical_sha256": "fc2d3d4f0448ec101334992ab54fdea3f7091bc7e6f13b9b8fc2a9b29d19b4ab",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "current_sha256": "bccb9b5630582cf0488ae4d1853807079327c6a9700e6af433fe7cc77e6ec73a",
+      "historical_sha256": "ea07cf88b27541dc7c503669d67f2d66e4891d79f3241bbae8b1e85dd3baf4b1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_2_0_checkpoint_fixtures.py": {
+      "current_sha256": "6c54031da34488051fcd384cc58db9d86764b2628224f89a6ed984b1d402949a",
+      "historical_sha256": "99411f04f400306bc71fdc3b3343556a27f26f22037022fa1466bf1c0749d354",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s03_exception_compatibility.py": {
+      "current_sha256": "4501c123bba1f2869132b5c859bcd786eba14398b57662b5c2e21ce7c15ecd91",
+      "historical_sha256": "04665df6fb13dc913d4925ec6abbfe87400f2fd10557b2d7784a81cb0461657b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s03_public_errors_metadata_record.py": {
+      "current_sha256": "8c2fbc46420db49cd81a8c300d771d621666f2ce654fbd4f0699edd1506ecd7d",
+      "historical_sha256": "9b61f21a4e40e7b680af66091b79b60aa04063cad94fdb9a24ac7dd8137e92bb",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "current_sha256": "fe430246f2e998aa23a9f30517dc6efa1d3bc1971725f08b6f3c520d6cc90118",
+      "historical_sha256": "fe63334a016f7df404b61feb1718bdd9ecbeea6d996fe7c0c57b809328331196",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity.py": {
+      "current_sha256": "03222981e467d70ae474435f0de8375a18f9e10a5aca386db0755a778f97a133",
+      "historical_sha256": "b724db921bcb7659491106f05d33b20fb31153dd5368926741b2cea65305f85e",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_record.py": {
+      "current_sha256": "ec869256b9bda7d73c7f7170b228111f54c6d4d42fcdf0ecb9b1ee152bac973a",
+      "historical_sha256": "dcb097ca300996b1615c0b44529403d32f94dbd2dd016666fb1e79c79db22c24",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "current_sha256": "f4db0f59848a59aeca8fed5d5a743bd2f4a40524608660f99f67f9b01996b80e",
+      "historical_sha256": "8337954f3cf3c707a471145b6cf440debc287d780ad8b596eb60a33ebb4dd0da",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s07_public_compilation_real_paths.py": {
+      "current_sha256": "105cc2dd512f4606441be41f458491c2d9092b278b644d785d5717800726bb95",
+      "historical_sha256": "610394f2d73ceaa5e4dfee7e70249d2ca9537baed03233d4e25a8c24fdfad4e1",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "current_sha256": "c1c64d6774676910f8a385accb2e7fdb282bce1fe2d8e868d8b3d38cb78a3bb2",
+      "historical_sha256": "c7f6ed54a8a3111871bc98b068aa2a8ee0e01aaef4d63c0620afe1ea6b092dcb",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s08_historical_cpu_coverage.py": {
+      "current_sha256": "bdf1516599c8f7a6c4c717bf9f442b9b497b55cbb34b24ab3b84e7cc1f8f1aa5",
+      "historical_sha256": "352b30f596aa5c59d4d157acc1005769d9eef44191223f500fa1d73489516e71",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {
+      "current_sha256": "302b42e437f88d24c17da78710c2ba515bcda59c9e94f3789d84a889fc58545d",
+      "historical_sha256": "69911c2247ab46e32523cb2b0bdc9d8bfdc7e40c54ff971e8a89d02a3938d619",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s09_h100_support.py": {
+      "current_sha256": "7283242e833d306b56611e408d8e2ff0acc16cbbb018404fd8516cfb3e57b4ad",
+      "historical_sha256": "006cd0847fdae54a7658fd82170115d89ce9460cf7c8cda739730ab1cd0f9490",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s09_r0029_rework.py": {
+      "current_sha256": "439a03958d7e4d00347ee1cc723761b485985bc2cd45ce967e3456407c620a8f",
+      "historical_sha256": "5a567456e05eea3435a26a71a8360c0e2af04108348191e6b13029e014d30407",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_3_s10_final_cleanup.py": {
+      "current_sha256": "d5f412abb2763c311a0ae97075a3869d23304cd7d18ad2e974510f545765f0f5",
+      "historical_sha256": "c7164ed9b7456c86e26f343120dc9aa9046a57fe3a616ed29be3625abb62deee",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s16_r0043_rework.py": {
+      "current_sha256": "8403abc0bb0536903af36e06da42a936a205cebc495f2e09b24ee0d2f341e00c",
+      "historical_sha256": "19bae015a95e420b0644d827e78aac33a584a5c96a0082ec6ee1bbd91992ce5b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s17_r3_r6_implementation.py": {
+      "current_sha256": "ca90e934294085b7f7f3ff550f47068b0731121b92b452aae96295ea1383fba8",
+      "historical_sha256": "e9ad9222e537da0a866d0dc2c76dba6847f1fd52a105342157cc17bf738563ba",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r0052_scope_rework.py": {
+      "current_sha256": "52663432b5aa125d697b9a4993c351e76ebe174393687c903d959999dfe89ed9",
+      "historical_sha256": "94d64a0addac91cd34d48343dda9e58ec951254165903bc95202c5dfd2a4d1a5",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r1_dispatch.py": {
+      "current_sha256": "43705d35f65c05cd21405f6601692d4a7ec17d0ec2edf3d37290cbf8fa86fa9a",
+      "historical_sha256": "0d90555b7bf462581caf117c00352fe4043f7fe659318541ff8fd3590c9c0aa2",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r1_shadow_registry.py": {
+      "current_sha256": "a9785c78308b2d17a4d30fbbf26c16f682e7182274a95017e99e1d0f48e8118d",
+      "historical_sha256": "94a46a65f1200ba0e37b0bdc1db5b4e8143434116bc42783542b215080f0864c",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py": {
+      "current_sha256": "291ddf7c654f25eaa8b658becfd4caa44f5c3397723a60aed104a2731cedb5e5",
+      "historical_sha256": "1a94d5969eb4a69ec35cf05db968fdd2ff4214fd308a179aa0c751ad4bd34899",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py": {
+      "current_sha256": "5a77aacb4f77c9a3cd3a721d42b412a7bf5863085f115dd5b86f820f8184ec0b",
+      "historical_sha256": "52219c78e254d1ebbe321e40bf455eed1608c35fbd036acfcff14f844196c6ac",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r4_successor_97.py": {
+      "current_sha256": "ffe87ca36dced58cc8e91742780c6df6c5005100023e67ec5ce222cddddf7719",
+      "historical_sha256": "cf241176d5d97540c69a3c93e3a30222d892cbc70c774e411a0f12ed148705da",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s18_r5_successor_105.py": {
+      "current_sha256": "81883d85311ef65d61b05d314f1a2fc95b7db197315201270a949b203f100bd8",
+      "historical_sha256": "a57e71d6180e21872381931b6138925c97a68ed5f092f72b05d3cda7e586b187",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_4_s19_self_compare.py": {
+      "current_sha256": "2b9b6cb48bdab6c0cf1a9ff5da10ca8a1516a54776f74996b5d361dc4ee588f6",
+      "historical_sha256": "df09c671144ed13e2673198cacf0ce0e1dd121bdcdf70cb448d535d7c655aee0",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tests/test_v0_5_s24_retirement.py": {
+      "current_sha256": "dec93d3429e8ed2940261f21947887c41f8bf8dfc63c3335403d5bee12001b33",
+      "historical_sha256": "3726476e748acc06d8d6e88b0441516ecd76e1ce2afcf6e8df7c74fa6fa6ea4b",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    },
+    "tools/check.py": {
+      "current_sha256": "c63aa51fee0e50e81768eb7966a5b56242c9858021f119596307a3ed441c2e03",
+      "historical_sha256": "5462e7e4df1a6dbc81228e8af3636034a959d3b26c6ec7b6a2ed0532dc11ee18",
+      "reason": "R-0074 W1-W4: minimal retirement changes, current lifting preservation, exact AST disposition, and forward evidence."
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_142_s24_rework_zh.md": "a300b9b37e566ef5d35a28df5d22a30e7e934d532fecc8db2c78de9c6053c76d",
+    "qualification/s24_source_audit.py": "31b3fbaa55943c86d0c6ea05e59ff163c3985ddbbecbfb9d53da935324b00565",
+    "tests/test_v0_5_s24_rework.py": "301fbb5038b827e36b17251f270e226e20ae9a2c382fa7a7e4ed6ea88aa84b77"
+  },
+  "plan_step": "S-24",
+  "record_note": "No qualification is claimed by this implementation record. R-0075 supplies complete new CPU evidence.",
+  "review_imports": {
+    "R-0074": {
+      "archive_checksums_sha256": "f522b6f444f3e01aabaa33540b2c3b0bc3315d3b42ebbd105aa5471986ac063a",
+      "classification": "REWORK_REQUIRED",
+      "registry_updates": [],
+      "result_sha256": "39d28b4da203ffdf48f2552b273e3facb3a260cbb3c8672b9408f064cb889cdd"
+    }
+  },
+  "reviews": [
+    "R-0074"
+  ],
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "scope_correction": {
+    "private_lifting": "read/write and four current tests retained until S-27",
+    "rc1_lifted": "original incompatible lifting dynamics rejection; no v0.4 resume instruction",
+    "rejected_now": [
+      "legacy_active_force_channel",
+      "separated_canary"
+    ]
+  },
+  "successor": 142,
+  "unchanged_record_141_sha256": "4bc28f1c3477361bdca12c687d8a46da36f4acd333f4da2e4225c3a8121d14f8"
+}

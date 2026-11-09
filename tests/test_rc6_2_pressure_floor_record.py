@@ -11,15 +11,27 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
-RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
-RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
-RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
-RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
+RC6_R5_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+)
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -87,9 +99,12 @@ def _rc6_3_successor(relative: str, historical: str) -> str:
 
 def test_rc6_2_contract_is_explicit_and_fail_closed():
     contract = _record()["contract"]
-    assert contract["tolerance_mode_floor_definition"] == ("8*finfo(real_dtype).eps")
+    assert contract["tolerance_mode_floor_definition"] == (
+        "8*finfo(real_dtype).eps"
+    )
     assert contract["normalized_residual_definition"] == (
-        "active_rms(projected_pcg_recurrence_residual)/active_rms(projected_rhs)"
+        "active_rms(projected_pcg_recurrence_residual)/"
+        "active_rms(projected_rhs)"
     )
     for key in (
         "relative_tolerance_met_is_recurrence_postcondition",

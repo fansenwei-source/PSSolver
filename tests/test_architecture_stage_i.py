@@ -90,7 +90,9 @@ def _model(*, parameters=None, friction=0.0, zero_mode="zero_mean"):
 def _numerics(*, half_spectrum=False):
     return NumericsConfig(
         precision=Precision.FLOAT64,
-        dealias_rule=(DealiasRule.CUBIC_HALF if half_spectrum else DealiasRule.NONE),
+        dealias_rule=(
+            DealiasRule.CUBIC_HALF if half_spectrum else DealiasRule.NONE
+        ),
         transform_execution_order=TransformExecutionOrder.REAL_FIRST,
         projected_transform_execution=(
             ProjectedTransformExecution.TRUNCATED
@@ -98,7 +100,9 @@ def _numerics(*, half_spectrum=False):
             else ProjectedTransformExecution.FULL
         ),
         spectral_storage=(
-            SpectralStorage.HERMITIAN_HALF if half_spectrum else SpectralStorage.FULL_COMPLEX
+            SpectralStorage.HERMITIAN_HALF
+            if half_spectrum
+            else SpectralStorage.FULL_COMPLEX
         ),
         hermitian_axis=1 if half_spectrum else None,
     )

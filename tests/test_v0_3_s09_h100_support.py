@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-
 import pytest
 
-from benchmarks.run_v0_3_s09_long_horizon import CASES
-from benchmarks.run_v0_3_s09_long_horizon import summarize as summarize_long
+from benchmarks.run_v0_3_s09_long_horizon import CASES, summarize as summarize_long
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,21 +40,12 @@ def test_job_orders_correctness_and_consumer_before_profiles() -> None:
 def test_long_horizon_summary_is_fail_closed() -> None:
     reports = []
     for case, storage in CASES:
-        reports.append(
-            {
-                "config": {
-                    "case": case,
-                    "spectral_storage": storage,
-                    "horizon": 200.0,
-                    "device": "cuda",
-                },
-                "completed_time": 200.0,
-                "passed": True,
-                "samples": [
-                    {"finite": True, "hermitian_violation": 0.0, "violation_bound": 1.0e-12}
-                ],
-            }
-        )
+        reports.append({
+            "config": {"case": case, "spectral_storage": storage, "horizon": 200.0, "device": "cuda"},
+            "completed_time": 200.0,
+            "passed": True,
+            "samples": [{"finite": True, "hermitian_violation": 0.0, "violation_bound": 1.0e-12}],
+        })
     assert summarize_long(reports)["passed"] is True
     reports[0]["samples"][0]["finite"] = False
     with pytest.raises(ValueError, match="finite/Hermitian"):
@@ -77,6 +66,4 @@ def test_plan_and_job_bind_the_same_auxiliary_stage_order() -> None:
         "paired_performance_memory_profiles",
         "cumulative_analyzer_and_checksums",
     ]
-    assert text.index("run_v0_3_s09_consumer_h100.py") < text.index(
-        "run_v0_3_s09_profile_matrix.py"
-    )
+    assert text.index("run_v0_3_s09_consumer_h100.py") < text.index("run_v0_3_s09_profile_matrix.py")

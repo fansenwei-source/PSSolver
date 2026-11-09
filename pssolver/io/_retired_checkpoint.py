@@ -1,4 +1,4 @@
-"""Early, tensor-free rejection of the three v0.5 retired restart families."""
+"""Early, tensor-free rejection of the two S-24 retired restart families."""
 
 from collections.abc import Mapping
 
@@ -13,8 +13,6 @@ def reject_retired_checkpoint(metadata: Mapping[str, object], *, operation: str)
         family = "legacy active-force Channel"
     elif runtime == "separated_canary":
         family = "separated_canary"
-    elif runtime == "legacy_production" and metadata.get("lifting_restart") is not None:
-        family = "private Plane lifting"
     if family is not None:
         raise CheckpointCompatibilityError(
             f"{family} checkpoint is retired in v0.5; use v0.4.x (maint/v0.4) to resume",

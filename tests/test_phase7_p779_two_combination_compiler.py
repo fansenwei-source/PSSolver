@@ -3,10 +3,7 @@
 from __future__ import annotations
 
 from pssolver import Simulation
-from pssolver.configuration.public_simulation_runner import (
-    PUBLIC_PLANE_APPLICATION,
-    public_compiler_capabilities,
-)
+from pssolver.configuration.public_simulation_runner import PUBLIC_PLANE_APPLICATION, public_compiler_capabilities
 
 
 def _replace_channel_declarations(source, *, execution=None, discretization=None):
@@ -16,7 +13,11 @@ def _replace_channel_declarations(source, *, execution=None, discretization=None
         boundaries=source.boundaries,
         numerics=source.numerics,
         time=source.time,
-        discretization=(source.discretization if discretization is None else discretization),
+        discretization=(
+            source.discretization
+            if discretization is None
+            else discretization
+        ),
         initial_condition=source.initial_condition,
         execution=source.execution if execution is None else execution,
         output=source.output,
@@ -32,7 +33,8 @@ def test_registry_is_capability_catalog_not_a_public_api_whitelist():
             "geometry_name": "plane_slab",
             "application": PUBLIC_PLANE_APPLICATION,
             "adapter": (
-                "pssolver.configuration.public_simulation_runner._compile_plane_public_simulation"
+                "pssolver.configuration.public_simulation_runner."
+                "_compile_plane_public_simulation"
             ),
         },
     )
@@ -46,4 +48,6 @@ def test_registry_is_capability_catalog_not_a_public_api_whitelist():
         ),
     }
     capabilities[0]["application"] = "local-copy-only"
-    assert public_compiler_capabilities()[0]["application"] == (PUBLIC_PLANE_APPLICATION)
+    assert public_compiler_capabilities()[0]["application"] == (
+        PUBLIC_PLANE_APPLICATION
+    )

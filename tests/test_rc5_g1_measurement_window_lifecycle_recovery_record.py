@@ -8,7 +8,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -31,10 +33,9 @@ def test_lifecycle_record_binds_the_v9_failure_without_reclassifying_it():
     assert failure["scientific_failure"] is False
     assert failure["solver_failure"] is False
     predecessor = record["predecessor"]
-    assert (
-        _sha256(ROOT / predecessor["implementation_record"])
-        == predecessor["implementation_record_sha256"]
-    )
+    assert _sha256(ROOT / predecessor["implementation_record"]) == predecessor[
+        "implementation_record_sha256"
+    ]
     assert predecessor["record_rewritten"] is False
 
 
@@ -55,7 +56,9 @@ def test_lifecycle_record_preserves_the_h100_authorization_boundary():
     verification = record["cpu_verification"]
     assert verification["source_compile"] == "PASS"
     assert verification["hpcc_python"] == "3.10.18"
-    assert verification["source_commit"] == ("305890013831a9eb79ac1ef671c88e3e5672398c")
+    assert verification["source_commit"] == (
+        "305890013831a9eb79ac1ef671c88e3e5672398c"
+    )
     assert verification["targeted_tests"] == {
         "passed": 71,
         "failed": 0,

@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import json
 import os
 import subprocess
 import sys
+from collections import Counter
 from pathlib import Path
 
 
@@ -53,7 +55,7 @@ def changed_files(base: str) -> tuple[list[str], list[str]]:
 
 
 def check_types(executable: str) -> bool:
-    """Expose the old diagnostics; accept them only in byte-identical baseline files."""
+    """Bind old diagnostics to unchanged source lines, including deletion-only shifts."""
     baseline = json.loads((ROOT / "qualification/type_baseline.json").read_text())
     result = run(
         [
@@ -74,10 +76,28 @@ def check_types(executable: str) -> bool:
         return False
     actual = result.stdout.splitlines()
     allowed = set(baseline["diagnostics"])
+    mapped_lines = {}
     for diagnostic in actual:
         relative = diagnostic.split(":", 1)[0]
         digest = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-        if diagnostic not in allowed or digest != baseline["sources"].get(relative):
+        if diagnostic in allowed and digest == baseline["sources"].get(relative):
+            continue
+        if relative not in baseline["sources"]:
+            return False
+        if "commit" not in baseline:
+            return False
+        if relative not in mapped_lines:
+            original = subprocess.check_output(
+                ["git", "show", baseline["commit"] + ":" + relative], cwd=ROOT
+            )
+            if hashlib.sha256(original).hexdigest() != baseline["sources"][relative]:
+                return False
+            mapped_lines[relative] = unchanged_line_map(
+                original.decode(), (ROOT / relative).read_text()
+            )
+        _, line, message = diagnostic.split(":", 2)
+        old_line = mapped_lines[relative].get(int(line))
+        if old_line is None or f"{relative}:{old_line}:{message}" not in allowed:
             return False
     errors = sum(": error:" in line for line in actual)
     print(
@@ -87,6 +107,56 @@ def check_types(executable: str) -> bool:
     return True
 
 
+def unchanged_line_map(original: str, current: str) -> dict[int, int]:
+    """Only byte-identical lines may inherit an exact historical diagnostic."""
+    result = {}
+    for block in difflib.SequenceMatcher(
+        a=original.splitlines(keepends=True),
+        b=current.splitlines(keepends=True),
+        autojunk=False,
+    ).get_matching_blocks():
+        for offset in range(block.size):
+            result[block.b + offset + 1] = block.a + offset + 1
+    return result
+
+
+def lint_counts(executable: str, relative: str, source: bytes) -> Counter:
+    """Use one configuration and filename for baseline and candidate diagnostics."""
+    command = [
+        executable,
+        "check",
+        "--no-cache",
+        "--output-format=json",
+        "--stdin-filename",
+        relative,
+        "-",
+    ]
+    completed = subprocess.run(command, cwd=ROOT, input=source, capture_output=True, check=False)
+    if completed.returncode not in (0, 1):
+        raise RuntimeError(completed.stderr.decode())
+    return Counter(item["code"] for item in json.loads(completed.stdout))
+
+
+def lint_ratchet(executable: str, changed: list[str], new: list[str], base: str) -> bool:
+    """Existing files cannot gain any per-rule diagnostics; new files must be clean."""
+    passed = True
+    for relative in changed:
+        actual = lint_counts(executable, relative, (ROOT / relative).read_bytes())
+        previous = Counter()
+        if relative not in new:
+            original = subprocess.check_output(["git", "show", base + ":" + relative], cwd=ROOT)
+            previous = lint_counts(executable, relative, original)
+        increased = actual - previous
+        print(
+            json.dumps(
+                {"path": relative, "baseline": previous, "actual": actual, "increased": increased},
+                sort_keys=True,
+            )
+        )
+        passed = passed and not increased
+    return bool(passed)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", default=BASE)
@@ -94,7 +164,7 @@ def main() -> int:
     changed, new = changed_files(args.base)
     ruff = os.environ.get("RUFF", "ruff")
     mypy = os.environ.get("MYPY", "mypy")
-    if changed and run([ruff, "check", "--no-cache", *changed]).returncode:
+    if not lint_ratchet(ruff, changed, new, args.base):
         return 1
     if new and run([ruff, "format", "--check", "--no-cache", *new]).returncode:
         return 1

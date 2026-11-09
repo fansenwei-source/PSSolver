@@ -2,34 +2,18 @@
 
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError, dataclass
 import json
 import math
-from dataclasses import FrozenInstanceError, dataclass
 
 import pytest
 import torch
 
 import pssolver
-from pssolver.core import (
-    BoundarySet,
-    DealiasRule,
-    DomainSpec,
-    HomogeneousNeumannBC,
-    NumericsConfig,
-    PeriodicBC,
-    Precision,
-    ProjectedTransformExecution,
-    SpectralStorage,
-    TransformExecutionOrder,
-)
-from pssolver.execution import (
-    AlgebraicSystemSpec,
-    GeometrySolverRegistry,
-)
+from pssolver.core import BoundarySet, DealiasRule, DomainSpec, HomogeneousNeumannBC, NumericsConfig, PeriodicBC, Precision, ProjectedTransformExecution, SpectralStorage, TransformExecutionOrder
+from pssolver.execution import AlgebraicSystemSpec, GeometrySolverRegistry
 from pssolver.geometries import PeriodicBox, PlaneSlab
-from pssolver.models.canary import (
-    DiffusionHelmholtzCouplingModel,
-)
+from pssolver.models.canary import DiffusionHelmholtzCouplingModel
 
 
 def _numerics(
@@ -68,7 +52,9 @@ def _coupled_cases():
         ),
     )
 
-    plane_boundaries = BoundarySet((PeriodicBC(), HomogeneousNeumannBC()))
+    plane_boundaries = BoundarySet(
+        (PeriodicBC(), HomogeneousNeumannBC())
+    )
     yield (
         DiffusionHelmholtzCouplingModel(
             plane_boundaries,
@@ -104,7 +90,6 @@ def _manual_initial(solver, model):
             solver.L,
             model.initial_modes,
             model.boundaries.axes,
-            strict=False,
         )
     ):
         if condition.kind.value == "periodic":
@@ -125,7 +110,10 @@ class _ManualHelmholtzStatic(torch.nn.Module):
         self.projector = projector
         self.boundaries = boundaries
         laplacian = solver.get_laplacian_eigs(boundaries)
-        self.denominator = model.helmholtz_shift - model.helmholtz_length_sq * laplacian
+        self.denominator = (
+            model.helmholtz_shift
+            - model.helmholtz_length_sq * laplacian
+        )
 
     def forward(self, fields, parameters):
         del parameters

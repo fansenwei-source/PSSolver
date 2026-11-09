@@ -10,24 +10,50 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
-R5_3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json")
-R5_11_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
-R5_12_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json")
+RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
+R5_3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
+)
+R5_11_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
-RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
-RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
-RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
-RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
-RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
-RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
+RC6_R2_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+)
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
+RC6_R5_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+)
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -80,7 +106,9 @@ def test_r510_preserves_the_r53_new10_adjudication():
     r53 = json.loads(R5_3_RECORD.read_text(encoding="utf-8"))
     assert record["new_10_disposition"] == {
         "source_work_item": "R5-3",
-        "complete_stress_channel_rc1_even": ("reject_pre_rc4_1_forward_nyquist"),
+        "complete_stress_channel_rc1_even": (
+            "reject_pre_rc4_1_forward_nyquist"
+        ),
         "complete_stress_channel_rc1_odd": (
             "reject_exact_restart_because_B2_incompressibility_dynamics_changed"
         ),
@@ -127,10 +155,11 @@ def test_r510_scope_and_completion_are_fail_closed():
 
     completed = record["status"] == "implementation_complete_cpu_verified"
     if completed:
-        assert record["classification"] == ("PASS_R5_10_CHANNEL_CHECKPOINT_OBSERVATION_CPU_CLOSURE")
-        assert (
-            record["git_identity"]["qualified_source_commit"]
-            == (record["git_identity"]["implementation_commit"])
+        assert record["classification"] == (
+            "PASS_R5_10_CHANNEL_CHECKPOINT_OBSERVATION_CPU_CLOSURE"
+        )
+        assert record["git_identity"]["qualified_source_commit"] == (
+            record["git_identity"]["implementation_commit"]
         )
         assert record["installed_wheel_evidence"] is not None
         assert record["authorization"]["r5_10_cpu_closure_complete"] is True

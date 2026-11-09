@@ -1,27 +1,19 @@
 """Synthetic fail-closed checks for the RC6 H100 stage producers."""
 
 from __future__ import annotations
-
 import copy
 
 import pytest
-
-from benchmarks import run_rc6_current_checkpoints as current_checkpoints
-from benchmarks.plan_rc6_single_h100_qualification import (
-    CONSUMER_WHEEL_SHA256,
-    build_plan,
-)
+from benchmarks.plan_rc6_single_h100_qualification import CONSUMER_WHEEL_SHA256, build_plan
 from benchmarks.run_rc5_g1_checkpoints import CELL_SCHEMA, DIRECTIONS, FAMILIES
-from benchmarks.run_rc5_g1_numerical import CHILD_SCHEMA
-from benchmarks.run_rc5_g1_numerical import FAMILIES as NUMERICAL_FAMILIES
+from benchmarks.run_rc5_g1_numerical import CHILD_SCHEMA, FAMILIES as NUMERICAL_FAMILIES
 from benchmarks.run_rc6_consumer import (
     GUARD_NODE,
     REQUIRED_NODES,
     _execution_on_device,
-)
-from benchmarks.run_rc6_consumer import (
     summarize as summarize_consumer,
 )
+from benchmarks import run_rc6_current_checkpoints as current_checkpoints
 from benchmarks.run_rc6_numerical import summarize as summarize_numerical
 from benchmarks.run_rc6_released_checkpoints import summarize as summarize_released
 
@@ -90,11 +82,7 @@ def test_current_checkpoint_work_root_requires_the_allocated_node_local_tmpdir(
 def test_released_checkpoint_summary_requires_twenty_clean_tests_and_immutable_sources():
     outcomes = {
         "passed": [f"test_{index}" for index in range(20)],
-        "failed": [],
-        "skipped": [],
-        "xfailed": [],
-        "xpassed": [],
-        "collection_errors": [],
+        "failed": [], "skipped": [], "xfailed": [], "xpassed": [], "collection_errors": [],
     }
     record = {"released_checkpoint_matrix": {"complete": True, "primary_case_count": 13}}
     assert summarize_released(outcomes, record, True)["primary_case_count"] == 13
@@ -121,11 +109,7 @@ def _child(role: str, family: str) -> dict[str, object]:
 
 
 def test_numerical_summary_requires_byte_identity_and_periodic_zero_hermitian_violation():
-    children = {
-        (role, family): _child(role, family)
-        for role in ("baseline", "candidate")
-        for family in NUMERICAL_FAMILIES
-    }
+    children = {(role, family): _child(role, family) for role in ("baseline", "candidate") for family in NUMERICAL_FAMILIES}
     result = summarize_numerical(children)
     assert result["family_count"] == 8 and result["passed"] is True
     broken = copy.deepcopy(children)
@@ -141,18 +125,12 @@ def test_numerical_summary_requires_byte_identity_and_periodic_zero_hermitian_vi
 def _consumer_outcomes() -> dict[str, object]:
     plan = build_plan()["consumer_h100_gate"]
     passed = [GUARD_NODE, *REQUIRED_NODES]
-    passed.extend(
-        f"tests/test_synthetic.py::test_{index}"
-        for index in range(plan["expected_passed"] - len(passed))
-    )
+    passed.extend(f"tests/test_synthetic.py::test_{index}" for index in range(plan["expected_passed"] - len(passed)))
     return {
         "passed": passed,
         "failed": [],
         "skipped": [{"nodeid": plan["allowed_skip"]}],
-        "xfailed": [],
-        "xpassed": [],
-        "collection_errors": [],
-        "deselected": [],
+        "xfailed": [], "xpassed": [], "collection_errors": [], "deselected": [],
     }
 
 
@@ -170,9 +148,7 @@ def test_consumer_summary_binds_counts_identities_and_semantic_nodes():
         "cuda_finite_smokes": {"periodic": True, "channel": True},
     }
     policy = {"enforcement": {"passed": True}}
-    result = summarize_consumer(
-        exit_code=0, outcomes=_consumer_outcomes(), identity_report=report, tf32_policy=policy
-    )
+    result = summarize_consumer(exit_code=0, outcomes=_consumer_outcomes(), identity_report=report, tf32_policy=policy)
     assert result["source_commit"] == plan["consumer"]["qualified_source_commit"]
     assert result["wheel_sha256"] == CONSUMER_WHEEL_SHA256
     broken = _consumer_outcomes()

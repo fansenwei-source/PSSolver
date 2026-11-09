@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import FrozenInstanceError, replace
 import hashlib
 import json
-from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 
 import pytest
 
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
+from pssolver.configuration.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
@@ -43,10 +41,17 @@ ROOT = Path(__file__).resolve().parents[1]
 LOWERING_DECLARATIONS = ROOT / "pssolver" / "planning" / "simulation.py"
 
 
-LOWERING_RESOLVER = ROOT / "pssolver" / "configuration" / "simulation_lowering.py"
+LOWERING_RESOLVER = (
+    ROOT / "pssolver" / "configuration" / "simulation_lowering.py"
+)
 
 
-RESULT_PATH = ROOT / "notes" / "architecture_v0_2" / "phase_7_p773_capability_lowering.json"
+RESULT_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_7_p773_capability_lowering.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -119,7 +124,10 @@ def test_p773_modules_are_tensor_runtime_and_solver_import_free():
         assert not {
             name
             for name in imports
-            if any(name == blocked or name.startswith(f"{blocked}.") for blocked in forbidden)
+            if any(
+                name == blocked or name.startswith(f"{blocked}.")
+                for blocked in forbidden
+            )
         }, path
 
 
@@ -130,7 +138,9 @@ def test_plane_lowering_resolves_every_component_and_exact_parity_maps():
     assert plan.source_simulation_sha256 == simulation.canonical_sha256()
     assert plan.equation_variant == "complete_stress_beris_edwards"
     assert plan.geometry_name == "plane_slab"
-    assert len(plan.component_bases) == len(simulation.equation_system.component_names) == 59
+    assert len(plan.component_bases) == len(
+        simulation.equation_system.component_names
+    ) == 59
     assert len(plan.derivatives) == 24
     assert len(plan.capabilities) == 7
     assert plan.basis_for("Qxx").transform_kinds == (
@@ -148,7 +158,9 @@ def test_plane_lowering_resolves_every_component_and_exact_parity_maps():
         TransformKind.FFT,
         TransformKind.DST,
     )
-    assert plan.basis_for("p").provenance is (BasisProvenance.ALGEBRAIC_COMPATIBILITY)
+    assert plan.basis_for("p").provenance is (
+        BasisProvenance.ALGEBRAIC_COMPATIBILITY
+    )
 
     dz_q = plan.derivative_for("dQxx_dz")
     assert dz_q.multiplier is DerivativeMultiplier.COSINE_TO_NEGATIVE_SINE
@@ -165,9 +177,9 @@ def test_plane_lowering_resolves_every_component_and_exact_parity_maps():
         assert value.transform_kinds[-1] is TransformKind.DST
         assert value.provenance is BasisProvenance.CONSTITUTIVE_PARITY
     for suffix in ("xx", "xy", "yx", "yy", "zz"):
-        assert (
-            plan.basis_for(f"stress_distortion_{suffix}").transform_kinds[-1] is TransformKind.DCT
-        )
+        assert plan.basis_for(
+            f"stress_distortion_{suffix}"
+        ).transform_kinds[-1] is TransformKind.DCT
     for component, target in zip(
         ("force_x", "force_y", "force_z"),
         ("ux", "uy", "uz"),
@@ -183,12 +195,15 @@ def test_plane_lowering_selects_exact_solver_and_explicit_zero_mode_model():
 
     assert plan.solver.family == "free_slip_modal_stokes"
     assert plan.solver.implementation == (
-        "pssolver.linear_solvers.stokes.plane_free_slip.FreeSlipModalStokesSolver"
+        "pssolver.linear_solvers.stokes.plane_free_slip."
+        "FreeSlipModalStokesSolver"
     )
     assert plan.nullspace.pressure_gauge == "zero_mean"
     assert plan.nullspace.tangential_velocity_components == ("ux", "uy")
     assert plan.nullspace.tangential_policy == "zero_mean"
-    assert plan.nullspace.uniform_mode_action == ("remove_uniform_tangential_velocity_and_force")
+    assert plan.nullspace.uniform_mode_action == (
+        "remove_uniform_tangential_velocity_and_force"
+    )
     assert plan.nullspace.friction == 0.0
 
     friction = lower_simulation_spec(
@@ -252,7 +267,9 @@ def test_lowering_rejects_asymmetric_and_unqualified_symmetric_wall_laws():
     symmetric = replace(
         qxx,
         faces=tuple(
-            replace(face, condition=HomogeneousDirichletBC()) if face.axis == 2 else face
+            replace(face, condition=HomogeneousDirichletBC())
+            if face.axis == 2
+            else face
             for face in qxx.faces
         ),
     )
@@ -287,7 +304,9 @@ def test_lowering_rejects_pressure_semantic_capability_and_integrator_drift():
         simulation,
         time_integration=replace(
             simulation.time_integration,
-            integrator=IntegratorSpec.sbdf2(dt=simulation.time_integration.integrator.dt),
+            integrator=IntegratorSpec.sbdf2(
+                dt=simulation.time_integration.integrator.dt
+            ),
         ),
     )
     assert _error_code(lambda: lower_simulation_spec(invalid)) is (
@@ -321,7 +340,9 @@ def test_lowering_rejects_backend_and_bounded_hermitian_axis():
 def test_p773_machine_record_matches_sources_and_scope():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
     assert record["schema_version"] == 1
-    assert record["classification"] == ("PASS_P7_7_3_CAPABILITY_RESOLUTION_TENSOR_FREE_LOWERING")
+    assert record["classification"] == (
+        "PASS_P7_7_3_CAPABILITY_RESOLUTION_TENSOR_FREE_LOWERING"
+    )
     assert record["runtime_connection"] is False
     assert record["tensor_allocation"] is False
     assert record["production_default_changed"] is False

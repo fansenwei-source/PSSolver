@@ -43,9 +43,13 @@ def CompleteStressBerisEdwards(
     """
 
     try:
-        zero_mode_policy = TangentialZeroModePolicy(tangential_zero_mode_policy)
+        zero_mode_policy = TangentialZeroModePolicy(
+            tangential_zero_mode_policy
+        )
     except (TypeError, ValueError) as exc:
-        raise ValueError("tangential_zero_mode_policy must be 'zero_mean' or 'friction'") from exc
+        raise ValueError(
+            "tangential_zero_mode_policy must be 'zero_mean' or 'friction'"
+        ) from exc
     if zero_mode_policy is TangentialZeroModePolicy.NOT_APPLICABLE:
         raise ValueError(
             "complete-stress periodic/Plane flow requires zero_mean or "

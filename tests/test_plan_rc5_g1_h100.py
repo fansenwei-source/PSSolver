@@ -1,7 +1,6 @@
 """Contracts for the frozen rc5 G-1 H100 planner and matrix runner."""
 
 from __future__ import annotations
-
 import json
 from pathlib import Path
 
@@ -14,8 +13,6 @@ from benchmarks.plan_rc5_g1_h100 import (
     REPAIRED_PERIODIC_FAMILIES,
     SCHEDULED_REFRESH_FAMILIES,
     build_plan,
-)
-from benchmarks.plan_rc5_g1_h100 import (
     main as plan_main,
 )
 from benchmarks.run_rc5_g1_profile_matrix import build_command_plan
@@ -63,8 +60,12 @@ def test_rc5_g1_plan_separates_raw_refresh_and_steady_transform_counts():
         "source_profiles_are_immutable": True,
     }
     profiles = plan["profile_matrix"]
-    refreshed = [entry for entry in profiles if entry["family"] in SCHEDULED_REFRESH_FAMILIES]
-    ordinary = [entry for entry in profiles if entry["family"] not in SCHEDULED_REFRESH_FAMILIES]
+    refreshed = [
+        entry for entry in profiles if entry["family"] in SCHEDULED_REFRESH_FAMILIES
+    ]
+    ordinary = [
+        entry for entry in profiles if entry["family"] not in SCHEDULED_REFRESH_FAMILIES
+    ]
     assert len(refreshed) == 24
     assert len(ordinary) == 72
     assert all(entry["scheduled_refreshes_in_timed_window"] == 3 for entry in refreshed)
@@ -80,7 +81,9 @@ def test_rc5_g1_plan_does_not_apply_global_state_hash_equality():
     plan = build_plan()
     comparison = plan["numerical_comparison"]
     assert comparison["global_final_state_sha_equality"] is False
-    assert comparison["repaired_periodic_families"] == list(REPAIRED_PERIODIC_FAMILIES)
+    assert comparison["repaired_periodic_families"] == list(
+        REPAIRED_PERIODIC_FAMILIES
+    )
     assert set(comparison["byte_identity_families"]) == {
         "plane_legacy_production",
         "plane_compiled_v2",
@@ -137,7 +140,8 @@ def test_rc5_g1_matrix_plan_preserves_venv_paths_and_is_shell_free(tmp_path):
     assert all(isinstance(row["command"], list) for row in command["rows"])
     assert all("--device" in row["command"] for row in command["rows"])
     assert all(
-        row["command"][row["command"].index("--device") + 1] == "cuda" for row in command["rows"]
+        row["command"][row["command"].index("--device") + 1] == "cuda"
+        for row in command["rows"]
     )
     assert all(
         row["support_script"].endswith("profile_rc5_g1_runtime_family.py")
@@ -162,7 +166,9 @@ def test_rc5_g1_slurm_template_is_fixed_to_one_nonrequeued_h100_job():
 
 def test_rc5_g1_profile_child_enforces_and_restores_both_tf32_flags():
     root = Path(__file__).resolve().parents[1]
-    source = (root / "benchmarks/profile_rc5_g1_runtime_family.py").read_text(encoding="utf-8")
+    source = (root / "benchmarks/profile_rc5_g1_runtime_family.py").read_text(
+        encoding="utf-8"
+    )
     assert 'torch.set_float32_matmul_precision("highest")' in source
     assert "torch.backends.cuda.matmul.allow_tf32 = False" in source
     assert "torch.backends.cudnn.allow_tf32 = False" in source

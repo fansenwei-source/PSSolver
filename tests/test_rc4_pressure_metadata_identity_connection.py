@@ -221,22 +221,32 @@ def test_declaration_runtime_capabilities_identity_and_diagnostics_agree(
     tmp_path,
 ):
     simulation = _simulation(tmp_path)
-    declaration = channel_activity_functional_declaration(simulation.specification)
+    declaration = channel_activity_functional_declaration(
+        simulation.specification
+    )
     request = channel_activity_functional_request(simulation.specification)
     runtime = build_channel_activity_functional_runtime(request)
 
-    assert declaration.capabilities.to_metadata() == (runtime.capabilities.to_metadata())
+    assert declaration.capabilities.to_metadata() == (
+        runtime.capabilities.to_metadata()
+    )
     assert runtime.capabilities.explicit_vjp is False
-    assert runtime.capabilities.differentiability == ("validated_custom_adjoint")
-    assert runtime.capabilities.inner_solve_gradient == ("custom_implicit_pressure_adjoint_v2")
+    assert runtime.capabilities.differentiability == (
+        "validated_custom_adjoint"
+    )
+    assert runtime.capabilities.inner_solve_gradient == (
+        "custom_implicit_pressure_adjoint_v2"
+    )
     declared_pressure = declaration.identity.to_metadata()["execution"][
         "functional_runtime_declaration"
     ]["pressure_solver"]
-    runtime_pressure = runtime.identity().to_metadata()["execution"]["functional_runtime"][
-        "pressure_solver"
-    ]
+    runtime_pressure = runtime.identity().to_metadata()["execution"][
+        "functional_runtime"
+    ]["pressure_solver"]
     assert declared_pressure == runtime_pressure
-    assert runtime_pressure["derived_policy"]["initial_guess_policy"] == ("zero_every_call")
+    assert runtime_pressure["derived_policy"]["initial_guess_policy"] == (
+        "zero_every_call"
+    )
     assert runtime_pressure["pressure_transpose_protocol"] == "2"
     assert runtime_pressure["implicit_adjoint"] == "2"
     assert runtime_pressure["diagnostics_schema_version"] == 2
@@ -245,7 +255,9 @@ def test_declaration_runtime_capabilities_identity_and_diagnostics_agree(
     assert diagnostics["schema_version"] == 2
     assert diagnostics["pressure"]["schema_version"] == 2
     diagnostics["pressure"]["primal"]["termination_reason"] = "tampered"
-    assert runtime.diagnostics()["pressure"]["primal"]["termination_reason"] == "not_run"
+    assert runtime.diagnostics()["pressure"]["primal"][
+        "termination_reason"
+    ] == "not_run"
 
 
 def test_production_runtime_diagnostics_are_public_json_snapshots(tmp_path):
@@ -255,12 +267,16 @@ def test_production_runtime_diagnostics_are_public_json_snapshots(tmp_path):
     assert before["pressure"]["schema_version"] == 2
     original_termination = before["pressure"]["termination_reason"]
     before["pressure"]["termination_reason"] = "tampered"
-    assert adapter.flow_diagnostics()["pressure"]["termination_reason"] == (original_termination)
+    assert adapter.flow_diagnostics()["pressure"]["termination_reason"] == (
+        original_termination
+    )
 
     adapter.advance(1)
     after = adapter.flow_diagnostics()
     assert after["pressure"]["solve_phase"] == "production_primal"
-    assert after["pressure"]["initial_guess_policy"] == ("persistent_production_warm_start")
+    assert after["pressure"]["initial_guess_policy"] == (
+        "persistent_production_warm_start"
+    )
     assert json.loads(json.dumps(after, allow_nan=False)) == after
 
 
@@ -289,12 +305,18 @@ def test_v4_identities_bind_pressure_policy_without_layout_version_changes(
     )
     functional = runtime.checkpoint_bridge._compatibility_identity
     assert functional.forward_dynamics.version == "channel.functional.forward.v4"
-    assert functional.derivative_dynamics.version == ("channel.functional.derivative.v4")
+    assert functional.derivative_dynamics.version == (
+        "channel.functional.derivative.v4"
+    )
     assert functional.state_layout.version == "channel.functional.state.v2"
-    assert functional.backend_restart.version == ("channel.functional.backend.v2")
+    assert functional.backend_restart.version == (
+        "channel.functional.backend.v2"
+    )
     derivative = functional.derivative_dynamics.to_metadata()["payload"]
     assert derivative["pressure_transpose_protocol"] == "2"
-    assert derivative["implicit_adjoint"] == ("channel_pressure_implicit_adjoint.v2")
+    assert derivative["implicit_adjoint"] == (
+        "channel_pressure_implicit_adjoint.v2"
+    )
     assert derivative["pressure_convergence_schema_version"] == 2
     assert derivative["transpose_initial_guess"] == "zero_every_call"
 
@@ -326,7 +348,9 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
     )
 
     _, target = _production(simulation)
-    before_fields = {name: value.clone() for name, value in target.fields.items()}
+    before_fields = {
+        name: value.clone() for name, value in target.fields.items()
+    }
     before_guess = target.capture_pressure_guess().clone()
     before_steps = target.completed_steps
 
@@ -345,7 +369,10 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
         )
     assert target.completed_steps == before_steps
     assert torch.equal(target.capture_pressure_guess(), before_guess)
-    assert all(torch.equal(target.fields[name], value) for name, value in before_fields.items())
+    assert all(
+        torch.equal(target.fields[name], value)
+        for name, value in before_fields.items()
+    )
 
 
 @pytest.mark.parametrize(
@@ -363,7 +390,9 @@ def test_functional_stale_or_tampered_identity_rejects_before_tensor_load(
     version,
 ):
     runtime = build_channel_activity_functional_runtime(
-        channel_activity_functional_request(_simulation(tmp_path, name=field).specification)
+        channel_activity_functional_request(
+            _simulation(tmp_path, name=field).specification
+        )
     )
     directory = tmp_path / f"functional_{field}"
     runtime.checkpoint_bridge.export_checkpoint(

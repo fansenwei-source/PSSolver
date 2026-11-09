@@ -1,12 +1,13 @@
 """RC4.5.5 shared public validation and diagnostics-envelope contract."""
 
 from __future__ import annotations
-
 import json
 from pathlib import Path
 
 import numpy as np
 import pytest
+
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 from pssolver.configuration.execution_device import validate_execution_device
 from pssolver.configuration.public_option_validation import (
@@ -14,15 +15,18 @@ from pssolver.configuration.public_option_validation import (
     validate_public_execution_device,
 )
 from pssolver.workflows.diagnostic_io import diagnostics_metadata_envelope
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
-RC457 = ROOT / ("notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json")
-RC457_RECOVERY = ROOT / ("notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json")
+RC457 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
+)
+RC457_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
+)
 RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
 RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
@@ -35,11 +39,19 @@ RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-RC5_R510 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
-RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
-RC5_R512 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json")
+RC5_R510 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
+RC5_R512 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
-RC5_G1_GLIBC = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+RC5_G1_GLIBC = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
@@ -85,7 +97,10 @@ def _latest_successor(relative: str, historical: str) -> str:
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if registration is not None and registration["historical_sha256"] == resolved:
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
             resolved = registration["current_sha256"]
     return resolve_s03_successor(relative, resolved)
 
@@ -149,13 +164,10 @@ def _pressure(**overrides):
 @pytest.mark.parametrize("fixed", (None, 1, 40))
 def test_shared_pressure_validator_accepts_the_exact_contract(fixed):
     value = _pressure(fixed_iterations=fixed)
-    assert (
-        validate_iterative_pressure_options(
-            value,
-            description="test pressure",
-        )
-        == value
-    )
+    assert validate_iterative_pressure_options(
+        value,
+        description="test pressure",
+    ) == value
 
 
 @pytest.mark.parametrize(

@@ -23,17 +23,17 @@ from pssolver.configuration.simulation import (
     SimulationSpec,
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
-from pssolver.core._validation import require_exact_keys
 from pssolver.core.domain import GridPlacement
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
+from pssolver.core._validation import require_exact_keys
 from pssolver.core.pressure import (
     channel_pressure_minimum_relative_tolerance_for_precision,
 )
+from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.linear_solvers.stokes._pressure_policy import (
     channel_pressure_policy_metadata,
 )
-from pssolver.models.active_nematics.fields import Q_COMPONENTS
 
 
 _EXECUTION_KEYS = frozenset(
@@ -80,8 +80,6 @@ def compile_channel_beris_edwards_public_simulation(
 
     from .public_simulation_runner import (
         PublicCompilationRejectionCode as Code,
-    )
-    from .public_simulation_runner import (
         _reject,
         _validate_invocation_options,
     )
@@ -103,7 +101,8 @@ def compile_channel_beris_edwards_public_simulation(
         )
     if source.execution.runtime_path != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
         _reject(
-            "complete-stress Channel requires runtime_path='channel_complete_stress'",
+            "complete-stress Channel requires "
+            "runtime_path='channel_complete_stress'",
             code=Code.EXECUTION_CONTRACT,
         )
     if source.time_integration.integrator.scheme is not (
@@ -179,7 +178,9 @@ def compile_channel_beris_edwards_public_simulation(
             code=Code.EXECUTION_CONTRACT,
         )
     try:
-        device_normalization = validate_public_execution_device(execution["device"])
+        device_normalization = validate_public_execution_device(
+            execution["device"]
+        )
     except ValueError as exc:
         _reject(str(exc), code=Code.EXECUTION_CONTRACT)
     if not isinstance(execution["disable_q_gradient_reuse"], bool):
@@ -237,7 +238,9 @@ def compile_channel_beris_edwards_public_simulation(
             code=Code.NUMERICS_CONTRACT,
         )
 
-    validate_complete_stress_runtime_parameters(source.equation_system.parameters)
+    validate_complete_stress_runtime_parameters(
+        source.equation_system.parameters
+    )
     stokes = source.equation_system.parameters["stokes"]["parameters"]
     if stokes["pressure_gauge"] != "zero_mean":
         _reject(
@@ -257,11 +260,19 @@ def compile_channel_beris_edwards_public_simulation(
             "schema_version": 1,
             "physical_values_changed": False,
             "pressure_gauge": "zero_mean",
-            "declared_tangential_zero_mode_policy": stokes["tangential_zero_mode_policy"],
+            "declared_tangential_zero_mode_policy": stokes[
+                "tangential_zero_mode_policy"
+            ],
             "effective_tangential_zero_mode_policy": "not_applicable",
-            "velocity_nullspace": ("absent_due_to_two_bounded_no_slip_axes"),
-            "requested_molecular_field_linear_space": execution["molecular_field_linear_space"],
-            "effective_molecular_field_linear_space": execution["molecular_field_linear_space"],
+            "velocity_nullspace": (
+                "absent_due_to_two_bounded_no_slip_axes"
+            ),
+            "requested_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "effective_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
             "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
             **device_normalization,
@@ -269,7 +280,9 @@ def compile_channel_beris_edwards_public_simulation(
                 relative_tolerance=pressure["relative_tolerance"],
                 max_iterations=pressure["max_iterations"],
                 fixed_iterations=pressure["fixed_iterations"],
-                initial_guess_policy=("persistent_production_warm_start"),
+                initial_guess_policy=(
+                    "persistent_production_warm_start"
+                ),
             ),
         },
     )
