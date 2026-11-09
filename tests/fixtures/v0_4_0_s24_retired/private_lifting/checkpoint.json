@@ -1,0 +1,677 @@
+{
+  "backend_restart": {
+    "kind": "legacy_plane_stateless",
+    "state_keys": []
+  },
+  "compatibility_identity": {
+    "backend_restart": {
+      "kind": "backend_restart",
+      "payload": {
+        "kind": "legacy_plane_stateless",
+        "state_keys": []
+      },
+      "schema_version": 1,
+      "version": "plane.backend.v1"
+    },
+    "derivative_dynamics": null,
+    "family": "plane_workflow",
+    "forward_dynamics": {
+      "kind": "forward_dynamics",
+      "payload": {
+        "lifting_dynamics": {
+          "convention": {
+            "S_definition": "S=lambda_max(Q)",
+            "definition": "Q=(3S/2)(nn-I/3)",
+            "id": "de_gennes_S_lambda_max_v1",
+            "uniaxial_eigenvalues": [
+              "S",
+              "-S/2",
+              "-S/2"
+            ],
+            "version": 1
+          },
+          "lifting": {
+            "affine_laplacian_explicit": true,
+            "allocation_lifetime": "construction_owned_static",
+            "component_order": [
+              "Qxx",
+              "Qxy",
+              "Qxz",
+              "Qyy",
+              "Qyz"
+            ],
+            "dtype": "torch.float64",
+            "materialized_lift_sha256": "fc349a1e0f40a7e0485793b1209f766f8ea5d0d1e0fc2fda30af00cdad8dfdef",
+            "plan_sha256": "894139bd6b908a923c5273ca45cf38f328daceab61f2f2baeeec388c77f863af",
+            "shape": [
+              8,
+              8,
+              6
+            ]
+          },
+          "linear_corrections": [
+            {
+              "component": "Qxx",
+              "dtype": "torch.float64",
+              "operator_name": "beris_edwards_linear_lift",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "source_lift_sha256": "bcdeb4d66bf11c368c94415ac7d50ada2b35c35e40fd95ec1a28f903c9d15266",
+              "values_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d"
+            },
+            {
+              "component": "Qxy",
+              "dtype": "torch.float64",
+              "operator_name": "beris_edwards_linear_lift",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "source_lift_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d",
+              "values_sha256": "2a70fe8dfd460788f6fb94baa845b7074fc6264df7baf57ec1791f4c1c5364b4"
+            },
+            {
+              "component": "Qxz",
+              "dtype": "torch.float64",
+              "operator_name": "beris_edwards_linear_lift",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "source_lift_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d",
+              "values_sha256": "2a70fe8dfd460788f6fb94baa845b7074fc6264df7baf57ec1791f4c1c5364b4"
+            },
+            {
+              "component": "Qyy",
+              "dtype": "torch.float64",
+              "operator_name": "beris_edwards_linear_lift",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "source_lift_sha256": "bcdeb4d66bf11c368c94415ac7d50ada2b35c35e40fd95ec1a28f903c9d15266",
+              "values_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d"
+            },
+            {
+              "component": "Qyz",
+              "dtype": "torch.float64",
+              "operator_name": "beris_edwards_linear_lift",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "source_lift_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d",
+              "values_sha256": "2a70fe8dfd460788f6fb94baa845b7074fc6264df7baf57ec1791f4c1c5364b4"
+            }
+          ],
+          "physical_reconstruction": "homogeneous_remainder_plus_lift",
+          "representation": "homogeneous_remainder",
+          "schema_version": 1
+        },
+        "lifting_equation_version": "static_affine_dirichlet.v1",
+        "run_spec_dynamics": {
+          "kind": "forward_dynamics",
+          "payload": {
+            "dynamics_versions": {
+              "q_evolution": "complete_stress_beris_edwards.v1",
+              "spectral_refresh": "semi_implicit_euler_refresh.v1",
+              "stokes_nyquist": "plane_free_slip.periodic_nyquist_zero.v2"
+            },
+            "run_spec": {
+              "boundaries": {
+                "distortion_odd_z": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "dirichlet"
+                  }
+                ],
+                "normal_velocity": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "dirichlet"
+                  }
+                ],
+                "pressure_modal": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "q": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "tangential_velocity": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "wall_normal_axis": 2
+              },
+              "dt": 0.01,
+              "geometry": {
+                "axis_topologies": [
+                  "periodic",
+                  "periodic",
+                  "bounded"
+                ],
+                "bounded_axes": [
+                  2
+                ],
+                "domain": {
+                  "axis_names": [
+                    "x",
+                    "y",
+                    "z"
+                  ],
+                  "grid_placement": "cell_centered",
+                  "lengths": [
+                    100.0,
+                    100.0,
+                    20.0
+                  ],
+                  "shape": [
+                    8,
+                    8,
+                    6
+                  ]
+                },
+                "name": "plane_slab",
+                "periodic_axes": [
+                  0,
+                  1
+                ]
+              },
+              "model": {
+                "beta": -1.0,
+                "eta": 0.6666666666666666,
+                "flow_alignment": 0.3,
+                "gamma": 2.94,
+                "ldg_a": 0.0,
+                "ldg_b": -0.3,
+                "ldg_c": 0.3,
+                "molecular_field_linear_space": "spectral",
+                "pointwise_execution": "eager",
+                "stress_divergence_sum_space": "spectral"
+              },
+              "numerics": {
+                "dealias_rule": "cubic_half",
+                "hermitian_axis": 1,
+                "precision": "float64",
+                "projected_transform_execution": "truncated",
+                "spectral_storage": "hermitian_half",
+                "transform_execution_order": "real_first"
+              },
+              "preset": {
+                "activity_number": 18.0,
+                "activity_ratio_zeta_over_k": 0.81,
+                "equilibrium_q_amplitude": 0.5,
+                "equilibrium_s": 0.33333333333333337,
+                "frank_k": 0.012345679012345678,
+                "height": 20.0,
+                "ldg_a": 0.0,
+                "ldg_a_over_gamma": 0.0,
+                "ldg_b": -0.3,
+                "ldg_b_over_gamma": -0.10204081632653061,
+                "ldg_c": 0.3,
+                "ldg_c_over_gamma": 0.10204081632653061,
+                "ldg_l1": 0.024691358024691357,
+                "ldg_l1_over_gamma": 0.008398421096833794,
+                "parameterization": "paper-window",
+                "rotational_viscosity": 2.94,
+                "zeta": 0.01
+              },
+              "runtime_controls": {
+                "disable_q_gradient_reuse": false,
+                "tf32": "off"
+              },
+              "schema_version": 1,
+              "spectral_refresh": {
+                "effective_interval_steps": 20,
+                "effective_interval_time": 0.2,
+                "mode": "physical_time",
+                "requested_interval_steps": null,
+                "requested_interval_time": 0.2
+              },
+              "zero_mode": {
+                "friction_mode_fric": 0.1,
+                "policy": "zero_mean"
+              }
+            }
+          },
+          "schema_version": 1,
+          "version": "plane.run_spec_dynamics.v2"
+        }
+      },
+      "schema_version": 1,
+      "version": "plane.forward.v2"
+    },
+    "runtime_path": "legacy_production",
+    "schema_version": 1,
+    "state_layout": {
+      "kind": "state_layout",
+      "payload": {
+        "component_order": [
+          "Qxx",
+          "Qxy",
+          "Qxz",
+          "Qyy",
+          "Qyz"
+        ],
+        "spatial": {
+          "Qxx": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          }
+        },
+        "spectral": {
+          "Qxx": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          }
+        }
+      },
+      "schema_version": 1,
+      "version": "plane.state.v2"
+    }
+  },
+  "compatibility_identity_sha256": "df3c284191061eb5c11c54e70cfa330a776a145712f27dc9fce6d8f68f0eb9f8",
+  "completed_steps": 1,
+  "evolved_components": [
+    "Qxx",
+    "Qxy",
+    "Qxz",
+    "Qyy",
+    "Qyz"
+  ],
+  "format_version": 3,
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": 20,
+    "step_count": 1
+  },
+  "lifting_restart": {
+    "convention": {
+      "S_definition": "S=lambda_max(Q)",
+      "definition": "Q=(3S/2)(nn-I/3)",
+      "id": "de_gennes_S_lambda_max_v1",
+      "uniaxial_eigenvalues": [
+        "S",
+        "-S/2",
+        "-S/2"
+      ],
+      "version": 1
+    },
+    "lifting": {
+      "affine_laplacian_explicit": true,
+      "allocation_lifetime": "construction_owned_static",
+      "component_order": [
+        "Qxx",
+        "Qxy",
+        "Qxz",
+        "Qyy",
+        "Qyz"
+      ],
+      "dtype": "torch.float64",
+      "materialized_lift_sha256": "fc349a1e0f40a7e0485793b1209f766f8ea5d0d1e0fc2fda30af00cdad8dfdef",
+      "plan_sha256": "894139bd6b908a923c5273ca45cf38f328daceab61f2f2baeeec388c77f863af",
+      "shape": [
+        8,
+        8,
+        6
+      ]
+    },
+    "linear_corrections": [
+      {
+        "component": "Qxx",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          8,
+          8,
+          6
+        ],
+        "source_lift_sha256": "bcdeb4d66bf11c368c94415ac7d50ada2b35c35e40fd95ec1a28f903c9d15266",
+        "values_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d"
+      },
+      {
+        "component": "Qxy",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          8,
+          8,
+          6
+        ],
+        "source_lift_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d",
+        "values_sha256": "2a70fe8dfd460788f6fb94baa845b7074fc6264df7baf57ec1791f4c1c5364b4"
+      },
+      {
+        "component": "Qxz",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          8,
+          8,
+          6
+        ],
+        "source_lift_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d",
+        "values_sha256": "2a70fe8dfd460788f6fb94baa845b7074fc6264df7baf57ec1791f4c1c5364b4"
+      },
+      {
+        "component": "Qyy",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          8,
+          8,
+          6
+        ],
+        "source_lift_sha256": "bcdeb4d66bf11c368c94415ac7d50ada2b35c35e40fd95ec1a28f903c9d15266",
+        "values_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d"
+      },
+      {
+        "component": "Qyz",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          8,
+          8,
+          6
+        ],
+        "source_lift_sha256": "61103152c00d1815d1193628975bbcbdaa7edd5289da9391b1ae1e211996265d",
+        "values_sha256": "2a70fe8dfd460788f6fb94baa845b7074fc6264df7baf57ec1791f4c1c5364b4"
+      }
+    ],
+    "materialization_provenance": {
+      "lifting_device": "cpu",
+      "linear_correction_devices": [
+        "cpu",
+        "cpu",
+        "cpu",
+        "cpu",
+        "cpu"
+      ]
+    },
+    "physical_reconstruction": "homogeneous_remainder_plus_lift",
+    "representation": "homogeneous_remainder",
+    "schema_version": 1
+  },
+  "metadata_sha256": "f0aa070a2db8ed49438bb49182eb453b6aa9f940fa82f47426d80191c6097a8a",
+  "run_provenance": {
+    "fresh_construction": {
+      "checkpoint_compatibility_identity": false,
+      "conditioning": {
+        "affected_components": [
+          "Qxx",
+          "Qxy",
+          "Qxz",
+          "Qyy",
+          "Qyz"
+        ],
+        "affected_field": "Q",
+        "effective_policy": "strict_no_automatic_conditioning_v1",
+        "formula": "r_conditioned = r_raw",
+        "fresh_only": true,
+        "requested_policy": "strict_no_automatic_conditioning_v1",
+        "schema_version": 1,
+        "transition_width": null,
+        "transition_width_units": "not_applicable"
+      },
+      "conditioning_applied": true,
+      "forward_dynamics_identity": false,
+      "restored_state_reconditioned": false,
+      "schema_version": 1
+    },
+    "legacy_runtime_identity_sha256": "a9dae3f1b0ad7c8c33c68f746399b3078580ad5a16286478025815fcf6d05a32"
+  },
+  "runtime_path": "legacy_production",
+  "tensor_files": {
+    "evolved_spatial": {
+      "Qxx": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxx.npy",
+        "sha256": "1ef686c21f04f0fca3c2c8e8c3df075e7a84a0e5edfbef552a67f9ace38f8643",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxy.npy",
+        "sha256": "5eb28f33d9b77412e3df3a5c887eb3ee49cf80628eaaeb2dc7b106396f8c7a87",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxz.npy",
+        "sha256": "6743182ca49d042ac631b71a2a8f041d09ea3f701236eb93287b441c08fcf72e",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyy.npy",
+        "sha256": "f18c3ed8cbd57ac23aae94a7bde0a674adac43122117f19736167cc772038091",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyz.npy",
+        "sha256": "beb050b721111cc2667925e586cc90c07f1c5dec75720a263dc43ff13eaa546e",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      }
+    },
+    "evolved_spectral": {
+      "Qxx": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxx.npy",
+        "sha256": "3e70fdacc409a8ffd30afaeee33d1004507dd4b2018fdddb79015e365136fc5a",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxy.npy",
+        "sha256": "0d6c42c965d89159e70099469da337a57c6c25d30f06a39cc66507fb9bd88439",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxz.npy",
+        "sha256": "eb54d0c36b700deb2e8e238081db4a3d44e8616b1759c166be60d80d2203e743",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyy.npy",
+        "sha256": "eded9890959a2f33e400ee4693083a5913090ceee51d783d444044b344dd7e8e",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyz.npy",
+        "sha256": "ba3e3a7f0b429dc80dea57eb13c0155b39d369892b03d0ba8647532b8d5e8f49",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,544 @@
+{
+  "backend_restart": {
+    "algebraic_restart": {
+      "format_version": 1,
+      "systems": [
+        {
+          "capability": "beris_edwards_molecular_field",
+          "implementation_name": "plane_projected_beris_edwards_molecular_field",
+          "provenance_sha256": "3e0b1351f1608ba649971ae43a2ef74df39e9b3756314fe7bd6413bf6816db67",
+          "system_name": "molecular_field",
+          "tensors": {}
+        },
+        {
+          "capability": "beris_edwards_q_gradient",
+          "implementation_name": "plane_native_projected_q_gradient",
+          "provenance_sha256": "bcb886eca06649a87492ff2dc7316f83c3ab049502679b1fa5b517a447c669f2",
+          "system_name": "q_gradient",
+          "tensors": {}
+        },
+        {
+          "capability": "beris_edwards_stress",
+          "implementation_name": "plane_projected_complete_beris_edwards_stress",
+          "provenance_sha256": "3b47c371ee054ea553558bda882e763c02dec7a896710843e32f20f20e1b4646",
+          "system_name": "nematic_stress",
+          "tensors": {}
+        },
+        {
+          "capability": "beris_edwards_force",
+          "implementation_name": "plane_projected_complete_stress_divergence",
+          "provenance_sha256": "7a2980b31950c811536328510a8af6d867a1382df4b14a76fec1a66c9240bb5f",
+          "system_name": "nematic_force",
+          "tensors": {}
+        },
+        {
+          "capability": "incompressible_stokes",
+          "implementation_name": "plane_free_slip_modal_stokes",
+          "provenance_sha256": "f166c66290ae9258ac06a740de3bc70af4568355e1bae181c5fa39458af0db94",
+          "system_name": "flow",
+          "tensors": {}
+        },
+        {
+          "capability": "beris_edwards_velocity_gradient",
+          "implementation_name": "plane_native_projected_velocity_gradient",
+          "provenance_sha256": "e017bdb8d2b81b002a5d73acf35ec6fcb7a2de14f843321f5a09a70113322845",
+          "system_name": "velocity_gradient",
+          "tensors": {}
+        }
+      ]
+    },
+    "kind": "separated_plane_stateless_algebraic",
+    "state_keys": []
+  },
+  "compatibility_identity": {
+    "backend_restart": {
+      "kind": "backend_restart",
+      "payload": {
+        "algebraic_restart": {
+          "format_version": 1,
+          "systems": [
+            {
+              "capability": "beris_edwards_molecular_field",
+              "implementation_name": "plane_projected_beris_edwards_molecular_field",
+              "provenance_sha256": "3e0b1351f1608ba649971ae43a2ef74df39e9b3756314fe7bd6413bf6816db67",
+              "system_name": "molecular_field",
+              "tensors": {}
+            },
+            {
+              "capability": "beris_edwards_q_gradient",
+              "implementation_name": "plane_native_projected_q_gradient",
+              "provenance_sha256": "bcb886eca06649a87492ff2dc7316f83c3ab049502679b1fa5b517a447c669f2",
+              "system_name": "q_gradient",
+              "tensors": {}
+            },
+            {
+              "capability": "beris_edwards_stress",
+              "implementation_name": "plane_projected_complete_beris_edwards_stress",
+              "provenance_sha256": "3b47c371ee054ea553558bda882e763c02dec7a896710843e32f20f20e1b4646",
+              "system_name": "nematic_stress",
+              "tensors": {}
+            },
+            {
+              "capability": "beris_edwards_force",
+              "implementation_name": "plane_projected_complete_stress_divergence",
+              "provenance_sha256": "7a2980b31950c811536328510a8af6d867a1382df4b14a76fec1a66c9240bb5f",
+              "system_name": "nematic_force",
+              "tensors": {}
+            },
+            {
+              "capability": "incompressible_stokes",
+              "implementation_name": "plane_free_slip_modal_stokes",
+              "provenance_sha256": "f166c66290ae9258ac06a740de3bc70af4568355e1bae181c5fa39458af0db94",
+              "system_name": "flow",
+              "tensors": {}
+            },
+            {
+              "capability": "beris_edwards_velocity_gradient",
+              "implementation_name": "plane_native_projected_velocity_gradient",
+              "provenance_sha256": "e017bdb8d2b81b002a5d73acf35ec6fcb7a2de14f843321f5a09a70113322845",
+              "system_name": "velocity_gradient",
+              "tensors": {}
+            }
+          ]
+        },
+        "kind": "separated_plane_stateless_algebraic",
+        "state_keys": []
+      },
+      "schema_version": 1,
+      "version": "plane.backend.v1"
+    },
+    "derivative_dynamics": null,
+    "family": "plane_workflow",
+    "forward_dynamics": {
+      "kind": "forward_dynamics",
+      "payload": {
+        "lifting_dynamics": null,
+        "lifting_equation_version": "none",
+        "run_spec_dynamics": {
+          "kind": "forward_dynamics",
+          "payload": {
+            "dynamics_versions": {
+              "q_evolution": "complete_stress_beris_edwards.v1",
+              "spectral_refresh": "semi_implicit_euler_refresh.v1",
+              "stokes_nyquist": "plane_free_slip.periodic_nyquist_zero.v2"
+            },
+            "run_spec": {
+              "boundaries": {
+                "distortion_odd_z": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "dirichlet"
+                  }
+                ],
+                "normal_velocity": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "dirichlet"
+                  }
+                ],
+                "pressure_modal": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "q": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "tangential_velocity": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "wall_normal_axis": 2
+              },
+              "dt": 0.01,
+              "geometry": {
+                "axis_topologies": [
+                  "periodic",
+                  "periodic",
+                  "bounded"
+                ],
+                "bounded_axes": [
+                  2
+                ],
+                "domain": {
+                  "axis_names": [
+                    "x",
+                    "y",
+                    "z"
+                  ],
+                  "grid_placement": "cell_centered",
+                  "lengths": [
+                    100.0,
+                    100.0,
+                    20.0
+                  ],
+                  "shape": [
+                    8,
+                    8,
+                    6
+                  ]
+                },
+                "name": "plane_slab",
+                "periodic_axes": [
+                  0,
+                  1
+                ]
+              },
+              "model": {
+                "beta": -1.0,
+                "eta": 0.6666666666666666,
+                "flow_alignment": 0.3,
+                "gamma": 2.94,
+                "ldg_a": 0.0,
+                "ldg_b": -0.3,
+                "ldg_c": 0.3,
+                "molecular_field_linear_space": "spectral",
+                "pointwise_execution": "eager",
+                "stress_divergence_sum_space": "spectral"
+              },
+              "numerics": {
+                "dealias_rule": "cubic_half",
+                "hermitian_axis": 1,
+                "precision": "float64",
+                "projected_transform_execution": "truncated",
+                "spectral_storage": "hermitian_half",
+                "transform_execution_order": "real_first"
+              },
+              "preset": {
+                "activity_number": 18.0,
+                "activity_ratio_zeta_over_k": 0.81,
+                "equilibrium_q_amplitude": 0.5,
+                "equilibrium_s": 0.33333333333333337,
+                "frank_k": 0.012345679012345678,
+                "height": 20.0,
+                "ldg_a": 0.0,
+                "ldg_a_over_gamma": 0.0,
+                "ldg_b": -0.3,
+                "ldg_b_over_gamma": -0.10204081632653061,
+                "ldg_c": 0.3,
+                "ldg_c_over_gamma": 0.10204081632653061,
+                "ldg_l1": 0.024691358024691357,
+                "ldg_l1_over_gamma": 0.008398421096833794,
+                "parameterization": "paper-window",
+                "rotational_viscosity": 2.94,
+                "zeta": 0.01
+              },
+              "runtime_controls": {
+                "disable_q_gradient_reuse": false,
+                "tf32": "off"
+              },
+              "schema_version": 1,
+              "spectral_refresh": {
+                "effective_interval_steps": 20,
+                "effective_interval_time": 0.2,
+                "mode": "physical_time",
+                "requested_interval_steps": null,
+                "requested_interval_time": 0.2
+              },
+              "zero_mode": {
+                "friction_mode_fric": 0.1,
+                "policy": "zero_mean"
+              }
+            }
+          },
+          "schema_version": 1,
+          "version": "plane.run_spec_dynamics.v2"
+        }
+      },
+      "schema_version": 1,
+      "version": "plane.forward.v2"
+    },
+    "runtime_path": "separated_canary",
+    "schema_version": 1,
+    "state_layout": {
+      "kind": "state_layout",
+      "payload": {
+        "component_order": [
+          "Qxx",
+          "Qxy",
+          "Qxz",
+          "Qyy",
+          "Qyz"
+        ],
+        "spatial": {
+          "Qxx": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              8,
+              8,
+              6
+            ]
+          }
+        },
+        "spectral": {
+          "Qxx": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              8,
+              5,
+              6
+            ]
+          }
+        }
+      },
+      "schema_version": 1,
+      "version": "plane.state.v2"
+    }
+  },
+  "compatibility_identity_sha256": "0611259362e6ad568396fa8a73115dae2c3d67629c3595ae9abf88e21c8f6a31",
+  "completed_steps": 1,
+  "evolved_components": [
+    "Qxx",
+    "Qxy",
+    "Qxz",
+    "Qyy",
+    "Qyz"
+  ],
+  "format_version": 3,
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": 20,
+    "step_count": 1
+  },
+  "metadata_sha256": "324dc26b458a7af86a1b991291505c4657c6fb59a6c641755d892cf0bfb3dc8e",
+  "run_provenance": {
+    "legacy_runtime_identity_sha256": "06071eb6ec8f17f9ca855275e3d6199898ab2770dc392141eb2f7a6cf979556b"
+  },
+  "runtime_path": "separated_canary",
+  "tensor_files": {
+    "evolved_spatial": {
+      "Qxx": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxx.npy",
+        "sha256": "c540226d6da0e54958d3b30f03b2d8ec6cba7e256968336a28d579b04de0ed0e",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxy.npy",
+        "sha256": "c04451456092f2bf4622d2398eb691b9bd298b0911f54a3f06b7b11957547219",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxz.npy",
+        "sha256": "925ecc9690278955e7ac98ad7afcb40c5711c44a7cbd10fdd6c03deee33f8221",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyy.npy",
+        "sha256": "0cf092f2b0e16bdf5fe6fcc45a22a181c29395b6a6638fb5d47e024e6c97aac3",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyz.npy",
+        "sha256": "e38584ad6ac4a0a70e59c7dd68584ecbe054f9e115965625ebdf13faed4f0d8e",
+        "shape": [
+          1,
+          8,
+          8,
+          6
+        ]
+      }
+    },
+    "evolved_spectral": {
+      "Qxx": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxx.npy",
+        "sha256": "be774b97e3edc075f09e8444150c86bf712ecf193da3756c276fb468033fe64a",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxy.npy",
+        "sha256": "b17178882ae8ecb8f15b38340184950430a62fccf4ffb7a3477da3b78f569e66",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxz.npy",
+        "sha256": "666f82d14e1bd4f27a7b5d2c2de8cde2e3d8ca8359bc034c960931d49cc309d3",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyy.npy",
+        "sha256": "806705713bcc0b2e0317bcaf32fd2efcbaf5dfc592c5396ce0d21362c8414c31",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyz.npy",
+        "sha256": "a44481bd14f79a1243e4947dd3eaec46a5c280b724cfc79184a0c3007671800d",
+        "shape": [
+          1,
+          8,
+          5,
+          6
+        ]
+      }
+    }
+  }
+}
