@@ -5,6 +5,8 @@
 # PSSOLVER_INSTALLED_PYTHON. Ordinary/numerical source tests use the active CPU environment.
 [categories]
 functional = [
+  "tests/test_v0_5_s26_assembly.py",
+  "tests/test_v0_5_s26_rework.py",
   "tests/test_v0_5_s25_engineering.py",
   "tests/test_v0_5_s25_dispatch_counter.py",
   "tests/test_v0_5_s24_successor.py",
@@ -88,6 +90,7 @@ functional = [
   "tests/test_verify_v0_4_s16_numerical_equivalence.py",
 ]
 numerical = [
+  "tests/test_v0_5_s26_allen_cahn.py",
   "tests/test_v0_5_s25_batch.py",
   "tests/test_v0_5_s25_engine_core.py",
   "tests/mms/test_primitives.py",
@@ -98,7 +101,6 @@ numerical = [
   "tests/test_analyze_fig4_convergence.py",
   "tests/test_analyze_fig4_defect_core_convergence.py",
   "tests/test_analyze_phase6_long_run_equivalence.py",
-  "tests/test_architecture_stage_c.py",
   "tests/test_architecture_stage_d.py",
   "tests/test_architecture_stage_e.py",
   "tests/test_architecture_stage_f.py",
@@ -214,6 +216,7 @@ numerical = [
   "tests/test_validate_beris_edwards_outputs.py",
 ]
 historical = [
+  "tests/test_v0_5_s26_historical_tests.py",
     "tests/test_v0_5_s24_rework.py",
     "tests/test_v0_5_s25_disposition.py",
   "tests/test_v0_5_s25_stokes_extraction.py",
