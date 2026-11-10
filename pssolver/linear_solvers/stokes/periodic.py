@@ -148,6 +148,32 @@ class PeriodicModalStokesSolver(torch.nn.Module):
     def solve_force_hats(self, fx_hat, fy_hat, fz_hat):
         """Return divergence-free velocity and zero-mean pressure spectra."""
 
+        result, diagnostics = self.solve_force_hats_with_diagnostics(
+            fx_hat, fy_hat, fz_hat, pressure_diagnostics=self.pressure_diagnostics
+        )
+        self.last_pressure_hat = diagnostics["pressure_hat"]
+        self.last_pressure_iterations = diagnostics["pressure_iterations"]
+        if self.pressure_diagnostics:
+            residual_norm = diagnostics["residual_norm"].item()
+            force_norm = diagnostics["force_norm"].item()
+            self.last_pressure_residual = residual_norm
+            self.last_pressure_relative_residual = (
+                residual_norm / force_norm if force_norm else 0.0
+            )
+        else:
+            self.last_pressure_residual = math.nan
+            self.last_pressure_relative_residual = math.nan
+        return result
+
+    def solve_force_hats_with_diagnostics(
+        self, fx_hat, fy_hat, fz_hat, *, pressure_diagnostics
+    ):
+        """Return the same spectra and caller-owned tensor diagnostics.
+
+        No module attributes are assigned and no tensor is converted to a host
+        scalar. Inputs retain their leading batch dimensions and are not mutated.
+        """
+
         force = torch.stack((fx_hat, fy_hat, fz_hat))
         if force.shape[-3:] != self.helmholtz_inverse.shape:
             raise ValueError("periodic force spectra have an incompatible shape")
@@ -166,20 +192,19 @@ class PeriodicModalStokesSolver(torch.nn.Module):
         gradient = ik * pressure_hat.unsqueeze(0)
         velocity = (force - gradient) * inverse.unsqueeze(0)
 
-        self.last_pressure_hat = pressure_hat.detach()
-        self.last_pressure_iterations = 1
-        if self.pressure_diagnostics:
+        if pressure_diagnostics:
             residual = self.divergence_hat(*velocity)
-            residual_norm = torch.linalg.vector_norm(residual.reshape(-1)).item()
-            force_norm = torch.linalg.vector_norm(force.reshape(-1)).item()
-            self.last_pressure_residual = residual_norm
-            self.last_pressure_relative_residual = (
-                residual_norm / force_norm if force_norm else 0.0
-            )
+            residual_norm = torch.linalg.vector_norm(residual.reshape(-1))
+            force_norm = torch.linalg.vector_norm(force.reshape(-1))
         else:
-            self.last_pressure_residual = math.nan
-            self.last_pressure_relative_residual = math.nan
-        return (*tuple(velocity), pressure_hat)
+            residual_norm = None
+            force_norm = None
+        return (*tuple(velocity), pressure_hat), {
+            "pressure_hat": pressure_hat.detach(),
+            "pressure_iterations": 1,
+            "residual_norm": residual_norm,
+            "force_norm": force_norm,
+        }
 
     def _solve_force_hats(self, fx_hat, fy_hat, fz_hat):
         return self.solve_force_hats(fx_hat, fy_hat, fz_hat)

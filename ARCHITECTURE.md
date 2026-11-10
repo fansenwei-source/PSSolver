@@ -281,3 +281,20 @@ Counts are of modules touched; the target is at most three.
 
 The numbers are tracked as trends, not gates. A regression is explained in the
 release design.
+# S-25 Periodic draft boundary
+
+The Periodic production and functional paths share `engine.Engine` and caller-owned
+`engine.State`. The torch-free `planning.periodic` produces a Plan. The v0.4 RunSpec,
+identity, upgrade and embedded-identity validation remain in
+`configuration.legacy_periodic` until S-28 (D-0051 A). `io.legacy.periodic_workflow`
+contains only the frozen carrier and its read/write operations. `runtime.legacy_entry`
+owns the declaration-to-Engine entrance; `runtime.runner` owns scheduling and output.
+Plane and Channel remain on their existing paths. The protected physics and Plane
+solver files are unchanged. No old Periodic adapter shell remains.
+
+Frozen benchmark consumers of deleted Periodic modules are not repaired here. Their
+original tests execute in the v0.4 historical checkout; exact non-importable chains
+are recorded in `qualification/s25_expected_unimportable.json` for S-30. S-24's test
+audit ends at aee8289; S-25 changes are audited independently by
+`qualification/s25_test_disposition.json`. This section describes an unqualified draft,
+not a claim that T1–T25 or K2 has passed.

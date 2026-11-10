@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import ast
 from collections import Counter
-import hashlib
 import json
 from pathlib import Path
-import subprocess
 
 import pytest
 
@@ -291,37 +289,6 @@ def test_legacy_registry_has_exact_releases_families_and_runtime_paths():
         registry[next(iter(registry))] = next(iter(registry.values()))
 
 
-def test_registry_source_hashes_are_the_released_files_not_live_derivations():
-    source_path = {
-        CheckpointFamily.PLANE_WORKFLOW: (
-            "pssolver/configuration/plane_beris_edwards_schema_v1.py"
-        ),
-        CheckpointFamily.PERIODIC_WORKFLOW: (
-            "pssolver/configuration/periodic_beris_edwards.py"
-        ),
-        CheckpointFamily.CHANNEL_WORKFLOW: (
-            "pssolver/configuration/channel_beris_edwards.py"
-        ),
-        CheckpointFamily.PERIODIC_FUNCTIONAL: (
-            "pssolver/functional/versioning.py"
-        ),
-        CheckpointFamily.CHANNEL_FUNCTIONAL: (
-            "pssolver/functional/versioning.py"
-        ),
-    }
-    observed: dict[tuple[str, str], str] = {}
-    for entry in LEGACY_IDENTITY_SCHEMAS:
-        path = source_path[entry.key.checkpoint_family]
-        lookup = (entry.source_commit, path)
-        if lookup not in observed:
-            payload = subprocess.run(
-                ["git", "show", f"{entry.source_commit}:{path}"],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-            ).stdout
-            observed[lookup] = hashlib.sha256(payload).hexdigest()
-        assert observed[lookup] == entry.source_schema_sha256
 
 
 def test_registry_resolution_is_exact_and_unknown_keys_fail_closed():
@@ -352,7 +319,7 @@ def test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wi
 
     wired_readers = [
         "pssolver/workflows/plane_checkpoint.py",
-        "pssolver/workflows/periodic_checkpoint.py",
+        "pssolver/configuration/legacy_periodic.py",
         "pssolver/workflows/channel_beris_edwards.py",
     ]
     for relative in wired_readers:

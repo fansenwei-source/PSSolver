@@ -5,7 +5,7 @@ from copy import deepcopy
 import pytest
 
 from qualification.identity.analyze import validate_sampling
-from qualification.identity.runtime_case import RuntimeCase
+from qualification.identity.runtime_case_v2 import RuntimeCaseV2 as RuntimeCase
 from qualification.identity.sampling import restart_contract, sample, trace
 from qualification.identity.scenarios import scenarios
 from tests._dynamic_flags import set_dynamic_flag
@@ -25,9 +25,11 @@ def scene(family):
 )
 def test_identical_event_schedule_restores_exact_fields_and_clocks(tmp_path, family):
     row = scene(family)
-    recorded = trace(row, tmp_path)
+    recorded = trace(row, tmp_path, case_factory=RuntimeCase)
     validate_sampling({"disposition": "accepted", "scene": row, "trace": recorded})
     for start, replay in recorded["restarts"].items():
+        if family == "periodic":
+            assert recorded["restart_contracts"][start]["raw_metadata_differences"] == []
         changed = deepcopy(replay)
         changed[0]["after_checkpoint"]["step"] += 1
         assert not restart_contract(recorded["steps"], changed, int(start))[
@@ -61,7 +63,7 @@ def test_resumed_schedule_replays_later_checkpoint_events(tmp_path):
 def test_pre_update_callback_records_the_rhs_input_after_synchronization(tmp_path, monkeypatch):
     case = RuntimeCase(scene("periodic"), tmp_path)
     calls = []
-    update = case.solver.model.update_static_fields
+    update = case.prepare
     record = case.record
 
     def update_then_mark():
@@ -72,12 +74,12 @@ def test_pre_update_callback_records_the_rhs_input_after_synchronization(tmp_pat
         calls.append("callback")
         return record()
 
-    monkeypatch.setattr(case.solver.model, "update_static_fields", update_then_mark)
+    monkeypatch.setattr(case, "prepare", update_then_mark)
     monkeypatch.setattr(case, "record", record_then_mark)
     before = case.step()
     assert calls == ["algebraic", "callback"]
-    # This flag is a one-use restore/reuse token, not an observation timestamp.
-    assert before["step"] == 0 and not before["progress"]["constraints_current"]
+    # Engine's explicit prepare publishes the current constraint token (section 9).
+    assert before["step"] == 0 and before["progress"]["constraints_current"]
     assert case.record()["step"] == 1
 
 

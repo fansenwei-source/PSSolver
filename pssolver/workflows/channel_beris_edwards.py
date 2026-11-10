@@ -45,11 +45,11 @@ from pssolver.runtime.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     ChannelBerisEdwardsRuntimeAdapterProtocol,
 )
-from .diagnostic_io import (
+from pssolver.io.diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
-from .state_validation import require_finite_tensors
+from pssolver.runtime.state_validation import require_finite_tensors
 from pssolver.errors import SimulationRestartError, SimulationStateError
 from pssolver.io.checkpoint import CheckpointError
 from pssolver.linear_solvers.stokes._pressure_policy import (

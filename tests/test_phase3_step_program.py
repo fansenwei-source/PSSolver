@@ -6,8 +6,8 @@ import pytest
 import torch
 
 import pssolver
-from pssolver.execution.state import IntegratorProgress, RuntimeState
-from pssolver.execution.workspace import (
+from pssolver.engine.progress import IntegratorProgress, RuntimeState
+from pssolver.engine.workspace import (
     WorkspacePlan,
     WorkspaceSlotSpec,
 )

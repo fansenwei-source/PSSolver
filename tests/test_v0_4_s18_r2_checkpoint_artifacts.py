@@ -127,7 +127,7 @@ def test_r2_writers_delegate_to_one_private_owner() -> None:
         "pssolver/functional/channel_checkpoint.py": ("write_standard_tensor_record"),
         "pssolver/integrators/reference_checkpoint.py": ("write_reference_tensor_record"),
         "pssolver/workflows/finite_q_anchoring.py": ("write_sized_tensor_record"),
-        "pssolver/workflows/periodic_checkpoint.py": ("write_standard_tensor_record"),
+        "pssolver/io/legacy/periodic_workflow.py": ("write_standard_tensor_record"),
         "pssolver/workflows/plane_checkpoint.py": ("write_standard_tensor_record"),
     }
     for relative, helper in expected.items():

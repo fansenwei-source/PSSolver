@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from qualification.s25_source_paths import source_path
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = (
@@ -17,7 +19,7 @@ RECORD = (
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(source_path(ROOT, path.relative_to(ROOT).as_posix()).read_bytes()).hexdigest()
 
 
 def test_p82_record_is_local_candidate_and_does_not_overclaim_h100_closure():
@@ -41,6 +43,6 @@ def test_p82_record_preserves_well_formed_frozen_source_identities():
     # the hashes of the then-qualified files as historical evidence rather
     # than silently rewriting them to the current worktree.
     for relative, frozen in record["source_sha256"].items():
-        assert (ROOT / relative).is_file()
+        assert source_path(ROOT, relative).is_file()
         assert len(frozen) == 64
         int(frozen, 16)

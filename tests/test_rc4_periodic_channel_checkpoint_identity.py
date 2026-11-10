@@ -22,7 +22,7 @@ from pssolver import (
     compile_simulation,
 )
 from pssolver.applications.channel_beris_edwards import load_channel_initial_q
-from pssolver.applications.periodic_beris_edwards import load_periodic_initial_q
+from pssolver.configuration.legacy_periodic import load_periodic_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -47,11 +47,8 @@ from pssolver.runtime.channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
     build_channel_beris_edwards_runtime,
 )
-from pssolver.runtime.periodic_beris_edwards import (
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
-from pssolver.workflows import periodic_checkpoint as periodic_module
+from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
+from pssolver.io.legacy import periodic_workflow as periodic_module
 from pssolver.workflows.channel_beris_edwards import (
     CHECKPOINT_VERSION as CHANNEL_CHECKPOINT_VERSION,
     _load_checkpoint as load_channel_checkpoint,
@@ -59,15 +56,19 @@ from pssolver.workflows.channel_beris_edwards import (
     upgrade_channel_beris_edwards_checkpoint_directory,
     write_channel_beris_edwards_checkpoint,
 )
-from pssolver.workflows.periodic_checkpoint import (
+from pssolver.io.legacy.periodic_workflow import (
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_V1,
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    capture_periodic_checkpoint,
     load_periodic_checkpoint,
-    restore_periodic_checkpoint,
-    upgrade_periodic_checkpoint_directory,
     write_periodic_checkpoint,
+)
+from tests.v0_5_s25_periodic_v04_checkpoint import (
+    capture_periodic_checkpoint,
+    restore_periodic_checkpoint,
+)
+from pssolver.configuration.legacy_periodic import (
+    upgrade_periodic_checkpoint_directory,
 )
 
 
@@ -156,13 +157,7 @@ def _periodic_runtime(simulation):
     compiled = compile_simulation(simulation)
     run_spec = compiled.application_request
     initial, _, _ = load_periodic_initial_q(run_spec)
-    adapter = build_periodic_beris_edwards_runtime(
-        PeriodicRuntimeBuildRequest(
-            run_spec=run_spec,
-            initial_values=initial,
-            device="cpu",
-        )
-    )
+    _, adapter = production_handle(simulation)
     return run_spec, adapter
 
 
@@ -345,7 +340,8 @@ def test_periodic_refresh_policy_mismatch_rejects_before_target_mutation(tmp_pat
     run_spec, source = _periodic_runtime(
         _periodic_simulation(tmp_path, "hermitian_half")
     )
-    source.advance(2)
+    for _ in range(2):
+        source.engine.step_(source.state)
     directory = write_periodic_checkpoint(
         tmp_path / "periodic",
         capture_periodic_checkpoint(source, run_spec=run_spec),
@@ -461,7 +457,8 @@ def test_m08_rc1_hermitian_half_upgrades_and_restores(tmp_path):
     target_spec, target = _periodic_runtime(
         _periodic_simulation(tmp_path, "hermitian_half", device="auto")
     )
-    source.advance(2)
+    for _ in range(2):
+        source.engine.step_(source.state)
     legacy = _periodic_legacy(
         capture_periodic_checkpoint(source, run_spec=run_spec),
         SourceReleaseGeneration.RC1,

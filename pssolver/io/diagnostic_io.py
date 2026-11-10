@@ -27,10 +27,7 @@ def diagnostics_metadata_envelope(
     if not isinstance(enabled, bool):
         raise TypeError("diagnostics enabled must be a bool")
     steps = list(steps)
-    if any(
-        not isinstance(step, int) or isinstance(step, bool) or step < 0
-        for step in steps
-    ):
+    if any(not isinstance(step, int) or isinstance(step, bool) or step < 0 for step in steps):
         raise ValueError("diagnostics steps must be non-negative integers")
     dtype = np.dtype(dtype)
     if dtype.names is None:

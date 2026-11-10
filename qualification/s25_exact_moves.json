@@ -1,0 +1,336 @@
+{
+  "source_commit": "aee82899d091b0d3bbfa62f0fe1cf83817574285",
+  "exact_moves": [
+    {
+      "source": "pssolver/configuration/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "PeriodicBerisEdwardsRunSpec",
+      "target_lines": [
+        92,
+        135
+      ],
+      "sha256": "779368724ab547ddea10d391bbd36cc093f885a383fd0c0f6784b7563b5775ca"
+    },
+    {
+      "source": "pssolver/configuration/public_periodic_simulation_compiler.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_exact_keys",
+      "target_lines": [
+        138,
+        146
+      ],
+      "sha256": "87631be1cc70db1efba003d241e3b34d9f9dc3b08940e82156f5692a55095934"
+    },
+    {
+      "source": "pssolver/configuration/public_periodic_simulation_compiler.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "compile_periodic_public_simulation",
+      "target_lines": [
+        149,
+        363
+      ],
+      "sha256": "fad2de04fc242033b000b19d9a9fcfb5f2b41e42765f67b72068a703a423120a"
+    },
+    {
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_sha256",
+      "target_lines": [
+        366,
+        371
+      ],
+      "sha256": "f069ea7c4598b39a65b4a69411801241abefd464def08f70bafda4d183cd7026"
+    },
+    {
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_reject_input",
+      "target_lines": [
+        374,
+        403
+      ],
+      "sha256": "947a1545c96662334cea6c7479e36f2ae8acdc48811ec0d9d3f823357f2bdbbb"
+    },
+    {
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_reject_restart",
+      "target_lines": [
+        848,
+        865
+      ],
+      "sha256": "6faf8a52247cd9173ee8839b171c570148fd51e00f1103adc0cb65c6e1799673"
+    },
+    {
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "load_periodic_initial_q",
+      "target_lines": [
+        406,
+        466
+      ],
+      "sha256": "d84e0da42792b6a26d0ab7d336de06e337d368a917a60d467d5bbd870c339cde"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_periodic_run_spec_dynamics",
+      "target_lines": [
+        511,
+        523
+      ],
+      "sha256": "4bd0b607fb2e509d79868a6465912137a6a09e85a1ea8874ee673b0b718205c6"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "periodic_forward_dynamics_identity",
+      "target_lines": [
+        526,
+        545
+      ],
+      "sha256": "3692d02aed78933eb85ae5a3a30fde9dcfa9a122bbb82fa0a2fd239bf9afa010"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_periodic_state_layout_identity",
+      "target_lines": [
+        548,
+        569
+      ],
+      "sha256": "fb6225c74bcc364ffefd01ab04885bcd86330c659361924d3544073827fede5b"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_periodic_backend_restart_identity",
+      "target_lines": [
+        572,
+        583
+      ],
+      "sha256": "43d7e13c91e19ad45c863b827b9316bd6f704ed07f798df93d7f8100c448ebfa"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "build_periodic_checkpoint_compatibility_identity",
+      "target_lines": [
+        586,
+        602
+      ],
+      "sha256": "25afa82a37e81084ffe330961f2cc46eb8232d2fb00cbf45c305058f5cc9c66f"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_validate_periodic_embedded_identity",
+      "target_lines": [
+        605,
+        628
+      ],
+      "sha256": "1bcceac514d8d0045124683545f081d6c92e63c64eb73683e2919c9140712eee"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "_validate_legacy_periodic_upgrade_contract",
+      "target_lines": [
+        631,
+        672
+      ],
+      "sha256": "74ab884946617bdafde4005bf94a00e2d3952ba526371b9dd232e6b2cc3804e5"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "upgrade_periodic_checkpoint",
+      "target_lines": [
+        675,
+        724
+      ],
+      "sha256": "e31d1999f5c9cf94acc3cc219ef15766d8fc284c27ad927ad57072604e605a09"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "unit": "upgrade_periodic_checkpoint_directory",
+      "target_lines": [
+        727,
+        766
+      ],
+      "sha256": "7ef87321d2125d03aa4dc5c672dc4e9860828d9b2388614737f302a1a6448ea8"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_sha256",
+      "target_lines": [
+        63,
+        64
+      ],
+      "sha256": "48c759256ac84d2cbd0635bd987e17fcf1cc99f41707da8a5d67ca3326f3c6d5"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_require_sha256",
+      "target_lines": [
+        67,
+        74
+      ],
+      "sha256": "a1febd85482d72c207948a0e77729bd0293b65ab19b09de0082192a199094aad"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_json_mapping",
+      "target_lines": [
+        77,
+        84
+      ],
+      "sha256": "4e727e2e3d7eb02408c4f228ef009a69ba74c9814b5ff58dabe5c89297d24f7c"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_clone_tensors",
+      "target_lines": [
+        87,
+        100
+      ],
+      "sha256": "6b2d0db968be197379199e6e1b4799541cff0b01a7415faef57e7c4c9ba30d9d"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_validate_progress",
+      "target_lines": [
+        103,
+        132
+      ],
+      "sha256": "f37b1d421b9596e2ea287cc52299ff06813aa2096662fba1b0b561d64161676a"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "PeriodicCheckpointHeader",
+      "target_lines": [
+        135,
+        189
+      ],
+      "sha256": "e46452023461fcac6b2dc26970bb984280759816989121ffe6415a7522399d94"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "PeriodicWorkflowCheckpoint",
+      "target_lines": [
+        192,
+        291
+      ],
+      "sha256": "31a78b724d49e3a43723f6f836da8d2e2c6be2904621c94f0e9deb73b47146fe"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_write_tensor",
+      "target_lines": [
+        294,
+        299
+      ],
+      "sha256": "091e56c14922ace51fc1a3a16e4844fcb86bb0462cf67cc83bef5d0a5d70c573"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "write_periodic_checkpoint",
+      "target_lines": [
+        302,
+        341
+      ],
+      "sha256": "aa9b3f97db34f24dbba049505b56b04760dcecda93037cdd938c66283aa22f30"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_read_metadata",
+      "target_lines": [
+        344,
+        419
+      ],
+      "sha256": "ba00b69c224e9614f3aae70a7fe3b8d937e0a685847ce617b098e2eee9b0b5e6"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "read_periodic_checkpoint_header",
+      "target_lines": [
+        422,
+        503
+      ],
+      "sha256": "7f3f8fb5728456110e750c33450325c9325d041ba3ebb409ef5cb8ad8d50c887"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_load_tensor",
+      "target_lines": [
+        506,
+        565
+      ],
+      "sha256": "cd88ad5a52ff5dc859783f0502155c37d5220c2e8a6c62bc3d09cd0204a0f37e"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "load_periodic_checkpoint",
+      "target_lines": [
+        568,
+        613
+      ],
+      "sha256": "014507baaab9a34a5f0aff77357f9cceecd142730cda277e84b1707f21a656f7"
+    },
+    {
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "unit": "_legacy_periodic_format_for_generation",
+      "target_lines": [
+        616,
+        625
+      ],
+      "sha256": "cc920b778fe39c74c48c0c09111d1cf3589baeb27b2e8f91267abf891e137c1d"
+    },
+    {
+      "source": "pssolver/runtime/periodic_beris_edwards.py",
+      "target": "pssolver/models/active_nematics/engine_terms.py",
+      "unit": "_BerisEdwardsPeriodicStokes",
+      "target_lines": [
+        17,
+        96
+      ],
+      "sha256": "b9f93e5fca9724badfccb5d51e0529aee43c53bcc51b39ea10d9628d8988c5f7"
+    },
+    {
+      "source": "pssolver/workflows/periodic_beris_edwards.py",
+      "target": "pssolver/runtime/observations.py",
+      "unit": "PeriodicObservation",
+      "target_lines": [
+        16,
+        49
+      ],
+      "sha256": "43a07977041144c65a19c7112a0916ece4722e07232f85f4ca7ebf19ce59b8d7"
+    },
+    {
+      "source": "pssolver/workflows/periodic_beris_edwards.py",
+      "target": "pssolver/runtime/observations.py",
+      "unit": "PeriodicDiagnostic",
+      "target_lines": [
+        52,
+        78
+      ],
+      "sha256": "b05d354d02a7b544aa70cfcecc3e596c40a2cd899528eba159c5a20f811928a5"
+    }
+  ],
+  "policy": "R-0084 F005: exact unit bytes, rule and relative line; new glue has zero diagnostics"
+}

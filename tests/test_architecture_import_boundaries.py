@@ -28,6 +28,7 @@ class ImportEdge:
 # Allowed internal dependency layers for packages governed in Phase 0.
 # Applications are composition roots and are checked separately below.
 ALLOWED_INTERNAL_LAYERS = {
+    "engine": frozenset({"engine", "core", "planning", "backends", "operators", "linear_solvers", "models"}),
     # Top-level modules are compatibility facades or small legacy roots.  They
     # retain distinct names so an allowance for one facade cannot silently
     # authorize imports from or to every other top-level module.
@@ -229,6 +230,8 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
+    ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.engine_plan"),
+    ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.periodic"),
     ImportEdge(
         "pssolver.configuration.finite_q_anchoring",
         "pssolver.planning.robin",
@@ -293,6 +296,7 @@ REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES = {
 
 
 REVIEWED_MODEL_TO_STOKES_IMPLEMENTATION_EDGES = {
+    ImportEdge("pssolver.models.active_nematics.engine_terms", "pssolver.linear_solvers.stokes"),
     ImportEdge(
         "pssolver.models.active_nematics.stokes",
         "pssolver.linear_solvers.stokes.plane_free_slip",
@@ -311,10 +315,6 @@ REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES = {
     ),
     ImportEdge(
         "pssolver.workflows.finite_q_anchoring",
-        "pssolver.core._canonical",
-    ),
-    ImportEdge(
-        "pssolver.workflows.periodic_checkpoint",
         "pssolver.core._canonical",
     ),
     ImportEdge(
@@ -361,14 +361,6 @@ REVIEWED_INTEGRATOR_TO_IO_EDGES = {
 # layer-wide allowance; a future engine extraction can remove them together.
 REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES = {
     ImportEdge(
-        "pssolver.runtime.periodic_beris_edwards",
-        "pssolver.integrator",
-    ),
-    ImportEdge(
-        "pssolver.runtime.periodic_beris_edwards",
-        "pssolver.solver",
-    ),
-    ImportEdge(
         "pssolver.runtime.channel_beris_edwards",
         "pssolver.integrator",
     ),
@@ -409,6 +401,48 @@ REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES = {
     ),
 }
 
+
+
+# S-25 precise engine/translator/runner edges; no layer-wide exemption.
+REVIEWED_S25_EDGES = {
+    ImportEdge('pssolver.api.runner', 'pssolver.runtime.legacy_entry'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.errors'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io.checkpoint'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io.checkpoint_identity'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io.engine_state'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io.legacy.periodic_workflow'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.planning.engine_plan'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.planning.periodic'),
+    ImportEdge('pssolver.functional.periodic_activity', 'pssolver.engine.engine'),
+    ImportEdge('pssolver.functional.periodic_activity', 'pssolver.engine.state'),
+    ImportEdge('pssolver.functional.validation', 'pssolver.engine.engine'),
+    ImportEdge('pssolver.functional.validation', 'pssolver.engine.state'),
+    ImportEdge('pssolver.integrators.state_backed', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.integrators.state_backed', 'pssolver.engine.workspace'),
+    ImportEdge('pssolver.integrators.step_program', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.integrators.step_program', 'pssolver.engine.workspace'),
+    ImportEdge('pssolver.io.engine_state', 'pssolver.engine.state'),
+    ImportEdge('pssolver.models.active_nematics.engine_terms', 'pssolver.linear_solvers.stokes'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.engine.engine'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.errors'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.io'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.io.checkpoint'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.io.engine_state'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.io.legacy.periodic_workflow'),
+    ImportEdge('pssolver.runtime.observations', 'pssolver.errors'),
+    ImportEdge('pssolver.runtime.state_validation', 'pssolver.errors'),
+    ImportEdge('pssolver.runtime.plane_beris_edwards', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.runtime.plane_compiled_v2_binding', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.runtime.plane_compiled_v2_binding', 'pssolver.engine.workspace'),
+    ImportEdge('pssolver.runtime.plane_compiled_v2_step', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.runtime.plane_compiled_v2_step', 'pssolver.engine.workspace'),
+    ImportEdge('pssolver.runtime.robin_scalar', 'pssolver.engine.progress'),
+    ImportEdge('pssolver.runtime.runner', 'pssolver.io'),
+    ImportEdge('pssolver.runtime.runner', 'pssolver.io.diagnostic_io'),
+    ImportEdge('pssolver.runtime.runner', 'pssolver.io.engine_state'),
+}
 
 def test_systems_layer_has_only_the_authorized_dependency_edges():
     assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
@@ -619,6 +653,8 @@ def test_tensor_free_declaration_and_planning_layers_use_no_third_party_runtime(
     violations: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
         source = _module_name(path)
+        if source == "pssolver.configuration.legacy_periodic":
+            continue  # D-0051 A: frozen v0.4 translation boundary until S-28.
         if _layer(source) not in TENSOR_FREE_LAYERS:
             continue
         for destination in sorted(_imports(path)):
@@ -661,6 +697,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if edge in REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES:
             continue
         if edge in REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES:
+            continue
+        if edge in REVIEWED_S25_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)

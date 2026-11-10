@@ -92,13 +92,13 @@ _PLANE = ApplicationRegistration(
 _PERIODIC = ApplicationRegistration(
     "complete_stress_beris_edwards", "periodic_box",
     "periodic_complete_stress_beris_edwards",
-    "pssolver.configuration.public_periodic_simulation_compiler."
+    "pssolver.configuration.legacy_periodic."
     "compile_periodic_public_simulation",
     True, "periodic", ("periodic", "periodic", "periodic"),
     _COMPLETE_CAPABILITIES, ("periodic_spectral",),
-    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest",
-    "pssolver.runtime.periodic_beris_edwards.build_periodic_beris_edwards_runtime",
-    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol",
+    "pssolver.configuration.legacy_periodic.PeriodicTranslation",
+    "pssolver.engine.engine.Engine",
+    "pssolver.engine.engine.Engine",
     False, "periodic construction requires PeriodicRuntimeBuildRequest",
 )
 _CHANNEL_COMPLETE = ApplicationRegistration(

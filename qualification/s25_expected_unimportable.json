@@ -1,0 +1,1870 @@
+[
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_periodic_hermitian_profiles",
+          "benchmarks.profile_periodic_hermitian_qualification",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_periodic_hermitian_profiles",
+          "benchmarks.profile_periodic_hermitian_qualification",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_periodic_hermitian_profiles",
+          "benchmarks.profile_periodic_hermitian_qualification",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_periodic_hermitian_profiles",
+    "path": "benchmarks/analyze_periodic_hermitian_profiles.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+    "path": "benchmarks/analyze_phase9_p95_gradient_diagnostic.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+    "path": "benchmarks/analyze_phase9_p95_gradient_validator_v2.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_reserved_memory_recovery",
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_reserved_memory_recovery",
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_reserved_memory_recovery",
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc458_reserved_memory_recovery",
+    "path": "benchmarks/analyze_rc458_reserved_memory_recovery.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc458_tf32_h100",
+    "path": "benchmarks/analyze_rc458_tf32_h100.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc458_transform_counter_recovery",
+    "path": "benchmarks/analyze_rc458_transform_counter_recovery.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_cumulative_closure",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_cumulative_closure",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_cumulative_closure",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc5_g1_cumulative_closure",
+    "path": "benchmarks/analyze_rc5_g1_cumulative_closure.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc5_g1_focused_performance_h100",
+    "path": "benchmarks/analyze_rc5_g1_focused_performance_h100.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc5_g1_h100",
+    "path": "benchmarks/analyze_rc5_g1_h100.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_measurement_window_h100",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_measurement_window_h100",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_measurement_window_h100",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc5_g1_measurement_window_h100",
+    "path": "benchmarks/analyze_rc5_g1_measurement_window_h100.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc5_g1_timing_instrumentation",
+    "path": "benchmarks/analyze_rc5_g1_timing_instrumentation.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.analyze_rc6_single_h100",
+    "path": "benchmarks/analyze_rc6_single_h100.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.assemble_rc5_g1_auxiliary",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc5_g1_auxiliary",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc5_g1_auxiliary",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.assemble_rc5_g1_auxiliary",
+    "path": "benchmarks/assemble_rc5_g1_auxiliary.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.assemble_rc6_h100_auxiliary",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc6_h100_auxiliary",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc6_h100_auxiliary",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.assemble_rc6_h100_auxiliary",
+    "path": "benchmarks/assemble_rc6_h100_auxiliary.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.build_rc6_single_h100_stage_plan",
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.build_rc6_single_h100_stage_plan",
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.build_rc6_single_h100_stage_plan",
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.build_rc6_single_h100_stage_plan",
+    "path": "benchmarks/build_rc6_single_h100_stage_plan.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+    "path": "benchmarks/diagnose_phase9_p95_gradient_epsilon.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+    "path": "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.diagnose_rc451_cross_runtime_residuals",
+          "pssolver.workflows.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 72,
+        "name": "PERIODIC_DIAGNOSTIC_DTYPE",
+        "target": "pssolver.workflows.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc451_cross_runtime_residuals",
+          "pssolver.workflows.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 72,
+        "name": "PERIODIC_DIAGNOSTIC_HEADER",
+        "target": "pssolver.workflows.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.diagnose_rc451_cross_runtime_residuals",
+    "path": "benchmarks/diagnose_rc451_cross_runtime_residuals.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+    "path": "benchmarks/diagnose_rc5_g1_timing_instrumentation.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.profile_periodic_functional",
+    "path": "benchmarks/profile_periodic_functional.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.profile_periodic_hermitian_qualification",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_periodic_hermitian_qualification",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_periodic_hermitian_qualification",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.profile_periodic_hermitian_qualification",
+    "path": "benchmarks/profile_periodic_hermitian_qualification.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.profile_rc458_runtime_family",
+    "path": "benchmarks/profile_rc458_runtime_family.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.profile_rc5_g1_runtime_family",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc5_g1_runtime_family",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc5_g1_runtime_family",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.profile_rc5_g1_runtime_family",
+    "path": "benchmarks/profile_rc5_g1_runtime_family.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+    "path": "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.qualify_rc458_tf32_scope",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc458_tf32_scope",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc458_tf32_scope",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.qualify_rc458_tf32_scope",
+    "path": "benchmarks/qualify_rc458_tf32_scope.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_periodic_hermitian_profile_matrix",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_periodic_hermitian_profile_matrix",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_periodic_hermitian_profile_matrix",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_periodic_hermitian_profile_matrix",
+    "path": "benchmarks/run_periodic_hermitian_profile_matrix.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_phase9_p95_gradient_diagnostic",
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_phase9_p95_gradient_diagnostic",
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_phase9_p95_gradient_diagnostic",
+          "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_phase9_p95_gradient_diagnostic",
+    "path": "benchmarks/run_phase9_p95_gradient_diagnostic.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_phase9_p95_gradient_validator_v2",
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_phase9_p95_gradient_validator_v2",
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_phase9_p95_gradient_validator_v2",
+          "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+          "benchmarks.profile_periodic_functional",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 52,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_phase9_p95_gradient_validator_v2",
+    "path": "benchmarks/run_phase9_p95_gradient_validator_v2.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc5_g1_focused_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_focused_profile_matrix.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_paired_block_profile_matrix.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_stage_plan",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_stage_plan",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_stage_plan",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc5_g1_stage_plan",
+    "path": "benchmarks/run_rc5_g1_stage_plan.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_timing_instrumentation",
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_timing_instrumentation",
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_timing_instrumentation",
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc5_g1_timing_instrumentation",
+    "path": "benchmarks/run_rc5_g1_timing_instrumentation.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc6_profile_child",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_profile_child",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_profile_child",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc6_profile_child",
+    "path": "benchmarks/run_rc6_profile_child.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_rc6_single_h100_stage_plan",
+    "path": "benchmarks/run_rc6_single_h100_stage_plan.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+    "path": "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+    "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+    "path": "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_numerical",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 54,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_numerical",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_numerical",
+          "benchmarks.profile_rc458_runtime_family",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 91,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.run_v0_3_s09_numerical",
+    "path": "benchmarks/run_v0_3_s09_numerical.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 70,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 70,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "capture_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "load_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "restore_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "write_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.v0_2_0_checkpoint_fixtures",
+    "path": "benchmarks/v0_2_0_checkpoint_fixtures.py"
+  },
+  {
+    "basis": "R-0082 section 2A and section 4",
+    "chains": [
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.applications.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 36,
+        "name": "load_periodic_initial_q",
+        "target": "pssolver.applications.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 70,
+        "name": "PeriodicRuntimeBuildRequest",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.periodic_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 70,
+        "name": "build_periodic_beris_edwards_runtime",
+        "target": "pssolver.runtime.periodic_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "capture_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "load_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "restore_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.periodic_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 86,
+        "name": "write_periodic_checkpoint",
+        "target": "pssolver.workflows.periodic_checkpoint"
+      }
+    ],
+    "disposition": "frozen; S-30",
+    "module": "benchmarks.verify_v0_3_s10_build_fingerprints",
+    "path": "benchmarks/verify_v0_3_s10_build_fingerprints.py"
+  }
+]

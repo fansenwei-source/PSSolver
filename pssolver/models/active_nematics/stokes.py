@@ -415,25 +415,37 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         return self.compute_nematic_force(fields, alpha)
 
     def forward(self, fields, params):
-        alpha = params["alpha"]
+        return self.constrained_hats(
+            fields, params["alpha"], solve=self.solve_force_hats,
+            record=lambda name, value: setattr(self, name, value),
+        )
+
+    def constrained_hats(self, fields, alpha, *, solve, record):
+        """Compute force in the legacy order with caller-selected solve and recording.
+
+        Passing ``record=None`` suppresses force diagnostics and their attribute
+        writes. The solver controls its own diagnostics; Engine supplies the
+        stateless Periodic solve, while legacy forward retains MRO dispatch.
+        """
         force, active_tangential_force = self.compute_nematic_force(
             fields,
             alpha,
         )
 
-        total_mean = force[:2].mean(dim=(-3, -2, -1)).detach()
-        active_mean = active_tangential_force.mean(
-            dim=(-3, -2, -1)
-        ).detach()
-        self.last_total_tangential_force_mean = total_mean
-        self.last_tangential_force_mean = total_mean
-        self.last_active_tangential_force_mean = active_mean
-        self.last_passive_tangential_force_mean = total_mean - active_mean
-        self.last_removed_tangential_force_mean = (
-            total_mean
-            if self.has_tangential_null_mode
-            else torch.zeros_like(total_mean)
-        )
+        if record is not None:
+            total_mean = force[:2].mean(dim=(-3, -2, -1)).detach()
+            active_mean = active_tangential_force.mean(
+                dim=(-3, -2, -1)
+            ).detach()
+            record("last_total_tangential_force_mean", total_mean)
+            record("last_tangential_force_mean", total_mean)
+            record("last_active_tangential_force_mean", active_mean)
+            record("last_passive_tangential_force_mean", total_mean - active_mean)
+            record("last_removed_tangential_force_mean", (
+                total_mean
+                if self.has_tangential_null_mode
+                else torch.zeros_like(total_mean)
+            ))
 
         # Project the complete force before the coupled saddle solve.
         force_tangential_hat = self.spectral_projector.forward_transform(
@@ -444,19 +456,20 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             force[2],
             self.normal_boundary_conditions,
         )
-        if self.cache_force_diagnostics:
-            self.last_projected_normal_force = (
-                self.spectral_projector.inverse_transform(
-                    force_normal_hat,
-                    self.normal_boundary_conditions,
-                ).detach()
-            )
-        else:
-            self.last_projected_normal_force = None
+        if record is not None:
+            if self.cache_force_diagnostics:
+                record("last_projected_normal_force", (
+                    self.spectral_projector.inverse_transform(
+                        force_normal_hat,
+                        self.normal_boundary_conditions,
+                    ).detach()
+                ))
+            else:
+                record("last_projected_normal_force", None)
         del active_tangential_force, force
 
         fx_hat, fy_hat = force_tangential_hat
-        ux_hat, uy_hat, uz_hat, pressure_hat = self.solve_force_hats(
+        ux_hat, uy_hat, uz_hat, pressure_hat = solve(
             fx_hat,
             fy_hat,
             force_normal_hat,

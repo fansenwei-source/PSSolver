@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import json
+import subprocess
 from pathlib import Path
 
 
@@ -55,16 +56,17 @@ def _spectral_refresh_inventory() -> set[str]:
         "_advance_spectral_refresh_clock",
     }
     found: set[str] = set()
-    for path in (ROOT / "pssolver").rglob("*.py"):
-        text = path.read_text(encoding="utf-8")
-        if not any(
-            token in text
-            for token in ("spectral_refresh", "refresh_count", "_refresh_dynamic_spectra")
-        ):
+    revision = "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", revision, "pssolver"], cwd=ROOT, text=True).splitlines()
+    for relative in paths:
+        if not relative.endswith(".py"):
             continue
-        names = _definition_names(path)
+        text = subprocess.check_output(["git", "show", revision + ":" + relative], cwd=ROOT, text=True)
+        if not any(token in text for token in ("spectral_refresh", "refresh_count", "_refresh_dynamic_spectra")):
+            continue
+        names = {node.name for node in ast.walk(ast.parse(text)) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))}
         if control_names & names or any("checkpoint" in name.lower() for name in names):
-            found.add(path.relative_to(ROOT).as_posix())
+            found.add(relative)
     return found
 
 

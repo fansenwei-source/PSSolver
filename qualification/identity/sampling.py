@@ -58,18 +58,19 @@ def restart_contract(continuous: list[dict], resumed: list[dict], start: int) ->
     }
 
 
-def trace(scene: dict, root: Path) -> dict:
+def trace(scene: dict, root: Path, *, case_factory=None) -> dict:
     """Record one continuous run and resumptions with identical event schedules."""
     from qualification.identity.runtime_case import RuntimeCase
 
-    case = RuntimeCase(scene, root)
+    factory = RuntimeCase if case_factory is None else case_factory
+    case = factory(scene, root)
     identity = case.identity()
     rows = [sample(case, root, step) for step in range(scene["steps"] + 1)]
     del case
     gc.collect()
     resumptions, contracts = {}, {}
     for start in scene["restart_steps"]:
-        restored = RuntimeCase(scene, root)
+        restored = factory(scene, root)
         restored.restore(root / f"restart_{start}", start)
         continued = [
             sample(restored, root, step, restart_from=start)

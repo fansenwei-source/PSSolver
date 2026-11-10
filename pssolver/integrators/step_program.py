@@ -13,8 +13,8 @@ from typing import Protocol
 
 import torch
 
-from pssolver.execution.state import RuntimeState
-from pssolver.execution.workspace import RuntimeWorkspace
+from pssolver.engine.progress import RuntimeState
+from pssolver.engine.workspace import RuntimeWorkspace
 
 
 class StepOperation(Protocol):

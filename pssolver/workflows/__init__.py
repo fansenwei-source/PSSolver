@@ -41,21 +41,21 @@ from .plane_observation import (
     write_plane_diagnostics,
     write_plane_observation,
 )
-from .periodic_checkpoint import (
+from pssolver.io.legacy.periodic_workflow import (
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_V1,
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PeriodicCheckpointHeader,
     PeriodicWorkflowCheckpoint,
-    build_periodic_checkpoint_compatibility_identity,
-    capture_periodic_checkpoint,
     load_periodic_checkpoint,
-    periodic_forward_dynamics_identity,
     read_periodic_checkpoint_header,
-    restore_periodic_checkpoint,
+    write_periodic_checkpoint,
+)
+from pssolver.configuration.legacy_periodic import (
+    build_periodic_checkpoint_compatibility_identity,
+    periodic_forward_dynamics_identity,
     upgrade_periodic_checkpoint,
     upgrade_periodic_checkpoint_directory,
-    write_periodic_checkpoint,
 )
 from .channel_beris_edwards import (
     CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_CHECKPOINT_VERSION,
@@ -137,11 +137,9 @@ __all__ = [
     "PeriodicCheckpointHeader",
     "PeriodicWorkflowCheckpoint",
     "build_periodic_checkpoint_compatibility_identity",
-    "capture_periodic_checkpoint",
     "load_periodic_checkpoint",
     "periodic_forward_dynamics_identity",
     "read_periodic_checkpoint_header",
-    "restore_periodic_checkpoint",
     "upgrade_periodic_checkpoint",
     "upgrade_periodic_checkpoint_directory",
     "write_periodic_checkpoint",

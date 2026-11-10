@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from qualification.s25_source_paths import source_path
 from tests.v0_3_s03_successor import resolve_s03_successor
 
 
@@ -142,7 +143,7 @@ def _assert_successor_chain(
 
 
 def _sha256(relative: str) -> str:
-    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+    return hashlib.sha256(source_path(ROOT, relative).read_bytes()).hexdigest()
 
 
 def test_rc424_record_binds_parent_plans_and_implementation_files():

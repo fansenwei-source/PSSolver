@@ -19,7 +19,7 @@ from pssolver import (
     TimeStepping,
     TorchSpectralExecution,
 )
-from pssolver.applications.periodic_beris_edwards import load_periodic_initial_q
+from pssolver.configuration.legacy_periodic import load_periodic_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -38,10 +38,7 @@ from pssolver.functional import (
 )
 from pssolver.geometries import PeriodicBox
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.runtime.periodic_beris_edwards import (
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
+from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 
 
 def _simulation(tmp_path: Path) -> Simulation:
@@ -128,13 +125,7 @@ def _control(runtime, value: float = 0.013):
 def _production(simulation):
     compiled = compile_public_simulation(simulation.specification)
     initial_values, _, _ = load_periodic_initial_q(compiled.run_spec)
-    return build_periodic_beris_edwards_runtime(
-        PeriodicRuntimeBuildRequest(
-            run_spec=compiled.run_spec,
-            initial_values=initial_values,
-            device="cpu",
-        )
-    )
+    return production_handle(simulation)[1]
 
 
 class _DetachedInputProxy:

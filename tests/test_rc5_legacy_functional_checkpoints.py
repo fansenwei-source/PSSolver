@@ -342,7 +342,7 @@ def test_stripped_periodic_rc1_functional_checkpoint_cannot_downgrade(
     if marker.exists():
         marker.unlink()
     monkeypatch.setattr(
-        "pssolver.workflows.periodic_checkpoint._load_tensor",
+        "pssolver.io.legacy.periodic_workflow._load_tensor",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 

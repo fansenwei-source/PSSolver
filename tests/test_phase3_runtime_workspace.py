@@ -7,7 +7,7 @@ import torch
 
 import pssolver
 import pssolver.execution as execution
-from pssolver.execution.workspace import (
+from pssolver.engine.workspace import (
     RuntimeWorkspace,
     WorkspacePlan,
     WorkspaceSlotSpec,

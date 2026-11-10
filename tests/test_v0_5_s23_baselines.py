@@ -8,8 +8,9 @@ import pytest
 from qualification.identity.analyze import compact, digest
 from qualification.identity.checkpoint_fixtures import continue_case
 from qualification.identity.historical_continuations import replay
+from qualification.identity.periodic_comparison import compact_periodic
 from qualification.identity.records import fingerprint, require_fingerprint
-from qualification.identity.runtime_case import RuntimeCase
+from qualification.identity.runtime_case_v2 import RuntimeCaseV2 as RuntimeCase
 from qualification.identity.sampling import trace
 from qualification.identity.vjp import vjp_record
 
@@ -19,6 +20,7 @@ BASELINES = ROOT / "baselines/v0_4"
 TABLE = json.loads((BASELINES / "trajectories.json").read_text())
 FIXTURES = ROOT / "fixtures/v0_4_0_s23"
 CHECKPOINT = json.loads((BASELINES / "checkpoint_continuations.json").read_text())
+PERIODIC_V2 = json.loads((ROOT / "baselines/s25/periodic_comparison.json").read_text())
 FIXTURE_MANIFEST = json.loads((FIXTURES / "manifest.json").read_text())
 HISTORICAL = json.loads((BASELINES / "historical_continuations.json").read_text())
 
@@ -42,15 +44,27 @@ def test_replay_recorded_release_trajectory(name, tmp_path):
             message=str(error),
         )
     else:
-        result.update(disposition="accepted", trace=trace(scene, tmp_path))
+        result.update(
+            disposition="accepted", trace=trace(scene, tmp_path, case_factory=RuntimeCase)
+        )
         if scene["family"].startswith("functional_"):
             result["vjp"] = vjp_record(scene, tmp_path)
-    assert compact(result) == expected
+    if scene["family"] == "periodic":
+        if result["disposition"] == "accepted":
+            assert all(
+                not contract["raw_metadata_differences"]
+                for contract in result["trace"]["restart_contracts"].values()
+            )
+        assert compact_periodic(result) == PERIODIC_V2["cases"][name]
+    else:
+        assert compact(result) == expected
 
 
 @pytest.mark.parametrize("scene", FIXTURE_MANIFEST["scenes"], ids=lambda item: item["id"])
 def test_released_checkpoint_sixteen_step_continuation(scene, tmp_path):
-    actual = continue_case(scene, FIXTURES / scene["id"], tmp_path / "runtime")
+    actual = continue_case(
+        scene, FIXTURES / scene["id"], tmp_path / "runtime", case_factory=RuntimeCase
+    )
     assert [digest(row) for row in actual] == CHECKPOINT["cases"][scene["id"]]
 
 

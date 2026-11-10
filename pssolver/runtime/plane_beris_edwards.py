@@ -25,7 +25,7 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.execution.state import RuntimeState
+from pssolver.engine.progress import RuntimeState
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.models.active_nematics import Q_COMPONENTS

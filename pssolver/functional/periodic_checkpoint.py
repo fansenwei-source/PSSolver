@@ -11,7 +11,7 @@ import torch
 from pssolver.core._canonical import canonical_json
 from pssolver.core._canonical import canonical_sha256
 
-from pssolver.configuration.periodic_beris_edwards import (
+from pssolver.configuration.legacy_periodic import (
     PERIODIC_RUNTIME_PATH,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
@@ -29,8 +29,8 @@ from pssolver.io.checkpoint_identity import (
     SourceReleaseGeneration,
     resolve_legacy_identity_schema,
 )
-from pssolver.runtime.periodic_beris_edwards import PERIODIC_BOUNDARIES
-from pssolver.workflows.periodic_checkpoint import (
+from pssolver.models.active_nematics.engine_terms import PERIODIC_BOUNDARIES
+from pssolver.io.legacy.periodic_workflow import (
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PeriodicWorkflowCheckpoint,
     load_periodic_checkpoint,

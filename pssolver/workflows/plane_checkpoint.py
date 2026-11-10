@@ -46,7 +46,7 @@ from pssolver.runtime import (
     plane_lifting_restart_metadata,
     verify_plane_lifting_identity,
 )
-from .state_validation import require_finite_tensors
+from pssolver.runtime.state_validation import require_finite_tensors
 
 
 PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1

@@ -19,6 +19,7 @@ files = ["pssolver/api", "pssolver/core"]
 show_error_codes = true
 
 [tool.pssolver.import-contracts]
+engine = ["pssolver.api", "pssolver.applications", "pssolver.workflows", "pssolver.configuration", "pssolver.functional", "pssolver.runtime", "pssolver.io"]
 core = ["torch"]
 backends = ["pssolver.api", "pssolver.applications", "pssolver.workflows", "pssolver.runtime"]
 operators = ["pssolver.api", "pssolver.applications", "pssolver.workflows", "pssolver.runtime"]

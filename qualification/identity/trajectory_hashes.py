@@ -50,7 +50,13 @@ def main() -> None:
     parser.add_argument("--scenes", type=Path)
     parser.add_argument("--scene-id")
     parser.add_argument("--discover", action="store_true")
+    parser.add_argument("--candidate-adapter", choices=("v1", "v2"), default="v1")
     args = parser.parse_args()
+    case_factory = RuntimeCase
+    if args.candidate_adapter == "v2":
+        from qualification.identity.runtime_case_v2 import RuntimeCaseV2
+
+        case_factory = RuntimeCaseV2
     if args.output.exists() or args.work.exists():
         raise FileExistsError("Work and output must initially be absent")
     if torch.cuda.is_initialized():
@@ -82,7 +88,7 @@ def main() -> None:
         result = {"scene": scene}
         try:
             try:
-                case = RuntimeCase(scene, work)
+                case = case_factory(scene, work)
             except (ValueError, TypeError, NotImplementedError) as error:
                 result.update(
                     disposition="rejected",
@@ -94,7 +100,7 @@ def main() -> None:
                 del case
                 gc.collect()
                 if not args.discover:
-                    result["trace"] = trace(scene, work)
+                    result["trace"] = trace(scene, work, case_factory=case_factory)
                     if scene["family"].startswith("functional_"):
                         from qualification.identity.vjp import vjp_record
 

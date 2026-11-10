@@ -20,7 +20,6 @@ from benchmarks.run_rc426_cross_device_checkpoint import (
     _atomic_json,
     _run_channel,
     _run_functional,
-    _run_periodic,
     _run_plane,
     matrix_plan,
 )
@@ -143,7 +142,6 @@ def test_plane_cell_protocol_executes_on_cpu(
 @pytest.mark.parametrize(
     ("family", "runtime_path", "executor"),
     (
-        ("periodic_production", "periodic_spectral", _run_periodic),
         ("channel_production", "channel_complete_stress", _run_channel),
         ("periodic_functional", "periodic_activity_batch_one", _run_functional),
         ("channel_functional", "channel_activity_batch_one", _run_functional),

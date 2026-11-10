@@ -14,6 +14,7 @@ from tools import check
 
 
 ROOT = Path(__file__).resolve().parents[1]
+S24_ENDPOINT = "aee82899d091b0d3bbfa62f0fe1cf83817574285"
 
 
 def test_rework_is_forward_bound_without_rewriting_successor_141():
@@ -36,11 +37,14 @@ def test_rework_is_forward_bound_without_rewriting_successor_141():
 
 
 def test_retained_ast_equal_units_keep_the_exact_baseline_text():
-    assert retained_changes(ROOT)["format_only"] == []
+    assert retained_changes(ROOT, endpoint=S24_ENDPOINT)["format_only"] == []
 
 
 def test_every_changed_retained_test_unit_has_a_disposition_and_exact_history():
-    actual = {(row["path"], row["unit"]) for row in retained_changes(ROOT, ("tests",))["semantic"]}
+    actual = {
+        (row["path"], row["unit"])
+        for row in retained_changes(ROOT, ("tests",), endpoint=S24_ENDPOINT)["semantic"]
+    }
     dispositions = json.loads((ROOT / "qualification/s24_test_disposition.json").read_text())
     manifest = json.loads((ROOT / "qualification/historical_stage_tests.json").read_text())
     nodes = set(manifest["nodeids"])

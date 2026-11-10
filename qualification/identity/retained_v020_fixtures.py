@@ -27,7 +27,6 @@ from pssolver import (
     compile_simulation,
 )
 from pssolver.applications.channel_beris_edwards import load_channel_initial_q
-from pssolver.applications.periodic_beris_edwards import load_periodic_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -36,14 +35,20 @@ from pssolver.boundaries import (
     no_slip_velocity,
 )
 from pssolver.configuration import create_plane_beris_edwards_run_spec
+from pssolver.configuration.legacy_periodic import translate_periodic
 from pssolver.configuration.simulation import InvocationSpec
+from pssolver.engine import Engine
 from pssolver.functional import (
     build_channel_activity_functional_runtime,
     build_functional_runtime,
     channel_activity_functional_request,
     periodic_activity_functional_request,
 )
+from pssolver.functional.validation import PeriodicProductionHandle
 from pssolver.geometries import PeriodicBox, RectangularChannel
+from pssolver.io.legacy.periodic_workflow import (
+    load_periodic_checkpoint as load_periodic_checkpoint,
+)
 from pssolver.models.active_nematics import (
     Q_COMPONENTS,
     VELOCITY_COMPONENTS,
@@ -53,20 +58,11 @@ from pssolver.runtime.channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
     build_channel_beris_edwards_runtime,
 )
-from pssolver.runtime.periodic_beris_edwards import (
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
+from pssolver.runtime.legacy_entry import restore_periodic_state
 from pssolver.runtime.plane_beris_edwards import LegacyPlaneRuntimeAdapter
 from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
 from pssolver.workflows.channel_beris_edwards import (
     _load_checkpoint,
-)
-from pssolver.workflows.periodic_checkpoint import (
-    load_periodic_checkpoint as load_periodic_checkpoint,
-)
-from pssolver.workflows.periodic_checkpoint import (
-    restore_periodic_checkpoint as restore_periodic_checkpoint,
 )
 from pssolver.workflows.plane_checkpoint import load_plane_checkpoint as load_plane_checkpoint
 from pssolver.workflows.plane_checkpoint import restore_plane_checkpoint as restore_plane_checkpoint
@@ -331,15 +327,18 @@ def _control(runtime, value: float = 0.01) -> dict[str, torch.Tensor]:
 def build_periodic_production(root: Path):
     compiled = compile_simulation(periodic_simulation(root))
     run_spec = compiled.application_request
-    initial, _, _ = load_periodic_initial_q(run_spec)
-    adapter = build_periodic_beris_edwards_runtime(
-        PeriodicRuntimeBuildRequest(
-            run_spec=run_spec,
-            initial_values=initial,
-            device="cpu",
-        )
-    )
-    return run_spec, adapter
+    translated = translate_periodic(run_spec.simulation, flavour="production", load_initial=True)
+    engine = Engine(translated.plan, device="cpu", dtype=torch.float64)
+    state = engine.initial_state(translated.initial_values)
+    return run_spec, PeriodicProductionHandle(engine, state)
+
+
+def restore_periodic_checkpoint(handle, checkpoint, *, run_spec):
+    return restore_periodic_state(handle.engine, handle.state, checkpoint, run_spec=run_spec)
+
+
+def advance_periodic(handle):
+    handle.engine.step_(handle.state)
 
 
 def build_channel_complete_stress(root: Path):
@@ -412,7 +411,14 @@ def functional_continuation_records(state) -> dict[str, object]:
 
 
 def periodic_continuation_records(adapter) -> dict[str, object]:
-    return _field_records(adapter, tuple(Q_COMPONENTS))
+    records = {}
+    for name in Q_COMPONENTS:
+        records[name] = _tensor_record(adapter.fields[name])
+        records[f"{name}.hat"] = _tensor_record(adapter.fields[f"{name}.hat"])
+    records["completed_steps"] = adapter.completed_steps
+    records["integrator_step_count"] = int(adapter.state.refresh_phase[0])
+    records["integrator_refresh_count"] = int(adapter.state.refresh_phase[1])
+    return records
 
 
 def channel_complete_continuation_records(adapter) -> dict[str, object]:

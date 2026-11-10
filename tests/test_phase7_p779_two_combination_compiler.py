@@ -43,7 +43,7 @@ def test_registry_is_capability_catalog_not_a_public_api_whitelist():
         "geometry_name": "periodic_box",
         "application": "periodic_complete_stress_beris_edwards",
         "adapter": (
-            "pssolver.configuration.public_periodic_simulation_compiler."
+            "pssolver.configuration.legacy_periodic."
             "compile_periodic_public_simulation"
         ),
     }

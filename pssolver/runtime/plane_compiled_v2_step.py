@@ -13,8 +13,8 @@ from dataclasses import dataclass
 
 import torch
 
-from pssolver.execution.state import RuntimeState
-from pssolver.execution.workspace import RuntimeWorkspace, WorkspacePlan
+from pssolver.engine.progress import RuntimeState
+from pssolver.engine.workspace import RuntimeWorkspace, WorkspacePlan
 from pssolver.integrators.step_program import _execute_projected_euler_step
 from pssolver.planning.plane_compiled_v2 import PlaneCompiledStage
 from pssolver.runtime.plane_compiled_v2_binding import (

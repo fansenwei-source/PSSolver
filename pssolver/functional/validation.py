@@ -16,13 +16,30 @@ from typing import Protocol
 import torch
 
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime.periodic_beris_edwards import PeriodicRuntimeAdapterProtocol
+from pssolver.engine.engine import Engine
+from pssolver.engine.state import State
 
 from .contracts import FunctionalControls, FunctionalState
 
 
 PERIODIC_GRADIENT_VALIDATION_VERSION = 2
 PERIODIC_CONSISTENCY_VALIDATION_VERSION = 1
+
+
+@dataclass
+class PeriodicProductionHandle:
+    """Caller-owned production engine and state for one consistency comparison."""
+
+    engine: Engine
+    state: State
+
+    @property
+    def fields(self):
+        return self.engine.field_view(self.state)
+
+    @property
+    def completed_steps(self):
+        return self.state.completed_steps
 
 
 class _PeriodicFunctionalRuntime(Protocol):
@@ -516,7 +533,7 @@ def _consistency_check(name, functional, production, *, atol, rtol):
 
 def evaluate_periodic_production_consistency(
     runtime: _PeriodicFunctionalRuntime,
-    production: PeriodicRuntimeAdapterProtocol,
+    production: PeriodicProductionHandle,
     state: FunctionalState,
     controls: FunctionalControls,
 ) -> PeriodicProductionConsistencyReport:
@@ -526,7 +543,7 @@ def evaluate_periodic_production_consistency(
     at ``state``.  The tolerance contract is internal and has no override.
     """
 
-    if not isinstance(production, PeriodicRuntimeAdapterProtocol):
+    if not isinstance(production, PeriodicProductionHandle):
         raise TypeError("production must implement PeriodicRuntimeAdapterProtocol")
     runtime.state_spec.validate(state)
     if not isinstance(controls, Mapping) or set(controls) != {"activity"}:
@@ -536,7 +553,7 @@ def evaluate_periodic_production_consistency(
     if not bool(torch.isfinite(activity).all().item()):
         raise ValueError("activity contains NaN or Inf")
     atol, rtol = _frozen_consistency_contract(state[0].dtype)
-    fields = production.fields
+    fields = production.engine.field_view(production.state)
     production_state = (
         torch.stack(tuple(fields[name] for name in Q_COMPONENTS), dim=0),
         torch.stack(tuple(fields[f"{name}.hat"] for name in Q_COMPONENTS), dim=0),
@@ -558,12 +575,11 @@ def evaluate_periodic_production_consistency(
             tuple(checks),
             False,
         )
-    original_alpha = production.solver.model.parameters["alpha"]
+    engine_controls = {"alpha": activity}
     try:
-        production.solver.model.parameters["alpha"] = activity
-        production.synchronize_for_observation()
+        production.engine.prepare_constraints_(production.state, engine_controls)
         functional_next, functional_observations = runtime.step_and_observe(
-            state, controls, production.completed_steps
+            state, controls, production.state.completed_steps
         )
         production_observations = {
             "Q": torch.stack(tuple(fields[name] for name in Q_COMPONENTS), dim=0),
@@ -580,7 +596,7 @@ def evaluate_periodic_production_consistency(
                     rtol=rtol,
                 )
             )
-        production.advance(1)
+        production.engine.step_(production.state, engine_controls)
         checks.extend(
             (
                 _consistency_check(
@@ -600,8 +616,7 @@ def evaluate_periodic_production_consistency(
             )
         )
     finally:
-        production.solver.model.parameters["alpha"] = original_alpha
-        production.synchronize_for_observation()
+        production.engine.prepare_constraints_(production.state)
 
     passed = all(value.passed for value in checks)
     return PeriodicProductionConsistencyReport(
@@ -616,7 +631,7 @@ def evaluate_periodic_production_consistency(
 
 def validate_periodic_production_consistency(
     runtime: _PeriodicFunctionalRuntime,
-    production: PeriodicRuntimeAdapterProtocol,
+    production: PeriodicProductionHandle,
     state: FunctionalState,
     controls: FunctionalControls,
 ) -> PeriodicProductionConsistencyReport:

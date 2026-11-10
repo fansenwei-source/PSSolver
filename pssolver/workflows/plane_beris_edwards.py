@@ -33,7 +33,7 @@ from .plane_observation import (
     write_plane_diagnostics,
     write_plane_observation,
 )
-from .diagnostic_io import diagnostics_metadata_envelope
+from pssolver.io.diagnostic_io import diagnostics_metadata_envelope
 
 
 PLANE_WORKFLOW_SCHEMA_VERSION = 1

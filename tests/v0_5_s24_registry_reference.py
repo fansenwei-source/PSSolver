@@ -8,6 +8,41 @@ from pathlib import Path
 from types import ModuleType
 
 
+S25_IDENTITY_MAP = {
+    "pssolver.configuration.public_periodic_simulation_compiler.compile_periodic_public_simulation": "pssolver.configuration.legacy_periodic.compile_periodic_public_simulation",
+    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest": "pssolver.configuration.legacy_periodic.PeriodicTranslation",
+    "pssolver.runtime.periodic_beris_edwards.build_periodic_beris_edwards_runtime": "pssolver.engine.engine.Engine",
+    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol": "pssolver.engine.engine.Engine",
+}
+
+S25_DELETED_REGISTRY_MODULES = (
+    "pssolver.configuration.public_periodic_simulation_compiler.",
+    "pssolver.runtime.periodic_beris_edwards.",
+)
+
+
+def _forward_periodic_value(value, *, periodic):
+    """Translate only the closed Periodic identity set; never pass a missing key."""
+    if isinstance(value, str):
+        if value.startswith(S25_DELETED_REGISTRY_MODULES):
+            assert periodic, "deleted Periodic identity in another application"
+            assert value in S25_IDENTITY_MAP, f"unmapped Periodic identity: {value}"
+            return S25_IDENTITY_MAP[value]
+        return value
+    if isinstance(value, dict):
+        return {key: _forward_periodic_value(item, periodic=periodic) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_forward_periodic_value(item, periodic=periodic) for item in value)
+    return value
+
+
+def _validated_registry():
+    registry = release_registry()
+    for item in registry.APPLICATIONS:
+        _forward_periodic_value(asdict(item), periodic=item.geometry_name == "periodic_box")
+    return registry
+
+
 @lru_cache(maxsize=1)
 def release_registry():
     root = Path(__file__).resolve().parents[1]
@@ -30,16 +65,16 @@ def release_registry():
 
 def retained_application_metadata():
     return tuple(
-        item.compiler_metadata()
-        for item in release_registry().APPLICATIONS
+        _forward_periodic_value(item.compiler_metadata(), periodic=item.geometry_name == "periodic_box")
+        for item in _validated_registry().APPLICATIONS
         if item.lowering_kind != "channel_legacy"
     )
 
 
 def retained_runtime_bindings():
     return {
-        item.key: item.binding_fields()
-        for item in release_registry().RUNTIMES
+        item.key: _forward_periodic_value(item.binding_fields(), periodic=item.application.geometry_name == "periodic_box")
+        for item in _validated_registry().RUNTIMES
         if item.application.lowering_kind != "channel_legacy"
         and item.runtime_path != "separated_canary"
     }
@@ -47,10 +82,10 @@ def retained_runtime_bindings():
 
 def retained_application_records():
     records = []
-    for item in release_registry().APPLICATIONS:
+    for item in _validated_registry().APPLICATIONS:
         if item.lowering_kind == "channel_legacy":
             continue
-        record = asdict(item)
+        record = _forward_periodic_value(asdict(item), periodic=item.geometry_name == "periodic_box")
         record["runtime_paths"] = tuple(
             name for name in record["runtime_paths"] if name != "separated_canary"
         )

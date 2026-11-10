@@ -13,9 +13,9 @@ from collections.abc import Mapping
 
 import torch
 
-from pssolver.applications.periodic_beris_edwards import (
-    load_periodic_initial_q,
-)
+from pssolver.configuration.legacy_periodic import translate_periodic
+from pssolver.engine.engine import Engine
+from pssolver.engine.state import State
 from pssolver.configuration.public_simulation_runner import (
     PUBLIC_PERIODIC_APPLICATION,
     compile_public_simulation,
@@ -27,11 +27,7 @@ from pssolver.configuration.execution_device import (
 )
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime.periodic_beris_edwards import (
-    PERIODIC_BOUNDARIES,
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
+
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
@@ -232,9 +228,8 @@ class PeriodicActivityFunctionalRuntime:
         self,
         request: FunctionalRuntimeConstructionRequest,
         *,
-        adapter,
-        snapshot_sha256: str,
-        production_runtime_identity_sha256: str,
+        engine,
+        translation,
     ) -> None:
         if not isinstance(request, FunctionalRuntimeConstructionRequest):
             raise TypeError("request must be FunctionalRuntimeConstructionRequest")
@@ -253,9 +248,8 @@ class PeriodicActivityFunctionalRuntime:
             raise ValueError("functional observation declaration is not canonical")
 
         self._request = request
-        self._adapter = adapter
-        self._solver = adapter.solver
-        self._projector = adapter.projector
+        self._engine = engine
+        self._projector = engine.projector
         self._state_spec = state_spec
         self._control_specs = controls
         self._observation_specs = observations
@@ -279,22 +273,13 @@ class PeriodicActivityFunctionalRuntime:
             differentiable_inputs=("state", "activity"),
         )
 
-        # A functional call must not depend on a previously staged gradient.
-        # The immutable transform/operator caches remain implementation detail;
-        # all trajectory-dependent arrays are supplied in FunctionalState.
-        self._solver.model.nlmodel.q_gradient_cache = None
-        self._solver.model.static_model.q_gradient_cache = None
-        self._solver.model.static_model.pressure_diagnostics = False
-
-        fields = self._solver.fields
-        dynamic = fields.dyn_count
+        initial = engine.initial_state(translation.initial_values)
         self._initial_state = (
-            fields.spatial[:dynamic].detach().clone(),
-            fields.spectral[:dynamic].detach().clone(),
+            initial.spatial[:engine.evolved_count].detach().clone(),
+            initial.spectral[:engine.evolved_count].detach().clone(),
         )
         identities = request.simulation.identity_metadata()
         execution_identity = dict(identities["execution"])
-        production_metadata = adapter.to_metadata()
         execution_identity["functional_runtime"] = {
             "kind": "periodic_activity_batch_one",
             "device": device,
@@ -302,11 +287,9 @@ class PeriodicActivityFunctionalRuntime:
             "q_gradient_reuse": False,
             "pressure_solver": "direct_periodic_fourier",
             "spectral_refresh": "disabled",
-            "hermitian_state_projection": production_metadata[
-                "hermitian_state_projection"
-            ],
+            "hermitian_state_projection": engine.projector.execution_metadata()["hermitian_state_projection"],
             "activity_product_before_divergence": True,
-            "snapshot_sha256": snapshot_sha256,
+            "snapshot_sha256": translation.snapshot_sha256,
             "fallback_allowed": False,
             "fallback_used": False,
             "deterministic_replay": replay_capability,
@@ -327,10 +310,10 @@ class PeriodicActivityFunctionalRuntime:
             state_spec=state_spec,
             functional_identity=self._identity,
             production_runtime_identity_sha256=(
-                production_runtime_identity_sha256
+                translation.run_spec.runtime_identity_sha256()
             ),
-            backend_restart=adapter.backend_restart_metadata(),
-            projector=adapter.projector,
+            backend_restart={"kind": "periodic_stokes_stateless", "state_keys": []},
+            projector=engine.projector,
         )
 
     @property
@@ -406,72 +389,21 @@ class PeriodicActivityFunctionalRuntime:
         self._control_specs[0].validate(value)
         return value
 
-    def _bind_input_state(
-        self,
-        state: FunctionalState,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    def _engine_state(self, state, step_index=0):
         q_physical, q_spectral = state
-        fields = self._solver.fields
-        static_count = fields.stat_count
-        spatial_zeros = q_physical.new_zeros(
-            (static_count, q_physical.shape[1], *q_physical.shape[2:])
+        static_count = len(self._engine.components) - self._engine.evolved_count
+        spatial_zeros = q_physical.new_zeros((static_count, *q_physical.shape[1:]))
+        spectral_zeros = q_spectral.new_zeros((static_count, *q_spectral.shape[1:]))
+        spatial = torch.cat((q_physical, spatial_zeros), dim=0)
+        spectral = torch.cat((q_spectral, spectral_zeros), dim=0)
+        return State(
+            spectral, spatial, (), {}, step_index, (step_index, 0), False,
+            pure_evolved=(q_physical, q_spectral),
         )
-        spectral_zeros = q_spectral.new_zeros(
-            (static_count, q_spectral.shape[1], *q_spectral.shape[2:])
-        )
-        # Concatenation creates fresh owned storage: neither the caller's
-        # physical nor spectral tensor is mutated by model execution.
-        fields.spatial = torch.cat((q_physical, spatial_zeros), dim=0)
-        fields.spectral = torch.cat((q_spectral, spectral_zeros), dim=0)
-        return q_physical, q_spectral
 
-    def _flow_and_rhs(
-        self,
-        state: FunctionalState,
-        activity: torch.Tensor,
-        *,
-        need_rhs: bool,
-    ) -> tuple[dict[str, torch.Tensor], torch.Tensor | None]:
-        q_physical, q_spectral = self._bind_input_state(state)
-        model = self._solver.model
-        fields = self._solver.fields
-        # Controls are call arguments, not mutable entries in the production
-        # parameter registry.  The existing model adapters accept this minimal
-        # per-call mapping without changing their equation implementation.
-        static_hat = model.static_model(fields, {"alpha": activity})
-        static_physical = self._projector.inverse_transform(
-            static_hat,
-            PERIODIC_BOUNDARIES,
-        )
-        fields.spatial = torch.cat((q_physical, static_physical), dim=0)
-        fields.spectral = torch.cat((q_spectral, static_hat), dim=0)
-        observations = {
-            "Q": q_physical,
-            "velocity": static_physical[:3],
-            "pressure": static_physical[3],
-        }
-        rhs = model.nlmodel(fields, {}) if need_rhs else None
-        return observations, rhs
-
-    def _next_state(
-        self,
-        state: FunctionalState,
-        rhs: torch.Tensor,
-    ) -> FunctionalState:
-        q_spectral = state[1]
-        integrator = self._solver.integrator
-        next_spectral = (
-            q_spectral + integrator.dt * rhs
-        ) / integrator.denom
-        next_spectral = self._projector.project_real_spectrum(
-            next_spectral,
-            PERIODIC_BOUNDARIES,
-        )
-        next_physical = self._projector.inverse_transform(
-            next_spectral,
-            PERIODIC_BOUNDARIES,
-        )
-        return (next_physical, next_spectral)
+    def _observations(self, original, prepared):
+        return {"Q": original[0], "velocity": prepared.constraint_physical[:3],
+                "pressure": prepared.constraint_physical[3]}
 
     def step(
         self,
@@ -487,10 +419,8 @@ class PeriodicActivityFunctionalRuntime:
             self._validate_step_index(step_index)
             self._validate_state(state)
             activity = self._activity(controls)
-            _, rhs = self._flow_and_rhs(state, activity, need_rhs=True)
-            if rhs is None:  # pragma: no cover - guarded by need_rhs=True
-                raise AssertionError("functional RHS was not computed")
-            return self._next_state(state, rhs)
+            result = self._engine.step(self._engine_state(state, step_index), {"alpha": activity})
+            return result.pure_evolved
 
     def observe(
         self,
@@ -506,12 +436,8 @@ class PeriodicActivityFunctionalRuntime:
             if controls is None:
                 return {"Q": state[0]}
             activity = self._activity(controls)
-            observations, _ = self._flow_and_rhs(
-                state,
-                activity,
-                need_rhs=False,
-            )
-            return observations
+            prepared = self._engine.prepare_constraints(self._engine_state(state), {"alpha": activity})
+            return self._observations(state, prepared)
 
     def step_and_observe(
         self,
@@ -527,14 +453,12 @@ class PeriodicActivityFunctionalRuntime:
             self._validate_step_index(step_index)
             self._validate_state(state)
             activity = self._activity(controls)
-            observations, rhs = self._flow_and_rhs(
-                state,
-                activity,
-                need_rhs=True,
+            prepared = self._engine.prepare_constraints(
+                self._engine_state(state, step_index), {"alpha": activity},
             )
-            if rhs is None:  # pragma: no cover - guarded by need_rhs=True
-                raise AssertionError("functional RHS was not computed")
-            return self._next_state(state, rhs), observations
+            observations = self._observations(state, prepared)
+            result = self._engine.step(prepared, {"alpha": activity})
+            return result.pure_evolved, observations
 
 
 class PeriodicActivityFunctionalRuntimeFactory:
@@ -549,24 +473,13 @@ class PeriodicActivityFunctionalRuntimeFactory:
         expected = periodic_activity_functional_request(request.simulation)
         if request.to_metadata() != expected.to_metadata():
             raise ValueError("functional construction request is not canonical")
-        compiled = compile_public_simulation(request.simulation)
-        run_spec = compiled.run_spec
-        initial_values, _, snapshot_sha256 = load_periodic_initial_q(run_spec)
-        adapter = build_periodic_beris_edwards_runtime(
-            PeriodicRuntimeBuildRequest(
-                run_spec=run_spec,
-                initial_values=initial_values,
-                device=request.control_fields[0].tensor.device,
-            )
+        translation = translate_periodic(
+            request.simulation, flavour="functional_1_1", load_initial=True,
         )
-        return PeriodicActivityFunctionalRuntime(
-            request,
-            adapter=adapter,
-            snapshot_sha256=snapshot_sha256,
-            production_runtime_identity_sha256=(
-                run_spec.runtime_identity_sha256()
-            ),
-        )
+        engine = Engine(translation.plan, device=request.control_fields[0].tensor.device,
+                        dtype=getattr(torch, request.simulation.numerics.precision.value), batch=1)
+        return PeriodicActivityFunctionalRuntime(request, engine=engine, translation=translation)
+
 
 
 def build_functional_runtime(

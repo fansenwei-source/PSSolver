@@ -178,11 +178,11 @@ def _run_periodic_application(
     progress: Iterable[int] | None,
     emit_metadata: bool,
 ) -> tuple[object | None, str | Path | None]:
-    from pssolver.applications.periodic_beris_edwards import (
-        run_periodic_beris_edwards,
+    from pssolver.runtime.legacy_entry import (
+        run_v04_translation,
     )
 
-    result = run_periodic_beris_edwards(
+    result = run_v04_translation(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
@@ -227,8 +227,8 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
             _PublicApplicationRunnerRegistration(
                 "periodic_complete_stress_beris_edwards",
                 (
-                    "pssolver.applications.periodic_beris_edwards."
-                    "run_periodic_beris_edwards"
+                    "pssolver.runtime.legacy_entry."
+                    "run_v04_translation"
                 ),
                 _run_periodic_application,
             )

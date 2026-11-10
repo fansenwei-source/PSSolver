@@ -56,7 +56,10 @@ def replay(fixture: Path, work: Path) -> dict:
             old.load_channel_complete_stress_checkpoint(fixture / name, runtime, run_spec=spec)
         records = [capture(runtime)]
         for _ in range(16):
-            runtime.advance(1)
+            if name == "production_periodic":
+                old.advance_periodic(runtime)
+            else:
+                runtime.advance(1)
             records.append(capture(runtime))
         cases[name] = records
     assert before == file_manifest(fixture)

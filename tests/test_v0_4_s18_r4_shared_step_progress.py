@@ -10,7 +10,7 @@ from types import SimpleNamespace
 import pytest
 import torch
 
-from pssolver.execution.state import (
+from pssolver.engine.progress import (
     IntegratorProgress,
     RuntimeState,
     _completed_steps_from_refresh_counters,
@@ -28,13 +28,14 @@ from pssolver.integrators.step_program import (
     ProjectedSemiImplicitEulerStepProgram,
 )
 from pssolver.runtime.channel_beris_edwards import _ChannelProjectedEuler
-from pssolver.runtime.periodic_beris_edwards import _PeriodicProjectedEuler
 from pssolver.runtime.plane_compiled_v2_step import (
     PlaneCompiledEulerStepProgram,
 )
 from pssolver.runtime.plane_legacy import (
     DealiasedSemiImplicitEulerIntegrator,
 )
+from qualification.s25_source_paths import source_path
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -171,7 +172,6 @@ def test_projected_programs_delegate_to_the_same_exact_order_executor():
 def test_projected_runtimes_inherit_one_inverse_and_refresh_implementation():
     concrete = (
         DealiasedSemiImplicitEulerIntegrator,
-        _PeriodicProjectedEuler,
         _ChannelProjectedEuler,
     )
     for integrator_type in concrete:
@@ -203,4 +203,4 @@ def test_control_facing_functional_paths_remain_byte_identical_to_parent():
         ),
     }
     for relative, digest in expected.items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == digest
+        assert hashlib.sha256(source_path(ROOT, relative).read_bytes()).hexdigest() == resolve_s03_successor(relative, digest)

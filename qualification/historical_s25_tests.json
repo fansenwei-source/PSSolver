@@ -1,0 +1,297 @@
+{
+  "files": [
+    {
+      "blob": "ff2f56a6d446d6116ff684aeb36ac9434eb113f6",
+      "path": "tests/test_analyze_phase9_p95_gradient_diagnostic.py",
+      "sha256": "80b1b6712b61b31fa9875490d8a4d49e4d8028874ad721c85981e3fa79f5cce8"
+    },
+    {
+      "blob": "80ba7b688240d98ac6cb93f1eed89fc1805b9612",
+      "path": "tests/test_analyze_phase9_p95_gradient_validator_v2.py",
+      "sha256": "14b052226441148e6a61b1f0653fe8f350976eb6ad57a8ea8a0d01d1213be714"
+    },
+    {
+      "blob": "ef6c20ce82b5b1dfe13a825e9a3a9b91637c6b30",
+      "path": "tests/test_architecture_import_boundaries.py",
+      "sha256": "164559a430b918b1407466ae949b9da1998c8df2262df166ee7cab956dba389a"
+    },
+    {
+      "blob": "0085940e5315be1fbb6c1ed4d23820767d528aa4",
+      "path": "tests/test_diagnose_phase9_p95_gradient_epsilon.py",
+      "sha256": "39f166193ddd8813f7d5542dae3714ee291ca00accdb8aba2a56e81e449f3111"
+    },
+    {
+      "blob": "f2cab6ed3ffa7e287f6cd5bb8f6eb324cbcb1525",
+      "path": "tests/test_diagnose_phase9_p95_gradient_validator_v2.py",
+      "sha256": "f1c6ea79c04f109bcde628dbecfc7ad13660a35ef51e6a80bcef2621710abe25"
+    },
+    {
+      "blob": "ca83a8f416ea296a41bd86594943ab28ab2023ba",
+      "path": "tests/test_periodic_hermitian_qualification_profiler.py",
+      "sha256": "4206b8cc064f31425b456d874e25b0eba67ddea242577e16d3ff50b1332ab019"
+    },
+    {
+      "blob": "37f7474923a128d66f5446690c6ce70833bea826",
+      "path": "tests/test_phase3_runtime_state.py",
+      "sha256": "40822b2dcd2eee39d206986f66d15bc2073a970923a11360b61f0cbb60c86cf4"
+    },
+    {
+      "blob": "ea3db939da53428461ff8af22b3d7666dd7036b9",
+      "path": "tests/test_phase7_p779_two_combination_compiler.py",
+      "sha256": "ae07899cfd8b800762d1e909304f54940207359ef01be46980f14aaac0970f69"
+    },
+    {
+      "blob": "0a039b01cc4e0a05fd0fa2e795243e5753a8b72c",
+      "path": "tests/test_phase8_p82_local_candidate_record.py",
+      "sha256": "06ef0f08dd86b6509135f42dc34771e7c7409b0903b11288ac92d2e462eeb71a"
+    },
+    {
+      "blob": "f03da3dcd66facc8a6a1215ba221a47b826945ef",
+      "path": "tests/test_phase9_p92_periodic_functional_runtime.py",
+      "sha256": "2d1cf7ec8368c315d55771c038edeffb261d8d5a2a73da47655d00c6189eee3c"
+    },
+    {
+      "blob": "9edd60a42f36623f7888279562509503017a8e75",
+      "path": "tests/test_profile_periodic_functional.py",
+      "sha256": "9b49e942390c0c128d1a931c131db06383057ff541a078f0f8f70a244521b071"
+    },
+    {
+      "blob": "0e47a7962cf6d01bff6bd42943683f0360218459",
+      "path": "tests/test_rc426_cross_device_checkpoint_harness.py",
+      "sha256": "e141b58791bba890f744e1cded8d8a8f300a5aaf862fac2db33d41e4c38bbfd5"
+    },
+    {
+      "blob": "0e45405b7af839a7342f5c57862300c98d1b9b80",
+      "path": "tests/test_rc4_checkpoint_identity_primitives.py",
+      "sha256": "f72bc50a3bff3c8113b888b25eebf390f51fdf51be7a4691c47d9be3287d4319"
+    },
+    {
+      "blob": "d373722c41bd2edb28790f9256aae375483a2dd3",
+      "path": "tests/test_rc4_cross_device_checkpoint_plan.py",
+      "sha256": "4af6597c98ba1b9cc50b77644e46755f2fbca97c0c8b6d3a80b9f0dbd7470137"
+    },
+    {
+      "blob": "def1e152e61be36082a060f5bf6b471c573d5507",
+      "path": "tests/test_rc4_functional_checkpoint_identity_record.py",
+      "sha256": "f0a824769723f4daddc786082dca76f255e4c96cdfedcb347b89efcaf75f3099"
+    },
+    {
+      "blob": "1b08dec543bc4d7963d15a6272c25caab2763e24",
+      "path": "tests/test_rc4_lifting_capability_restriction_record.py",
+      "sha256": "e92a741bf9a374897f140268a7b1a7d47c30d1cfec82f4e6526f4d34f1010d05"
+    },
+    {
+      "blob": "6cbcef7aec1ec173a0214de3f9c9bbc3dc6a8b3b",
+      "path": "tests/test_rc4_periodic_channel_checkpoint_identity_record.py",
+      "sha256": "f9c76ce2bf5ad4964285be4eeec47b22898cedd9c7fb8d983343256574250c61"
+    },
+    {
+      "blob": "8805387f7c77515a241981a8a1e43fa44fa4eeae",
+      "path": "tests/test_rc5_r511_metadata_strict_record.py",
+      "sha256": "e02cc96e894f417bff0b3c320f48ad143cd513b852a212013b0c6a9caf88fcb9"
+    },
+    {
+      "blob": "453fb5dca38c6e44048e8f148908ca0f45517360",
+      "path": "tests/test_rc5_r58_checkpoint_integrity_record.py",
+      "sha256": "44c5974b90608ac62c926448e9f2dd049a42f3fa65395124acbaef4509624b8d"
+    },
+    {
+      "blob": "7045fa368f93951a34f9a9712baf0d24f3a4bcaa",
+      "path": "tests/test_rc6_3_compile_preflight_record.py",
+      "sha256": "605148c39f133f1f3f0ff3ace47d90c812d51a95754f75ba0beab8d50ee58afb"
+    },
+    {
+      "blob": "1c658d3ca31774dbd3bcf663cbcac582abf27c94",
+      "path": "tests/test_run_periodic_hermitian_profile_matrix.py",
+      "sha256": "73282d684f3e130149b2696901f973f46f3cd54662ea6a23abf8436422d5944e"
+    },
+    {
+      "blob": "caa084a15303cec95ea6311de590f3f77ba3b9b0",
+      "path": "tests/test_run_phase9_p95_gradient_diagnostic.py",
+      "sha256": "70d1aa6ccb9189c1349d3935a0f676328ed5d3a2acc702c02ff500f4a3ef4da6"
+    },
+    {
+      "blob": "856944bc47854744f558d20953d9e909994f0540",
+      "path": "tests/test_run_phase9_p95_gradient_validator_v2.py",
+      "sha256": "4d1697eae031b3617f2f15bdd700a1d979ae75cfe13d140f8c019cb695ff21ca"
+    },
+    {
+      "blob": "ac82f49666bfa0d4ccafa495819f95cff8fbbd44",
+      "path": "tests/test_v0_3_s03_exception_compatibility.py",
+      "sha256": "579a518f25274d61a7e3a9b3204b8974dd2e14ee10045f526cd3cc7e5f5245e2"
+    },
+    {
+      "blob": "5e476fc74af48070e7e2f4faf1f38a72c3bb3a94",
+      "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
+      "sha256": "cd9939d40e0c90c4589d3fe540b57dacf56383dd5b2280a7a33c5ceb0b2a8e81"
+    },
+    {
+      "blob": "fb9117bca6b9c423830b4c5c4f3e7c21ff41cf6b",
+      "path": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "sha256": "c2750382115eb93d1f1146469a64f21120c3f03cbacd1e3fd5c8e53551b4ca22"
+    },
+    {
+      "blob": "291575371551308ab6740cb41b0f7b292b80228a",
+      "path": "tests/test_v0_4_s18_r0056_import.py",
+      "sha256": "15609040b532f29726527ca6b184c71f392e91955dfded189c678dd251e579c2"
+    },
+    {
+      "blob": "263252ab5dcde245217aeee45cc4acee0e205cd1",
+      "path": "tests/test_v0_4_s18_r1_dispatch.py",
+      "sha256": "fc91232360dc647ed3ddd1598d0febc345396576d33fffaf8b48e6b20ada4010"
+    },
+    {
+      "blob": "700a66a37b46ed27c8a784a6ceec96c1659b7908",
+      "path": "tests/test_v0_4_s18_r1_shadow_registry.py",
+      "sha256": "fb28eb3009ff6abc5ea571bee94d51c8916032b2b71cec5ab9c8ef9bf5914693"
+    },
+    {
+      "blob": "ffadbc75e7371ff8a9a9a58e4d3e2fe4b7386f61",
+      "path": "tests/test_v0_4_s18_r2_checkpoint_artifacts.py",
+      "sha256": "b1fae410df5d58d263b5d30ebc472251c2240b5f06271ab3bf2fcd2a5765f846"
+    },
+    {
+      "blob": "94989a37e7ace8374e48984b57ac5720a0bcb55c",
+      "path": "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py",
+      "sha256": "c9afabfaa179912425da4276e61a308ab027d1bba68e3b99556c58ee8f878af4"
+    },
+    {
+      "blob": "a907bfa826330fe3c0acd0ac6750add614f4e2c3",
+      "path": "tests/test_v0_4_s18_r4_shared_step_progress.py",
+      "sha256": "88257a5fd0ccf6f74e07f9cf84d58bbd1edd855b5b161f2a39ed47f4d22e0237"
+    },
+    {
+      "blob": "f6b35c4a84aceb71a0fa6d3d875e6ac757d88b7b",
+      "path": "tests/test_v0_4_s20_closeout.py",
+      "sha256": "289729e031086c6cb0523d0f515d3213f8fa570a7f49ed2f050c749796d31874"
+    }
+  ],
+  "nodeids": [
+    "tests/test_analyze_phase9_p95_gradient_diagnostic.py::test_analyzer_can_report_no_common_candidate_without_false_pass",
+    "tests/test_analyze_phase9_p95_gradient_diagnostic.py::test_analyzer_finds_common_candidate_without_qualifying_p95",
+    "tests/test_analyze_phase9_p95_gradient_diagnostic.py::test_analyzer_rejects_wrong_commit_or_objective_replay",
+    "tests/test_analyze_phase9_p95_gradient_validator_v2.py::test_analyzer_finds_independent_paired_cross_grid_candidates",
+    "tests/test_analyze_phase9_p95_gradient_validator_v2.py::test_analyzer_rejects_dirty_or_disconnected_evidence",
+    "tests/test_architecture_import_boundaries.py::test_configuration_has_only_reviewed_planning_composition_edges",
+    "tests/test_architecture_import_boundaries.py::test_models_have_only_the_two_reviewed_stokes_implementation_edges",
+    "tests/test_diagnose_phase9_p95_gradient_epsilon.py::test_diagnostic_persists_raw_validator_and_complete_epsilon_sweep",
+    "tests/test_diagnose_phase9_p95_gradient_epsilon.py::test_diagnostic_rejects_bad_input_and_atomic_overwrite",
+    "tests/test_diagnose_phase9_p95_gradient_validator_v2.py::test_low_mode_direction_is_finite_normalized_and_complex_compatible",
+    "tests/test_diagnose_phase9_p95_gradient_validator_v2.py::test_paired_quadratic_derivative_matches_analytic_complex_result",
+    "tests/test_diagnose_phase9_p95_gradient_validator_v2.py::test_validator_v2_atomic_output_refuses_overwrite",
+    "tests/test_diagnose_phase9_p95_gradient_validator_v2.py::test_validator_v2_diagnostic_records_complete_analysis_only_matrix",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_analyzer_accepts_non_regression_matrix",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_analyzer_rejects_performance_and_transform_regressions",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_capability_validator_rejects_fallback_and_missing_projection",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_capability_validator_rejects_invented_eager_values",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_physical_q_comparison_uses_relative_l2_gate",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_profiler_records_actual_fallback_transform_and_compile_capabilities",
+    "tests/test_periodic_hermitian_qualification_profiler.py::test_profiler_writes_canonical_physical_q_artifact",
+    "tests/test_phase3_runtime_state.py::test_state_is_not_promoted_and_shared_core_owns_runtime_imports",
+    "tests/test_phase7_p779_two_combination_compiler.py::test_registry_is_capability_catalog_not_a_public_api_whitelist",
+    "tests/test_phase8_p82_local_candidate_record.py::test_p82_record_preserves_well_formed_frozen_source_identities",
+    "tests/test_phase9_p92_periodic_functional_runtime.py::test_p92_step_is_input_pure_and_combined_observation_uses_input_state",
+    "tests/test_profile_periodic_functional.py::test_production_and_functional_profiles_are_byte_identical",
+    "tests/test_profile_periodic_functional.py::test_production_profile_constructs_exactly_one_runtime",
+    "tests/test_profile_periodic_functional.py::test_profiler_rejects_bad_initial_q_and_atomic_overwrite",
+    "tests/test_profile_periodic_functional.py::test_profiler_rejects_invalid_role_and_missing_canonical_filename",
+    "tests/test_profile_periodic_functional.py::test_vjp_profile_is_finite_nonzero_and_bitwise_replayable",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[channel_functional-channel_activity_batch_one-_run_functional]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[channel_production-channel_complete_stress-_run_channel]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[periodic_functional-periodic_activity_batch_one-_run_functional]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[periodic_production-periodic_spectral-_run_periodic]",
+    "tests/test_rc4_checkpoint_identity_primitives.py::test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wired",
+    "tests/test_rc4_checkpoint_identity_primitives.py::test_registry_source_hashes_are_the_released_files_not_live_derivations",
+    "tests/test_rc4_cross_device_checkpoint_plan.py::test_rc426_plan_binds_rc425_and_reviewed_sources",
+    "tests/test_rc4_functional_checkpoint_identity_record.py::test_rc424_registers_exact_rc423_historical_successors",
+    "tests/test_rc4_lifting_capability_restriction_record.py::test_rc433_sources_are_content_addressed_and_scope_is_narrow",
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py::test_rc423_record_binds_plan_parent_and_implementation_files",
+    "tests/test_rc5_r511_metadata_strict_record.py::test_r511_record_binds_implementation_and_regression_sources",
+    "tests/test_rc5_r511_metadata_strict_record.py::test_r511_successor_registry_is_forward_only_and_exact",
+    "tests/test_rc5_r58_checkpoint_integrity_record.py::test_r58_record_binds_implementation_and_exact_sources",
+    "tests/test_rc6_3_compile_preflight_record.py::test_rc6_3_registers_exact_forward_only_successors",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_child_identity_uses_real_venv_purelib_and_benchmark_shim",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_import_bootstrap_exposes_benchmarks_but_not_source_pssolver",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_matrix_has_36_unique_explicit_commands_without_empty_arguments",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_matrix_rejects_noncanonical_cli_device_token",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_physical_artifact_argument_is_present_only_for_four_profiles",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_plan_metadata_is_strictly_json_compatible",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_python_orchestrator_executes_profiles_with_and_without_artifacts",
+    "tests/test_run_periodic_hermitian_profile_matrix.py::test_runtime_preserves_the_requested_python_symlink",
+    "tests/test_run_phase9_p95_gradient_diagnostic.py::test_runner_builds_six_unique_fresh_process_commands",
+    "tests/test_run_phase9_p95_gradient_diagnostic.py::test_runner_rejects_a_noncanonical_trial_contract",
+    "tests/test_run_phase9_p95_gradient_validator_v2.py::test_runner_builds_two_unique_grid_processes",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_application_restart_preflight_preserves_checkpoint_not_found[_simulation-channel_missing_restart]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_application_restart_preflight_preserves_checkpoint_not_found[_simulation-periodic_missing_restart]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_complete_stress_workflow_restore_preserves_checkpoint_error[pssolver.workflows.channel_beris_edwards-ChannelBerisEdwardsWorkflow]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_complete_stress_workflow_restore_preserves_checkpoint_error[pssolver.workflows.periodic_beris_edwards-PeriodicBerisEdwardsWorkflow]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_legacy_workflow_restore_preserves_checkpoint_error[pssolver.workflows.channel_active_nematics-ChannelActiveNematicsWorkflow-load_channel_checkpoint-<lambda>]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_legacy_workflow_restore_preserves_checkpoint_error[pssolver.workflows.plane_beris_edwards-PlaneBerisEdwardsWorkflow-load_plane_checkpoint-<lambda>]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_missing_snapshot_is_both_public_input_and_file_not_found[pssolver.applications.channel_beris_edwards-_simulation-load_channel_initial_q]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_missing_snapshot_is_both_public_input_and_file_not_found[pssolver.applications.periodic_beris_edwards-_simulation-load_periodic_initial_q]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_periodic_functional_export_uses_functional_translation",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_plane_application_preflight_preserves_checkpoint_integrity_error",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_snapshot_hash_io_failure_retains_os_error_compatibility[pssolver.applications.channel_beris_edwards-_simulation-load_channel_initial_q]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_snapshot_hash_io_failure_retains_os_error_compatibility[pssolver.applications.periodic_beris_edwards-_simulation-load_periodic_initial_q]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_unreadable_snapshot_is_both_public_input_and_os_error[pssolver.applications.channel_beris_edwards-_simulation-load_channel_initial_q]",
+    "tests/test_v0_3_s03_exception_compatibility.py::test_unreadable_snapshot_is_both_public_input_and_os_error[pssolver.applications.periodic_beris_edwards-_simulation-load_periodic_initial_q]",
+    "tests/test_v0_4_s17_r3_r6_implementation.py::test_plain_package_import_preserves_v030_submodule_attributes_without_warning",
+    "tests/test_v0_4_s18_r0052_scope_rework.py::test_r1_classifies_every_missing_per_combination_module_as_frozen",
+    "tests/test_v0_4_s18_r0052_scope_rework.py::test_r4_code_scan_and_claude_inventory_have_no_unclassified_module",
+    "tests/test_v0_4_s18_r0056_import.py::test_r0056_records_every_intentionally_unchanged_r4_file",
+    "tests/test_v0_4_s18_r1_dispatch.py::test_registry_discovery_matches_parent_byte_order",
+    "tests/test_v0_4_s18_r1_shadow_registry.py::test_shadow_matches_literal_binding_table_keys_values_and_order",
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py::test_r2_writers_delegate_to_one_private_owner",
+    "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py::test_r2_freezes_released_formats_and_restart_behavior",
+    "tests/test_v0_4_s18_r4_shared_step_progress.py::test_control_facing_functional_paths_remain_byte_identical_to_parent",
+    "tests/test_v0_4_s18_r4_shared_step_progress.py::test_projected_runtimes_inherit_one_inverse_and_refresh_implementation",
+    "tests/test_v0_4_s20_closeout.py::test_r1_r9_remaining_items_are_decision_scoped_not_claimed_complete"
+  ],
+  "review": "R-0083",
+  "rules": [
+    "R5",
+    "R8",
+    "R9"
+  ],
+  "selected_nodeids": [
+    "tests/test_analyze_phase9_p95_gradient_diagnostic.py",
+    "tests/test_analyze_phase9_p95_gradient_validator_v2.py",
+    "tests/test_architecture_import_boundaries.py::test_configuration_has_only_reviewed_planning_composition_edges",
+    "tests/test_architecture_import_boundaries.py::test_models_have_only_the_two_reviewed_stokes_implementation_edges",
+    "tests/test_diagnose_phase9_p95_gradient_epsilon.py",
+    "tests/test_diagnose_phase9_p95_gradient_validator_v2.py",
+    "tests/test_periodic_hermitian_qualification_profiler.py",
+    "tests/test_phase3_runtime_state.py::test_state_is_not_promoted_and_shared_core_owns_runtime_imports",
+    "tests/test_phase7_p779_two_combination_compiler.py::test_registry_is_capability_catalog_not_a_public_api_whitelist",
+    "tests/test_phase8_p82_local_candidate_record.py::test_p82_record_preserves_well_formed_frozen_source_identities",
+    "tests/test_phase9_p92_periodic_functional_runtime.py::test_p92_step_is_input_pure_and_combined_observation_uses_input_state",
+    "tests/test_profile_periodic_functional.py",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu",
+    "tests/test_rc4_checkpoint_identity_primitives.py::test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wired",
+    "tests/test_rc4_checkpoint_identity_primitives.py::test_registry_source_hashes_are_the_released_files_not_live_derivations",
+    "tests/test_rc4_cross_device_checkpoint_plan.py::test_rc426_plan_binds_rc425_and_reviewed_sources",
+    "tests/test_rc4_functional_checkpoint_identity_record.py::test_rc424_registers_exact_rc423_historical_successors",
+    "tests/test_rc4_lifting_capability_restriction_record.py::test_rc433_sources_are_content_addressed_and_scope_is_narrow",
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py::test_rc423_record_binds_plan_parent_and_implementation_files",
+    "tests/test_rc5_r511_metadata_strict_record.py::test_r511_record_binds_implementation_and_regression_sources",
+    "tests/test_rc5_r511_metadata_strict_record.py::test_r511_successor_registry_is_forward_only_and_exact",
+    "tests/test_rc5_r58_checkpoint_integrity_record.py::test_r58_record_binds_implementation_and_exact_sources",
+    "tests/test_rc6_3_compile_preflight_record.py::test_rc6_3_registers_exact_forward_only_successors",
+    "tests/test_run_periodic_hermitian_profile_matrix.py",
+    "tests/test_run_phase9_p95_gradient_diagnostic.py",
+    "tests/test_run_phase9_p95_gradient_validator_v2.py",
+    "tests/test_v0_3_s03_exception_compatibility.py",
+    "tests/test_v0_4_s17_r3_r6_implementation.py::test_plain_package_import_preserves_v030_submodule_attributes_without_warning",
+    "tests/test_v0_4_s18_r0052_scope_rework.py::test_r1_classifies_every_missing_per_combination_module_as_frozen",
+    "tests/test_v0_4_s18_r0052_scope_rework.py::test_r4_code_scan_and_claude_inventory_have_no_unclassified_module",
+    "tests/test_v0_4_s18_r0056_import.py::test_r0056_records_every_intentionally_unchanged_r4_file",
+    "tests/test_v0_4_s18_r1_dispatch.py::test_registry_discovery_matches_parent_byte_order",
+    "tests/test_v0_4_s18_r1_shadow_registry.py::test_shadow_matches_literal_binding_table_keys_values_and_order",
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py::test_r2_writers_delegate_to_one_private_owner",
+    "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py::test_r2_freezes_released_formats_and_restart_behavior",
+    "tests/test_v0_4_s18_r4_shared_step_progress.py::test_control_facing_functional_paths_remain_byte_identical_to_parent",
+    "tests/test_v0_4_s18_r4_shared_step_progress.py::test_projected_runtimes_inherit_one_inverse_and_refresh_implementation",
+    "tests/test_v0_4_s20_closeout.py::test_r1_r9_remaining_items_are_decision_scoped_not_claimed_complete"
+  ],
+  "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+}

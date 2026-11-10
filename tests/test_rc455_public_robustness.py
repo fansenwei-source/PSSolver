@@ -14,7 +14,7 @@ from pssolver.configuration.public_option_validation import (
     validate_iterative_pressure_options,
     validate_public_execution_device,
 )
-from pssolver.workflows.diagnostic_io import diagnostics_metadata_envelope
+from pssolver.io.diagnostic_io import diagnostics_metadata_envelope
 
 
 ROOT = Path(__file__).resolve().parents[1]

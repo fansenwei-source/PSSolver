@@ -16,7 +16,7 @@ import torch
 
 from pssolver.core._canonical import canonical_json, canonical_sha256
 
-from pssolver.execution.state import (
+from pssolver.engine.progress import (
     IntegratorProgress,
     RepresentationLedger,
     RuntimeState,

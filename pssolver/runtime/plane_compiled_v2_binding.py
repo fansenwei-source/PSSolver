@@ -18,8 +18,8 @@ from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.execution.state import CurrentRepresentation, RuntimeState
-from pssolver.execution.workspace import RuntimeWorkspace
+from pssolver.engine.progress import CurrentRepresentation, RuntimeState
+from pssolver.engine.workspace import RuntimeWorkspace
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQNonlinearModel,

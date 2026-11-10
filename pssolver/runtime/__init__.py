@@ -16,12 +16,6 @@ from .plane_legacy import (
     DealiasedSemiImplicitEulerIntegrator,
     build_legacy_plane_runtime,
 )
-from .periodic_beris_edwards import (
-    PeriodicRuntimeAdapter,
-    PeriodicRuntimeAdapterProtocol,
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
 from .channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeAdapter,
     ChannelBerisEdwardsRuntimeBuildRequest,
@@ -78,10 +72,6 @@ __all__ = [
     "plane_physical_component",
     "verify_plane_lifting_identity",
     "PlaneStaticLiftingRuntime",
-    "PeriodicRuntimeAdapter",
-    "PeriodicRuntimeAdapterProtocol",
-    "PeriodicRuntimeBuildRequest",
-    "build_periodic_beris_edwards_runtime",
     "ChannelBerisEdwardsRuntimeAdapter",
     "ChannelBerisEdwardsRuntimeBuildRequest",
     "build_channel_beris_edwards_runtime",

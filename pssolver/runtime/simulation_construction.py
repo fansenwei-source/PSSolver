@@ -17,12 +17,8 @@ from pssolver.planning.construction import (
 )
 from .channel_beris_edwards import ChannelBerisEdwardsRuntimeAdapterProtocol, ChannelBerisEdwardsRuntimeBuildRequest
 from .plane_beris_edwards import PlaneRuntimeAdapterProtocol, PlaneRuntimeBuildRequest
-from .periodic_beris_edwards import PeriodicRuntimeAdapterProtocol, PeriodicRuntimeBuildRequest
 from .channel_beris_edwards import (
     build_channel_beris_edwards_runtime as build_channel_beris_edwards_runtime,
-)
-from .periodic_beris_edwards import (
-    build_periodic_beris_edwards_runtime as build_periodic_beris_edwards_runtime,
 )
 from .plane_beris_edwards import (
     build_plane_beris_edwards_runtime as build_plane_beris_edwards_runtime,
@@ -31,7 +27,6 @@ from .plane_beris_edwards import (
 
 RuntimeAdapter = (
     PlaneRuntimeAdapterProtocol
-    | PeriodicRuntimeAdapterProtocol
     | ChannelBerisEdwardsRuntimeAdapterProtocol
 )
 RuntimeBuilder = Callable[[], object]
@@ -40,8 +35,6 @@ RuntimeBuilder = Callable[[], object]
 def _request_simulation(request: object):
     if isinstance(request, PlaneRuntimeBuildRequest):
         return request.simulation
-    if isinstance(request, PeriodicRuntimeBuildRequest):
-        return request.run_spec.simulation
     if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
         return request.run_spec.simulation
     raise TypeError(
@@ -91,7 +84,7 @@ def build_bound_simulation_runtime(
     binding: RuntimeConstructionBinding,
     request: (
         PlaneRuntimeBuildRequest
-        | PeriodicRuntimeBuildRequest
+
         | ChannelBerisEdwardsRuntimeBuildRequest
     ),
     *,

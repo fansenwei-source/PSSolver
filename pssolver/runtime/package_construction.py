@@ -18,7 +18,6 @@ from pssolver.planning.package_construction import (
 )
 from .channel_beris_edwards import ChannelBerisEdwardsRuntimeBuildRequest
 from .plane_beris_edwards import PlaneRuntimeBuildRequest
-from .periodic_beris_edwards import PeriodicRuntimeBuildRequest
 from .simulation_construction import (
     RuntimeAdapter,
     build_bound_simulation_runtime,
@@ -29,7 +28,7 @@ from .plane_application_bridge import (
 
 
 PackageBuildRequest = (
-    PlaneRuntimeBuildRequest | PeriodicRuntimeBuildRequest | ChannelBerisEdwardsRuntimeBuildRequest
+    PlaneRuntimeBuildRequest | ChannelBerisEdwardsRuntimeBuildRequest
 )
 
 
@@ -47,7 +46,6 @@ class PackageRuntimeConstructionInput:
             self.request,
             (
                 PlaneRuntimeBuildRequest,
-                PeriodicRuntimeBuildRequest,
                 ChannelBerisEdwardsRuntimeBuildRequest,
             ),
         ):

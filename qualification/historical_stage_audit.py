@@ -31,9 +31,9 @@ def _git(root: Path, *args: str) -> str:
     return result.stdout.strip()
 
 
-def run_audit(repository: Path, work: Path) -> dict:
+def run_audit(repository: Path, work: Path, *, manifest_path: Path = MANIFEST) -> dict:
     """Check frozen sources and run the exact manifest without skipped audits."""
-    manifest = json.loads(MANIFEST.read_text())
+    manifest = json.loads(manifest_path.read_text())
     assert manifest["source_commit"] == SOURCE_COMMIT
     _git(repository, "cat-file", "-e", SOURCE_COMMIT + "^{commit}")
     work.mkdir(parents=True, exist_ok=False)
@@ -57,7 +57,7 @@ def run_audit(repository: Path, work: Path) -> dict:
         "--child",
         str(checkout),
         str(result_path),
-        *[item["path"] for item in manifest["files"]],
+        *manifest.get("selected_nodeids", [item["path"] for item in manifest["files"]]),
     ]
     with (work / "stdout.txt").open("w") as out, (work / "stderr.txt").open("w") as err:
         completed = subprocess.run(

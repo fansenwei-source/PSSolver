@@ -11,9 +11,10 @@ import pssolver
 from pssolver import compile_simulation, run_simulation
 from pssolver.applications import (
     channel_beris_edwards as channel_application,
-    periodic_beris_edwards as periodic_application,
     plane_beris_edwards as plane_application,
 )
+from pssolver.configuration import legacy_periodic as periodic_application
+from pssolver.runtime import legacy_entry as periodic_workflow
 from pssolver.functional import (
     FunctionalCheckpointError,
     FunctionalCheckpointIOError,
@@ -25,7 +26,7 @@ from pssolver.io.checkpoint import (
     CheckpointIntegrityError,
     CheckpointNotFoundError,
 )
-from pssolver.workflows import channel_beris_edwards as channel_workflow, periodic_beris_edwards as periodic_workflow
+from pssolver.workflows import channel_beris_edwards as channel_workflow
 from tests.test_phase8_p82_periodic_application import (
     _simulation as periodic_simulation,
 )
@@ -203,7 +204,7 @@ def test_plane_application_preflight_preserves_checkpoint_integrity_error(
 @pytest.mark.parametrize(
     ("module", "workflow_type"),
     (
-        (periodic_workflow, periodic_workflow.PeriodicBerisEdwardsWorkflow),
+        (periodic_workflow, periodic_workflow.restore_periodic_state),
         (channel_workflow, channel_workflow.ChannelBerisEdwardsWorkflow),
     ),
 )
@@ -214,18 +215,29 @@ def test_complete_stress_workflow_restore_preserves_checkpoint_error(
     workflow_type,
 ):
     sentinel = CheckpointIntegrityError("corrupt complete-stress checkpoint")
-    workflow = object.__new__(workflow_type)
-    workflow.options = {"restart_from": tmp_path / "checkpoint"}
-    workflow.adapter = SimpleNamespace(completed_steps=0)
-    workflow.run_spec = object()
-    workflow.output_directory = tmp_path / "output"
+    if module is periodic_workflow:
+        from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
+
+        spec, handle = production_handle(periodic_simulation(tmp_path))
+        def invoke():
+            return workflow_type(handle.engine, handle.state, None, run_spec=spec)
+
+        patch_name = "validate_periodic_restore"
+    else:
+        workflow = object.__new__(workflow_type)
+        workflow.options = {"restart_from": tmp_path / "checkpoint"}
+        workflow.adapter = SimpleNamespace(completed_steps=0)
+        workflow.run_spec = object()
+        workflow.output_directory = tmp_path / "output"
+        invoke = workflow.run
+        patch_name = "_load_checkpoint"
 
     def reject(*_args, **_kwargs):
         raise sentinel
 
-    monkeypatch.setattr(module, "_load_checkpoint", reject)
+    monkeypatch.setattr(module, patch_name, reject)
     with pytest.raises(CheckpointIntegrityError) as caught:
-        workflow.run()
+        invoke()
 
     assert caught.value is sentinel
     assert isinstance(caught.value, CheckpointError)

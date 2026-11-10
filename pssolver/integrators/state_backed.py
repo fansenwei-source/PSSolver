@@ -8,14 +8,14 @@ counter compatibility, and the frozen projected-IMEX ``StepProgram``.
 
 from __future__ import annotations
 
-from pssolver.execution.state import (
+from pssolver.engine.progress import (
     IntegratorProgress,
     RepresentationLedger,
     RuntimeState,
     _completed_steps_from_refresh_counters,
     _refresh_counters_from_completed_steps,
 )
-from pssolver.execution.workspace import WorkspacePlan
+from pssolver.engine.workspace import WorkspacePlan
 from pssolver.integrators.step_program import (
     ProjectedSemiImplicitEulerStepProgram,
 )

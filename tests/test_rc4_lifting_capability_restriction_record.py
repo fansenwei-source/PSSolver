@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from qualification.s25_source_paths import source_path
 from tests.v0_3_s03_successor import resolve_s03_successor
 
 
@@ -32,7 +33,7 @@ def _record() -> dict[str, object]:
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(source_path(ROOT, path.relative_to(ROOT).as_posix()).read_bytes()).hexdigest()
 
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:

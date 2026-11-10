@@ -521,7 +521,8 @@ def test_periodic_restart_rejects_tensor_tamper_before_advancing(tmp_path):
         )
     )
     checkpoint = first.output_directory / "checkpoint_1"
-    tensor = checkpoint / "spatial__Qxx.npy"
+    metadata = json.loads((checkpoint / "checkpoint.json").read_text())
+    tensor = checkpoint / metadata["tensor_files"]["spatial"]["file"]
     payload = bytearray(tensor.read_bytes())
     payload[-1] ^= 1
     tensor.write_bytes(payload)

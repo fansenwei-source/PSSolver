@@ -20,7 +20,7 @@ from pssolver import (
     TimeStepping,
     TorchSpectralExecution,
 )
-from pssolver.applications.periodic_beris_edwards import load_periodic_initial_q
+from pssolver.configuration.legacy_periodic import load_periodic_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -41,14 +41,13 @@ from pssolver.io.checkpoint import (
     write_functional_checkpoint_provenance,
 )
 from pssolver.models.active_nematics import CompleteStressBerisEdwards, Q_COMPONENTS
-from pssolver.runtime.periodic_beris_edwards import (
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
-from pssolver.workflows.periodic_checkpoint import (
+from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
+from tests.v0_5_s25_periodic_v04_checkpoint import (
     capture_periodic_checkpoint,
-    load_periodic_checkpoint,
     restore_periodic_checkpoint,
+)
+from pssolver.io.legacy.periodic_workflow import (
+    load_periodic_checkpoint,
     write_periodic_checkpoint,
 )
 
@@ -147,13 +146,7 @@ def _advance(runtime, state, controls):
 def _production_adapter(simulation):
     compiled = compile_public_simulation(simulation.specification)
     initial_values, _, _ = load_periodic_initial_q(compiled.run_spec)
-    adapter = build_periodic_beris_edwards_runtime(
-        PeriodicRuntimeBuildRequest(
-            run_spec=compiled.run_spec,
-            initial_values=initial_values,
-            device="cpu",
-        )
-    )
+    _, adapter = production_handle(simulation)
     return compiled.run_spec, adapter
 
 
@@ -266,7 +259,8 @@ def test_p93_imports_an_existing_production_checkpoint_without_repacking_loss(
 ):
     simulation, _, runtime = _runtime(tmp_path)
     run_spec, production = _production_adapter(simulation)
-    production.advance(2)
+    for _ in range(2):
+        production.engine.step_(production.state)
     expected = tuple(value.detach().clone() for value in _adapter_state(production))
     directory = tmp_path / "production_checkpoint"
     write_periodic_checkpoint(
@@ -318,7 +312,7 @@ def test_p93_bridge_identity_fails_before_any_tensor_payload_is_loaded(
         raise AssertionError("np.load must not run before identity preflight")
 
     monkeypatch.setattr(
-        "pssolver.workflows.periodic_checkpoint.np.load",
+        "pssolver.io.legacy.periodic_workflow.np.load",
         forbidden,
     )
     with pytest.raises(ValueError, match=message):
@@ -395,7 +389,7 @@ def test_p93_functional_metadata_tamper_cannot_fall_back_to_production(
         raise AssertionError("np.load must not run before metadata preflight")
 
     monkeypatch.setattr(
-        "pssolver.workflows.periodic_checkpoint.np.load",
+        "pssolver.io.legacy.periodic_workflow.np.load",
         forbidden,
     )
     with pytest.raises(ValueError, match="metadata checksum mismatch"):
@@ -431,7 +425,7 @@ def test_p93_cross_identity_checkpoint_is_rejected(tmp_path, monkeypatch):
         raise AssertionError("np.load must not run before runtime identity preflight")
 
     monkeypatch.setattr(
-        "pssolver.workflows.periodic_checkpoint.np.load",
+        "pssolver.io.legacy.periodic_workflow.np.load",
         forbidden,
     )
     with pytest.raises(ValueError, match="forward compatibility differs"):

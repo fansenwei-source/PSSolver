@@ -44,9 +44,11 @@ def file_manifest(root: Path) -> dict:
     }
 
 
-def continue_case(scene: dict, checkpoint: Path, work: Path) -> list[dict]:
+def continue_case(
+    scene: dict, checkpoint: Path, work: Path, *, case_factory=RuntimeCase
+) -> list[dict]:
     work.mkdir(parents=True, exist_ok=False)
-    case = RuntimeCase(scene, work)
+    case = case_factory(scene, work)
     case.restore(checkpoint, 2)
     rows = [case.record()]
     for _ in range(16):

@@ -1,0 +1,500 @@
+{
+  "classification": "S25_FULL_TRIAL_DRAFT_NOT_QUALIFIED",
+  "comparison_exclusions": [
+    "progress.constraints_current",
+    "identity.runtime.adapter"
+  ],
+  "decisions": [
+    "D-0051",
+    "D-0058"
+  ],
+  "git_identity": {
+    "implementation_parent": "aee82899d091b0d3bbfa62f0fe1cf83817574285"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "ARCHITECTURE.md": {
+      "current_sha256": "a42c05bdaeb85b631f73d6452656499a54aab475b18efeabec2bf266b1f09a66",
+      "historical_sha256": "609e886f31dafaccb26a8c824adb1dfa54ace9d86775fd610ed25d0d27b10b43",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "MANIFEST.in": {
+      "current_sha256": "cf7b48b721f8db0451c52fb8e98306988e7fa7cddf04241f3ca465f10d67533f",
+      "historical_sha256": "79c786253362b5582132352efd9127f0be89c7380846bf2401ff6925ada6a3d5",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/api/runner.py": {
+      "current_sha256": "5049240e75ce196eb533a5b26a93179d7753a2da2d04aee3af9cf2a03b64dd67",
+      "historical_sha256": "11fdc5098b13975af34f6f073174ce7619e63d33347d1a59a62e6aaea8b1ed62",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/applications/periodic_beris_edwards.py": {
+      "current_path": "pssolver/runtime/legacy_entry.py",
+      "current_sha256": "191d44d9358fb7f480e0b6dd9b3d3eac69818f031c8f89414c91f60c6872f0f3",
+      "historical_sha256": "07a6f5ec988122db99ec2e76fb4c1e189e49ce5a140f86815c5de2ee44d93fc0",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/configuration/application_registry.py": {
+      "current_sha256": "2580bd614af64e55f0b4dd5493715867041ed498cb79ab00f22080f1790e8290",
+      "historical_sha256": "1baa98e60e72999f94bf44003e76f8c22eb72a5981455d95bb2988bfd4c6e949",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/configuration/package_construction.py": {
+      "current_sha256": "599251c14fe575d3ea89e366f2db54a905491aed518b439866175390be10bbeb",
+      "historical_sha256": "d7a68438665256055c0fb869e49385388257c597f2cb8887c9858d34ec65ffd3",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/configuration/periodic_beris_edwards.py": {
+      "current_path": "pssolver/configuration/legacy_periodic.py",
+      "current_sha256": "34adeb155b42892896fef2240de266f7ef5c1bb885150344a5f1b41d2041ce19",
+      "historical_sha256": "91c47962edab27edf35d777a6df54cfbd767bdbd6e231fe384b9b19704186a02",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/configuration/public_periodic_simulation_compiler.py": {
+      "current_path": "pssolver/configuration/legacy_periodic.py",
+      "current_sha256": "34adeb155b42892896fef2240de266f7ef5c1bb885150344a5f1b41d2041ce19",
+      "historical_sha256": "21726cbcfe4b7ba761ddbc46916983b3fa6dcfaa3db97be878c4ae6970a834fc",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/functional/periodic_activity.py": {
+      "current_sha256": "34dd000c25a0db8c72252a00f33bda9c30e2424c851c63a90343f816e66486dd",
+      "historical_sha256": "ada4c53ffb38e24843ad1a2f74c2f5dec99e59196d0b57d916faaff62b14b0cd",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "current_sha256": "204fc3dc681534935feb031a30ee0c5756731358b6caa4cee0a2ea7f144dd748",
+      "historical_sha256": "ed7a19b7915df7819d475d23a8ac538054838754ef729a1b311281b1e5b6c0b6",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/functional/validation.py": {
+      "current_sha256": "0a3f38240e9088b2a77d88f14e38133560ea52ab0f78a82e531301d73c90513a",
+      "historical_sha256": "16cb2c8b6a4b6717a386f1cc604dae35caa4a9f1ca2413a26441e7385c0457e3",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/integrators/state_backed.py": {
+      "current_sha256": "02c220cc1f5bc317517ba94ddcbeaf927040ccb34df9ca58ab54d8f9a32541b3",
+      "historical_sha256": "6162ff35b2a87e7b12bacb103e756688acee33779264122ecaa004e9e9f951e5",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/integrators/step_program.py": {
+      "current_sha256": "bbdcf44633ffee9f601d855ceee32ff218adc15b57e13d9ad087f40adf765620",
+      "historical_sha256": "fe7edb7a89c99529a25b37722e5d5c40f1e46ccefa5d1543719e5929a6842655",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/linear_solvers/stokes/periodic.py": {
+      "current_sha256": "d5d6cb4e05d47ccceba788a28352e43746116a81984e3457966cfad04939350c",
+      "historical_sha256": "eaa17008286a2fb784f327b65d7665e4f8f3c7a2c4edbb68c8b7dfce15301ffc",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/models/active_nematics/stokes.py": {
+      "current_sha256": "d1f028b0d6f941454ddc31d362acf19a45050ef7f466564f7283d5e706a8a3a1",
+      "historical_sha256": "6db242f7ba5a7105c604a65cb3ad22279aac2630e5d9b232d365194440600c87",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/__init__.py": {
+      "current_sha256": "3a59110c55c36bc9f00c07f7a7d42ff39fd2e9f57fbb2f7773a427d09af3902f",
+      "historical_sha256": "51d3abab11a182c244a43c0285d658eae6fef8bb6080d3d6074cfc1c5e695d1d",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/package_construction.py": {
+      "current_sha256": "ae603ecf269d2c252b1c3f030834fc40e4113b9a4142e71d9d59814512610ea5",
+      "historical_sha256": "b1fc26207b01ff933c9583c86145ca41ac1dfb0923a40d044e5152cdec213ded",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/periodic_beris_edwards.py": {
+      "current_path": "pssolver/models/active_nematics/engine_terms.py",
+      "current_sha256": "d9e17257327c25fafde4990e14360110d6346f33329402f84a64d98f04c896b1",
+      "historical_sha256": "322af6f9fe3da1764287fee5a704761ffb8c5174cf0b200f016831f1a90ff5bc",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/runtime/plane_beris_edwards.py": {
+      "current_sha256": "4d6156dcca6fbbfe80bb9833021b79c8a7066021e66fc8845820234830d31dcf",
+      "historical_sha256": "1f5b7095509e6fd1d4c9cf3063cd7b2d578d04a0ce0d12f649381ffcf6c27b8a",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/plane_compiled_v2_binding.py": {
+      "current_sha256": "e5811094ef3990392b01070a1139103f9f04ebf30ffac34640f97c48c26cade4",
+      "historical_sha256": "3f5e9b211e0b03b4de0e220d158ccdff486c954c609cbb2fe2ea523952f59737",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/plane_compiled_v2_step.py": {
+      "current_sha256": "5016c4aaf710b2325f60854577bdc8a1ce9dca04447461ec950d3b904261e1d8",
+      "historical_sha256": "c9b3e3aabeee8f7dd71380599d4e800f6f47bc4cbb0c3ebe02e9e8c9594d8a16",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/robin_scalar.py": {
+      "current_sha256": "bcfc06ed2c9c92d6c1d345efbd2e475ed7b3f66fea0a657b807bae8b5fb06bad",
+      "historical_sha256": "f8de4773cd77a352d6f5803466d7612b4945dc0a3cce3dcfc90e8bdeed240fe2",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/runtime/simulation_construction.py": {
+      "current_sha256": "993ba0e4e8ea5503304cddaf5dc428b17034fbe71cb1f1079750e4fcf6ab7a60",
+      "historical_sha256": "e5b1504a3433d69e0b76ad17759995b12a56533399f2432e0f10c92bd74b68bf",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/workflows/__init__.py": {
+      "current_sha256": "8046c0142af9fc5c215bb3662e5537ab7d14eb4236bf48b2572edba0e621876f",
+      "historical_sha256": "9321c2d924d7349d87312ddfca2bad8939adaf62a2c457952a573b1ad0b160e6",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "current_sha256": "08e2d4a0cb43108ebc277a8282358aa834052479efa52788286d82d40722345d",
+      "historical_sha256": "c740a4423e733bf44a18ce1a28147e46da941c38972fd58c7e0b96c39d3eadc9",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/workflows/diagnostic_io.py": {
+      "current_path": "pssolver/io/diagnostic_io.py",
+      "current_sha256": "27f7ce5e8448cfa1641c82fafb476f0f46dd6c675355d8a20d6c2b6bb8237707",
+      "historical_sha256": "a2cebd79415d46164131bd017413b2a92f4879e7c871904830aadea0ae227680",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/workflows/periodic_beris_edwards.py": {
+      "current_path": "pssolver/runtime/runner.py",
+      "current_sha256": "e2b5f6bada1ebe1c62af4ec36081e5c2cebbdbf774b2f08ebd3053bcecd6d214",
+      "historical_sha256": "bb7cf6d287314f659b2f1b2d25a3519e78a5ac5942346a7507c3ed0d58c6c957",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "current_path": "pssolver/io/legacy/periodic_workflow.py",
+      "current_sha256": "8b021ac0ea1b5bc4ba120b2cd3ac19c3c4cf6fc38b0a195e4ae0757711ec49f5",
+      "historical_sha256": "a97a50e38a271fa07f6386fb6f11bd834e688c81a48b34d3a05c092f64c7250d",
+      "reason": "S-25 exact source relocation, old module retired; no compatibility shell."
+    },
+    "pssolver/workflows/plane_beris_edwards.py": {
+      "current_sha256": "681c07d61c5adafa33b9a8750e72300e7342513921e6a87302ad824d12bc7795",
+      "historical_sha256": "570d33dd731547547efba7bf37e0bb36620666b055b82529758f8d4fb78a20cc",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pssolver/workflows/plane_checkpoint.py": {
+      "current_sha256": "a566b43f41a2a6dc5725f247163b6c6e6a17030e72a540dad75132b6cb45f3ea",
+      "historical_sha256": "e4e475076dd00bf7587c5d26b26866b9a1abd8669d400f78842e5c8b7a26925b",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "pyproject.toml": {
+      "current_sha256": "9bc20a63734e9cdf085164304fd43fc7040b32bb8d9e1eb98f95051fe32d0eca",
+      "historical_sha256": "913f3cf34ee015a0e5473ccda75d285f45e28c0a7030f71d6b03d602eda272f2",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/historical_stage_audit.py": {
+      "current_sha256": "427dd03b3c7311bc65c9249cd3aece9b21b640d3945e8f8753f387103757f70d",
+      "historical_sha256": "07c076142c3137d7e1d604e792133e9c8df5ebd409bb74ceb36d5ebdf93d6dcc",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/identity/checkpoint_fixtures.py": {
+      "current_sha256": "3832e8a8d431fb6b6a98ccf5943ca32d60d1c8af4d42804d4f5b70ab3afee228",
+      "historical_sha256": "9350113a30a062cb14f9d7ff5f58b40891b4729f418133d9dce092f72459e4b8",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/identity/historical_continuations.py": {
+      "current_sha256": "98dbccdb1b612410684be0f545e8665570709f28a9a818db706db9f85e5b5cef",
+      "historical_sha256": "03946324b5524c73fc6852d1c49744b48d7b8ad2e30e7d8ca3826a72de94f351",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/identity/retained_v020_fixtures.py": {
+      "current_sha256": "d2613d2ae465e1c248cfb5eee50da5a5d724a61184416e18042b042dd4e8ac56",
+      "historical_sha256": "1c184753764da04e239c34922fcd71318f6fc0322ad15f08079fde4c75366381",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/identity/sampling.py": {
+      "current_sha256": "d56ba8498052efd127173bd74d69f6c6ec435d813e87fc3d3b4cb4bc54e3778d",
+      "historical_sha256": "89aaabebe11510e4fb3b73a46d00a412830f8ded64cfeb67a6940cd18d7642d1",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/identity/trajectory_hashes.py": {
+      "current_sha256": "ee95ffa21bb45e53b1a01f9ccc0f809374dd3658b377f019d74806ee4e47344e",
+      "historical_sha256": "8e69c12001c5176898029a92f4348462c6800127203434e21d8019fdc7382fc3",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "qualification/s24_source_audit.py": {
+      "current_sha256": "26e38ecdd3b8cc38431cc5e8eee32cdca2d8a2f13d8392629be23820dad5669f",
+      "historical_sha256": "31b3fbaa55943c86d0c6ea05e59ff163c3985ddbbecbfb9d53da935324b00565",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "d477a73dd9efb9ef3c95ab9b389835d2d203efcf19b3d8bdfe92b435edbcfc75",
+      "historical_sha256": "14e4393e98349aa495bf77c2f863230f756b0aae8c652f7e4c4a19d11922d0b5",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_architecture_import_boundaries.py": {
+      "current_sha256": "020d93010e83eaef9cacfc0efb969eafdda4a748265d762ae2780a4b127ab6ce",
+      "historical_sha256": "c874c7cd35926d9602395cfc4c6686d6e1c51aa7e0f75929d2f04e41ec6fd967",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase3_runtime_state.py": {
+      "current_sha256": "285dc010fbb23ec374266b404fecbf237ff38086a0692455134e3f355c040ed6",
+      "historical_sha256": "40822b2dcd2eee39d206986f66d15bc2073a970923a11360b61f0cbb60c86cf4",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase3_runtime_workspace.py": {
+      "current_sha256": "632d5596685309a5f1451370d6dc17b4f63a30768dd4737b66d20cbf40a924b4",
+      "historical_sha256": "f8ca06a300558a135d823518b77e9b0a6ddcb347336f5e97cc0c7430fa33aaf3",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase3_step_program.py": {
+      "current_sha256": "fd699e4b30da25a21fd2aca73b02748a2dfa888e22073b725a15212c0f2b9b9a",
+      "historical_sha256": "1c8835d1f5f02ffff6eaf33ec2f47c7f53d2c2a88d552a6ceecb58d88a5da4b5",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase5_compiled_binding.py": {
+      "current_sha256": "274f556661139c864df694ddb9bb9d920d991fc4983f7df638cd195a1d31b8e5",
+      "historical_sha256": "de051f621e4ecb027cd56b8fbcc8412424874b658e0ce2fc780c8404ad79ad80",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase7_p779_two_combination_compiler.py": {
+      "current_sha256": "2b00354e58d4f68b9123c382540f94215a954c239c1c85defbf0623c5518fa79",
+      "historical_sha256": "73f5bd3566459d60c357419d6ae941d570df34503e4afa3090195b67ba94035f",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase8_p82_local_candidate_record.py": {
+      "current_sha256": "fe1f8d785b67b0fbd39e5d6eebbbb1b0b1b0df07c961147468b095fa04c9e0ea",
+      "historical_sha256": "8aec815cd2e0c02c22cfd65812e393637c7aaf16752289d6f4016e1a8972e934",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase8_p82_periodic_application.py": {
+      "current_sha256": "797d650a2da857d13cc8ab52556a03c156d59b15d7bf748b23b50a0399151c1b",
+      "historical_sha256": "c3e5faa5cbccd2f1a0189ac132b45def80b6766e0c6f99794e915c39654e8692",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase9_p92_periodic_functional_runtime.py": {
+      "current_sha256": "5c14dbfa9e827339a5cb1207c6411fa54d3d2b9d39d357addab7e56c51e52b40",
+      "historical_sha256": "352441a3b9469f55849be8f684a32c0a1a00f2a8784c576ae210693bb05b1c59",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py": {
+      "current_sha256": "4cd26085f34b22f0193d93e459b898012aadbf850d82ca839b7f989eea25421c",
+      "historical_sha256": "98793729197fba5022d09f47c51eb4a3d48d3619d3a3840be732e1b15191017d",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_phase9_p94_gradient_consistency.py": {
+      "current_sha256": "43ae062a7a298b78e6197dbacf9106af4ad7364a8234ec392b793dabea759b59",
+      "historical_sha256": "19a00b6aff78882715c04f586bc00a4558315246b7e53697f26a49b3653e8aa6",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc426_cross_device_checkpoint_harness.py": {
+      "current_sha256": "23fdd016c1538b5eeb7c615557e570ddeb18dc98c5199338cb1360ccc3961dd6",
+      "historical_sha256": "e802630c44522cdca06c8c4e73d66ce5597941120dd0d734971a892c9ba62cca",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "current_sha256": "a551b7e6a5dc76146ebe31bde6aa94becd64ec43648b265b0d85fd409eec2f97",
+      "historical_sha256": "787ca339c26f7d8300848f4ec47fc49ffd43735f0a76c74ee5297f39a84bb403",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_checkpoint_identity_primitives.py": {
+      "current_sha256": "e4a601a657ca8aee1dd214d347650c4bb144e7739d5ea41e12517e1689e33855",
+      "historical_sha256": "21a6ed3b49cebfdc0f7841d26a4cc18ef47cf7f07c6c2bb81c823890d214611b",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {
+      "current_sha256": "fe41cc2b47e8ea5518d33c94388a5bb1c15bb4d37cbbdc2fc781ca8988923aca",
+      "historical_sha256": "4af6597c98ba1b9cc50b77644e46755f2fbca97c0c8b6d3a80b9f0dbd7470137",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_functional_checkpoint_identity.py": {
+      "current_sha256": "221984d68f9e17aa47bb2720a8e596a62e96136fd4d09a92fd0f64d25096f32e",
+      "historical_sha256": "0796d57f7ae55482e58768ab7165c1768fb88f9646b2cf221a8c64bfb9fa0bec",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "current_sha256": "94f5955c60dbbf211fce49bfddf33dab997dd2ed8bd3f2149f8963045aa85f9a",
+      "historical_sha256": "f0a824769723f4daddc786082dca76f255e4c96cdfedcb347b89efcaf75f3099",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "current_sha256": "93a5eb4f1dae2df4d9006d330167883aff48f95bd96dec8838dd1ad0d48e3da3",
+      "historical_sha256": "e92a741bf9a374897f140268a7b1a7d47c30d1cfec82f4e6526f4d34f1010d05",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": {
+      "current_sha256": "d20a0c2eabf7f50f86e86352eaf2001a67d1a31b7e72804b94f52b25b00eeca2",
+      "historical_sha256": "7e81dd47a44c72b2d5cbdb14d6e3f1127ca6898f567c61ab6593d26304286595",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "current_sha256": "34b29a5750bc1893b713e514c016b2a9d6c70860ae43bb71faebcdd0b674e7c5",
+      "historical_sha256": "f9c76ce2bf5ad4964285be4eeec47b22898cedd9c7fb8d983343256574250c61",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc5_legacy_functional_checkpoints.py": {
+      "current_sha256": "11ea244dcff575b1a21ee600f712c3e9dba37b45bc3083cd4bb61de790c1eba8",
+      "historical_sha256": "a421bfde2b5a8bb162697e6538b1f54961f1b1741d9b6d3fb73d34c843a20a8c",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "current_sha256": "ec1f51b9938c6235f1c812f52e84b44b7ab91c12c829c5fcd59a7f21bcb3a6d8",
+      "historical_sha256": "e02cc96e894f417bff0b3c320f48ad143cd513b852a212013b0c6a9caf88fcb9",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc5_r57_device_normalization.py": {
+      "current_sha256": "139c03e84d3d473e2ccbd407554a17464abaf23644df11bda063bd617e9da5d0",
+      "historical_sha256": "d18a92843ab3f1e90fd2f5087747edb72d505f2d32fd9d66958265a9e23c0af6",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "current_sha256": "8c9bd58e537165731208d7c9632a3f7a9a3cc5dc0fcfd9b3427bc2c8f7eb6261",
+      "historical_sha256": "44c5974b90608ac62c926448e9f2dd049a42f3fa65395124acbaef4509624b8d",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "current_sha256": "914a22050317492204f7db83fb3e2c5a5ac28ffc9428c44637007de384c01831",
+      "historical_sha256": "605148c39f133f1f3f0ff3ace47d90c812d51a95754f75ba0beab8d50ee58afb",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_3_s03_exception_compatibility.py": {
+      "current_sha256": "412e974be93d476b0153703e6c6119d0d17e7d6a815b21f12580efffe1127b2c",
+      "historical_sha256": "4501c123bba1f2869132b5c859bcd786eba14398b57662b5c2e21ce7c15ecd91",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_4_s17_r3_r6_implementation.py": {
+      "current_sha256": "99e5f01b533836ab6a4983adabfd87af85c5aa1245d1be21faef6f6e338cfbd9",
+      "historical_sha256": "ca90e934294085b7f7f3ff550f47068b0731121b92b452aae96295ea1383fba8",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_4_s18_r0052_scope_rework.py": {
+      "current_sha256": "f76d7ed09c11a3cfc141b44cfebc447e37209454ca432d27e6a3d9d0bfecfc47",
+      "historical_sha256": "52663432b5aa125d697b9a4993c351e76ebe174393687c903d959999dfe89ed9",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py": {
+      "current_sha256": "2341d867bf8ca55528bf7f44cce720cf08b3889a20f7f4d3a00a837026c8b250",
+      "historical_sha256": "291ddf7c654f25eaa8b658becfd4caa44f5c3397723a60aed104a2731cedb5e5",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_4_s18_r4_shared_step_progress.py": {
+      "current_sha256": "3d23dfccc05d3ac93738981e72a981e843a578f3fa936d013221826e6f69585d",
+      "historical_sha256": "88257a5fd0ccf6f74e07f9cf84d58bbd1edd855b5b161f2a39ed47f4d22e0237",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_5_s23_baselines.py": {
+      "current_sha256": "88f3121da30b25643b94476bfa6e719d98682b44e0853121b351a98c0fce792a",
+      "historical_sha256": "bd840c6553c2c67214ec1219b970921a6804c93c02c075f8d445c2f084db769a",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_5_s23_references.py": {
+      "current_sha256": "c32677c82d1c631fb3a1d5bd9b986fe21e45574bb77745eaabd84af66a7df6d2",
+      "historical_sha256": "cddaa1a5b1cc1168c13d382d9bf1704943bc1b2dc48b665b04c56e3c09aeddb0",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_5_s23_sampling.py": {
+      "current_sha256": "29a3d985b0465481556c6468afac2e54f3044bb81227d19d830e811eb86fb5d2",
+      "historical_sha256": "916e9151a58ec3d86379018878f03954b089b8f7c025a8525580b6a847b9e1ee",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/test_v0_5_s24_rework.py": {
+      "current_sha256": "d96e32a6bb02104a694c3982a9a418afe88ae6d004692adf50c486bbf71ecd1e",
+      "historical_sha256": "301fbb5038b827e36b17251f270e226e20ae9a2c382fa7a7e4ed6ea88aa84b77",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tests/v0_5_s24_registry_reference.py": {
+      "current_sha256": "091ee90a3fb626ba181ce2999dc00501c5da7fc41c8e9243765b8d4d014fc785",
+      "historical_sha256": "8e3b7321b232a85f1a9ede40d3e030eeabebd510b60b5a8b52f40868c6310348",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    },
+    "tools/check.py": {
+      "current_sha256": "5fced3929908a5870b6e950364d2f1a641753835cd5ad2b6bb9318252cd75490",
+      "historical_sha256": "c63aa51fee0e50e81768eb7966a5b56242c9858021f119596307a3ed441c2e03",
+      "reason": "S-25 r1.9 approved draft; forward binding, no historical record rewrite."
+    }
+  },
+  "introduced_sources": {
+    "pssolver/configuration/legacy_periodic.py": "34adeb155b42892896fef2240de266f7ef5c1bb885150344a5f1b41d2041ce19",
+    "pssolver/engine/__init__.py": "85e9f00e87c1b9096f2c9a6061b0f801fffc1d239884a1a9dc17477d614f2741",
+    "pssolver/engine/constraints.py": "9cfdf601448d91e57664335cda21fded5862b01c7e40fe0cbca3e3e5c1210434",
+    "pssolver/engine/derivatives.py": "7a04b1d80eaf8c3487acfeb689b078a0b45523f39d7b3ae7a68e50887ed716ea",
+    "pssolver/engine/engine.py": "f67b92b32146d603b5cd330d0593e72359f92b301e77ba67433a9b336c7d9758",
+    "pssolver/engine/field_view.py": "3991226b2426283610d8de86411c70e9f8e748ccb0232d1020c1375a99a671bf",
+    "pssolver/engine/imex.py": "f297fdae1dd10b358065b2d9ffeeee0b838b48804d9f7b4dedf676f4d85f04ad",
+    "pssolver/engine/linear.py": "b8c3b1d99ae720050d7420d5221bf7e399038544a616ef485838d24b2f56e0e8",
+    "pssolver/engine/program.py": "dfb76955d10dd24a46a8543f5a5920daf5dd6f4f3d155a9a87484e265476aa12",
+    "pssolver/engine/progress.py": "cc29fc08d80d0efca22522ba85cef14a62bbf807cf68b619f561ee0d762cb936",
+    "pssolver/engine/resolve.py": "2563a2638cafc2bb6c4c71889c68eff4aeec8ed76e13ac1724c21daa4864942e",
+    "pssolver/engine/state.py": "5876b686c073633e64c081accc2b2d5840ed68e27300f76a68859331866d8893",
+    "pssolver/engine/workspace.py": "fff2390261bb0e2911d784d3d4bbc286cd1762fbc8a64686c58754c431fa5b3f",
+    "pssolver/io/diagnostic_io.py": "27f7ce5e8448cfa1641c82fafb476f0f46dd6c675355d8a20d6c2b6bb8237707",
+    "pssolver/io/engine_state.py": "8b05b380f3ec6b032bbe607f615afd9f0caacecd26623645f60e32246b85ef99",
+    "pssolver/io/legacy/__init__.py": "1a6b9b1840657dd3f88063f8c07c570976b898c5e70456a00ab1263f7e2138e1",
+    "pssolver/io/legacy/periodic_workflow.py": "8b021ac0ea1b5bc4ba120b2cd3ac19c3c4cf6fc38b0a195e4ae0757711ec49f5",
+    "pssolver/models/active_nematics/engine_terms.py": "d9e17257327c25fafde4990e14360110d6346f33329402f84a64d98f04c896b1",
+    "pssolver/planning/engine_plan.py": "6c4315e0c514f187d14932b44845bc13e114f4577a1715b12b1a56a058079a04",
+    "pssolver/planning/periodic.py": "d7088ebb6823ddddd97a27a7aa14363b651e4538358e86393330ada8ea03f932",
+    "pssolver/runtime/legacy_entry.py": "191d44d9358fb7f480e0b6dd9b3d3eac69818f031c8f89414c91f60c6872f0f3",
+    "pssolver/runtime/observations.py": "18facd237154150dd70fbd859ea45ea3560d0e0268a245ad72b5fee87aa9b57a",
+    "pssolver/runtime/runner.py": "e2b5f6bada1ebe1c62af4ec36081e5c2cebbdbf774b2f08ebd3053bcecd6d214",
+    "pssolver/runtime/state_validation.py": "7333a0d5c52d92b8314850a84b6eee99521b8feed6c54df9984465a321c66608",
+    "qualification/historical_s25_tests.json": "546cbe2bdfb9ac896c01f74748668970a677944046e078c1b105558b5f31c639",
+    "qualification/identity/periodic_comparison.py": "94cb85b798eacab7913d7112994f985ca1c2e1c0f234138812f1219439af6a22",
+    "qualification/identity/runtime_case_v2.py": "62ee3ff8b52f43154bec4d78ccf726efe603cd0ab0888d67c52c52167bc71dbc",
+    "qualification/k2/__init__.py": "bc01339d3a7e83dbb3c83cc08c5eabf5d67f9aa246799c1b902bfe5e605763c2",
+    "qualification/k2/dispatch_counter.py": "b7eb2061aeeaf606d30ce962aae1a0be44ff440bd7c7ea79f90b6951fb93a485",
+    "qualification/k2/measure.py": "018db32fba46288d17747a84b6c861c004c1d0cf798dab330c3e7f481f3ea36f",
+    "qualification/k2/resident_storage.py": "cad4dc55c8e9638ec71c2161fd95c5507c961699af76bbed89317fb60d55d31e",
+    "qualification/s25_boundary_check.py": "d33cb480c34439f28a378b8ca64efd587097ddbeca52b069f330bc6f561ca669",
+    "qualification/s25_exact_moves.json": "d5fda13f9dd33afbe0efe9e9438e4cffd1f58fd7d87600c62523f0eaafc87538",
+    "qualification/s25_expected_unimportable.json": "d38acbbbf9f22f6e547971d23a4acb53b1eefc56242913727329837a19136202",
+    "qualification/s25_import_scan.py": "e8b334d7299baae468769e8b540c949ebab3f6cf6ffbf258c6c52b45239539ed",
+    "qualification/s25_source_paths.py": "6eda48889bea109afd037843bd5335110e5b9fbb13c74f0b97e9823e755dec87",
+    "qualification/s25_test_classify.py": "4201bce8622307acb7942c257cb1e4bb164a7575bcbbd9cfa77f6e7cb31fb552",
+    "qualification/s25_test_disposition.json": "29c3c3ae38a8db14cf716ac8853e634b8d9762eb6832b50a07c3c21dce564b7c",
+    "tests/baselines/s25/periodic_comparison.json": "12b8ddfd5603bf8294c404af70fefc5aa2bdb5f8c81fd432828b0c8fc8127107",
+    "tests/test_v0_5_s25_dispatch_counter.py": "a1dd8f9778cc3eedef5e46dd59a4268ffe867b42be80c6894db9f2f1dd94ada6",
+    "tests/test_v0_5_s25_disposition.py": "10f49abf377af6db3e5be1e27a7d49b92f206e4b89088ad63c4faf0b0add97bd",
+    "tests/test_v0_5_s25_engine_core.py": "9458b7172bbe122a615b3e0935b23ee2930429eca1874b97b45163ced81a8be9",
+    "tests/test_v0_5_s25_engineering.py": "179ec19f179763665de061299f23a16300e3e001e02ffae17f567104c8cc277c",
+    "tests/test_v0_5_s25_historical_tests.py": "30af76279ced9d46eec6f0f627bef5f59045e0954bdd8d3a79a6a6217bddb0f9",
+    "tests/test_v0_5_s25_stokes_extraction.py": "14f653f2cdcfdbe3c4d31925bed799c64d6cec0bf57bd92e3cc72aae5053e7d2",
+    "tests/v0_5_s25_periodic_v04_checkpoint.py": "c221fba74b49b6910743bfcb5b17abf8805d17163b8776f94649d114bda9911b"
+  },
+  "r0083_dispositions": {
+    "F001-F002": "reviewed_edge_registration",
+    "F003,F006-F010,F012,F016": "R9 exact moved source lookup and successor; original tests executed historically",
+    "F004": "R4 tamper actual engine tensor file; assertion unchanged",
+    "F005": "R8 production Periodic parameter only; full original function runs historically",
+    "F011": "R1 exact finite validator before checkpoint prepare/write",
+    "F013": "R8/R9 plain import names only",
+    "F014-F015": "R9 explicit S25_IDENTITY_MAP",
+    "F017-F018": "R1 direct input consumers match v0.4 graph and gradients",
+    "F019-F035,F041-F051": "R4 RuntimeCaseV2, installed v0.4 generated references; section 9 only",
+    "F036-F040": "R1 real CPU storages and fresh subprocess tests",
+    "F052": "actual ALLOWED seven aliases only",
+    "F053": "isolated tool env with baseline versions"
+  },
+  "r0084_dispositions": {
+    "F001-F002": "closed four-field Periodic mapping, forward_reference_rebinding",
+    "F003": "exact R100 rename source path",
+    "F004": "changed imports and E731 only; no test formatting",
+    "F005": "33 byte-identical assembly units; exact rule and relative line; no new-code exemptions",
+    "F006": "isolated fixed tool wheels with ast-serialize 0.12.1; three smoke checks passed"
+  },
+  "relocated_error_edge": {
+    "basis": "R-0083 section 3 byte-identical move",
+    "from": "pssolver.workflows.state_validation",
+    "target": "pssolver.errors",
+    "to": "pssolver.runtime.state_validation"
+  },
+  "reviewed_edge_registration": [
+    [
+      "pssolver.configuration.legacy_periodic",
+      "pssolver.planning.engine_plan"
+    ],
+    [
+      "pssolver.configuration.legacy_periodic",
+      "pssolver.planning.periodic"
+    ],
+    [
+      "pssolver.models.active_nematics.engine_terms",
+      "pssolver.linear_solvers.stokes"
+    ]
+  ],
+  "reviews": [
+    "R-0076",
+    "R-0077",
+    "R-0078",
+    "R-0079",
+    "R-0080",
+    "R-0081",
+    "R-0083",
+    "R-0084"
+  ],
+  "scope": "Periodic Engine only; CPU trial before T1\u2013T25/K2; no GPU/HPCC/push/S26",
+  "v2_self_restart_exclusions": []
+}

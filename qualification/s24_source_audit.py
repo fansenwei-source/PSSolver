@@ -28,10 +28,25 @@ def source_units(source: str) -> dict[str, tuple[str, str]]:
     return result
 
 
-def retained_changes(root: Path, directories: tuple[str, ...] = ("pssolver", "tests")) -> dict:
+def retained_changes(
+    root: Path,
+    directories: tuple[str, ...] = ("pssolver", "tests"),
+    *,
+    base: str = BASE,
+    endpoint: str | None = None,
+) -> dict:
     """Compare real Git baseline objects, never tolerate missing historical sources."""
     changed = subprocess.check_output(
-        ["git", "diff", "--name-only", "--diff-filter=M", BASE, "--", *directories],
+        [
+            "git",
+            "diff",
+            "--name-only",
+            "--diff-filter=M",
+            base,
+            *([endpoint] if endpoint else []),
+            "--",
+            *directories,
+        ],
         cwd=root,
         text=True,
     ).splitlines()
@@ -41,9 +56,14 @@ def retained_changes(root: Path, directories: tuple[str, ...] = ("pssolver", "te
     for relative in changed:
         if not relative.endswith(".py"):
             continue
-        before = subprocess.check_output(["git", "show", BASE + ":" + relative], cwd=root)
+        before = subprocess.check_output(["git", "show", base + ":" + relative], cwd=root)
         old = source_units(before.decode())
-        new = source_units((root / relative).read_text())
+        after = (
+            subprocess.check_output(["git", "show", endpoint + ":" + relative], cwd=root).decode()
+            if endpoint
+            else (root / relative).read_text()
+        )
+        new = source_units(after)
         for name in sorted(old.keys() & new.keys()):
             item = {"path": relative, "unit": name}
             if old[name][0] != new[name][0]:

@@ -546,7 +546,7 @@ def test_m14_periodic_rc1_checkpoint_requires_reprojection_migration(
     def forbidden(*_args, **_kwargs):
         raise AssertionError("tensor payload must not open during direct rejection")
 
-    monkeypatch.setattr("pssolver.workflows.periodic_checkpoint.np.load", forbidden)
+    monkeypatch.setattr("pssolver.io.legacy.periodic_workflow.np.load", forbidden)
     with pytest.raises(
         FunctionalCheckpointCompatibilityError,
         match="explicit state migration",
@@ -726,7 +726,7 @@ def test_unknown_v3_identity_rejects_before_tensor_load(tmp_path, monkeypatch, f
             backend_restart={},
             projector=_Projector(),
         )
-        module = "pssolver.workflows.periodic_checkpoint.np.load"
+        module = "pssolver.io.legacy.periodic_workflow.np.load"
     else:
         identity = _channel_identity(state_spec)
         bridge = ChannelActivityCheckpointBridge(
@@ -776,7 +776,7 @@ def test_incomplete_migration_provenance_rejects_before_tensor_load(
             backend_restart={},
             projector=_Projector(),
         )
-        module = "pssolver.workflows.periodic_checkpoint.np.load"
+        module = "pssolver.io.legacy.periodic_workflow.np.load"
     else:
         bridge = ChannelActivityCheckpointBridge(
             state_spec=state_spec,

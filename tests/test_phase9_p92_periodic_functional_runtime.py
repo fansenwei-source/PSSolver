@@ -17,14 +17,14 @@ from pssolver import (
     TimeStepping,
     TorchSpectralExecution,
 )
-from pssolver.applications.periodic_beris_edwards import (
-    load_periodic_initial_q,
-)
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
     neumann_pressure_compatibility,
     neumann_q,
+)
+from pssolver.configuration.legacy_periodic import (
+    load_periodic_initial_q,
 )
 from pssolver.configuration.public_simulation_runner import (
     PublicSimulationCompilationError,
@@ -38,11 +38,8 @@ from pssolver.functional import (
 )
 from pssolver.geometries import PeriodicBox, PlaneSlab
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.runtime.periodic_beris_edwards import (
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
 from tests._dynamic_flags import set_dynamic_flag
+from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 
 
 def _model():
@@ -196,14 +193,12 @@ def test_p92_step_is_input_pure_and_combined_observation_uses_input_state(
     state = runtime.initial_state()
     before = tuple(value.clone() for value in state)
     controls = _control(runtime)
-    production_alpha = runtime._solver.model.parameters["alpha"]
 
     separate = runtime.observe(state, controls)
     next_state, combined = runtime.step_and_observe(state, controls, 0)
     direct_next = runtime.step(state, controls, 0)
 
     assert all(torch.equal(old, new) for old, new in zip(before, state, strict=True))
-    assert runtime._solver.model.parameters["alpha"] is production_alpha
     assert all(
         torch.equal(separate[name], combined[name])
         for name in ("Q", "velocity", "pressure")
@@ -297,20 +292,14 @@ def test_p92_matches_one_qualified_production_step(tmp_path):
     simulation, _, runtime = _runtime(tmp_path)
     compiled = compile_public_simulation(simulation.specification)
     initial_values, _, _ = load_periodic_initial_q(compiled.run_spec)
-    production = build_periodic_beris_edwards_runtime(
-        PeriodicRuntimeBuildRequest(
-            run_spec=compiled.run_spec,
-            initial_values=initial_values,
-            device="cpu",
-        )
-    )
+    _, production = production_handle(simulation)
     controls = _control(runtime)
     state = runtime.initial_state()
 
     assert torch.equal(state[0], production.fields.spatial[:5])
     assert torch.equal(state[1], production.fields.spectral[:5])
-    production.solver.model.parameters["alpha"] = controls["activity"]
-    production.synchronize_for_observation()
+    production_controls = {"alpha": controls["activity"]}
+    production.engine.prepare_constraints_(production.state, production_controls)
     functional_observation = runtime.observe(state, controls)
     assert torch.equal(
         functional_observation["velocity"],
@@ -322,7 +311,8 @@ def test_p92_matches_one_qualified_production_step(tmp_path):
     )
 
     expected = runtime.step(state, controls, 0)
-    production.advance(1)
+    for _ in range(1):
+        production.engine.step_(production.state, production_controls)
     assert torch.equal(expected[0], production.fields.spatial[:5])
     assert torch.equal(expected[1], production.fields.spectral[:5])
 

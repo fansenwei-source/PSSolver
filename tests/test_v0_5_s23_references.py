@@ -10,7 +10,7 @@ import pytest
 from pssolver.io.checkpoint import CheckpointError, seal_checkpoint_metadata
 from qualification.identity.checkpoint_fixtures import file_manifest
 from qualification.identity.records import require_fingerprint
-from qualification.identity.runtime_case import RuntimeCase
+from qualification.identity.runtime_case_v2 import RuntimeCaseV2 as RuntimeCase
 
 
 ROOT = Path(__file__).resolve().parents[1]

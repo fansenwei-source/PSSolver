@@ -10,7 +10,7 @@ import torch
 
 import pssolver
 import pssolver.execution as execution
-from pssolver.execution.state import (
+from pssolver.engine.progress import (
     CurrentRepresentation,
     IntegratorProgress,
     RepresentationLedger,
@@ -577,10 +577,10 @@ def test_state_is_not_promoted_and_shared_core_owns_runtime_imports():
     legacy_source = RUNTIME_MODULES[0].read_text(encoding="utf-8")
     selector_source = RUNTIME_MODULES[1].read_text(encoding="utf-8")
     core_source = STATE_BACKED_CORE.read_text(encoding="utf-8")
-    assert "pssolver.execution.state" not in legacy_source
+    assert "pssolver.engine.progress" not in legacy_source
     assert "RuntimeState" not in legacy_source
-    assert "from pssolver.execution.state import RuntimeState" in selector_source
-    assert "from pssolver.execution.state import (" in core_source
+    assert "from pssolver.engine.progress import RuntimeState" in selector_source
+    assert "from pssolver.engine.progress import (" in core_source
     assert "StateBackedProjectedIntegratorMixin" in legacy_source
 
 

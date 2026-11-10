@@ -190,13 +190,13 @@ def test_cuda_unavailable_runtime_construction_leaves_no_output_directory(
         output_name=output_name,
     )
     module = (
-        "pssolver.applications.periodic_beris_edwards"
+        "pssolver.runtime.legacy_entry"
         if family == "periodic"
         else "pssolver.applications.channel_beris_edwards"
     )
     monkeypatch.setattr(
-        f"{module}.build_package_simulation_runtime",
-        lambda construction: (_ for _ in ()).throw(
+        f"{module}.Engine" if family == "periodic" else f"{module}.build_package_simulation_runtime",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
             RuntimeError("simulated unavailable CUDA runtime")
         ),
     )
