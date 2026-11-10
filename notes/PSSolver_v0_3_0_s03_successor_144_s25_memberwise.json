@@ -7,6 +7,16 @@
   },
   "historical_records_rewritten": false,
   "historical_successor_sources": {
+    "MANIFEST.in": {
+      "historical_sha256": "cf7b48b721f8db0451c52fb8e98306988e7fa7cddf04241f3ca465f10d67533f",
+      "current_sha256": "eb6b11e53b612b5aa6bbd518334f40f73d1413bb8cc3cf5e70e498619b899cf0",
+      "reason": "R-0086 F001 explicitly amends this new successor: include the memberwise module."
+    },
+    "qualification/s25_test_disposition.json": {
+      "historical_sha256": "29c3c3ae38a8db14cf716ac8853e634b8d9762eb6832b50a07c3c21dce564b7c",
+      "current_sha256": "65048e994fe284651ee2b6b7f0faab9f0857db8de0313a5e5254d9443ba16d0d",
+      "reason": "R-0086 F002: four R1 entries with the classifier's complete original chains."
+    },
     "pssolver/engine/engine.py": {
       "current_sha256": "e17f6ba07a728a42c8b2ebc2d2c3a99a8ed3df7a993f53a117edfe48831e6cf9",
       "historical_sha256": "f67b92b32146d603b5cd330d0593e72359f92b301e77ba67433a9b336c7d9758",

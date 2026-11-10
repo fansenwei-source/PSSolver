@@ -1,5 +1,205 @@
 {
   "affected_tests": [
+  {
+    "path": "tests/test_v0_5_s25_batch.py",
+    "unit": "test_members_match_singleton_bytes",
+    "chains": [
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.applications.periodic_beris_edwards:222"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ]
+    ],
+    "rule": "R1",
+    "reason": "R-0085 §3 T14b/memberwise; R-0086 F002"
+  },
+  {
+    "path": "tests/test_v0_5_s25_batch.py",
+    "unit": "test_singleton_keeps_original_backend_object",
+    "chains": [
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.applications.periodic_beris_edwards:222"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ]
+    ],
+    "rule": "R1",
+    "reason": "R-0085 §3 T14b/memberwise; R-0086 F002"
+  },
+  {
+    "path": "tests/test_v0_5_s25_batch.py",
+    "unit": "test_memberwise_rejects_wrong_batch_without_calling_backend",
+    "chains": [
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.applications.periodic_beris_edwards:222"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ]
+    ],
+    "rule": "R1",
+    "reason": "R-0085 §3 T14b/memberwise; R-0086 F002"
+  },
+  {
+    "path": "tests/test_v0_5_s25_batch.py",
+    "unit": "test_memberwise_preserves_arguments_views_and_other_ranks",
+    "chains": [
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.applications.periodic_beris_edwards:222"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.runtime.periodic_beris_edwards:223"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:319"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ],
+      [
+        "tests.test_v0_5_s25_batch",
+        "tests.test_v0_5_s25_engine_core",
+        "qualification.identity.runtime_case",
+        "pssolver.workflows.periodic_checkpoint:345"
+      ]
+    ],
+    "rule": "R1",
+    "reason": "R-0085 §3 T14b/memberwise; R-0086 F002"
+  },
     {
       "chains": [
         [

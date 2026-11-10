@@ -82,6 +82,7 @@ include pssolver/engine/engine.py
 include pssolver/engine/field_view.py
 include pssolver/engine/imex.py
 include pssolver/engine/linear.py
+include pssolver/engine/memberwise_transforms.py
 include pssolver/engine/program.py
 include pssolver/engine/progress.py
 include pssolver/engine/resolve.py
