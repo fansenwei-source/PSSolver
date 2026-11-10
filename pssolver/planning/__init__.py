@@ -5,7 +5,6 @@ from pssolver.core._compatibility import (
     resolve_deprecated_facade_name,
 )
 
-from .assembler import assemble_spectral_plan
 from .plan import (
     ComponentTransformPlan,
     DomainAxisPlan,
@@ -61,7 +60,6 @@ __all__ = [
     "StaticLiftingComponentPlan",
     "StaticLiftingPlan",
     "TransformKind",
-    "assemble_spectral_plan",
     "CellCenteredRobinEigenbasisPlan",
     "PlaneRobinScalarLoweringPlan",
     "build_cell_centered_robin_eigenbasis_plan",

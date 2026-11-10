@@ -66,7 +66,7 @@ def test_legacy_forward_preserves_result_diagnostics_and_mro(tmp_path, dtype, fa
         ][dtype]
         flow = case.engine.constraint.term
         actual = tensor_record(
-            flow.forward(case.engine.field_view(case.state), {"alpha": case.engine._alpha(None)})
+            flow.forward(case.engine.field_view(case.state), {"alpha": case.engine.default_controls["alpha"]})
         )
         assert actual == reference["static"]
         assert _diagnostics(flow) == reference["diagnostics"]

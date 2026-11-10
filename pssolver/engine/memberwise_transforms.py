@@ -14,20 +14,24 @@ class _MemberwiseTransforms:
         return getattr(self._backend, name)
 
     def _apply(self, method, value, boundary_conditions, *, retained_axis_counts):
-        if value.ndim != 1 + len(self._backend.shape):
+        if value.ndim == 1 + len(self._backend.shape):
+            axis = 0
+        elif value.ndim == 2 + len(self._backend.shape) and value.shape[0] == 1:
+            axis = 1
+        else:
             return method(value, boundary_conditions, retained_axis_counts=retained_axis_counts)
-        if value.shape[0] != self._batch:
+        if value.shape[axis] != self._batch:
             raise RuntimeError("single-component transform batch differs from engine")
         return torch.cat(
             [
                 method(
-                    value.narrow(0, index, 1),
+                    value.narrow(axis, index, 1),
                     boundary_conditions,
                     retained_axis_counts=retained_axis_counts,
                 )
                 for index in range(self._batch)
             ],
-            dim=0,
+            dim=axis,
         )
 
     def forward(self, tensor, boundary_conditions, *, retained_axis_counts=None):

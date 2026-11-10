@@ -1,0 +1,303 @@
+{
+  "classification": "S26_IMPLEMENTATION_PENDING_QUALIFICATION",
+  "correction_source": "R-0088 and R-0089; S-26 r1.2 sections 18/19",
+  "decisions": [
+    "D-0061"
+  ],
+  "design": "S-26_assembler_model_terms.md",
+  "git_identity": {
+    "implementation_parent": "63f19383ec2d05aedc8b0354f058302f74f4a751"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "MANIFEST.in": {
+      "current_sha256": "13e5665c4ca5bdf716d1d916abdab9c499471875ba64bf2b9ff3b59865f67678",
+      "historical_sha256": "eb6b11e53b612b5aa6bbd518334f40f73d1413bb8cc3cf5e70e498619b899cf0",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/configuration/legacy_periodic.py": {
+      "current_sha256": "b88800d2e37332400933349bdd54087b5ded76c22944cd9187dde64dee5c9550",
+      "historical_sha256": "34adeb155b42892896fef2240de266f7ef5c1bb885150344a5f1b41d2041ce19",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/configuration/periodic_beris_edwards.py": {
+      "current_path": "pssolver/configuration/legacy_periodic.py",
+      "current_sha256": "b88800d2e37332400933349bdd54087b5ded76c22944cd9187dde64dee5c9550",
+      "historical_sha256": "34adeb155b42892896fef2240de266f7ef5c1bb885150344a5f1b41d2041ce19",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/configuration/public_periodic_simulation_compiler.py": {
+      "current_path": "pssolver/configuration/legacy_periodic.py",
+      "current_sha256": "b88800d2e37332400933349bdd54087b5ded76c22944cd9187dde64dee5c9550",
+      "historical_sha256": "34adeb155b42892896fef2240de266f7ef5c1bb885150344a5f1b41d2041ce19",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/engine/engine.py": {
+      "current_sha256": "d63d964127759fe33b0b5bd4108d93e0fd9ee70a4cc3c30c2d8f88156f080552",
+      "historical_sha256": "e17f6ba07a728a42c8b2ebc2d2c3a99a8ed3df7a993f53a117edfe48831e6cf9",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/engine/memberwise_transforms.py": {
+      "current_sha256": "c0dac884cb793630e749b85ff30b7a7b866cb8dff69b44608959624bace30865",
+      "historical_sha256": "872d2b5833b156dfec9db007dc7869b726b66ebd3e18123e76299b5b7d8bfff5",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/engine/program.py": {
+      "current_sha256": "6ded9335792c2ff6b8a770909e030ee2a40a4a22c98bfdb273c2428ae43f128e",
+      "historical_sha256": "dfb76955d10dd24a46a8543f5a5920daf5dd6f4f3d155a9a87484e265476aa12",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/planning/__init__.py": {
+      "current_sha256": "763d531a79d64363a97f182c922cfa7d4966f1b276a242194d5f4bd8d23434dc",
+      "historical_sha256": "b0f9736038f7ae564c0b956bba3556e57629cfe0a94d6227d3249862f31b4fa6",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "pssolver/planning/engine_plan.py": {
+      "current_sha256": "52831ffbbe1198be9f78bea3a4eb4f6f7dd6171c71cd5bd8979a2afa6560e40c",
+      "historical_sha256": "6c4315e0c514f187d14932b44845bc13e114f4577a1715b12b1a56a058079a04",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "qualification/identity/runtime_case_v2.py": {
+      "current_sha256": "3f395a734af47dd2d82bfc898ad6904ed7b909824c980e93a9633c6dd0e62471",
+      "historical_sha256": "62ee3ff8b52f43154bec4d78ccf726efe603cd0ab0888d67c52c52167bc71dbc",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "qualification/k2/measure.py": {
+      "current_sha256": "9864e646d74d8d60c8355faf7af694f423e7193b40f93905f308d6eaec9b0d62",
+      "historical_sha256": "018db32fba46288d17747a84b6c861c004c1d0cf798dab330c3e7f481f3ea36f",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "qualification/s25_boundary_check.py": {
+      "current_sha256": "ae7b5af58f91cd0b35149b81a1bc74474ae5d68c2a2574cd1225121e0d72c9fa",
+      "historical_sha256": "d33cb480c34439f28a378b8ca64efd587097ddbeca52b069f330bc6f561ca669",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "46ca5aab0b28de54a6cf5c600cef964ffa7dfd2f1ed4ddabe982126170a2c11f",
+      "historical_sha256": "ad32a8b76f96b144f42a15b18ee64c5295ecd4dcba6ae86d4419f20912febd23",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_architecture_import_boundaries.py": {
+      "current_sha256": "afc5f3220db7111dba1fd33c5b03e09af339d6e596418b828ca552484af52b6c",
+      "historical_sha256": "020d93010e83eaef9cacfc0efb969eafdda4a748265d762ae2780a4b127ab6ce",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_v0_5_s24_rework.py": {
+      "current_sha256": "8e6e3e7ccac5df88c25c62f4f4bfad7df317768f0e75c6ae598416224b7d3ca5",
+      "historical_sha256": "d96e32a6bb02104a694c3982a9a418afe88ae6d004692adf50c486bbf71ecd1e",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_v0_5_s24_successor.py": {
+      "current_sha256": "ef7657a7263fe0fb4e9a8cd6727d5c55708043f31ae8b43f26643fb07613ee87",
+      "historical_sha256": "85469c279b7f9b33e2e85731bc1ed02b6deb8d4299da3758ddccc1b2a1a13e8b",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_v0_5_s25_disposition.py": {
+      "current_sha256": "53f03fbd41d1432c6d64d1c5e3144ac9c73251c3685473534b1ded255b418eca",
+      "historical_sha256": "10f49abf377af6db3e5be1e27a7d49b92f206e4b89088ad63c4faf0b0add97bd",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_v0_5_s25_engine_core.py": {
+      "current_sha256": "2952dd4565b86831af6f9d90684ac8571fc52dea1e15d3690a6f5f779f4adfa3",
+      "historical_sha256": "9458b7172bbe122a615b3e0935b23ee2930429eca1874b97b45163ced81a8be9",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_v0_5_s25_engineering.py": {
+      "current_sha256": "f6a4d51ef54f4fbff40ef6b4ab1e3cf2cf2a4c18dadeca35ad0a0a30ff59de2c",
+      "historical_sha256": "179ec19f179763665de061299f23a16300e3e001e02ffae17f567104c8cc277c",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tests/test_v0_5_s25_stokes_extraction.py": {
+      "current_sha256": "ff5c1f497a36f4d4e3ea100ae31848f092726de002f23cd628031f0446dc9d05",
+      "historical_sha256": "14f653f2cdcfdbe3c4d31925bed799c64d6cec0bf57bd92e3cc72aae5053e7d2",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    },
+    "tools/check.py": {
+      "current_sha256": "9efc2fce2fc617609c29fe5e83d8838d187f294024a560e37c9bfc7b067559e6",
+      "historical_sha256": "5fced3929908a5870b6e950364d2f1a641753835cd5ad2b6bb9318252cd75490",
+      "reason": "S-26 model-term assembly and R-0088 r1.1 exact forward correction; not an acceptance claim."
+    }
+  },
+  "introduced_sources": {
+    "docs/adding_a_model.md": "cff0e14c2276e6edaf8042adfc5449b47e94178ae03f5055612a4f36c226cc69",
+    "examples/allen_cahn.py": "afdfd95ca245a7411912a3464e7ce6296021715ea3fb17737b9140ef5aaa9338",
+    "examples/model_template/README.md": "db5720ad2ad378dd16daad888694dcc681bc747efee047a489e628bc7cc5cba8",
+    "examples/model_template/checks.py": "e05c07fc5059ab1a49cef9d31e27e89e9a66ba60d5b865f3285b1be3453b4442",
+    "examples/model_template/model.py": "ff37b357bcd6830b0d51090087c607c0bc12fb82cee47ebee0d08a132a8ae294",
+    "pssolver/core/terms.py": "2db3c54289130114e2ccfbd04d79e1fb16ef1bde00485a2d0e4c43eb70b318eb",
+    "pssolver/engine/terms.py": "68ef6566567e60066b725672e4263b3739efbf87caa26a97809f9ce316e917b5",
+    "pssolver/planning/assemble.py": "b98a7e455348a65e666fb0a2581d6864cde3bc2748ec88d18817ad7953068efb",
+    "pssolver/planning/capabilities.py": "cb8974f3f4ac5295769ae8012f03534f23a0c2c8cccd696421def12168084397",
+    "pssolver/planning/term_analysis.py": "07d3c1c3b3bd73a72d233aed78426e7eba83a8775124654619e29ff1f93073f8",
+    "pssolver/presets/beris_edwards.py": "767ca6095af13be4a8fa2773ae38914817bb2083bee79477cf2901b6fa30522b",
+    "qualification/historical_s26_audit.py": "bc56696d30e75604f3f758dbb58816a4fb8b99a7f66e9b9bf7c247134705b3fa",
+    "qualification/historical_s26_tests.json": "e95522e9be6f9e190724caa622980e4758aa5362cf78ecfb7f2484b46bc84385",
+    "qualification/s26_exact_moves.json": "ae45b9134aead099eafc46f0fedd0698c20788b3deb0f6f3c10eae3b567c1cac",
+    "qualification/s26_guards.py": "3306bfbb1c76ce16e2f42cf5e9233a0b649a10f5a745d67a9d81de183ae1e765",
+    "qualification/s26_impact.py": "a89f6777237b0e51ad4115a3b39dd6e49146fc479f21580b6eaf61d856651b19",
+    "qualification/s26_mechanical.py": "1e7b416f53cd3b605e6bd5e56d11863609f6bd927e2078fd0d85f1277eda158f",
+    "qualification/s26_op_trace.py": "a9f5c54e035a300f9ca1bd36670f780f213127be7fe1c117a16365dcb12d8273",
+    "qualification/s26_records.py": "a77fdefe67e1c77127a46f0ae33a1cf3704cb7d0fef00448a8a69e017748136e",
+    "qualification/s26_test_classify.py": "405fe764c12dd2ec81f6880464c9eb5b1ca8de2601c2b8310f2566ab520ef536",
+    "qualification/s26_test_disposition.json": "19bb076f81912473d2ff1e0a6c9461581a0dc8aa4cf2fa5dc79f1685aa4aa45b",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_cpu_compile/construct.json": "c1ac15805ddce977eeaeebe9db259f4064c097eeb60fdd7e18a12c777173f45d",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_cpu_compile/initial_state.json": "801f37f7d32d8c7e55ed18b801fb5e8df51ab116548867937915517c11d2128b",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_cpu_compile/inplace.json": "2a06e6512bb578b4c5e931d6dcb855c71e7d21e878b1d5892186f8c00f0defbe",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_cpu_compile/plan.json": "deb0ff325e5afcd1d87ef0155b4c8b7353635b9197dc50a5bea788dd7990d297",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_cpu_compile/prepare_constraints.json": "def6e52ecda647f40a781cf48ceb0d77b37de3f9a6b2cc911459cfe7af2a328c",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_cpu_compile/pure.json": "b3362fc8005046d6bdf9f93a3f957a6913d7119d6f838fbfabd28365e1ffdc7c",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_default/construct.json": "c1ac15805ddce977eeaeebe9db259f4064c097eeb60fdd7e18a12c777173f45d",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_default/initial_state.json": "801f37f7d32d8c7e55ed18b801fb5e8df51ab116548867937915517c11d2128b",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_default/inplace.json": "2a06e6512bb578b4c5e931d6dcb855c71e7d21e878b1d5892186f8c00f0defbe",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_default/plan.json": "deb0ff325e5afcd1d87ef0155b4c8b7353635b9197dc50a5bea788dd7990d297",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_default/prepare_constraints.json": "def6e52ecda647f40a781cf48ceb0d77b37de3f9a6b2cc911459cfe7af2a328c",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float32_default/pure.json": "b3362fc8005046d6bdf9f93a3f957a6913d7119d6f838fbfabd28365e1ffdc7c",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_cpu_compile/construct.json": "de7e96eb4981966ac869cd0e38523dc4a6d172a4226dcfa4f20c2e929ba5424a",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_cpu_compile/initial_state.json": "6f2dd2357827ff297cb2e24ec451a1be6f7922b48d23fdf66aa673102281ed39",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_cpu_compile/inplace.json": "a2a59c4dbb3961cccff8ea5245c86f2f121d256fbaa0d471829ce58274aa58b8",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_cpu_compile/plan.json": "deb0ff325e5afcd1d87ef0155b4c8b7353635b9197dc50a5bea788dd7990d297",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_cpu_compile/prepare_constraints.json": "c3982c17377ee054e857bfe2c4a6f7b03ed1c19de083f6c4b066549cea97b8ac",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_cpu_compile/pure.json": "dd6811b2a5b5860d18d4c4905b658908ffc98ca5bafed4c7971ac84935ad718c",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_default/construct.json": "de7e96eb4981966ac869cd0e38523dc4a6d172a4226dcfa4f20c2e929ba5424a",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_default/initial_state.json": "6f2dd2357827ff297cb2e24ec451a1be6f7922b48d23fdf66aa673102281ed39",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_default/inplace.json": "a2a59c4dbb3961cccff8ea5245c86f2f121d256fbaa0d471829ce58274aa58b8",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_default/plan.json": "deb0ff325e5afcd1d87ef0155b4c8b7353635b9197dc50a5bea788dd7990d297",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_default/prepare_constraints.json": "c3982c17377ee054e857bfe2c4a6f7b03ed1c19de083f6c4b066549cea97b8ac",
+    "tests/baselines/s26/op_traces/functional_periodic_default_float64_default/pure.json": "dd6811b2a5b5860d18d4c4905b658908ffc98ca5bafed4c7971ac84935ad718c",
+    "tests/baselines/s26/op_traces/index.json": "9bd1cb9e0d159f62a11753e91bd91c3a96961ecd837d5049ecb4ccfc2da80b18",
+    "tests/baselines/s26/op_traces/periodic_default_float32_cpu_compile/construct.json": "b4691610141e77072aafee88ecc80de6be508e93ac12da08bbaf4167e9832bbb",
+    "tests/baselines/s26/op_traces/periodic_default_float32_cpu_compile/initial_state.json": "9f316c536eb57a97cbe9453ba0fe792f8a139fa49285ea7805cfac49ad8d3e6d",
+    "tests/baselines/s26/op_traces/periodic_default_float32_cpu_compile/inplace.json": "ad40ef36b15a92396116e0ce8389ec8bcaa29db1cca4f1ec295686f84dceb564",
+    "tests/baselines/s26/op_traces/periodic_default_float32_cpu_compile/plan.json": "d69cb3044e335e567306474b78c7dde5551294a5bcb80ca6ab6dc5817d65c8f9",
+    "tests/baselines/s26/op_traces/periodic_default_float32_cpu_compile/prepare_constraints.json": "f45c96f0f342324714068cbc47157320483d5c57c4c7b653deeda609b463505f",
+    "tests/baselines/s26/op_traces/periodic_default_float32_cpu_compile/pure.json": "fd58f5ca9e184b2c9b5b871f6dc092e5f85d9b604c4dc6bff86fcf6da6de6c9c",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_cubic_half/construct.json": "8b4a589f36c09be98b377ab74cedbf0996cfd0f38b8c782db61f934a877f6a22",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_cubic_half/initial_state.json": "9f316c536eb57a97cbe9453ba0fe792f8a139fa49285ea7805cfac49ad8d3e6d",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_cubic_half/inplace.json": "ad40ef36b15a92396116e0ce8389ec8bcaa29db1cca4f1ec295686f84dceb564",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_cubic_half/plan.json": "abbbf52433b4f94be9e2aaeeef47e72aa2a9a611a03df4a084e483ddc9685f59",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_cubic_half/prepare_constraints.json": "f45c96f0f342324714068cbc47157320483d5c57c4c7b653deeda609b463505f",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_cubic_half/pure.json": "fd58f5ca9e184b2c9b5b871f6dc092e5f85d9b604c4dc6bff86fcf6da6de6c9c",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none/plan.json": "680b67572910b0659d5595399bd58b3de6771784b4c4733c883a6237ace51f13",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none_full/construct.json": "044ea9c4d0d466578edafc9ffeb1cbeb60202b82116e7ab84f1bd106edaa00a8",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none_full/initial_state.json": "35a8f2ab9223decdaf85a7af4ca6920979f6e823f7ecb9d1f35fd43e1fc0c67e",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none_full/inplace.json": "66375f29340b52ec5a9ef2423b09db9d45b1902f8938a26a5894282335c24482",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none_full/plan.json": "3b5c953d63f552c938a6df4908c7ff15627c5f053763d9f23b5609b131a19ea7",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none_full/prepare_constraints.json": "11ee54780d1ecd8dd44916f11224ac04130ffb6ccf861cf71efb41162092b750",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_none_full/pure.json": "8709b0ea3c371c7a55a1a3f008c1f4adadaec6ceee78b0790a92544de924e415",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_two_thirds/construct.json": "2d3a694e3a843968522816e81faaafa12d3e107e47882c5993a0eeb2c4201f7c",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_two_thirds/initial_state.json": "4b530bd94f2ba2de8db2db6c75f41dbe0261e9f6bebcf946fd43067467df49bb",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_two_thirds/inplace.json": "e46b169e6be13dcb1f42d92ce399c286a193d2fb635ba45f5538f45a785a2e92",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_two_thirds/plan.json": "1d7ad87f9fb6a43b6dfd804223ce61791188e59e9f690f010438aff883fb1513",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_two_thirds/prepare_constraints.json": "c9d7fb5344834cfeb5d2a7497d063641c1c3405bb3331a5a7d8e4160c82c762a",
+    "tests/baselines/s26/op_traces/periodic_default_float32_dealias_two_thirds/pure.json": "5be4cb89a85be23cc014e859ee663f49c59239b1a904cd2008db5fb9641288d3",
+    "tests/baselines/s26/op_traces/periodic_default_float32_default/construct.json": "8b4a589f36c09be98b377ab74cedbf0996cfd0f38b8c782db61f934a877f6a22",
+    "tests/baselines/s26/op_traces/periodic_default_float32_default/initial_state.json": "9f316c536eb57a97cbe9453ba0fe792f8a139fa49285ea7805cfac49ad8d3e6d",
+    "tests/baselines/s26/op_traces/periodic_default_float32_default/inplace.json": "ad40ef36b15a92396116e0ce8389ec8bcaa29db1cca4f1ec295686f84dceb564",
+    "tests/baselines/s26/op_traces/periodic_default_float32_default/plan.json": "abbbf52433b4f94be9e2aaeeef47e72aa2a9a611a03df4a084e483ddc9685f59",
+    "tests/baselines/s26/op_traces/periodic_default_float32_default/prepare_constraints.json": "f45c96f0f342324714068cbc47157320483d5c57c4c7b653deeda609b463505f",
+    "tests/baselines/s26/op_traces/periodic_default_float32_default/pure.json": "fd58f5ca9e184b2c9b5b871f6dc092e5f85d9b604c4dc6bff86fcf6da6de6c9c",
+    "tests/baselines/s26/op_traces/periodic_default_float32_reuse_off/construct.json": "8b4a589f36c09be98b377ab74cedbf0996cfd0f38b8c782db61f934a877f6a22",
+    "tests/baselines/s26/op_traces/periodic_default_float32_reuse_off/initial_state.json": "9f316c536eb57a97cbe9453ba0fe792f8a139fa49285ea7805cfac49ad8d3e6d",
+    "tests/baselines/s26/op_traces/periodic_default_float32_reuse_off/inplace.json": "d77bf8eaab37a4ef147b22cb706ac6feeb45a62fa929cf5cfd42c5a94e824d4f",
+    "tests/baselines/s26/op_traces/periodic_default_float32_reuse_off/plan.json": "92103c93b30bf55fc4c32a75a19f3d041c2722d1bee47a4990eb68f59c25b1b9",
+    "tests/baselines/s26/op_traces/periodic_default_float32_reuse_off/prepare_constraints.json": "f45c96f0f342324714068cbc47157320483d5c57c4c7b653deeda609b463505f",
+    "tests/baselines/s26/op_traces/periodic_default_float32_reuse_off/pure.json": "6cdf386c1adc1ee064107611344b7d35a879c20c24e019f5f5b11e45abc0fc88",
+    "tests/baselines/s26/op_traces/periodic_default_float64_cpu_compile/construct.json": "d640e7612ea5e610cde230c7ebfbd3187824dc7512ba7acd138a639b8fd7a650",
+    "tests/baselines/s26/op_traces/periodic_default_float64_cpu_compile/initial_state.json": "a680a99c014fe8366fd7dcefd6085cc91230d2430f4d2acf2e5e8d14002a1ac1",
+    "tests/baselines/s26/op_traces/periodic_default_float64_cpu_compile/inplace.json": "4b66f7fa59e222a1fb6638def8336341cddc1c0099b5e556265f0936530ec280",
+    "tests/baselines/s26/op_traces/periodic_default_float64_cpu_compile/plan.json": "d69cb3044e335e567306474b78c7dde5551294a5bcb80ca6ab6dc5817d65c8f9",
+    "tests/baselines/s26/op_traces/periodic_default_float64_cpu_compile/prepare_constraints.json": "8a9dbe97bcaae8542195dde34d31901fc1d70b7373dfff1ba86459dc6e6e1269",
+    "tests/baselines/s26/op_traces/periodic_default_float64_cpu_compile/pure.json": "87768581a5d3afb6d5471ca5b2d13ae1db085ef9e226a93e7fea09a80192e130",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_cubic_half/construct.json": "d4e4c8d580fb0f9a9d99cc5f66800679496fb0691aa6a50a9bff2e9a120bf006",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_cubic_half/initial_state.json": "a680a99c014fe8366fd7dcefd6085cc91230d2430f4d2acf2e5e8d14002a1ac1",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_cubic_half/inplace.json": "4b66f7fa59e222a1fb6638def8336341cddc1c0099b5e556265f0936530ec280",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_cubic_half/plan.json": "abbbf52433b4f94be9e2aaeeef47e72aa2a9a611a03df4a084e483ddc9685f59",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_cubic_half/prepare_constraints.json": "8a9dbe97bcaae8542195dde34d31901fc1d70b7373dfff1ba86459dc6e6e1269",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_cubic_half/pure.json": "87768581a5d3afb6d5471ca5b2d13ae1db085ef9e226a93e7fea09a80192e130",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none/plan.json": "680b67572910b0659d5595399bd58b3de6771784b4c4733c883a6237ace51f13",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none_full/construct.json": "121bc8acd28ddb1e60e83e2a1cf3fa078fab80a117b4ec90cbc30df2ca92068e",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none_full/initial_state.json": "d691415d706b530651eb11f3764c38f3fbecb2aa9e2a7a52cb0fc034c5417039",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none_full/inplace.json": "6fa8341e80a2fc4fd59875e2fc453fc177b74041a0bcf2346a7ac86775107d5d",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none_full/plan.json": "3b5c953d63f552c938a6df4908c7ff15627c5f053763d9f23b5609b131a19ea7",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none_full/prepare_constraints.json": "9f99c24092669bc028d746d4e62e65482a769ab0c1d31104a8e1ea1f7362201d",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_none_full/pure.json": "7d1c9482ea34895b59869d069fbd228e5b63e935f7a4ded7a7f106695cdafa9f",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_two_thirds/construct.json": "7c5ef97089314c6401597cc688f649e09b88275db78566581cc141b1554512fa",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_two_thirds/initial_state.json": "48a48ffefcf4d1afaef2195d9fa217c603a07aff733d4bd9408ec0e57a23aa71",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_two_thirds/inplace.json": "b3f34390f632255b0a3ca120a069ee01f92ec204495988013c19ac609310ddb8",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_two_thirds/plan.json": "1d7ad87f9fb6a43b6dfd804223ce61791188e59e9f690f010438aff883fb1513",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_two_thirds/prepare_constraints.json": "2e42cf013230b02f7bc558b78ca991a2bbe8f9af355e7a76e090857159596aea",
+    "tests/baselines/s26/op_traces/periodic_default_float64_dealias_two_thirds/pure.json": "29d301f6fb0adb00502d23ca8b87ade7b56da1ab9f017f577b7bea975687cadf",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default/construct.json": "d4e4c8d580fb0f9a9d99cc5f66800679496fb0691aa6a50a9bff2e9a120bf006",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default/initial_state.json": "a680a99c014fe8366fd7dcefd6085cc91230d2430f4d2acf2e5e8d14002a1ac1",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default/inplace.json": "4b66f7fa59e222a1fb6638def8336341cddc1c0099b5e556265f0936530ec280",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default/plan.json": "abbbf52433b4f94be9e2aaeeef47e72aa2a9a611a03df4a084e483ddc9685f59",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default/prepare_constraints.json": "8a9dbe97bcaae8542195dde34d31901fc1d70b7373dfff1ba86459dc6e6e1269",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default/pure.json": "87768581a5d3afb6d5471ca5b2d13ae1db085ef9e226a93e7fea09a80192e130",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default_unobserved/construct.json": "d4e4c8d580fb0f9a9d99cc5f66800679496fb0691aa6a50a9bff2e9a120bf006",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default_unobserved/initial_state.json": "a680a99c014fe8366fd7dcefd6085cc91230d2430f4d2acf2e5e8d14002a1ac1",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default_unobserved/inplace.json": "4b66f7fa59e222a1fb6638def8336341cddc1c0099b5e556265f0936530ec280",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default_unobserved/plan.json": "abbbf52433b4f94be9e2aaeeef47e72aa2a9a611a03df4a084e483ddc9685f59",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default_unobserved/prepare_constraints.json": "8a9dbe97bcaae8542195dde34d31901fc1d70b7373dfff1ba86459dc6e6e1269",
+    "tests/baselines/s26/op_traces/periodic_default_float64_default_unobserved/pure.json": "87768581a5d3afb6d5471ca5b2d13ae1db085ef9e226a93e7fea09a80192e130",
+    "tests/baselines/s26/op_traces/periodic_default_float64_reuse_off/construct.json": "d4e4c8d580fb0f9a9d99cc5f66800679496fb0691aa6a50a9bff2e9a120bf006",
+    "tests/baselines/s26/op_traces/periodic_default_float64_reuse_off/initial_state.json": "a680a99c014fe8366fd7dcefd6085cc91230d2430f4d2acf2e5e8d14002a1ac1",
+    "tests/baselines/s26/op_traces/periodic_default_float64_reuse_off/inplace.json": "07ab27178e4f9024aaa9821ff741f0c1d17f2cdb2e97081db4e4727cf7cbcace",
+    "tests/baselines/s26/op_traces/periodic_default_float64_reuse_off/plan.json": "92103c93b30bf55fc4c32a75a19f3d041c2722d1bee47a4990eb68f59c25b1b9",
+    "tests/baselines/s26/op_traces/periodic_default_float64_reuse_off/prepare_constraints.json": "8a9dbe97bcaae8542195dde34d31901fc1d70b7373dfff1ba86459dc6e6e1269",
+    "tests/baselines/s26/op_traces/periodic_default_float64_reuse_off/pure.json": "d51c72d1d8904a5e6244ef678c3a6c2a2afae11cc7c68234894cd000d0290c2a",
+    "tests/baselines/s26/periodic_plans.json": "a33843c9c87ca3462b49a3d47f1a22cac2766f0c0613587cc3057e9808a4a4dd",
+    "tests/mms/allen_cahn_mms.py": "161b13f44ff6c28b40bed315d616507e9c4a173e032037686841cb08fc57a33d",
+    "tests/test_v0_5_s26_allen_cahn.py": "c051955255916578255eb7bf9958fa0b5f7bbc3c59c94e014935403dd59c850c",
+    "tests/test_v0_5_s26_assembly.py": "09fb1fca905cd7aaf90865c5112b27c8da33f1014fe630a1f3d78a70bb4ea65d",
+    "tests/test_v0_5_s26_historical_tests.py": "9a513be02bb979c18a59c4b97b2ec40e3d0735dd416f1d154edf11441e753ede",
+    "tests/test_v0_5_s26_rework.py": "ab0bbcd09ab5be4e568425cf211781e5223dcc1ab295277960daad924167db7a"
+  },
+  "preflight": {
+    "no_claim_of_final_qualification": true,
+    "required": "S-26 section 13 as revised by R-0088/R-0089, r1.2 sections 18/19"
+  },
+  "provenance_binding_order": "The new retirement registry binds this record. This record does not hash that registry, avoiding a circular content hash. Both are frozen by the candidate Git tree.",
+  "retired_sources": {
+    "pssolver/engine/resolve.py": {
+      "lines": 19,
+      "reason": "S-26 design 12.1/12.2; exact original retained in reachable history.",
+      "sha256": "2563a2638cafc2bb6c4c71889c68eff4aeec8ed76e13ac1724c21daa4864942e",
+      "source_commit": "63f19383ec2d05aedc8b0354f058302f74f4a751"
+    },
+    "pssolver/planning/assembler.py": {
+      "lines": 214,
+      "reason": "S-26 design 12.1/12.2; exact original retained in reachable history.",
+      "sha256": "4125875e024f43492ddf9339ea5e18a1d725508388b7064c2dd5fb7735e5412b",
+      "source_commit": "63f19383ec2d05aedc8b0354f058302f74f4a751"
+    },
+    "pssolver/planning/periodic.py": {
+      "lines": 145,
+      "reason": "S-26 design 12.1/12.2; exact original retained in reachable history.",
+      "sha256": "d7088ebb6823ddddd97a27a7aa14363b651e4538358e86393330ada8ea03f932",
+      "source_commit": "63f19383ec2d05aedc8b0354f058302f74f4a751"
+    },
+    "tests/test_architecture_stage_c.py": {
+      "lines": 510,
+      "reason": "S-26 design 12.1/12.2; exact original retained in reachable history.",
+      "sha256": "cff7caf82acb9c9c88568ae2663dde2ad720c3ee977f0a417d62e5afc5b54d26",
+      "source_commit": "63f19383ec2d05aedc8b0354f058302f74f4a751"
+    }
+  },
+  "scope": {
+    "deferred_to_S28": [
+      "execution",
+      "systems",
+      "planning/plan.py",
+      "planning/simulation.py",
+      "models/canary",
+      "legacy capability catalog derivation"
+    ],
+    "protected": [
+      "public API",
+      "Plane/Channel",
+      "v0.4 declarations",
+      "frozen mathematics",
+      "existing tolerances and comparison exclusions"
+    ]
+  }
+}

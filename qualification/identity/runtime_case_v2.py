@@ -37,7 +37,10 @@ class RuntimeCaseV2(RuntimeCase):
         )
 
     def prepare(self):
-        self.engine.prepare_constraints_(self.state, diagnostics=self.last_diagnostics)
+        self.engine.prepare_constraints_(
+            self.state, controls={"alpha": self.engine.default_controls["alpha"]},
+            diagnostics=self.last_diagnostics,
+        )
 
     def step(self):
         if not self.engine_periodic:

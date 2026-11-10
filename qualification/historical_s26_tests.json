@@ -1,0 +1,64 @@
+{
+  "files": [
+    {
+      "blob": "b2a8c9355679b8ed03699f805dadd8c93c530fbe",
+      "path": "tests/test_architecture_import_boundaries.py",
+      "sha256": "020d93010e83eaef9cacfc0efb969eafdda4a748265d762ae2780a4b127ab6ce"
+    },
+    {
+      "blob": "b69a8f887fcc002c4c2c2d02d345b80e91ce04b0",
+      "path": "tests/test_architecture_stage_c.py",
+      "sha256": "cff7caf82acb9c9c88568ae2663dde2ad720c3ee977f0a417d62e5afc5b54d26"
+    },
+    {
+      "blob": "e5addbd4da3652cb537b34f9a1cd8de73e2bc828",
+      "path": "tests/test_v0_5_s25_disposition.py",
+      "sha256": "10f49abf377af6db3e5be1e27a7d49b92f206e4b89088ad63c4faf0b0add97bd"
+    },
+    {
+      "blob": "a6b6b173dd9a3546a155988dbb041a15879b1907",
+      "path": "tests/test_v0_5_s24_rework.py",
+      "sha256": "d96e32a6bb02104a694c3982a9a418afe88ae6d004692adf50c486bbf71ecd1e"
+    },
+    {
+      "blob": "cf994cb1bd332938db2518fb65328d16b5d91e55",
+      "path": "tests/test_v0_5_s24_successor.py",
+      "sha256": "85469c279b7f9b33e2e85731bc1ed02b6deb8d4299da3758ddccc1b2a1a13e8b"
+    }
+  ],
+  "nodeids": [
+    "tests/test_architecture_import_boundaries.py::test_configuration_has_only_reviewed_planning_composition_edges",
+    "tests/test_architecture_import_boundaries.py::test_internal_imports_follow_the_phase_zero_dependency_ratchet",
+    "tests/test_architecture_stage_c.py::test_assembly_uses_the_problem_snapshot_not_a_later_model_mutation",
+    "tests/test_architecture_stage_c.py::test_diagnostic_components_are_declared_but_not_runtime_stored",
+    "tests/test_architecture_stage_c.py::test_periodic_box_plan_matches_a_full_complex_backend",
+    "tests/test_architecture_stage_c.py::test_plan_is_immutable_and_metadata_is_an_independent_json_value",
+    "tests/test_architecture_stage_c.py::test_plane_plan_resolves_layout_storage_and_transform_families",
+    "tests/test_architecture_stage_c.py::test_plane_shadow_comparison_matches_backend_projector_and_fields",
+    "tests/test_architecture_stage_c.py::test_planned_dealias_counts_match_the_qualified_runtime_projector[shape0-cubic_half-truncated-full_complex-None]",
+    "tests/test_architecture_stage_c.py::test_planned_dealias_counts_match_the_qualified_runtime_projector[shape1-two_thirds-truncated-hermitian_half-1]",
+    "tests/test_architecture_stage_c.py::test_planned_dealias_counts_match_the_qualified_runtime_projector[shape2-cubic_half-full-hermitian_half-0]",
+    "tests/test_architecture_stage_c.py::test_planned_dealias_counts_match_the_qualified_runtime_projector[shape3-none-full-full_complex-None]",
+    "tests/test_architecture_stage_c.py::test_runtime_storage_is_role_ordered_without_reordering_field_declarations",
+    "tests/test_architecture_stage_c.py::test_shadow_comparison_rejects_untyped_inputs[None-backend]",
+    "tests/test_architecture_stage_c.py::test_shadow_comparison_rejects_untyped_inputs[value0-plan]",
+    "tests/test_architecture_stage_c.py::test_shadow_comparison_reports_field_order_and_boundary_mismatches",
+    "tests/test_architecture_stage_c.py::test_shadow_comparison_reports_runtime_metadata_rejection_as_a_mismatch",
+    "tests/test_architecture_stage_c.py::test_shadow_comparison_reports_structural_mismatches_without_execution",
+    "tests/test_v0_5_s24_rework.py::test_rework_is_forward_bound_without_rewriting_successor_141",
+    "tests/test_v0_5_s24_successor.py::test_s24_successor_binds_current_sources_without_rewriting_history",
+    "tests/test_v0_5_s25_disposition.py::test_every_retained_test_edit_has_an_explicit_s25_disposition",
+    "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite"
+  ],
+  "provider_mode": "fresh wheel built from reachable S-25 commit, isolated installed subprocess",
+  "selected_nodeids": [
+    "tests/test_architecture_import_boundaries.py::test_configuration_has_only_reviewed_planning_composition_edges",
+    "tests/test_architecture_import_boundaries.py::test_internal_imports_follow_the_phase_zero_dependency_ratchet",
+    "tests/test_architecture_stage_c.py",
+    "tests/test_v0_5_s24_rework.py::test_rework_is_forward_bound_without_rewriting_successor_141",
+    "tests/test_v0_5_s24_successor.py::test_s24_successor_binds_current_sources_without_rewriting_history",
+    "tests/test_v0_5_s25_disposition.py::test_every_retained_test_edit_has_an_explicit_s25_disposition",
+    "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite"
+  ],
+  "source_commit": "63f19383ec2d05aedc8b0354f058302f74f4a751"
+}

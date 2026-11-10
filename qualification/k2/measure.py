@@ -63,33 +63,10 @@ def main() -> None:
             return build_periodic_beris_edwards_runtime(request), None
 
     else:
+        from pssolver.configuration.legacy_periodic import translate_periodic
         from pssolver.engine import Engine
-        from pssolver.planning.periodic import PeriodicPlanInputs, periodic_plan
 
-        declaration = spec.simulation
-        numerics, execution = declaration.numerics, declaration.execution.options
-        parameters = declaration.equation_system.parameters
-        plan = periodic_plan(
-            PeriodicPlanInputs(
-                tuple(declaration.geometry.domain.shape),
-                tuple(declaration.geometry.domain.lengths),
-                declaration.time_integration.integrator.dt,
-                numerics.spectral_storage.value,
-                numerics.hermitian_axis,
-                numerics.transform_execution_order.value,
-                numerics.dealias_rule.value,
-                numerics.projected_transform_execution.value,
-                parameters["material"],
-                parameters["ldg_l1"],
-                parameters["stokes"]["parameters"],
-                parameters["activity_amplitude"],
-                execution["pointwise_execution"],
-                not execution["disable_q_gradient_reuse"],
-                execution["molecular_field_linear_space"],
-                execution["stress_divergence_sum_space"],
-                "production",
-            )
-        )
+        plan = translate_periodic(spec.simulation, flavour="production", load_initial=False).plan
 
         def build():
             engine = Engine(plan, device="cpu", dtype=dtype, batch=1)

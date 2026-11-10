@@ -64,7 +64,7 @@ class LinearTermPlan:
     target: str
     tier: Literal["diagonal"]
     recipe: str
-    arguments: Mapping[str, float]
+    arguments: Mapping[str, object]
 
     def __post_init__(self):
         object.__setattr__(self, "arguments", _freeze(self.arguments))
@@ -73,7 +73,7 @@ class LinearTermPlan:
 @dataclass(frozen=True, slots=True)
 class ExplicitTermPlan:
     target: str
-    kernel: str
+    kernel: str  # Package reference or model-local kernel identity.
     arguments: Mapping[str, object]
     pointwise_execution: Literal["eager", "compile"]
     q_gradient_reuse: bool

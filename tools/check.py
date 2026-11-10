@@ -175,7 +175,16 @@ def unit_span(source: str, name: str) -> tuple[int, int]:
 
 def exact_assemblies() -> dict[str, list[dict]]:
     """Validate every registered span against its reachable, byte-identical source."""
-    manifest = json.loads((ROOT / "qualification/s25_exact_moves.json").read_text())
+    previous = json.loads((ROOT / "qualification/s25_exact_moves.json").read_text())
+    manifest = json.loads((ROOT / "qualification/s26_exact_moves.json").read_text())
+    def identities(record):
+        return [
+            {key: value for key, value in entry.items() if key != "target_lines"}
+            for entry in record["exact_moves"]
+        ]
+    if (manifest["source_commit"] != previous["source_commit"]
+            or identities(manifest) != identities(previous)):
+        raise ValueError("S-26 exact moves changed a source, unit or frozen hash")
     result = {}
     for entry in manifest["exact_moves"]:
         original = subprocess.check_output(

@@ -7,10 +7,15 @@ import torch
 from .progress import _advance_refresh_counters
 
 
-def prepare(engine, state, view, alpha, *, out=None, diagnostics=None):
+def prepare(engine, state, view, controls, *, out=None, diagnostics=None):
     if state.constrained_current:
         return state
-    hats = engine.constraint.constrained_hats(view, alpha, diagnostics=diagnostics)
+    if engine.constraint is None:
+        if out is None:
+            return replace(state, constrained_current=True)
+        # Reuse the one reviewed State publication below; no tensor work.
+        return _mark_constraints_current(out)
+    hats = engine._constraint_hats(view, controls, diagnostics=diagnostics)
     evolved = engine.evolved_count
     if out is None:
         q_physical, q_spectral = (
@@ -34,16 +39,22 @@ def prepare(engine, state, view, alpha, *, out=None, diagnostics=None):
         spectral[evolved:].copy_(hats)
         physical = engine.projector.inverse_transform(spectral[evolved:], engine.boundaries)
         out.spatial[evolved:].copy_(physical)
-        out.constrained_current = True
+        _mark_constraints_current(out)
         result = out
     view._bind(result.spatial, result.spectral)
     engine.constraint.term.after_static_fields_updated(view)
     return result
 
 
-def advance(engine, state, view, alpha, *, out=None, diagnostics=None):
-    current = prepare(engine, state, view, alpha, out=out, diagnostics=diagnostics)
-    rhs = engine.explicit(view, {})
+def _mark_constraints_current(out):
+    out.constrained_current = True
+    return out
+
+
+def advance(engine, state, view, controls, *, out=None, diagnostics=None):
+    current = prepare(engine, state, view, controls, out=out, diagnostics=diagnostics)
+    explicit = engine._explicit_at(current.completed_steps)
+    rhs = explicit(view, controls)
     evolved = engine.evolved_count
     source = (
         current.pure_evolved[1]

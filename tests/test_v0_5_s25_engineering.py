@@ -126,9 +126,22 @@ def test_registered_exact_unit_bytes_and_lines_are_enforced(tmp_path, monkeypatc
     (tmp_path / "qualification/s25_exact_moves.json").write_text(
         json.dumps(dict(source_commit=base, exact_moves=[row]))
     )
+    (tmp_path / "qualification/s26_exact_moves.json").write_text(
+        json.dumps(dict(source_commit=base, exact_moves=[row]))
+    )
     assert check.exact_assemblies()["new.py"][0]["unit"] == "old"
     (tmp_path / "new.py").write_text(source.replace("return  1", "return 1"))
     with pytest.raises(ValueError, match="altered exact move"):
+        check.exact_assemblies()
+
+
+def test_exact_moves_require_the_latest_manifest(tmp_path, monkeypatch):
+    (tmp_path / "qualification").mkdir()
+    (tmp_path / "qualification/s25_exact_moves.json").write_text(
+        json.dumps(dict(source_commit="old", exact_moves=[]))
+    )
+    monkeypatch.setattr(check, "ROOT", tmp_path)
+    with pytest.raises(FileNotFoundError, match="s26_exact_moves.json"):
         check.exact_assemblies()
 
 

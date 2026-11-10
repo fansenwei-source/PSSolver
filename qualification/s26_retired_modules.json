@@ -1,0 +1,117 @@
+{
+  "guard_references": [
+    {
+      "file": "tests/test_v0_5_s25_disposition.py",
+      "kind": "file_string",
+      "line": 19,
+      "module": "pssolver.planning.periodic",
+      "reason": "Exact S-25 introduced-source retirement guard; original function remains in the mandatory historical runner."
+    },
+    {
+      "file": "tests/test_v0_5_s25_disposition.py",
+      "kind": "file_string",
+      "line": 19,
+      "module": "pssolver.engine.resolve",
+      "reason": "Exact S-25 introduced-source retirement guard; original function remains in the mandatory historical runner."
+    }
+  ],
+  "modules": [
+    {
+      "module": "pssolver.planning.assembler",
+      "path": "pssolver/planning/assembler.py",
+      "reason": "Replaced by model-term assembly; old wiring tests run in the S-25 historical runner."
+    },
+    {
+      "module": "pssolver.planning.periodic",
+      "path": "pssolver/planning/periodic.py",
+      "reason": "Periodic translation now uses the model preset and assembler."
+    },
+    {
+      "module": "pssolver.engine.resolve",
+      "path": "pssolver/engine/resolve.py",
+      "reason": "Replaced by the capability table and private engine resolver."
+    }
+  ],
+  "provenance_references": [
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/planning/assembler.py",
+      "value": "pssolver/planning/assembler.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/reviewed_edge_registration/1/1",
+      "value": "pssolver.planning.periodic"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/introduced_sources/@pssolver/planning/periodic.py",
+      "value": "pssolver/planning/periodic.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/introduced_sources/@pssolver/engine/resolve.py",
+      "value": "pssolver/engine/resolve.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_145_s26_assembler.json",
+      "file_sha256": "96c6e4163e609282976ec181d64e1c4e015f6d8ad863ce6162011ff2224edc9b",
+      "kind": "record_string",
+      "pointer": "/retired_sources/@pssolver/planning/periodic.py",
+      "value": "pssolver/planning/periodic.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_145_s26_assembler.json",
+      "file_sha256": "96c6e4163e609282976ec181d64e1c4e015f6d8ad863ce6162011ff2224edc9b",
+      "kind": "record_string",
+      "pointer": "/retired_sources/@pssolver/planning/assembler.py",
+      "value": "pssolver/planning/assembler.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_145_s26_assembler.json",
+      "file_sha256": "96c6e4163e609282976ec181d64e1c4e015f6d8ad863ce6162011ff2224edc9b",
+      "kind": "record_string",
+      "pointer": "/retired_sources/@pssolver/engine/resolve.py",
+      "value": "pssolver/engine/resolve.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json",
+      "file_sha256": "65be86ac77af8247df2a7cce0dea457f1706d9a4dcb037367ac4b6b6d5b08064",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/planning/assembler.py",
+      "value": "pssolver/planning/assembler.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p851_robin_declarations.json",
+      "file_sha256": "2d78c78bbaa9822bfe320c00bb605062c5adb8dd6643e4b7e666d01e5ee4e7a1",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/planning/assembler.py",
+      "value": "pssolver/planning/assembler.py"
+    },
+    {
+      "file": "qualification/s24_frozen_sources.json",
+      "file_sha256": "843ea5416324f7df638e8c5bfcdad8d665465d5b6a0e046e051b8c4b948b1d41",
+      "kind": "record_string",
+      "pointer": "/files/252/path",
+      "value": "pssolver/planning/assembler.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/planning/assembler.py",
+      "value": "pssolver/planning/assembler.py"
+    }
+  ],
+  "retired_tests": [
+    "tests/test_architecture_stage_c.py"
+  ]
+}

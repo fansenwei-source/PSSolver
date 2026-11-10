@@ -231,7 +231,7 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
     ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.engine_plan"),
-    ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.periodic"),
+    ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.assemble"),
     ImportEdge(
         "pssolver.configuration.finite_q_anchoring",
         "pssolver.planning.robin",
@@ -413,7 +413,9 @@ REVIEWED_S25_EDGES = {
     ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io.engine_state'),
     ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.io.legacy.periodic_workflow'),
     ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.planning.engine_plan'),
-    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.planning.periodic'),
+    ImportEdge('pssolver.configuration.legacy_periodic', 'pssolver.planning.assemble'),
+    ImportEdge('pssolver.planning.assemble', 'pssolver.engine.engine'),
+    ImportEdge('pssolver.presets.beris_edwards', 'pssolver.core.terms'),
     ImportEdge('pssolver.functional.periodic_activity', 'pssolver.engine.engine'),
     ImportEdge('pssolver.functional.periodic_activity', 'pssolver.engine.state'),
     ImportEdge('pssolver.functional.validation', 'pssolver.engine.engine'),

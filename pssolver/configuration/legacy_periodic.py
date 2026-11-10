@@ -51,7 +51,6 @@ from pssolver.io.legacy.periodic_workflow import (
 )
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.planning.engine_plan import Plan
-from pssolver.planning.periodic import PeriodicPlanInputs, periodic_plan
 
 from .package_construction import plan_package_runtime_construction
 from .public_complete_stress_validation import (
@@ -477,35 +476,49 @@ class PeriodicTranslation:
 
 def translate_periodic(spec: SimulationSpec, *, flavour, load_initial):
     """Apply the frozen validation before constructing a tensor-free plan."""
+    from pssolver.core.terms import Parameter
+    from pssolver.planning.assemble import (
+        AssemblyProblem,
+        EulerInput,
+        ExecutionInput,
+        GeometryInput,
+        NumericsInput,
+        OutputInput,
+        assemble,
+    )
+    from pssolver.presets.beris_edwards import CompleteStressBerisEdwards
+
     from .public_simulation_runner import PublicSimulationCompilation
 
     compiled = compile_periodic_public_simulation(spec, PublicSimulationCompilation)
     numerics = spec.numerics
     execution = spec.execution.options
     parameters = spec.equation_system.parameters
-    inputs = PeriodicPlanInputs(
-        tuple(spec.geometry.domain.shape),
-        tuple(spec.geometry.domain.lengths),
-        spec.time_integration.integrator.dt,
-        numerics.spectral_storage.value,
-        numerics.hermitian_axis,
-        numerics.transform_execution_order.value,
-        numerics.dealias_rule.value,
-        numerics.projected_transform_execution.value,
-        parameters["material"],
-        parameters["ldg_l1"],
-        parameters["stokes"]["parameters"],
-        parameters["activity_amplitude"],
-        execution["pointwise_execution"],
-        not execution["disable_q_gradient_reuse"],
-        execution["molecular_field_linear_space"],
-        execution["stress_divergence_sum_space"],
-        flavour,
+    if flavour not in {"production", "functional_1_1"}:
+        raise ValueError("unsupported periodic plan flavour")
+    functional = flavour == "functional_1_1"
+    problem = AssemblyProblem(
+        CompleteStressBerisEdwards(
+            material=parameters["material"], ldg_l1=parameters["ldg_l1"],
+            stokes=parameters["stokes"]["parameters"],
+            alpha=Parameter(kind="field", controllable=True) if functional
+            else Parameter(parameters["activity_amplitude"]),
+        ),
+        GeometryInput("periodic_box", tuple(spec.geometry.domain.shape), tuple(spec.geometry.domain.lengths)),
+        {name: ("periodic",) * 3 for name in ("Q", "velocity", "pressure")},
+        EulerInput(spec.time_integration.integrator.dt),
+        NumericsInput(numerics.spectral_storage.value, numerics.hermitian_axis,
+            numerics.transform_execution_order.value, numerics.dealias_rule.value,
+            numerics.projected_transform_execution.value),
+        ExecutionInput("eager" if functional else execution["pointwise_execution"],
+            False if functional else not execution["disable_q_gradient_reuse"], not functional,
+            {name: execution[name] for name in ("molecular_field_linear_space", "stress_divergence_sum_space")}),
+        OutputInput(("Q", "velocity", "pressure"), "pssolver.runtime.observations:capture_periodic_observation"),
     )
     values, path, digest = (
         load_periodic_initial_q(compiled.run_spec) if load_initial else (None, None, None)
     )
-    return PeriodicTranslation(compiled.run_spec, periodic_plan(inputs), values, path, digest)
+    return PeriodicTranslation(compiled.run_spec, assemble(problem).plan, values, path, digest)
 
 
 def _periodic_run_spec_dynamics(

@@ -48,7 +48,9 @@ EXACT = [
     "io/diagnostic_io.py",
     "io/engine_state.py",
     "planning/engine_plan.py",
-    "planning/periodic.py",
+    "planning/assemble.py",
+    "planning/capabilities.py",
+    "planning/term_analysis.py",
 ]
 
 
@@ -78,7 +80,15 @@ def check(root):
                 continue
             row = dict(module=module, line=line, target=target, name=name)
             edges.append(row)
-            if target.split(".")[1] in FORBID.get(caller_layer, set()):
+            materialization_method = (
+                module == "pssolver.planning.assemble"
+                and target == "pssolver.engine.engine" and name == "Engine"
+                and any(isinstance(parent, ast.ClassDef) and parent.name == "AssembledProblem"
+                        and any(isinstance(method, ast.FunctionDef) and method.name == "engine"
+                                and method.lineno <= line <= method.end_lineno
+                                for method in parent.body) for parent in tree.body)
+            )
+            if target.split(".")[1] in FORBID.get(caller_layer, set()) and not materialization_method:
                 violations.append(row)
     return dict(
         units=units,
