@@ -16,6 +16,7 @@ from .constraints import PeriodicStokesConstraint
 from .field_view import FieldView
 from .imex import SemiImplicitEuler
 from .linear import DiagonalOperator
+from .memberwise_transforms import _MemberwiseTransforms
 from .progress import _refresh_counters_from_completed_steps
 from .resolve import resolve
 from .state import State
@@ -24,7 +25,7 @@ from .state import State
 @dataclass(frozen=True, slots=True)
 class _ProjectorHost:
     shape: tuple[int, ...]
-    transform_backend: TensorProductTransformBackend
+    transform_backend: TensorProductTransformBackend | _MemberwiseTransforms
 
 
 class Engine:
@@ -65,6 +66,8 @@ class Engine:
             hermitian_axis=geometry.hermitian_axis,
             periodic_transform_execution=geometry.periodic_transform_execution,
         )
+        if batch > 1:
+            self.transform_backend = _MemberwiseTransforms(self.transform_backend, batch)
         host = _ProjectorHost(self.shape, self.transform_backend)
         self.projector = BasisAwareSpectralProjector(
             host,

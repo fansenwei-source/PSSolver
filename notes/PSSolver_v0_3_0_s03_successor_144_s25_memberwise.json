@@ -1,0 +1,52 @@
+{
+  "changed_runtime_boundary": "Engine installs private memberwise transforms only for batch > 1.",
+  "classification": "S25_MEMBERWISE_FFT_REWORK_NOT_YET_QUALIFIED",
+  "design_revision": "r1.10 section 24",
+  "git_identity": {
+    "implementation_parent": "2f0ee4c4fa8027e804af82525b3c2436bd9703d1"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "pssolver/engine/engine.py": {
+      "current_sha256": "e17f6ba07a728a42c8b2ebc2d2c3a99a8ed3df7a993f53a117edfe48831e6cf9",
+      "historical_sha256": "f67b92b32146d603b5cd330d0593e72359f92b301e77ba67433a9b336c7d9758",
+      "reason": "R-0085 / design r1.10 section 24: private memberwise adapter and explicit test category."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "ad32a8b76f96b144f42a15b18ee64c5295ecd4dcba6ae86d4419f20912febd23",
+      "historical_sha256": "d477a73dd9efb9ef3c95ab9b389835d2d203efcf19b3d8bdfe92b435edbcfc75",
+      "reason": "R-0085 / design r1.10 section 24: private memberwise adapter and explicit test category."
+    }
+  },
+  "introduced_sources": {
+    "pssolver/engine/memberwise_transforms.py": "872d2b5833b156dfec9db007dc7869b726b66ebd3e18123e76299b5b7d8bfff5",
+    "tests/test_v0_5_s25_batch.py": "a6929dcb3c04631286663a976aa517b0bfe085048947741c8589b3d5201f83d2"
+  },
+  "rerun": [
+    "five-stage full trial",
+    "T1-T25 including T14b and T19",
+    "K2",
+    "clean-clone full CPU",
+    "wheel and sdist"
+  ],
+  "review": "R-0085",
+  "t19": {
+    "authority": "D-0052 / RL-0074",
+    "device": "local RTX 3060 Ti",
+    "estimated_minutes": 20,
+    "hard_limit_minutes": 40,
+    "record_only": true,
+    "requires_gpu_local_lock": true
+  },
+  "unchanged": [
+    "batch=1 backend object and call path",
+    "multi-component rank-5 transforms",
+    "backends/tensor_product.py",
+    "operators/tensor_divergence.py",
+    "linear_solvers/stokes/periodic.py",
+    "models/active_nematics/stokes.py",
+    "frozen references and mathematics",
+    "tolerances",
+    "comparison exclusions"
+  ]
+}

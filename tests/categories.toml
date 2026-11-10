@@ -88,6 +88,7 @@ functional = [
   "tests/test_verify_v0_4_s16_numerical_equivalence.py",
 ]
 numerical = [
+  "tests/test_v0_5_s25_batch.py",
   "tests/test_v0_5_s25_engine_core.py",
   "tests/mms/test_primitives.py",
   "tests/test_active_nematics_initial_conditions.py",
