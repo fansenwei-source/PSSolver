@@ -1,0 +1,742 @@
+{
+ "schema": "s28a_tables.v1",
+ "basis": "4b720938896af6cae0719569e95be471b33e0935",
+ "step": "S-28a",
+ "retired_modules": [
+  "pssolver.applications.channel_beris_edwards",
+  "pssolver.runtime.channel_beris_edwards",
+  "pssolver.workflows.channel_beris_edwards",
+  "pssolver.workflows.channel_checkpoint_observation",
+  "pssolver.configuration.channel_beris_edwards",
+  "pssolver.configuration.public_channel_beris_edwards_compiler",
+  "pssolver.models.active_nematics.channel_stokes",
+  "pssolver.functional.channel_pressure",
+  "pssolver.functional.channel_pressure_adjoint"
+ ],
+ "new_modules": {
+  "pssolver.configuration.legacy_channel": {
+   "required_units": [
+    "translate_channel",
+    "restore_channel_state"
+   ],
+   "authority": "design §3.2"
+  },
+  "pssolver.runtime.channel_observations": {
+   "required_units": [
+    "ChannelCapture",
+    "capture_channel_observation",
+    "capture_channel_diagnostic"
+   ],
+   "authority": "design §3.3"
+  }
+ },
+ "exact_moves": [
+  {
+   "unit": "CHECKPOINT_VERSION",
+   "source": "pssolver/workflows/channel_beris_edwards.py:CHECKPOINT_VERSION",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "2789d98fd7739c3d09d1e7aac9ea2efc35fc3c6b68d0371d58a421d1f86e60ec",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "ChannelBerisEdwardsCheckpointHeader",
+   "source": "pssolver/workflows/channel_beris_edwards.py:ChannelBerisEdwardsCheckpointHeader",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "4e149f2d8d936a22f9a4ad959122104b2d808c851bb71bf9611f8c3432bf2ae0",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "LEGACY_CHECKPOINT_VERSION",
+   "source": "pssolver/workflows/channel_beris_edwards.py:LEGACY_CHECKPOINT_VERSION",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "cc1dbd5c63d27556f2cb5cdcca30fd448c0149c483d2a5ccba19547d90901a47",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "LEGACY_CHECKPOINT_VERSION_V1",
+   "source": "pssolver/workflows/channel_beris_edwards.py:LEGACY_CHECKPOINT_VERSION_V1",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "973d0535d59111b1be0db50b6a0ecac711018048b4e993b1c7b952b7132b8321",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_STATE_COMPONENTS",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_STATE_COMPONENTS",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "1e5b6872190d0043d10321762c146a29af472d9df78dc43264712c3e9fa507d9",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_SUPPORTED_CHECKPOINT_VERSIONS",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_SUPPORTED_CHECKPOINT_VERSIONS",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "7654ac2d2a4b530ee3e0451513a90dfb4755a3a6bcd9b70da5694bd64b913901",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_channel_backend_restart_identity",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_channel_backend_restart_identity",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "e70b39cc58adb1e048e12f7d1813cc9de064d67ec6893911fb194bb52e28513d",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_channel_run_spec_dynamics",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_channel_run_spec_dynamics",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "44a3982b79882c22154271fa5de6d13b9d6a45409c8fa8df24703d1fb39eee4f",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_channel_state_layout_identity",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_channel_state_layout_identity",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "5f386b613fc0bfc5a76bacca1152ade9bf3e4b352f98deaa5dc53ebd880585a5",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_channel_state_layout_identity_from_metadata",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_channel_state_layout_identity_from_metadata",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "65a41c3e972a3d6e494c56f7410d034f9737d808e37a4a92e5b07ffaeec884e7",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_legacy_channel_format_for_generation",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_legacy_channel_format_for_generation",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "63d88d889dde1368b9b1ad8669d0330eb82638cdadf0ff23f84f1a76ee94e2a9",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_load_checkpoint",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_load_checkpoint",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "99573d7d9a4ebfca9f65d90291093651b49302117e66ffa03a15e7105362ab7e",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_read_channel_checkpoint_metadata",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_read_channel_checkpoint_metadata",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "d836ff7e73cfd10e6fb3f63d453b7ece94f5dec0691786690047eea39d4e7075",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_sha256",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_sha256",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "55234d6af4cdb8b3bdf5f96730156a66bf53202cd4a6fd34f0f7d3b9a5979362",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_validate_legacy_channel_upgrade_contract",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_validate_legacy_channel_upgrade_contract",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "0ad05a6b1375a126bb6859f4ad328a109b144aa05ddd93149987acb8e48e62ce",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_validated_array",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_validated_array",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "3ee8b8e18e547507fea5f19b06e9e9cefa980a0cecf569537b91b44208bc9ad8",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "_validated_progress",
+   "source": "pssolver/workflows/channel_beris_edwards.py:_validated_progress",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "d389dfd015c4f0c035262cc4cc31119ca334875b68a25e2fed2a4fdcd2d4742d",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "build_channel_checkpoint_compatibility_identity",
+   "source": "pssolver/workflows/channel_beris_edwards.py:build_channel_checkpoint_compatibility_identity",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "437b9ecbb3871c16e3720939e94e0e21b617d1af14648fdff176b2a313390598",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "channel_forward_dynamics_identity",
+   "source": "pssolver/workflows/channel_beris_edwards.py:channel_forward_dynamics_identity",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "9932fa6de8cf6729c86f683e9f9e4135a0217480c872aab793f29f28762e53b9",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "read_channel_beris_edwards_checkpoint_header",
+   "source": "pssolver/workflows/channel_beris_edwards.py:read_channel_beris_edwards_checkpoint_header",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "ff6629012c1898b16b333447d80ffb38c4c91b5623a411f167ed6152fa63cb87",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "read_channel_beris_edwards_checkpoint_progress",
+   "source": "pssolver/workflows/channel_beris_edwards.py:read_channel_beris_edwards_checkpoint_progress",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "5ee04cf5320c345eb562b16ef7b48b97683263a5fa385c230738a8f81b919dd9",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "upgrade_channel_beris_edwards_checkpoint_directory",
+   "source": "pssolver/workflows/channel_beris_edwards.py:upgrade_channel_beris_edwards_checkpoint_directory",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "d78d3f93886863a21830dd4093a9699a89df13544d9146caf1dd1590e05a3b14",
+   "authority": "design §3.2 v0.4 Channel checkpoint carrier (readers + upgrade; P3)"
+  },
+  {
+   "unit": "CHANNEL_COMPLETE_STRESS_RUNTIME_PATH",
+   "source": "pssolver/configuration/channel_beris_edwards.py:CHANNEL_COMPLETE_STRESS_RUNTIME_PATH",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "9b4d9338a26418fb36cfe79e3b2ed1e2daa6cf3a413e993c78fe735461db7f46",
+   "authority": "design §3.2 v0.4 Channel declaration carrier"
+  },
+  {
+   "unit": "ChannelBerisEdwardsRunSpec",
+   "source": "pssolver/configuration/channel_beris_edwards.py:ChannelBerisEdwardsRunSpec",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "58ab1f360665859008570639b3675099818e25a3f795eb8ab8892675ee164f65",
+   "authority": "design §3.2 v0.4 Channel declaration carrier"
+  },
+  {
+   "unit": "_EXECUTION_KEYS",
+   "source": "pssolver/configuration/public_channel_beris_edwards_compiler.py:_EXECUTION_KEYS",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "c7850d9e4aaabe0f56374e3c8cf9c2fa78f833d349486094c9f0224a2b3caa2b",
+   "authority": "design §3.2 1.1 validation (v0.4 order and messages)"
+  },
+  {
+   "unit": "_WORKFLOW_KEYS",
+   "source": "pssolver/configuration/public_channel_beris_edwards_compiler.py:_WORKFLOW_KEYS",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "de946807489f3c571c15e17993d13404c111a28f6f39cc42b968bc26a26ff74b",
+   "authority": "design §3.2 1.1 validation (v0.4 order and messages)"
+  },
+  {
+   "unit": "_exact_keys",
+   "source": "pssolver/configuration/public_channel_beris_edwards_compiler.py:_exact_keys",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "7ac77b80cd505f26ca0f206b3a55a51d36b8a4bed87692c5b527631e53e44e15",
+   "authority": "design §3.2 1.1 validation (v0.4 order and messages)"
+  },
+  {
+   "unit": "_reject_input",
+   "source": "pssolver/applications/channel_beris_edwards.py:_reject_input",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "ced4a96a97bd2633822be2ddfd0ce28ca5ab32d114c38262f0c02c1912e54690",
+   "authority": "design §3.2 v0.4 input rejection"
+  },
+  {
+   "unit": "CHANNEL_Q_BOUNDARY_CONDITIONS",
+   "source": "pssolver/models/active_nematics/channel_stokes.py:CHANNEL_Q_BOUNDARY_CONDITIONS",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "827edf176b295db58e1ff0312c8a6dc6f14233297f5a71b96a797f43c49dc3c0",
+   "authority": "design §3.2 Channel boundary constants used by the translator"
+  },
+  {
+   "unit": "CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS",
+   "source": "pssolver/models/active_nematics/channel_stokes.py:CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "source_ast_sha256": "2ee5ea837997740213f7b1514219f2fa76761c04b3fac10b6ea3722d75654044",
+   "authority": "design §3.2 Channel boundary constants used by the translator"
+  },
+  {
+   "unit": "ChannelBerisEdwardsObservation",
+   "source": "pssolver/workflows/channel_beris_edwards.py:ChannelBerisEdwardsObservation",
+   "target": "pssolver/runtime/channel_observations.py",
+   "source_ast_sha256": "997953035534c74121128fb515cc263f4b3250acfee9d1e157601721e6ceda1f",
+   "authority": "design §3.3 Channel observation units (names kept)"
+  },
+  {
+   "unit": "ChannelBerisEdwardsDiagnostic",
+   "source": "pssolver/workflows/channel_beris_edwards.py:ChannelBerisEdwardsDiagnostic",
+   "target": "pssolver/runtime/channel_observations.py",
+   "source_ast_sha256": "0083d9e734a40c39660b932c3dbbb41cb497e1e6cd3f5cbd3f36f777baa0a5eb",
+   "authority": "design §3.3 Channel observation units (names kept)"
+  },
+  {
+   "unit": "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE",
+   "source": "pssolver/workflows/channel_beris_edwards.py:CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE",
+   "target": "pssolver/runtime/channel_observations.py",
+   "source_ast_sha256": "5475ce75c4102b7e956b8520e7263096af640a60c327759833029be150b33cfa",
+   "authority": "design §3.3 Channel observation units (names kept)"
+  },
+  {
+   "unit": "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER",
+   "source": "pssolver/workflows/channel_beris_edwards.py:CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER",
+   "target": "pssolver/runtime/channel_observations.py",
+   "source_ast_sha256": "36f84ee2e02dc45238e2f48b501adea4dc4547a4ba4eb824c8a455c716dcabc9",
+   "authority": "design §3.3 Channel observation units (names kept)"
+  },
+  {
+   "unit": "capture_synchronized_pressure_guess",
+   "source": "pssolver/workflows/channel_checkpoint_observation.py:capture_synchronized_pressure_guess",
+   "target": "pssolver/runtime/channel_observations.py",
+   "source_ast_sha256": "330c9178d52c4b7f9f00dc9841bfb37ad8677e8c1d5b0b824feb8b1fcc28efd1",
+   "authority": "design §3.3 pressure-guess capture"
+  }
+ ],
+ "mechanical_moves": [
+  {
+   "unit": "_snapshot_sha256",
+   "source": "pssolver/applications/channel_beris_edwards.py:_sha256",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "substitutions": [
+    [
+     "def _sha256(",
+     "def _snapshot_sha256("
+    ]
+   ],
+   "source_ast_sha256": "6ca5f8b3b2bf6b658213b6c9bb2f9435d2ff9dc74b795600950fb4219a5ee1a6",
+   "authority": "design §3.2 snapshot digest (renamed: the carrier keeps the workflow _sha256)"
+  },
+  {
+   "unit": "load_channel_initial_q",
+   "source": "pssolver/applications/channel_beris_edwards.py:load_channel_initial_q",
+   "target": "pssolver/configuration/legacy_channel.py",
+   "substitutions": [
+    [
+     "_sha256(path)",
+     "_snapshot_sha256(path)"
+    ]
+   ],
+   "source_ast_sha256": "87c4b0dbd849d5b26483b4960456fa88fd3f986195a61ee476aafa8142f0c588",
+   "authority": "design §3.2 v0.4 initial Q loading (one call renamed)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver._apply_axis_matrix_adjoint",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator._apply_axis_matrix_adjoint",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [],
+   "source_ast_sha256": "37f0a0b29c4d7c9b68f76507eb62884e69a28a80260675f1015df2b2853a2f9e",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver._helmholtz_inverse_adjoint",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator._helmholtz_inverse_adjoint",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [
+    [
+     "self._solver.",
+     "self."
+    ]
+   ],
+   "source_ast_sha256": "21c34bea5be32d7d956031ab228166ea41389b264137ec848f8222618d9b5b80",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver._pressure_to_velocity_adjoint",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator._pressure_to_velocity_adjoint",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [
+    [
+     "self._solver.",
+     "self."
+    ]
+   ],
+   "source_ast_sha256": "dac68b0a5892ce96737bc70e8db09a63a346eeef18ba5023c9f76a5e017e831b",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver._velocity_to_pressure_adjoint",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator._velocity_to_pressure_adjoint",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [
+    [
+     "self._solver.",
+     "self."
+    ]
+   ],
+   "source_ast_sha256": "d26b29cedba77755c6d8c91b149bf730e3172fb787bd59756ee504324693ddc3",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver._pressure_gradient_adjoint",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator._pressure_gradient_adjoint",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [
+    [
+     "self._solver.",
+     "self."
+    ]
+   ],
+   "source_ast_sha256": "fe490e2614c5d640cb4eff28ba3621dd291581f6695c0cc7fb3acb2e54da54dc",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver._velocity_divergence_component_adjoint",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator._velocity_divergence_component_adjoint",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [
+    [
+     "self._solver.",
+     "self."
+    ]
+   ],
+   "source_ast_sha256": "6ecbd6e17aa696185d1ec462edc12f4daa13b7a7e98c35efb8923c8acfc3cabf",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  },
+  {
+   "unit": "ChannelNoSlipModalStokesSolver.apply_pressure_operator_transpose",
+   "source": "pssolver/functional/channel_pressure.py:ChannelPressureTransposeOperator.apply_pressure_operator_transpose",
+   "target": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+   "substitutions": [
+    [
+     "self._project_gauge(",
+     "self._project_pressure_gauge("
+    ]
+   ],
+   "source_ast_sha256": "90336acabca52f81b03312066d523305b16f983fd8dc442c3def599e5451453a",
+   "authority": "design §2.2 hand-written Schur transpose becomes part of the solver (S-22 §3.3.4)"
+  }
+ ],
+ "mechanical_target_dynamic_members": {
+  "ChannelNoSlipModalStokesSolver": [
+   "d_to_n_y",
+   "d_to_n_z",
+   "dd_to_dn_y",
+   "dd_to_dn_z",
+   "dn_to_dd_y",
+   "dn_to_dd_z",
+   "n_to_d_y",
+   "n_to_d_z"
+  ],
+  "authority": "register_buffer(f'{operator_name}_{axis_name}') over the wall_ops keys for axes y and z in __init__"
+ },
+ "test_moves": [
+  {
+   "unit": "unrolled_channel_pressure_solve_oracle",
+   "source": "pssolver/functional/channel_pressure_adjoint.py:unrolled_channel_pressure_solve_oracle",
+   "target": "tests/oracles/channel_pressure_unrolled.py",
+   "source_ast_sha256": "0c005dc5cca2143036f1b1efca7fefcc215c86b78325c8b03b20170b435848fb",
+   "authority": "design §2.2 oracle #4 stays independent; only its reference to the deleted adjoint class is rewritten"
+  }
+ ],
+ "changed_paths": {
+  "pssolver/linear_solvers/stokes/channel_no_slip.py": "modify: design §2.2 merged Schur PCG: solve/solve_transpose with explicit role policies",
+  "pssolver/engine/constraints.py": "modify: design §2.3 ChannelStokesConstraint, custom VJP",
+  "pssolver/engine/engine.py": "modify: design §2.3 Channel constraint wiring, P1 seeding",
+  "pssolver/engine/program.py": "modify: design §2.3 solver state threading",
+  "pssolver/engine/state.py": "modify: design §2.3 explicit pressure-guess pair in State.solver",
+  "pssolver/engine/members.py": "modify: design §2.3 per-member solver state for batch > 1",
+  "pssolver/planning/assemble.py": "modify: design §2.4 channel geometry and constraint",
+  "pssolver/planning/capabilities.py": "modify: design §2.4 capability row for stokes on periodic x no_slip^2",
+  "pssolver/planning/engine_plan.py": "modify: design §2.4 warm-start policy in the constraint plan",
+  "pssolver/io/engine_state.py": "modify: design §2.6 solver state in engine_state",
+  "pssolver/runtime/legacy_entry.py": "modify: design §3.1 Channel branch to Engine/Runner",
+  "pssolver/runtime/__init__.py": "modify: design §3.1 re-exports",
+  "pssolver/workflows/__init__.py": "modify: design §3.2 re-exports of moved checkpoint names",
+  "pssolver/applications/__init__.py": "modify: design §3.1 empty package docstring",
+  "pssolver/functional/channel_activity_runtime.py": "modify: design §4 1.1 Channel runtime on the Engine pure step",
+  "pssolver/functional/channel_activity.py": "modify: design §4 1.1 request validation imports from legacy_channel",
+  "pssolver/functional/channel_checkpoint.py": "modify: design §4 format-3 bridge reads/writes Engine state",
+  "pssolver/functional/__init__.py": "modify: design §4 facade rows of deleted modules removed (S-22 §3.8)",
+  "pssolver/configuration/application_registry.py": "modify: design §3.1 wiring strings",
+  "pssolver/configuration/public_simulation_runner.py": "modify: design §3.1 wiring strings",
+  "pssolver/configuration/simulation_lowering.py": "modify: design §3.1 Channel lowering to the translator",
+  "pssolver/api/runner.py": "modify: design §3.1 wiring strings",
+  "pssolver/api/capabilities.py": "modify: design §3.1 capability catalogue wiring (strings unchanged)",
+  "ARCHITECTURE.md": "modify: design §6 architecture map",
+  "MANIFEST.in": "modify: design §6 packaging",
+  "tools/check.py": "modify: design §6 engineering gate (exact-moves reader)",
+  "pssolver/configuration/legacy_channel.py": "add: design §3.2 Channel translator + carrier",
+  "pssolver/runtime/channel_observations.py": "add: design §3.3 Channel observations and capture",
+  "pssolver/applications/channel_beris_edwards.py": "delete: design §5 S-28a deletion",
+  "pssolver/runtime/channel_beris_edwards.py": "delete: design §5 S-28a deletion",
+  "pssolver/workflows/channel_beris_edwards.py": "delete: design §5 S-28a deletion",
+  "pssolver/workflows/channel_checkpoint_observation.py": "delete: design §5 S-28a deletion",
+  "pssolver/configuration/channel_beris_edwards.py": "delete: design §5 S-28a deletion",
+  "pssolver/configuration/public_channel_beris_edwards_compiler.py": "delete: design §5 S-28a deletion",
+  "pssolver/models/active_nematics/channel_stokes.py": "delete: design §5 S-28a deletion",
+  "pssolver/functional/channel_pressure.py": "delete: design §5 S-28a deletion",
+  "pssolver/functional/channel_pressure_adjoint.py": "delete: design §5 S-28a deletion"
+ },
+ "changed_path_classes": [
+  {
+   "pattern": "tests/*",
+   "reason": "design §7 test disposition (R-0087 §4, Df7)"
+  },
+  {
+   "pattern": "qualification/*",
+   "reason": "design §8 qualification registries and tools"
+  },
+  {
+   "pattern": "notes/PSSolver_v0_3_0_s03_successor_147_*",
+   "reason": "design §8 successor 147 (generated last)"
+  }
+ ],
+ "unit_registry": "qualification/s28a_units.json",
+ "frozen_files": [
+  "pssolver/linear_solvers/stokes/plane_free_slip.py",
+  "pssolver/models/active_nematics/beris_edwards.py",
+  "pssolver/models/active_nematics/q_tensor.py",
+  "pssolver/operators/projection.py",
+  "qualification/identity/runtime_case.py"
+ ],
+ "frozen_sha256": {
+  "pssolver/linear_solvers/stokes/plane_free_slip.py": "ef1935b36050c08cd92079c8e4af324788a3f401b9a3c69fa46da8bb4d031a59",
+  "pssolver/models/active_nematics/beris_edwards.py": "2b2e8d9a0555e1337cc314a5776b9fb5073eab1bafa6087f70b468eabe62906d",
+  "pssolver/models/active_nematics/q_tensor.py": "adae50e10adff6d0c6daeaaba215afd9664ebbcf9bfe0471fe6880d8f511601b",
+  "pssolver/operators/projection.py": "f2264d7bd1419e15a94d588d72ae2532b18185c850a941005c8651a7f6725356",
+  "qualification/identity/runtime_case.py": "d220f536c9f54f6080a942952a31756d53a19b006a42947b240c6b1741df8d6e"
+ },
+ "frozen_patterns": [
+  "tests/baselines/v0_4/*",
+  "tests/baselines/s25/*",
+  "tests/baselines/s26/*",
+  "tests/fixtures/*",
+  "benchmarks/*"
+ ],
+ "forbid": {
+  "io": [
+   "configuration",
+   "functional",
+   "api",
+   "applications",
+   "workflows",
+   "runtime",
+   "models",
+   "planning"
+  ],
+  "engine": [
+   "api",
+   "applications",
+   "workflows",
+   "configuration",
+   "functional",
+   "runtime",
+   "io"
+  ],
+  "planning": [
+   "engine",
+   "api",
+   "applications",
+   "workflows",
+   "configuration",
+   "functional",
+   "runtime",
+   "io",
+   "models"
+  ],
+  "models": [
+   "configuration",
+   "functional",
+   "runtime",
+   "io",
+   "api",
+   "applications",
+   "workflows"
+  ],
+  "configuration": [
+   "functional",
+   "api",
+   "applications",
+   "workflows",
+   "runtime"
+  ],
+  "runtime": [
+   "functional",
+   "api",
+   "applications",
+   "workflows"
+  ],
+  "functional": [
+   "api",
+   "applications",
+   "workflows",
+   "runtime"
+  ],
+  "linear_solvers": [
+   "configuration",
+   "runtime",
+   "workflows",
+   "applications",
+   "api",
+   "functional",
+   "engine",
+   "io",
+   "models"
+  ],
+  "cli": [
+   "functional",
+   "applications",
+   "workflows",
+   "experimental"
+  ]
+ },
+ "layers_extra": {},
+ "allowed_edges": [
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.planning.assemble",
+   "authority": "design §3.2 translator via assembler (as S-27 E-row legacy_plane)"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.io.checkpoint",
+   "authority": "design §3.2 carrier (exact moves)"
+  },
+  {
+   "source": "pssolver.runtime.channel_observations",
+   "destination": "pssolver.engine.field_view",
+   "authority": "design §3.3 captures take FieldView"
+  },
+  {
+   "source": "pssolver.runtime.channel_observations",
+   "destination": "pssolver.run_metadata",
+   "authority": "design §3.3 ChannelCapture run records"
+  },
+  {
+   "source": "pssolver.runtime.channel_observations",
+   "destination": "pssolver.errors",
+   "authority": "design §3.3 observation errors"
+  }
+ ],
+ "torch_free_modules": [
+  "pssolver.core.terms",
+  "pssolver.planning.assemble",
+  "pssolver.planning.capabilities",
+  "pssolver.planning.term_analysis",
+  "pssolver.presets.beris_edwards"
+ ],
+ "torch_free_deferred_imports": [
+  [
+   "pssolver.planning.assemble",
+   "pssolver.engine.engine"
+  ]
+ ],
+ "component_layers": [
+  "models",
+  "geometries",
+  "boundaries",
+  "integrators",
+  "engine",
+  "backends",
+  "operators",
+  "linear_solvers",
+  "runtime",
+  "io",
+  "functional",
+  "api",
+  "applications",
+  "workflows",
+  "configuration",
+  "experimental"
+ ],
+ "own_file_patterns": [
+  "qualification/s28a_*",
+  "notes/PSSolver_v0_3_0_s03_successor_147_*"
+ ],
+ "criteria": {
+  "section9_exclusions": [
+   {
+    "name": "progress.constraints_current",
+    "pointer_regex": "/progress/constraints_current$",
+    "dry_run_patterns": [
+     "/trace/restarts/#/#/progress/constraints_current",
+     "/trace/steps/#/after_observation/progress/constraints_current",
+     "/trace/steps/#/before_observation/progress/constraints_current"
+    ]
+   },
+   {
+    "name": "identity.runtime.adapter",
+    "pointer_regex": "^(/trace)?/identity/runtime/adapter$",
+    "dry_run_patterns": [
+     "/identity/runtime/adapter",
+     "/trace/identity/runtime/adapter"
+    ]
+   }
+  ],
+  "channel_identity_runtime_keys_equal": [
+   "effective",
+   "fallback_used",
+   "pressure_diagnostics_schema_version",
+   "pressure_gauge",
+   "pressure_solver_policy",
+   "pressure_warm_start",
+   "requested",
+   "velocity_nullspace"
+  ],
+  "functional_channel_identity_runtime_keys_equal": [
+   "api_version",
+   "discretization",
+   "execution",
+   "scientific",
+   "state_layout"
+  ],
+  "channel_metadata": {
+   "add_rules": [
+    {
+     "pattern": "/velocity_nullspace",
+     "class_": "declaration"
+    }
+   ],
+   "implementation_keys": [
+    "/public_compilation/compilation_identity_sha256",
+    "/runtime/adapter",
+    "/runtime_construction/**"
+   ],
+   "per_run_keys": [
+    "/elapsed_seconds",
+    "/initial_condition/source"
+   ],
+   "dry_run_sha256": "7879805f4036387c4292c445d9c6fa8c367017ab8e50c17c8407753b8ddc49e8",
+   "dry_run_counts": {
+    "diagnostics_off/run/metadata.json": {
+     "leaves": 1320,
+     "classes": {
+      "declaration": 1308,
+      "per_run": 2,
+      "implementation": 9,
+      "UNCLASSIFIED": 1
+     },
+     "unclassified_patterns": [
+      "/velocity_nullspace"
+     ]
+    },
+    "public_diag_checkpoint/run/metadata.json": {
+     "leaves": 1323,
+     "classes": {
+      "declaration": 1311,
+      "per_run": 2,
+      "implementation": 9,
+      "UNCLASSIFIED": 1
+     },
+     "unclassified_patterns": [
+      "/velocity_nullspace"
+     ]
+    }
+   }
+  },
+  "dry_run": {
+   "channel_records": 17,
+   "channel_v04_self_differences": 0,
+   "channel_leaves_by_class": {
+    "exact_scene": 242,
+    "exact_identity": 17388,
+    "exclusion_2_runtime_adapter": 28,
+    "exclusion_1_constraints_current": 2758,
+    "exact_trace": 431087
+   },
+   "functional_records": 8,
+   "functional_v04_self_differences": 0,
+   "functional_leaves_by_class": {
+    "exact_scene": 104,
+    "exact_trace": 6163,
+    "exact_identity": 7704
+   },
+   "sha256": "e6fe370cae7794e5d9ae435c9caa350bbf3986e64daa7d4bdd57c71d86621c5f"
+  }
+ },
+ "impact": {
+  "sha256": "601be5a85f12b7983ff975dcd15f7454cac41bb51d9859287de9fc140eaa95ab"
+ },
+ "installed_paths": {
+  "gate": "qualification/s28a_guard.py",
+  "tables": "qualification/s28a_tables.json"
+ },
+ "installation_removes": [],
+ "revision": "s28a r1.0 (T-0022)",
+ "gate_sha256": "2f80a130ef29f6b752093803163aaf45346c32a060ccfe1c2756d55460f36679"
+}

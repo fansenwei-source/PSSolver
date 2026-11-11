@@ -214,6 +214,7 @@ numerical = [
   "tests/test_validate_beris_edwards_outputs.py",
 ]
 historical = [
+  "tests/test_v0_5_s28a_m1.py",
   "tests/test_v0_5_s27_historical_tests.py",
   "tests/test_v0_5_s26_historical_tests.py",
     "tests/test_v0_5_s24_rework.py",

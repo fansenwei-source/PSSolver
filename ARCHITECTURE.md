@@ -313,3 +313,21 @@ member results; diagnostics are separate dictionaries per member. No backend ker
 sees an enlarged batch problem. Singleton execution has no member Engine or buffer.
 The transform-only member adapter is retired, with its original tests retained in the
 S-27 historical runner. This is a draft boundary, not a qualification claim.
+
+## S-28a M1 intermediate boundary
+
+The production and functional Channel PCG entry points temporarily retain their
+existing call signatures and diagnostic owners, but execute one role-specialized
+PCG skeleton in `linear_solvers/stokes/channel_no_slip.py`. Its production,
+functional-primal and functional-transpose policies preserve each original
+operation sequence. The seven explicit adjoint operations now belong to that
+same solver. The independent unrolled test oracle is not folded into this loop.
+
+At this intermediate gate, the legacy functional wrappers supply their diagnostic
+callbacks and sequence context; the numerical layer does not import the facade.
+This context is not the final Engine solver-state representation. Explicit warm
+state threading, Channel Engine/Runner wiring, and removal of the nine legacy
+modules remain subsequent S-28a work after the predeclared M1 review. No public
+frontend or v1 Engine is retired by M1. The entry-to-mathematics route is the old
+entry point, `solve`/`solve_transpose`, and then `_solve_pcg`; there is no second PCG
+implementation behind the compatibility entry points.

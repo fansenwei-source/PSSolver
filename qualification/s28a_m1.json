@@ -1,0 +1,51 @@
+{
+  "schema": "pssolver.s28a.m1.intermediate.v1",
+  "basis": "4b720938896af6cae0719569e95be471b33e0935",
+  "authority": "S-28_channel_frontend.md r1.0 sections 2.2 and 9; D-0066",
+  "stage": "M1 first segment: old entrances retained, merged PCG active",
+  "not_claimed": [
+    "S-28a final qualification",
+    "M1 post-deletion segment",
+    "Engine Channel migration",
+    "public frontend switch",
+    "GPU qualification"
+  ],
+  "sources": {
+    "ARCHITECTURE.md": "f9a4068d136e3803643ef72eca7c272858ae6fbc6e9b2c9f8b44d9e4f158719c",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "c8da7e0788804a8a905c8810ec3964af1b9673c4dd006cf65f31144102e3f1bd",
+    "pssolver/functional/channel_pressure.py": "313676f8041547103c6e3dc38311ced92ba9c1d136b0262f17b4b7c9e8914803",
+    "pssolver/functional/channel_pressure_adjoint.py": "bacb5bcba09d0220d013c340066a6f32e542c027bf1de4bae1112ce51d49399b",
+    "tests/categories.toml": "51e311654b7a02e98ce9e16022f0343d8d42e93fdcb0df806e8b12414c657ce1",
+    "tests/test_phase9_p972_channel_pressure_transpose.py": "b427720ddc99a4a9771a8833c00f53e603fb9df7b04b1dc95f91fe4f2c715c91",
+    "tests/test_v0_5_s28a_m1.py": "9bbad272a5fb4d0da94381b16619282a58b9c67650a877e7c309d36b96170055",
+    "qualification/s28a_guard.py": "2f80a130ef29f6b752093803163aaf45346c32a060ccfe1c2756d55460f36679",
+    "qualification/s28a_tables.json": "19bd34eacee588b01c99d9d1ec785dcdac00269412ad716f861632311bedc042"
+  },
+  "architecture": "ARCHITECTURE.md sections 3, 4.2, 6 and S-28a M1 intermediate boundary",
+  "role_specialization": {
+    "production": "baseline _solve_pressure",
+    "standalone_transpose": "baseline solve_pressure_transpose",
+    "implicit": "baseline _solve_no_grad (both functional_primal and functional_transpose)"
+  },
+  "temporary_boundaries": [
+    "Legacy callers supply existing diagnostic factories and sequence context without a lower-layer import.",
+    "Production warm state remains on the solver until the Engine/state migration.",
+    "Independent unrolled oracle and nine legacy modules remain until M1 review and the deletion segment."
+  ],
+  "test_disposition": [
+    {
+      "path": "tests/test_phase9_p972_channel_pressure_transpose.py",
+      "test": "test_solver_satisfies_the_explicit_pressure_transpose_protocol",
+      "rule": "R4",
+      "change": "Inspect the exact-moved solver method rather than its temporary forwarding wrapper; all assertions unchanged."
+    }
+  ],
+  "successor_147": "Reserved for final S-28a registration, generated last as required by section 6; this record is the forward M1 source binding and does not rewrite any historical record.",
+  "skills": [
+    "python-design-patterns",
+    "python-project-structure",
+    "python-code-style",
+    "python-testing-patterns",
+    "refactor"
+  ]
+}

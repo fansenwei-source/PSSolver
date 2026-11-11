@@ -88,7 +88,7 @@ def test_solver_satisfies_the_explicit_pressure_transpose_protocol():
     _, _, pressure = _solver()
 
     assert isinstance(pressure, ChannelPressureTransposeProtocol)
-    source = inspect.getsource(pressure.apply_pressure_operator_transpose)
+    source = inspect.getsource(pressure._solver.apply_pressure_operator_transpose)
     assert "_pressure_gradient_adjoint" in source
     assert "_velocity_divergence_component_adjoint" in source
     assert "apply_pressure_operator(" not in source
