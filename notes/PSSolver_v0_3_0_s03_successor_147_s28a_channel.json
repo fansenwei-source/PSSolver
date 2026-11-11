@@ -5,7 +5,9 @@
     "R-0106",
     "R-0107",
     "R-0108",
-    "R-0109"
+    "R-0109",
+    "R-0110",
+    "R-0111"
   ],
   "decisions": [
     "D-0045",
@@ -13,7 +15,7 @@
     "D-0064",
     "D-0066"
   ],
-  "design": "S-28_channel_frontend.md r1.4; unchanged r1.2 authority",
+  "design": "S-28_channel_frontend.md r1.6; unchanged r1.2 authority",
   "git_identity": {
     "implementation_parent": "4b720938896af6cae0719569e95be471b33e0935",
     "m1_first_segment": "80ef5e658db86436fdcc8dbbb95db6a150195397"
@@ -60,7 +62,11 @@
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "pssolver/engine/engine.py": {
-      "current_sha256": "7ce7ba66f01d56d59f04449b814e712a58ebdc8aab27aeec1367f021f80da3ac",
+      "accepted_predecessor_sha256": [
+        "53e1a239628d3433cabbd6f7713afa85f2e13dcd5825e5b08a60c4ee89a716e3",
+        "7ce7ba66f01d56d59f04449b814e712a58ebdc8aab27aeec1367f021f80da3ac"
+      ],
+      "current_sha256": "9e2ff516175f10decbd0b6be4b9206a14318c0f8bf46a13dba7ff9ee19954166",
       "historical_sha256": "53e1a239628d3433cabbd6f7713afa85f2e13dcd5825e5b08a60c4ee89a716e3",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
@@ -106,8 +112,8 @@
     },
     "pssolver/linear_solvers/stokes/channel_no_slip.py": {
       "accepted_predecessor_sha256": [
-        "e8d59b0ef72ada1aaf2f9aab6190639e477be5b5816f0ef01c5bcaddda82e5ee",
-        "c8da7e0788804a8a905c8810ec3964af1b9673c4dd006cf65f31144102e3f1bd"
+        "c8da7e0788804a8a905c8810ec3964af1b9673c4dd006cf65f31144102e3f1bd",
+        "e8d59b0ef72ada1aaf2f9aab6190639e477be5b5816f0ef01c5bcaddda82e5ee"
       ],
       "current_sha256": "a2d4bd6b338bd6e0a3d7a36f7164f6dfd2c05544248a0952617ed765e2899d69",
       "historical_sha256": "e8d59b0ef72ada1aaf2f9aab6190639e477be5b5816f0ef01c5bcaddda82e5ee",
@@ -129,17 +135,29 @@
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "pssolver/planning/capabilities.py": {
-      "current_sha256": "5a14a91dc9c36d4967f01847f0b1ebe1f0fcfaa28d600c1182d57a744ad131e4",
+      "accepted_predecessor_sha256": [
+        "5a14a91dc9c36d4967f01847f0b1ebe1f0fcfaa28d600c1182d57a744ad131e4",
+        "92d38ae5dbd84fe873a3c90efe5ba15cce3f0f1b9c21c0634006aca41e255a4f"
+      ],
+      "current_sha256": "d6d4fc69ec1d2d526735ca127c8f7387ed69a616f4323e172af3980ff8bcc50a",
       "historical_sha256": "92d38ae5dbd84fe873a3c90efe5ba15cce3f0f1b9c21c0634006aca41e255a4f",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "pssolver/runtime/__init__.py": {
-      "current_sha256": "87d2b45e4f9d558c1499ebf751c9c0e34258c43a0b579870fcefe396b68b7eb5",
+      "accepted_predecessor_sha256": [
+        "87d2b45e4f9d558c1499ebf751c9c0e34258c43a0b579870fcefe396b68b7eb5",
+        "cec1ad2bf09cf9ea9d5a20095ad3113ef41114a4003cb716d67c9e638a554122"
+      ],
+      "current_sha256": "4449187e5ead4e45010e6080c964e881773bdd35281b0f3c0c4eade78d5c3dc3",
       "historical_sha256": "cec1ad2bf09cf9ea9d5a20095ad3113ef41114a4003cb716d67c9e638a554122",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "pssolver/runtime/legacy_entry.py": {
-      "current_sha256": "9c52ea96660003b5ae250b79654edf4185d14fb4423574325cdfe2955ab205ce",
+      "accepted_predecessor_sha256": [
+        "9c52ea96660003b5ae250b79654edf4185d14fb4423574325cdfe2955ab205ce",
+        "cb8d473923bc836c41cbcbce0ea8f60385ceae5cdd1ab52566fabc06a32c37d7"
+      ],
+      "current_sha256": "bf227f5850f64626e8a5c1b8f2c016e883db4cca622d711d37d3d174d3ed9246",
       "historical_sha256": "cb8d473923bc836c41cbcbce0ea8f60385ceae5cdd1ab52566fabc06a32c37d7",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
@@ -147,6 +165,14 @@
       "current_sha256": "28009fbd9de4216b446b9f7b1249ea82ff0554537313070c92989451fc654424",
       "historical_sha256": "c74561264c7f20f340e5fd2faa343874c9a75ef29a2a27206047059b7f7edcff",
       "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "qualification/identity/channel_comparison.py": {
+      "accepted_predecessor_sha256": [
+        "15babcd27b186db2ecd18b576d106c23ab608265c442956b10026596aa2d455a"
+      ],
+      "current_sha256": "0d38b2871f317bcacfe9aed0c7221d1d33034db37afe2ed56151939c03afde92",
+      "historical_sha256": "15babcd27b186db2ecd18b576d106c23ab608265c442956b10026596aa2d455a",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
     },
     "qualification/identity/historical_continuations.py": {
       "current_sha256": "19a469fe141573c991663e0cca09f33b8c7c0eba0b85f120c038f71abd6e888a",
@@ -158,20 +184,63 @@
       "historical_sha256": "f92ecac13366791c99ab4a32ccad4cd180f46d5732495cd3d00f02dc6adf9893",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "qualification/identity/runtime_case_v2.py": {
+      "current_sha256": "e4506870a4155e5698dbf4800c59cc2ff4bb6ef50437803e165230efbc299bbf",
+      "historical_sha256": "afe61765cad8e799c40ed37bc84ade75ba88e3463aadd57c052a9ba8855adca5",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "qualification/s27_forward.py": {
       "current_sha256": "96af60771307cf191ec5ebc8badf7bbaf3f6b3c111eb1f39fbd28a365f70e8ce",
       "historical_sha256": "5af4256f92c58904f2f3d8fc4d77776b42826feb188e68a858799c90adb9312f",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "qualification/s28a_expected_unimportable.json": {
+      "accepted_predecessor_sha256": [
+        "fa68b447b95ba81b5e680be7813bb69dc55a956e886cfcb1faf9a328a59b929a"
+      ],
+      "current_sha256": "13a58647a8240ccfec49fd806400dfc918c018c36673f83436417841129c43cb",
+      "historical_sha256": "fa68b447b95ba81b5e680be7813bb69dc55a956e886cfcb1faf9a328a59b929a",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
+    },
     "qualification/s28a_guard.py": {
+      "accepted_predecessor_sha256": [
+        "2f80a130ef29f6b752093803163aaf45346c32a060ccfe1c2756d55460f36679"
+      ],
       "current_sha256": "0827966299cde9004d935dded34efa54a7f0a2d5cca8614384046726a0bbec4f",
       "historical_sha256": "2f80a130ef29f6b752093803163aaf45346c32a060ccfe1c2756d55460f36679",
-      "reason": "Forward binding from the reviewed M1 first segment."
+      "reason": "Exact forward binding from a preceding S-28a candidate."
+    },
+    "qualification/s28a_historical_tests.json": {
+      "accepted_predecessor_sha256": [
+        "dfa5b42fbcd947213e0a87784d0e58c4f6da978c6b327c274196d1578fe4eb99"
+      ],
+      "current_sha256": "7d88207597f4b27733de27c9c33d5bb2cf53156be1aed41d8f574737c47724da",
+      "historical_sha256": "dfa5b42fbcd947213e0a87784d0e58c4f6da978c6b327c274196d1578fe4eb99",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
     },
     "qualification/s28a_tables.json": {
+      "accepted_predecessor_sha256": [
+        "19bd34eacee588b01c99d9d1ec785dcdac00269412ad716f861632311bedc042"
+      ],
       "current_sha256": "7ad2186922143a0ceb3d641799bc66711ae2037e952307910b25527575bf12d5",
       "historical_sha256": "19bd34eacee588b01c99d9d1ec785dcdac00269412ad716f861632311bedc042",
-      "reason": "Forward binding from the reviewed M1 first segment."
+      "reason": "Exact forward binding from a preceding S-28a candidate."
+    },
+    "qualification/s28a_test_disposition.json": {
+      "accepted_predecessor_sha256": [
+        "86f63f6c26b78e967dc096e37fce07a344ef8dcc3ce6b601d06599ad983a57b2"
+      ],
+      "current_sha256": "a3cafe56746eda8e2f3b75da90ef8145426b8d481eea53b3ac4f3396db83657a",
+      "historical_sha256": "86f63f6c26b78e967dc096e37fce07a344ef8dcc3ce6b601d06599ad983a57b2",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
+    },
+    "qualification/s28a_units.json": {
+      "accepted_predecessor_sha256": [
+        "7635fc524b7058edd3b57c42a31e99031388f97d7a437ae91ab319e86d2273ef"
+      ],
+      "current_sha256": "7d6d6f43a0ea1b29966d49e4f98040eb55437ad5499a13c9c76fed64b44c2c42",
+      "historical_sha256": "7635fc524b7058edd3b57c42a31e99031388f97d7a437ae91ab319e86d2273ef",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
     },
     "tests/categories.toml": {
       "accepted_predecessor_sha256": [
@@ -195,6 +264,16 @@
     "tests/test_channel_no_slip_modal_stokes.py": {
       "current_sha256": "70613cd54a96d6e367da84cab225392ed7689bc9c842acb6ad81ae8df9192590",
       "historical_sha256": "c86306f1c15de71b9a8a03be53b46979a0c633d625328758e073535e532b854e",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_fig4_numerics_cli.py": {
+      "current_sha256": "7ddd6aff2d0fed6ae91f433cfb857fa8733184abcfa9de19db31e1e08ac3f866",
+      "historical_sha256": "710a96cd43c34c81e06e588c865f7ce3a8ab7e35d77d6bb8a5e348f13e77f3a1",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_phase8_p82_local_candidate_record.py": {
+      "current_sha256": "707cb0c52bf1027e548179ee61ac9453c4b47dd887bdc4ccc70b7c008cc842cc",
+      "historical_sha256": "fe1f8d785b67b0fbd39e5d6eebbbb1b0b1b0df07c961147468b095fa04c9e0ea",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tests/test_phase8_p83_channel_complete_stress_application.py": {
@@ -236,6 +315,11 @@
       "historical_sha256": "e474a9ccc2292c9ad7945344cd4700dc88f85acb0174cbc3a41213cb6d7289cd",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "tests/test_phase9_p981_public_api_surface_inventory.py": {
+      "current_sha256": "c2077dcec6b523e3e032f2f080ff41a003402ce5bd5a6c3be77529a7ab0a158e",
+      "historical_sha256": "aa1697e0dcf97a042f03f88b052a9f59e78b771c4b64e4b5f1ae35cea4a88a53",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "tests/test_phase9_p982_stable_functional_api.py": {
       "current_sha256": "566dfdeb9461089a85f328e54f47ea693b6a8383d188b62070c984ab98cf54c2",
       "historical_sha256": "c14e240dab18e0721b35a3afe9366bf7b3d8a4302b616fe9fe9ce1e2c94e5f98",
@@ -246,9 +330,29 @@
       "historical_sha256": "9a694424ca467736ca6c960d94b5388743568b9f10cccb0551d5afdeeed56bbc",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "tests/test_rc426_cross_device_checkpoint_harness.py": {
+      "current_sha256": "f43a0505b242eb9c7ae647d616a49eb940f1ca3c58ed629158fbb61e30740cdf",
+      "historical_sha256": "b600903bf311f59ad151f86f01232305d2b2421f8b576940611ff9848770aab1",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "current_sha256": "908d728d7997f772c6c7c779b7616386bcd07db2e78413b5a2179213dc6e0fd2",
+      "historical_sha256": "93a5eb4f1dae2df4d9006d330167883aff48f95bd96dec8838dd1ad0d48e3da3",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "tests/test_rc4_periodic_channel_checkpoint_identity.py": {
       "current_sha256": "5a2e0633dbbf1deea60981c0fb43f1683fc59a3afee87f99547f55d1b4725b4b",
       "historical_sha256": "d20a0c2eabf7f50f86e86352eaf2001a67d1a31b7e72804b94f52b25b00eeca2",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "current_sha256": "9eace9c3cc51df20667e10b611cc3df7308e80441ea8277c981cca578761af21",
+      "historical_sha256": "34b29a5750bc1893b713e514c016b2a9d6c70860ae43bb71faebcdd0b674e7c5",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_rc4_pressure_adjudication.py": {
+      "current_sha256": "30b9a0246d4ef785444692a2199e4b8b4e07e63f79c0cac7a663f7bf46f22b40",
+      "historical_sha256": "358817cdb59571168b3ae373e0bb0c15312e640182bfffd1705322192261e235",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tests/test_rc4_pressure_metadata_identity_connection.py": {
@@ -276,9 +380,19 @@
       "historical_sha256": "f349ca1f98eae22f21505da90af281db6110f91a68229b0f8cc262dc428bcf0d",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "current_sha256": "461ce3d016f6f4616a62edeb0b8d3bcb51e877067b98a05543cb2073d800a6dd",
+      "historical_sha256": "8c9bd58e537165731208d7c9632a3f7a9a3cc5dc0fcfd9b3427bc2c8f7eb6261",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "tests/test_rc6_2_pressure_floor_contract.py": {
       "current_sha256": "68a91dd64b74e9b3ac2c086718c94329f9b2597fb45b660019855390bd9b0b0a",
       "historical_sha256": "e43aee0a6395af4fd73d9df36e5dcd3405d6ccbf0f7012f27580c76e7aa72eb0",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "current_sha256": "4dab26ac3cea67d5dc58046131151bc9e610f15d18249ddc0b280f6f213cf905",
+      "historical_sha256": "914a22050317492204f7db83fb3e2c5a5ac28ffc9428c44637007de384c01831",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tests/test_rc6_pressure_smoke_contract_correction.py": {
@@ -291,9 +405,34 @@
       "historical_sha256": "79535d33c9edb56115ddbba08ab89c82d0de4572d344ab15f183ddedb7e53950",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "current_sha256": "38259435fe1fdb8555707a2db657b35e1ceb76b095558811b711c6377d35a45b",
+      "historical_sha256": "255b9a074056be003aaf394bc2169d45ecccbc527a27a8d204452b80e823de95",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "current_sha256": "cf3340d0573aeacf937d2737eb6dd5ac1cdfd46ad333269f9bab72fa8162f0b0",
+      "historical_sha256": "0654454d447175978011f82d1ad957dfd7460ba1572cecd60bc3bfa67a0c146e",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "current_sha256": "41f31ed2d31fbda8e0a96308164dd0ca42aa2c4b6828cb7d94a7e88c735ef2af",
+      "historical_sha256": "01320e3f959da38e57f982964299c366da067ade19c960d120b302a7ceb3d8d1",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "current_sha256": "6d959e46c39c115fbade5086e49496fda96edd816db54fbe668548d6dadab4b4",
+      "historical_sha256": "ab3599a817f586ee03f823a207336b22c3f6202071be13c34f3a3663a5e187cf",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "tests/test_v0_3_s06_pressure_and_pickle.py": {
       "current_sha256": "d6893d3062e68b68bdf6cb95b35d448827c93e87f47b6e7bb700b68ca79c3c12",
       "historical_sha256": "cad25c982d42bb20cadfa1986d8b9b719b7e31602e6b5bf5e66927ca0ed69190",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {
+      "current_sha256": "772982ca70d933019f6bce0fd979b1ee52cc7b1cd12da7d1768e1597c027308c",
+      "historical_sha256": "302b42e437f88d24c17da78710c2ba515bcda59c9e94f3789d84a889fc58545d",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tests/test_v0_3_s09_pressure_operator_cache.py": {
@@ -306,6 +445,11 @@
       "historical_sha256": "d035a3bf037d63ca86857e4435a88abefbbe76e8dda1436e1f83517f9807e04e",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "tests/test_v0_4_s18_r1_dispatch_record.py": {
+      "current_sha256": "4bfc7184f0998349ede478abc2a9537cfb8dcc97efcaaa471ec343f9d341d4af",
+      "historical_sha256": "766d421045acc0c1ca0a1a12ce1a1c979f3548c7d0297914cc344677a1f9fc65",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "tests/test_v0_4_s18_r4_shared_step_progress.py": {
       "current_sha256": "38c644c6183b1f7046d4fe7f2576a1b1242ff06423f97d00cf483bec0e5ccfe5",
       "historical_sha256": "44d3abc75601b77e021a89096b4a1f27d0dc5bfcb94a477b8399c62fae12b77e",
@@ -314,6 +458,11 @@
     "tests/test_v0_4_s18_r5_channel_pcg_control.py": {
       "current_sha256": "6410964f81471ba9b1d18f0fe2eeeec751dd2bfbc1d919f53c8801d4a3e49d09",
       "historical_sha256": "8b7eadf2565b5962cefb4fe53e5503e9695decc3292918f9d9a0a75d6328d9ca",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_4_s18_r5_postcondition.py": {
+      "current_sha256": "f9f33cc60accc121916ecdef80d1ff18cd15cf7f5e51b18b306a28fdd82c1328",
+      "historical_sha256": "a6d28deae8a22f9b21e90923e58478ede32a32ce8fd2c0d89f7c720e56fe3e0b",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tests/test_v0_4_s18_r5_r0057_rework.py": {
@@ -336,14 +485,62 @@
       "historical_sha256": "84e7b73bdcea1c93e6f3e41e086c26eb5f68d54f12f9de9b998971a2fa746784",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
+    "tests/test_v0_5_s25_engineering.py": {
+      "current_sha256": "9c9c3b99f106cc4b26f4e9b46dafcb97d20026dabd4eb9909dcfd59d23b7aaba",
+      "historical_sha256": "1baa64a952243d224c15f649490811c7e6b720ceec1ad7ffd4c2215e73824df8",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_5_s26_assembly.py": {
+      "current_sha256": "2498a8b04fc005b627b9be49fd32e8a3c029857404054a31aa6001d71c458f2d",
+      "historical_sha256": "91414588f52aeceb0d45bbe11673da43325fd25632b08b6e3185b84fb86cafe9",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_5_s26_rework.py": {
+      "current_sha256": "87e14c423aa815b02fe91fb73ccdcc1dbc10a2889027e060c962d93c16e5abd9",
+      "historical_sha256": "0157e2aef75ccf95116a165ebc2365e3c819512df19b062ef5a9d959b7c4643b",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/test_v0_5_s27_r0096_rework.py": {
+      "current_sha256": "296728016128f0f4ed7552a796133eda40f4aac1f7f536060c2577f76d72646e",
+      "historical_sha256": "2c809f13798c9be52f18b3611bd2e49cdba8be49832c9ba7153aa5f1eb1fc853",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
     "tests/test_v0_5_s28a_m1.py": {
+      "accepted_predecessor_sha256": [
+        "9bbad272a5fb4d0da94381b16619282a58b9c67650a877e7c309d36b96170055"
+      ],
       "current_sha256": "485c0c712f31c881886579ab236cbde31dee941b0f17867344909a2f10fea8d9",
       "historical_sha256": "9bbad272a5fb4d0da94381b16619282a58b9c67650a877e7c309d36b96170055",
-      "reason": "Forward binding from the reviewed M1 first segment."
+      "reason": "Exact forward binding from a preceding S-28a candidate."
+    },
+    "tests/test_v0_5_s28a_solver_state.py": {
+      "accepted_predecessor_sha256": [
+        "da56a7629087a3110b17056af96137640ba689296f5fd47fdbb60d1b286255ac"
+      ],
+      "current_sha256": "e145f7d924423b63041fdbb49f0b23d3094c8b71c0c6fc54c5c7108be5e06600",
+      "historical_sha256": "da56a7629087a3110b17056af96137640ba689296f5fd47fdbb60d1b286255ac",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
+    },
+    "tests/test_v0_5_s28a_successor.py": {
+      "accepted_predecessor_sha256": [
+        "25b5596b97eef51b7aab845a510281fc46db465c64bca017c0a87656e3b5bef8"
+      ],
+      "current_sha256": "9da7ae8df7633a0c2f815df9d111f1b4dac2b9ca3a3eccf620b21b55d823e2ef",
+      "historical_sha256": "25b5596b97eef51b7aab845a510281fc46db465c64bca017c0a87656e3b5bef8",
+      "reason": "Exact forward binding from a preceding S-28a candidate."
     },
     "tests/v0_3_s03_successor.py": {
-      "current_sha256": "de0199db63499331521959d8ec07355173fef09a173cb10969ffa7dd74ee1b69",
+      "accepted_predecessor_sha256": [
+        "0368f3030517b1971984608297afbdb05647d151a09ea154c6eafe59e0bcdfe0",
+        "de0199db63499331521959d8ec07355173fef09a173cb10969ffa7dd74ee1b69"
+      ],
+      "current_sha256": "87ad03ab32aa5f0fb313d1b85e80dc1a88820737299c2d22418f86a6e4a9e7c4",
       "historical_sha256": "0368f3030517b1971984608297afbdb05647d151a09ea154c6eafe59e0bcdfe0",
+      "reason": "S-28a migration, test disposition or reviewed authority install."
+    },
+    "tests/v0_5_s24_registry_reference.py": {
+      "current_sha256": "781675933e13c050c41ccd6de97ce199cccdc53aa5feb9a7c5aadc98583b55c6",
+      "historical_sha256": "344b305d8efb48d8f82aa4212e5eb971c76fde76311d9fa314f3653567929d80",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tools/check.py": {
@@ -356,21 +553,15 @@
     "notes/PSSolver_v0_3_0_s03_successor_147_s28a_channel_zh.md": "322d0515676937f8da75e2c0578652e613a2f42432eddd5744f7ea02ad49ba62",
     "pssolver/configuration/legacy_channel.py": "07d48de3d3493e59ce5fca4811fa9c77cbd743a965289f00c148b3c534ceb26b",
     "pssolver/runtime/channel_observations.py": "0486c83f81e38f36f7eb2cb46efbb5ef3a125a11fe30b5cc80217f1c2621247b",
-    "qualification/identity/channel_comparison.py": "15babcd27b186db2ecd18b576d106c23ab608265c442956b10026596aa2d455a",
     "qualification/s28a_channel_release_comparison.json": "c0d0ee453d79428e066ac2d265236539b4a1e2e1735af2dcd70cdbb2f849519e",
-    "qualification/s28a_expected_unimportable.json": "fa68b447b95ba81b5e680be7813bb69dc55a956e886cfcb1faf9a328a59b929a",
-    "qualification/s28a_historical_tests.json": "dfa5b42fbcd947213e0a87784d0e58c4f6da978c6b327c274196d1578fe4eb99",
+    "qualification/s28a_fault_child.py": "29e2cbd7e9d14919b114120749661ee789f9a272acff8df723ee1ec30fe5c41f",
     "qualification/s28a_import_delta.py": "bab83a0750d97767b91f2b5b03b5bf0cf66cb70ff19c2c254397acf43ba8640d",
     "qualification/s28a_m1.json": "b3ddaa98c0c064a8f2d8412e76ed3cad9926f13a22a13d766fcc7fbc1860d999",
     "qualification/s28a_pcg_equivalence.py": "071ac49868215acccb1588c8870f07be53deba61506694508e88f3b6e6a29477",
     "qualification/s28a_test_classify.py": "685cd0572b80e3a3ec57d58ee0f9f0bfd2768ba33f278cbc1919d87d5fec18c3",
-    "qualification/s28a_test_disposition.json": "86f63f6c26b78e967dc096e37fce07a344ef8dcc3ce6b601d06599ad983a57b2",
-    "qualification/s28a_units.json": "7635fc524b7058edd3b57c42a31e99031388f97d7a437ae91ab319e86d2273ef",
     "tests/_s28a_pressure.py": "5a4e318f5f84aceacb84be7cb9042007cb231edc9b88c520a03b1065ed97c8ca",
     "tests/oracles/channel_pressure_unrolled.py": "849e762b1f33628bf7eca254017eace36c847ac7a61bd2aab2061e6240e4eaf8",
     "tests/test_v0_5_s28a_historical_tests.py": "dc9073473f5c123cefb70f8f5afa177dbf4bcb200e09a87e4ec9e65f5917ce9a",
-    "tests/test_v0_5_s28a_solver_state.py": "da56a7629087a3110b17056af96137640ba689296f5fd47fdbb60d1b286255ac",
-    "tests/test_v0_5_s28a_successor.py": "25b5596b97eef51b7aab845a510281fc46db465c64bca017c0a87656e3b5bef8",
     "tests/v0_5_s28a_channel_v04_checkpoint.py": "5765f4fbb565ca738df7a9e4087665aad0a8721b626a37598a12cd8834bb5f1d"
   },
   "provenance_binding_order": "After all disposition, historical and unit registrations.",

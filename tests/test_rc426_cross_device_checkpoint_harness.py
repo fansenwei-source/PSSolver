@@ -18,7 +18,6 @@ from benchmarks.run_rc426_cross_device_checkpoint import (
     SCHEMA,
     MatrixCell,
     _atomic_json,
-    _run_channel,
     _run_functional,
     matrix_plan,
 )
@@ -118,7 +117,6 @@ def test_atomic_json_refuses_overwrite(tmp_path):
 @pytest.mark.parametrize(
     ("family", "runtime_path", "executor"),
     (
-        ("channel_production", "channel_complete_stress", _run_channel),
         ("periodic_functional", "periodic_activity_batch_one", _run_functional),
         ("channel_functional", "channel_activity_batch_one", _run_functional),
     ),

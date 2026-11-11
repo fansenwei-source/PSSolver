@@ -29,7 +29,9 @@ _PILOT_EXPORTS = {
         )
 }
 
-_IMPLICIT_SUBMODULE_NAMES = frozenset({"channel_observations", "finite_q_anchoring", "robin_scalar"})
+_IMPLICIT_SUBMODULE_NAMES = frozenset(
+    {"channel_observations", "finite_q_anchoring", "plane_observations", "robin_scalar"}
+)
 
 
 def __getattr__(name: str) -> object:

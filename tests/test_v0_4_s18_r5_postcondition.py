@@ -50,8 +50,8 @@ def test_postcondition_never_overwrites_a_prior_rejection(
 def test_failed_floor_retry_preserves_parent_path_exception(
     path, iterations, error, message, termination,
 ):
-    command = [sys.executable, '-I',
-               str(ROOT / 'benchmarks/probe_v0_4_s18_r5_postcondition.py'),
+    command = [sys.executable, '-I', '-B',
+               str(ROOT / 'qualification/s28a_fault_child.py'),
                str(ROOT), path, str(iterations)]
     run = subprocess.run(command, capture_output=True, text=True, check=True,
                          env={**os.environ, 'CUDA_VISIBLE_DEVICES': '',

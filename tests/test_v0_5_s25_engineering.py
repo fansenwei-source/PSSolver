@@ -132,6 +132,9 @@ def test_registered_exact_unit_bytes_and_lines_are_enforced(tmp_path, monkeypatc
     (tmp_path / "qualification/s27_exact_moves.json").write_text(
         json.dumps(dict(source_commit=base, exact_moves=[row]))
     )
+    (tmp_path / "qualification/s28a_tables.json").write_text(
+        json.dumps(dict(basis=base, exact_moves=[]))
+    )
     assert check.exact_assemblies()["new.py"][0]["unit"] == "old"
     (tmp_path / "new.py").write_text(source.replace("return  1", "return 1"))
     with pytest.raises(ValueError, match="altered exact move"):

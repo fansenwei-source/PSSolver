@@ -1,10 +1,9 @@
 """Frozen R1 dispatch scope and exact forward bindings, not live branch state."""
-import hashlib
 import json
 from pathlib import Path
 import subprocess
 
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json"
@@ -27,9 +26,9 @@ def test_r1_dispatch_has_a_proven_shadow_predecessor_and_no_tolerance():
 def test_r1_dispatch_binds_only_exact_forward_source_changes():
     record = _record()
     for path, entry in record["historical_successor_sources"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(path, entry["current_sha256"])
+        assert registered_source_sha256(path) == resolve_s03_successor(path, entry["current_sha256"])
     for path, digest in record["introduced_sources"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(path, digest)
+        assert registered_source_sha256(path) == resolve_s03_successor(path, digest)
 
 
 def test_r1_concrete_and_consumer_boundary_blobs_were_frozen_at_switch():

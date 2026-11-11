@@ -42,8 +42,22 @@ def test_s28a_preserves_accepted_frozen_sources():
     for path, expected in table["frozen_sha256"].items():
         assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == expected
     manifest = json.loads((ROOT / "qualification/s28a_expected_unimportable.json").read_bytes())
-    for row in manifest["modules"].values():
+    for row in (*manifest["modules"].values(), *manifest["frozen_lazy_callers"]):
         path = row["path"]
         original = subprocess.check_output(["git", "show", f"{baseline}:{path}"], cwd=ROOT)
         assert (ROOT / path).read_bytes() == original
         assert hashlib.sha256(original).hexdigest() == row["sha256"]
+
+
+def test_channel_registry_mapping_rejects_unknown_identity_and_wrong_family():
+    import pytest
+
+    from tests.v0_5_s24_registry_reference import S28_IDENTITY_MAP, _forward_channel_value
+
+    assert len(S28_IDENTITY_MAP) == 4
+    for old, new in S28_IDENTITY_MAP.items():
+        assert _forward_channel_value(old, channel=True) == new
+        with pytest.raises(AssertionError, match="another application"):
+            _forward_channel_value(old, channel=False)
+        with pytest.raises(AssertionError, match="unmapped Channel identity"):
+            _forward_channel_value(old + "Unregistered", channel=True)

@@ -12,24 +12,33 @@ class Capability:
     key: tuple[str, str]
     implementation: str
     adjoint_mode: str | None
+    companion: "Capability | None" = None
 
 
 CAPABILITIES = (
     Capability(
-        "constraint", ("stokes", "periodic×no_slip^2"),
-        "pssolver.engine.constraints:channel_stokes_term", "custom_transpose",
+        "constraint",
+        ("stokes", "periodic×no_slip^2"),
+        "pssolver.engine.constraints:channel_stokes_term",
+        "custom_transpose",
+        companion=Capability(
+            "explicit",
+            ("beris_edwards_q", "periodic^1/neumann^2"),
+            "pssolver.engine.constraints:channel_explicit_term",
+            None,
+        ),
     ),
     Capability(
-        "explicit", ("beris_edwards_q", "periodic^1/neumann^2"),
-        "pssolver.engine.constraints:channel_explicit_term", None,
+        "constraint",
+        ("stokes", "periodic^2×free_slip"),
+        "pssolver.models.active_nematics.engine_terms:plane_stokes_term",
+        "autograd",
     ),
     Capability(
-        "constraint", ("stokes", "periodic^2×free_slip"),
-        "pssolver.models.active_nematics.engine_terms:plane_stokes_term", "autograd",
-    ),
-    Capability(
-        "explicit", ("beris_edwards_q", "periodic^2×neumann"),
-        "pssolver.models.active_nematics.engine_terms:plane_explicit_term", None,
+        "explicit",
+        ("beris_edwards_q", "periodic^2×neumann"),
+        "pssolver.models.active_nematics.engine_terms:plane_explicit_term",
+        None,
     ),
     Capability(
         "constraint",
@@ -64,9 +73,19 @@ CAPABILITIES = (
 )
 
 
+def implementations(kind):
+    """Return implementations, including kernels private to a registered composition."""
+    return tuple(
+        item
+        for row in CAPABILITIES
+        for item in (row, row.companion)
+        if item is not None and item.kind == kind
+    )
+
+
 def lookup(kind, key):
     """Look up a capability without importing its implementation."""
-    return next((item for item in CAPABILITIES if item.kind == kind and item.key == key), None)
+    return next((item for item in implementations(kind) if item.key == key), None)
 
 
 def basis_signature(axis_kinds):

@@ -454,7 +454,6 @@ def _run_v04_channel_translation(
         plan = translate_channel(run_spec)
         start = 0
         new_checkpoint = False
-        restart_header = None
         if restart is not None:
             try:
                 header = read_checkpoint_json(
@@ -492,20 +491,18 @@ def _run_v04_channel_translation(
             raise FileExistsError(f"refusing nonempty Channel output: {output}")
         engine = Engine(plan, device=device, dtype=dtype)
         diagnostics = {}
+        # The first restart diagnostic is the declaration's P1 construction
+        # solve, not the last diagnostic stored by the checkpoint writer.
+        state = engine.initial_state(
+            {name: value.to(device=device) for name, value in initial.items()}, diagnostics=diagnostics
+        )
         if new_checkpoint:
             state = engine_state.read(
                 restart, plan_identity_sha256=plan.identity_sha256, dtype=dtype, batch=1, device=device
             )
-            diagnostics.update(
-                restart_header["run_provenance"].get("channel_constraint_diagnostics", {})
-            )
             engine._restore_channel_state_layout(state)
-        else:
-            state = engine.initial_state(
-                {name: value.to(device=device) for name, value in initial.items()}, diagnostics=diagnostics
-            )
-            if restart is not None:
-                start = restore_channel_state(engine, state, restart, run_spec=run_spec)
+        elif restart is not None:
+            start = restore_channel_state(engine, state, restart, run_spec=run_spec)
         metadata["runtime_construction"] = {
             "plan_identity_sha256": plan.identity_sha256,
             "engine": "pssolver.engine.engine.Engine",

@@ -22,7 +22,9 @@ def _read(path: Path) -> dict[str, object]:
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    from tests.v0_3_s03_successor import read_registered_source
+
+    return hashlib.sha256(read_registered_source(path.relative_to(ROOT).as_posix())).hexdigest()
 
 
 def test_s06_minimum_floor_contract_is_exact() -> None:

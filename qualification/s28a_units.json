@@ -238,9 +238,19 @@
   },
   "pssolver.engine.engine": {
     "Engine": {
-      "after_ast_sha256": "78348147ce389a316cb157b491f49ea3f00d2db051ace462780b2cfc17b27705",
+      "after_ast_sha256": "2bc6ea5714eca3a02425f22c7cc67bad33a8529a9b9a3e37575733550e2f7874",
       "authority": "modify: design \u00a72.3 Channel constraint wiring, P1 seeding",
       "before_ast_sha256": "5529dd03ba64081c6408eff8f8224e89730d739a55f1e60a97032da3924ace3a"
+    },
+    "_capability": {
+      "after_ast_sha256": "7e8adbdde530dee257996cd71afa4991ec69de73b81f07f2541abf1a39f84d15",
+      "authority": "modify: design \u00a72.3 Channel constraint wiring, P1 seeding",
+      "before_ast_sha256": "530460e6abd5a0d6a8798e16f5e875d4b7c65ed3a9ad9c526d28313f0ce41eb1"
+    },
+    "_resolve": {
+      "after_ast_sha256": "9c9404a787cc47c5e07e9dc455505e1ded6fca790370231a18bceb8c7c0a9f51",
+      "authority": "modify: design \u00a72.3 Channel constraint wiring, P1 seeding",
+      "before_ast_sha256": "0c74081116d757a42b1db43e501693b333ef448866fea8a4bb126c74a734c70a"
     }
   },
   "pssolver.engine.members": {
@@ -400,14 +410,29 @@
   },
   "pssolver.planning.capabilities": {
     "CAPABILITIES": {
-      "after_ast_sha256": "6c1f8cb18fec4f80842b38adc0782fd93de1d5559982c9244b2977986f904234",
+      "after_ast_sha256": "173cfec005970e98282068ba62439dc06aad1bfe22b67ea57f9f3b1b4eff2290",
       "authority": "modify: design \u00a72.4 capability row for stokes on periodic x no_slip^2",
       "before_ast_sha256": "1bb9d3e6d68c8b6ca267a892c86ccd0b677ef68acc08d03d1d395ccb9259c3c3"
+    },
+    "Capability": {
+      "after_ast_sha256": "78014351c919ccaca230ed3444f9ba67a44fca906c61696bdca8bf6987e89826",
+      "authority": "modify: design \u00a72.4 capability row for stokes on periodic x no_slip^2",
+      "before_ast_sha256": "ab6d5139134b14ab6245c5caa97908dd0c7b1a2c044bb2cef0c3fc12bbc5c560"
+    },
+    "implementations": {
+      "after_ast_sha256": "9cc053f59dcda1cda54afd06ecdc52e9a5b343c1d88b9682014ca03ca1056a63",
+      "authority": "modify: design \u00a72.4 capability row for stokes on periodic x no_slip^2",
+      "before_ast_sha256": null
+    },
+    "lookup": {
+      "after_ast_sha256": "2ad22366d747114978a602c2e58fb483be41322cff21b27ec2999cf97d0cf880",
+      "authority": "modify: design \u00a72.4 capability row for stokes on periodic x no_slip^2",
+      "before_ast_sha256": "681e89cba8ae97bc59bed280564f2bacfb90548f6798a1ab415132f339c28107"
     }
   },
   "pssolver.runtime": {
     "_IMPLICIT_SUBMODULE_NAMES": {
-      "after_ast_sha256": "d9a03a35a5328712bff70268c69bfe58ef22e06bf1e10b42636ce0d129183e4f",
+      "after_ast_sha256": "44cdcdbc74aadbdff33e40761f0709ba482d920e68a59284fb05f1fa0e0d10c6",
       "authority": "modify: design \u00a73.1 re-exports",
       "before_ast_sha256": "1f661659219ace082f2476a504bcf54480508ee9947bae013b73bccf6bebbeb6"
     }
@@ -466,7 +491,7 @@
       "before_ast_sha256": null
     },
     "_run_v04_channel_translation": {
-      "after_ast_sha256": "67f90745040ae1917f091ea4e79b9930023a3afe2be9ee020c8704a0c89308db",
+      "after_ast_sha256": "70db0e1823c93f39ae11a2675fe1dfbc1da610d4284e6f8ea1de13c6b8e0b202",
       "authority": "modify: design \u00a73.1 Channel branch to Engine/Runner",
       "before_ast_sha256": null
     },

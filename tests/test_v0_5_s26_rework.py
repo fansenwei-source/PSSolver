@@ -73,7 +73,11 @@ def test_exact_moves_preserve_every_frozen_source_unit_and_hash():
     assert [{k: v for k, v in row.items() if k != "target_lines"} for row in new["exact_moves"]] == [
         {k: v for k, v in row.items() if k != "target_lines"} for row in old["exact_moves"]]
     latest = json.loads((ROOT / "qualification/s27_exact_moves.json").read_text())
-    assert sum(map(len, check.exact_assemblies().values())) == len(latest["exact_moves"])
+    assembled_through_s27 = [
+        row for rows in check.exact_assemblies().values() for row in rows
+        if "target_lines" in row
+    ]
+    assert len(assembled_through_s27) == len(latest["exact_moves"])
     assert latest["exact_moves"][:len(new["exact_moves"])] == new["exact_moves"]
 
 

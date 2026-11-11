@@ -10,10 +10,14 @@ from qualification.identity.runtime_case import RuntimeCase, complete_simulation
 
 
 class RuntimeCaseV2(RuntimeCase):
-    """Use Engine/State for Periodic/Plane; retain the Channel/functional driver."""
+    """Use Engine/State for production; retain the stable functional driver."""
 
     def __init__(self, scene: dict, root: Path):
-        self.engine_family = scene["family"] in {"periodic", "plane"}
+        self._channel = None
+        self.engine_family = scene["family"] in {"periodic", "plane", "channel"}
+        if scene["family"] == "channel":
+            self._engine_channel(scene, root)
+            return
         if scene["family"] == "plane":
             self._engine_plane(scene, root)
             return
@@ -38,6 +42,12 @@ class RuntimeCaseV2(RuntimeCase):
         self.state = self.engine.initial_state(
             self.translation.initial_values, diagnostics=self.last_diagnostics
         )
+
+    def _engine_channel(self, scene, root):
+        from qualification.identity.channel_comparison import ChannelEngineCase
+
+        self.scene, self.family, self.functional = scene, "channel", False
+        self._channel = ChannelEngineCase(scene, root)
 
     def _engine_plane(self, scene, root):
         self.scene, self.family, self.functional = scene, "plane", False
@@ -78,17 +88,24 @@ class RuntimeCaseV2(RuntimeCase):
             for i, name in enumerate(Q_COMPONENTS)
         }
         self.configuration_identity = self.spec.identity_metadata()
-        self.engine = Engine(translate_plane(self.spec), device="cpu", dtype=getattr(torch, scene["dtype"]))
+        self.engine = Engine(
+            translate_plane(self.spec), device="cpu", dtype=getattr(torch, scene["dtype"])
+        )
         self.last_diagnostics = {}
         self.state = self.engine.initial_state(initial, diagnostics=self.last_diagnostics)
 
     def prepare(self):
+        if self._channel is not None:
+            return self._channel.prepare()
         self.engine.prepare_constraints_(
-            self.state, controls={"alpha": self.engine.default_controls["alpha"]},
+            self.state,
+            controls={"alpha": self.engine.default_controls["alpha"]},
             diagnostics=self.last_diagnostics,
         )
 
     def step(self):
+        if self._channel is not None:
+            return self._channel.step()
         if not self.engine_family:
             return super().step()
         self.prepare()
@@ -98,6 +115,8 @@ class RuntimeCaseV2(RuntimeCase):
         return before
 
     def observe(self):
+        if self._channel is not None:
+            return self._channel.observe()
         if not self.engine_family:
             return super().observe()
         self.prepare()
@@ -105,6 +124,8 @@ class RuntimeCaseV2(RuntimeCase):
         return {name: tensor_record(fields[name]) for name in self.engine.components}
 
     def record(self):
+        if self._channel is not None:
+            return self._channel.record()
         if not self.engine_family:
             return super().record()
         fields = self.engine.field_view(self.state)
@@ -132,6 +153,8 @@ class RuntimeCaseV2(RuntimeCase):
         }
 
     def export(self, path):
+        if self._channel is not None:
+            return self._channel.export(path)
         if not self.engine_family:
             return super().export(path)
         from pssolver.io import engine_state
@@ -147,6 +170,8 @@ class RuntimeCaseV2(RuntimeCase):
         )
 
     def restore(self, path, step):
+        if self._channel is not None:
+            return self._channel.restore(path, step)
         if not self.engine_family:
             return super().restore(path, step)
         from pssolver.io import engine_state
@@ -168,7 +193,10 @@ class RuntimeCaseV2(RuntimeCase):
             from pssolver.runtime.legacy_entry import restore_plane_state
 
             restore_plane_state(
-                self.engine, self.state, load_plane_checkpoint(path), run_spec=self.spec,
+                self.engine,
+                self.state,
+                load_plane_checkpoint(path),
+                run_spec=self.spec,
                 diagnostics=self.last_diagnostics,
             )
         else:
@@ -178,6 +206,8 @@ class RuntimeCaseV2(RuntimeCase):
         self.index = step
 
     def identity(self):
+        if self._channel is not None:
+            return self._channel.identity()
         if not self.engine_family:
             return super().identity()
         if self.family == "plane":

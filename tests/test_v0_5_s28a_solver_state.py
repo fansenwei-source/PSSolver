@@ -1,6 +1,7 @@
 """Test explicit Channel cache ownership, member transfers and persistence."""
 
 import ast
+import hashlib
 import json
 from pathlib import Path
 
@@ -104,7 +105,9 @@ def test_channel_restart_recovers_fft_layout_without_solving(tmp_path, monkeypat
     }
     continuous = ChannelEngineCase(scene, tmp_path)
     continuous.step()
-    continuous.export(tmp_path / "saved")
+    checkpoint = tmp_path / "saved"
+    continuous.export(checkpoint)
+    saved = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in checkpoint.iterdir()}
     resumed = ChannelEngineCase(scene, tmp_path)
 
     def unexpected_solve(*args, **kwargs):
@@ -112,12 +115,20 @@ def test_channel_restart_recovers_fft_layout_without_solving(tmp_path, monkeypat
 
     with monkeypatch.context() as patch:
         patch.setattr(resumed.engine.constraint.term.pressure_solver, "solve", unexpected_solve)
-        resumed.restore(tmp_path / "saved", 1)
+        resumed.restore(checkpoint, 1)
+    assert resumed.state.completed_steps == continuous.state.completed_steps == 1
+    for name, tensor in continuous.state.solver.items():
+        if isinstance(tensor, torch.Tensor):
+            assert tensor.numpy().tobytes() == resumed.state.solver[name].numpy().tobytes()
+        else:
+            assert tensor == resumed.state.solver[name]
+    assert {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in checkpoint.iterdir()} == saved
     assert resumed.state.spectral.stride() == continuous.state.spectral.stride()
     continuous.step()
     resumed.step()
     assert resumed.observe() == continuous.observe()
     assert resumed.record() == continuous.record()
+    assert all(torch.isfinite(tensor).all() for tensor in (resumed.state.spatial, resumed.state.spectral))
 
 
 @pytest.mark.parametrize("inplace", [False, True])

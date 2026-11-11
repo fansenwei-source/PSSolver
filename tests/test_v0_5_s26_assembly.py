@@ -35,6 +35,7 @@ from pssolver.planning.capabilities import CAPABILITIES, basis_signature, lookup
 
 
 EXPECTED_CAPABILITIES = [
+    ("constraint", ("stokes", "periodic×no_slip^2"), "pssolver.engine.constraints:channel_stokes_term", "custom_transpose"),
     ("constraint", ("stokes", "periodic^2×free_slip"), "pssolver.models.active_nematics.engine_terms:plane_stokes_term", "autograd"),
     ("explicit", ("beris_edwards_q", "periodic^2×neumann"), "pssolver.models.active_nematics.engine_terms:plane_explicit_term", None),
     ("constraint", ("stokes", "periodic^3"), "pssolver.models.active_nematics.engine_terms:periodic_stokes_term", "autograd"),
@@ -90,7 +91,7 @@ REJECTIONS = {
     "M3": "linear_requires_modal_block", "M4": "linear_requires_general_solver",
     "M5": "incompatible_boundaries", "M6": "invalid_field_reference",
     "M7": "invalid_linear_expression", "M8": "unused_or_missing_execution_option",
-    "S1": "geometry_not_migrated", "S2": "nonzero_dirichlet_lifting",
+    "S1": "incompatible_boundaries", "S2": "nonzero_dirichlet_lifting",
     "S3": "robin_or_anchoring", "S4": "integrator_not_available",
     "S5": "compiled_model_kernel", "S6": "refresh_not_supported",
     "S7": "boundary_data_reserved",
@@ -126,9 +127,10 @@ def test_rejections_have_exact_codes_and_no_tensor_operations(code):
     with NoTensorOperations(), pytest.raises(AssemblyRejection) as error:
         assemble(rejected_problem(code))
     assert error.value.code == REJECTIONS[code]
-    assert error.value.kind == ("scope" if code.startswith("S") else "mathematical")
-    assert bool(error.value.source) == code.startswith("S")
-    assert bool(error.value.opens_in) == code.startswith("S")
+    scope = code.startswith("S") and code != "S1"
+    assert error.value.kind == ("scope" if scope else "mathematical")
+    assert bool(error.value.source) == scope
+    assert bool(error.value.opens_in) == scope
 
 
 @pytest.mark.parametrize("code", REJECTIONS)
@@ -198,7 +200,11 @@ def test_parameter_order_linear_normalization_and_local_identity():
 
 
 def test_capability_table_is_exact_and_resolves_function_identity():
-    from pssolver.engine.constraints import PeriodicStokesConstraint
+    from pssolver.engine.constraints import (
+        PeriodicStokesConstraint,
+        channel_explicit_term,
+        channel_stokes_term,
+    )
     from pssolver.engine.engine import _resolve
     from pssolver.engine.terms import expression_symbol, pointwise_explicit_term
     from pssolver.models.active_nematics import beris_edwards_linear_operator
@@ -211,9 +217,12 @@ def test_capability_table_is_exact_and_resolves_function_identity():
 
     assert [(item.kind, item.key, item.implementation, item.adjoint_mode) for item in CAPABILITIES] == EXPECTED_CAPABILITIES
     assert basis_signature(("periodic",) * 3) == "periodic^3"
-    assert lookup("constraint", PeriodicStokesConstraint.key) is CAPABILITIES[2]
+    assert lookup("constraint", PeriodicStokesConstraint.key) is CAPABILITIES[3]
+    assert [item.companion for item in CAPABILITIES[1:]] == [None] * 7
+    assert _resolve(lookup("explicit", ("beris_edwards_q", "periodic^1/neumann^2"))) is channel_explicit_term
     assert [_resolve(item) for item in CAPABILITIES] == [
-        plane_stokes_term, plane_explicit_term, periodic_stokes_term, periodic_explicit_term, pointwise_explicit_term,
+        channel_stokes_term, plane_stokes_term, plane_explicit_term,
+        periodic_stokes_term, periodic_explicit_term, pointwise_explicit_term,
         beris_edwards_linear_operator, expression_symbol]
     with pytest.raises(ValueError):
         _resolve(None)

@@ -1,6 +1,7 @@
 """Channel probes for the Engine; leave both v0.4 reference drivers untouched."""
 
 import copy
+import json
 from pathlib import Path
 
 import torch
@@ -80,8 +81,10 @@ class ChannelEngineCase:
 
     def step(self):
         self.prepare()
+        before = self.record()
         self.engine.step_(self.state, diagnostics=self.diagnostics)
         self.index += 1
+        return before
 
     def export(self, path):
         self.prepare()
@@ -94,7 +97,10 @@ class ChannelEngineCase:
             run_provenance={"channel_constraint_diagnostics": self.diagnostics},
         )
 
-    def restore(self, path, step, *, legacy=False):
+    def restore(self, path, step, *, legacy=None):
+        if legacy is None:
+            header = json.loads((path / "checkpoint.json").read_bytes())
+            legacy = header.get("format_kind") != "engine_state"
         if legacy:
             restored = restore_channel_state(self.engine, self.state, path, run_spec=self.spec)
             assert restored == step
@@ -104,8 +110,6 @@ class ChannelEngineCase:
                 "dtype": self.engine.dtype,
                 "batch": self.engine.batch,
             }
-            metadata = engine_state.read_header(path, **expected)
-            self.diagnostics = metadata["run_provenance"]["channel_constraint_diagnostics"]
             self.state = engine_state.read(path, **expected, device=self.engine.device)
             self.engine._restore_channel_state_layout(self.state)
         self.index = step

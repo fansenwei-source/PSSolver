@@ -1,12 +1,8 @@
 from __future__ import annotations
-import ast
-from contextlib import contextmanager
-import json
-import hashlib
+
 import itertools
+import json
 from pathlib import Path
-import subprocess
-import textwrap
 
 from benchmarks.analyze_v0_3_s09_ap_cache_diagnostic import _ratio_summary, analyze
 from benchmarks.analyze_v0_3_s09_h100 import _profile_center
@@ -18,78 +14,7 @@ from benchmarks.plan_v0_3_s09_ap_cache_diagnostic import (
     build_plan,
     build_profile_matrix,
 )
-from benchmarks.v0_3_s09_revert_pressure_proxy import (
-    CANDIDATE_METHOD_SHA256,
-    REVERT_COMMIT,
-    REVERT_METHOD_SHA256,
-    REVERT_SOURCE_PATH,
-    reconstructed_revert_source,
-    use_revert_pressure_proxy,
-)
-from pssolver.linear_solvers.stokes.channel_no_slip import (
-    ChannelNoSlipModalStokesSolver,
-)
-
-
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def _historical_candidate_pressure_source() -> str:
-    completed = subprocess.run(
-        [
-            "git",
-            "-C",
-            str(ROOT),
-            "show",
-            f"{CANDIDATE_COMMIT}:{REVERT_SOURCE_PATH}",
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    source = completed.stdout
-    tree = ast.parse(source)
-    class_node = next(
-        node
-        for node in tree.body
-        if isinstance(node, ast.ClassDef)
-        and node.name == "ChannelNoSlipModalStokesSolver"
-    )
-    method = next(
-        node
-        for node in class_node.body
-        if isinstance(node, ast.FunctionDef) and node.name == "_solve_pressure"
-    )
-    lines = source.splitlines(keepends=True)
-    method_source = textwrap.dedent(
-        "".join(lines[method.lineno - 1 : method.end_lineno])
-    )
-    assert hashlib.sha256(method_source.encode("utf-8")).hexdigest() == (
-        CANDIDATE_METHOD_SHA256
-    )
-    return method_source
-
-
-@contextmanager
-def _historical_candidate_source_for_frozen_proxy():
-    """Let the frozen S-09 proxy inspect its bound historical candidate."""
-
-    import benchmarks.v0_3_s09_revert_pressure_proxy as proxy
-
-    historical_source = _historical_candidate_pressure_source()
-    current_method = ChannelNoSlipModalStokesSolver._solve_pressure
-    original_getsource = proxy.inspect.getsource
-
-    def historical_getsource(value):
-        if value is current_method:
-            return historical_source
-        return original_getsource(value)
-
-    proxy.inspect.getsource = historical_getsource
-    try:
-        yield
-    finally:
-        proxy.inspect.getsource = original_getsource
 
 
 def test_h100_plan_has_balanced_72_profile_diagnostic_contract() -> None:
@@ -179,20 +104,6 @@ def test_cpu_rehearsal_preserves_full_role_matrix_but_is_not_measurement() -> No
     assert environment["cuda_module"] == "cuda/12.1"
     assert environment["node_local_tmpdir"] is True
     assert environment["torch_compile_cuda_smoke_before_matrix"] is True
-
-
-def test_revert_proxy_reconstructs_exact_f94b9be_method_and_restores_class() -> None:
-    with _historical_candidate_source_for_frozen_proxy():
-        source = reconstructed_revert_source()
-    assert hashlib.sha256(source.encode("utf-8")).hexdigest() == REVERT_METHOD_SHA256
-    assert len(source.splitlines()) == 691
-    original = ChannelNoSlipModalStokesSolver._solve_pressure
-    with _historical_candidate_source_for_frozen_proxy():
-        with use_revert_pressure_proxy("candidate_revert_proxy") as proof:
-            assert ChannelNoSlipModalStokesSolver._solve_pressure is not original
-            assert proof["revert_commit"] == REVERT_COMMIT
-            assert proof["compiled_in_candidate_module_namespace"] is True
-    assert ChannelNoSlipModalStokesSolver._solve_pressure is original
 
 
 def test_trial_ratio_uses_exact_frozen_profile_center() -> None:

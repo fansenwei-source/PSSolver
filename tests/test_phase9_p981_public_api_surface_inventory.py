@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import ast
 from dataclasses import fields
 import json
 from pathlib import Path
+import subprocess
 
 import pssolver
 import pssolver.functional as functional
+import pssolver.functional.api as functional_api
 from pssolver.functional import (
     FUNCTIONAL_API_VERSION,
     CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
@@ -20,11 +23,23 @@ from pssolver.functional import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
+from tests.v0_3_s03_successor import read_registered_source
 
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTES = ROOT / "notes" / "architecture_v0_2"
 RECORD = NOTES / "phase_9_p981_public_api_surface_inventory.json"
+PRE_S28 = "4b720938896af6cae0719569e95be471b33e0935"
+
+
+def _pre_s28_exports(relative):
+    source = subprocess.check_output(["git", "show", f"{PRE_S28}:{relative}"], cwd=ROOT)
+    assignment, = [
+        node for node in ast.parse(source).body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == "__all__" for target in node.targets)
+    ]
+    return ast.literal_eval(assignment.value)
 
 
 def _record() -> dict[str, object]:
@@ -90,7 +105,22 @@ def test_inventory_matches_the_exact_functional_export_surface():
     record = _record()
     exported = record["module"]["public_exports"]
     assert record["module"]["export_count"] == 57
-    assert set(exported) <= set(functional.__all__)
+    before = _pre_s28_exports("pssolver/functional/__init__.py")
+    assert set(exported) <= set(before)
+    retired = {
+        "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
+        "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
+        "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+        "ChannelImplicitPressureAdjoint",
+        "ChannelImplicitPressureAdjointProtocol",
+        "ChannelPressureTransposeOperator",
+        "ChannelPressureTransposeProtocol",
+        "unrolled_channel_pressure_solve_oracle",
+    }
+    assert retired <= set(before)
+    assert list(functional.__all__) == [name for name in before if name not in retired]
+    assert len(functional_api.__all__) == 46
+    assert list(functional_api.__all__) == _pre_s28_exports("pssolver/functional/api.py")
     assert len(exported) == len(set(exported))
     assert record["module"]["api_version"] == "0.1-provisional"
     # This is a historical P9.8.1 inventory for the provisional surface.
@@ -163,8 +193,7 @@ def test_protocol_and_checkpoint_versions_are_distinctly_recorded():
 
 def test_source_bindings_remain_well_formed_historical_baseline_records():
     for binding in _record()["source_bindings"]:
-        path = ROOT / binding["path"]
-        assert path.is_file()
+        assert read_registered_source(binding["path"])
         assert len(binding["sha256"]) == 64
         assert set(binding["sha256"]) <= set("0123456789abcdef")
 

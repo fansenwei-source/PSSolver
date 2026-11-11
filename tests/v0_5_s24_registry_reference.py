@@ -26,6 +26,30 @@ S27_IDENTITY_MAP = {
     "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol": "pssolver.engine.engine.Engine",
 }
 
+_S28_RUNTIME = ".".join(("pssolver", "runtime", "channel_beris_edwards")) + "."
+_S28_COMPILER = ".".join(("pssolver", "configuration", "public_channel_beris_edwards_compiler")) + "."
+S28_IDENTITY_MAP = {
+    _S28_COMPILER + "compile_channel_beris_edwards_public_simulation":
+        "pssolver.configuration.legacy_channel.compile_channel_beris_edwards_public_simulation",
+    _S28_RUNTIME + "ChannelBerisEdwardsRuntimeBuildRequest":
+        "pssolver.configuration.legacy_channel.ChannelBerisEdwardsRunSpec",
+    _S28_RUNTIME + "build_channel_beris_edwards_runtime": "pssolver.engine.engine.Engine",
+    _S28_RUNTIME + "ChannelBerisEdwardsRuntimeAdapterProtocol": "pssolver.engine.engine.Engine",
+}
+
+
+def _forward_channel_value(value, *, channel):
+    """Forward only the four reviewed identities of complete-stress Channel."""
+    if isinstance(value, str) and value.startswith((_S28_RUNTIME, _S28_COMPILER)):
+        assert channel, "deleted Channel identity in another application"
+        assert value in S28_IDENTITY_MAP, f"unmapped Channel identity: {value}"
+        return S28_IDENTITY_MAP[value]
+    if isinstance(value, dict):
+        return {key: _forward_channel_value(item, channel=channel) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_forward_channel_value(item, channel=channel) for item in value)
+    return value
+
 
 def _forward_plane_value(value, *, plane):
     """Closed S-27 mapping; unknown retired identities and wrong families fail."""
@@ -53,10 +77,11 @@ def _forward_plane_value(value, *, plane):
 
 
 def _forward_value(value, application):
-    return _forward_plane_value(
+    value = _forward_plane_value(
         _forward_periodic_value(value, periodic=application.geometry_name == "periodic_box"),
         plane=application.geometry_name == "plane_slab",
     )
+    return _forward_channel_value(value, channel=application.lowering_kind == "channel_complete")
 
 
 def _forward_periodic_value(value, *, periodic):
@@ -77,8 +102,7 @@ def _forward_periodic_value(value, *, periodic):
 def _validated_registry():
     registry = release_registry()
     for item in registry.APPLICATIONS:
-        _forward_periodic_value(asdict(item), periodic=item.geometry_name == "periodic_box")
-        _forward_plane_value(asdict(item), plane=item.geometry_name == "plane_slab")
+        _forward_value(asdict(item), item)
     return registry
 
 

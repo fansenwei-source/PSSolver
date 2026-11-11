@@ -53,13 +53,24 @@ def read_registered_source(relative: str, root: Path = ROOT) -> bytes:
         retired = record.get("retired_sources", {}).get(relative)
         if retired is None:
             continue
-        contents = subprocess.check_output(
-            ["git", "show", f"{retired['source_commit']}:{relative}"], cwd=root,
-        )
+        try:
+            contents = subprocess.check_output(
+                ["git", "show", f"{retired['source_commit']}:{relative}"], cwd=root,
+                stderr=subprocess.PIPE,
+            )
+        except (OSError, subprocess.CalledProcessError) as error:
+            raise RuntimeError(
+                f"PSSOLVER_TEST_PREREQUISITE: registered Git source is unavailable: {relative}"
+            ) from error
         if sha256(contents).hexdigest() != retired["sha256"]:
             raise ValueError(f"Retired source hash does not match: {relative}")
         return contents
     raise FileNotFoundError(path)
 
 
-__all__ = ["read_registered_source", "resolve_s03_successor"]
+def registered_source_sha256(relative: str, root: Path = ROOT) -> str:
+    """Return the current or recorded terminal digest, not a substitute file."""
+    return sha256(read_registered_source(relative, root)).hexdigest()
+
+
+__all__ = ["read_registered_source", "registered_source_sha256", "resolve_s03_successor"]

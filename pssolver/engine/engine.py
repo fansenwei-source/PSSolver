@@ -10,7 +10,7 @@ import torch
 
 from pssolver.backends.tensor_product import TensorProductTransformBackend
 from pssolver.operators.projection import BasisAwareSpectralProjector
-from pssolver.planning.capabilities import CAPABILITIES, lookup
+from pssolver.planning.capabilities import implementations, lookup
 from pssolver.planning.engine_plan import Plan
 
 from . import members, program
@@ -24,15 +24,15 @@ from .state import State
 
 
 def _resolve(capability):
-    if capability not in CAPABILITIES:
+    if capability is None or capability not in implementations(capability.kind):
         raise ValueError("engine implementation capability is not allowed")
     module, name = capability.implementation.split(":")
     return getattr(import_module(module), name)
 
 
 def _capability(kind, reference):
-    item = next((value for value in CAPABILITIES
-                 if value.kind == kind and value.implementation == reference), None)
+    item = next((value for value in implementations(kind)
+                 if value.implementation == reference), None)
     if item is None:
         raise ValueError(f"engine implementation reference is not allowed: {reference!r}")
     return item
@@ -77,7 +77,7 @@ class Engine:
         ):
             raise ValueError("engine supports only registered Periodic Euler plans")
         kernels = {} if kernels is None else dict(kernels)
-        package_explicit = {item.implementation for item in CAPABILITIES if item.kind == "explicit"}
+        package_explicit = {item.implementation for item in implementations("explicit")}
         local = {item.kernel for item in plan.explicit if item.kernel not in package_explicit}
         if set(kernels) != local or not all(callable(value) for value in kernels.values()):
             raise ValueError("model kernels must match the plan's local identities exactly")

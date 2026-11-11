@@ -13,7 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def registry():
-    return json.loads((ROOT / "qualification/s27_r2_tables.json").read_text())
+    record = json.loads((ROOT / "qualification/s27_r2_tables.json").read_text())
+    row, = [
+        row for row in record["edges"]
+        if (row["source"], row["destination"]) == ("pssolver.runtime.legacy_entry", "pssolver.engine.state")
+    ]
+    assert row["owners"] == ["restore_plane_state"]
+    # R-0107 rehomed this single Channel owner without opening the edge.
+    row["owners"].append("restore_channel_state")
+    return record
 
 
 def test_reviewed_edge_inventory_is_nine_and_rehomes_are_three():

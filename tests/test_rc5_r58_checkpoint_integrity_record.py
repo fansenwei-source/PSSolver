@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from qualification.s25_source_paths import source_path
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import read_registered_source, resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,7 +63,8 @@ def _record() -> dict[str, object]:
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(source_path(ROOT, path.relative_to(ROOT).as_posix()).read_bytes()).hexdigest()
+    relative = source_path(ROOT, path.relative_to(ROOT).as_posix()).relative_to(ROOT)
+    return hashlib.sha256(read_registered_source(relative.as_posix())).hexdigest()
 
 
 def test_r58_record_binds_implementation_and_exact_sources():

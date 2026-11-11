@@ -11,6 +11,11 @@
       "sha256": "c86306f1c15de71b9a8a03be53b46979a0c633d625328758e073535e532b854e"
     },
     {
+      "blob": "1860e8441381a0433b0788594e16dab1ac98acb3",
+      "path": "tests/test_phase8_p82_local_candidate_record.py",
+      "sha256": "fe1f8d785b67b0fbd39e5d6eebbbb1b0b1b0df07c961147468b095fa04c9e0ea"
+    },
+    {
       "blob": "c8dc2bbf8eb46dc704dd8396a7432cd7eebe2e41",
       "path": "tests/test_phase8_p83_channel_complete_stress_application.py",
       "sha256": "d2af6eda245f7da1b5f1b49a4a9294f50eec303aa9a787c2e3ea7a20d8a7b040"
@@ -41,6 +46,21 @@
       "sha256": "e474a9ccc2292c9ad7945344cd4700dc88f85acb0174cbc3a41213cb6d7289cd"
     },
     {
+      "blob": "ac4183dfdb04b3e99003e479e1348fc6725e2b9f",
+      "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
+      "sha256": "aa1697e0dcf97a042f03f88b052a9f59e78b771c4b64e4b5f1ae35cea4a88a53"
+    },
+    {
+      "blob": "2b99c313b7c5e6b3bdafb072bb2e2d3ca6c931d3",
+      "path": "tests/test_rc426_cross_device_checkpoint_harness.py",
+      "sha256": "b600903bf311f59ad151f86f01232305d2b2421f8b576940611ff9848770aab1"
+    },
+    {
+      "blob": "1a1a4af42f8c5777fd8cc51a973c615f29c0e2ee",
+      "path": "tests/test_rc4_pressure_adjudication.py",
+      "sha256": "358817cdb59571168b3ae373e0bb0c15312e640182bfffd1705322192261e235"
+    },
+    {
       "blob": "15386afbbed76e1322a43c2d7a734d19c1b7b41e",
       "path": "tests/test_rc4_pressure_metadata_identity_connection.py",
       "sha256": "7e0d190d511d2f98898069c7a2033f9fc18e08372b7e8260918ad66cf1abf73e"
@@ -66,9 +86,19 @@
       "sha256": "cad25c982d42bb20cadfa1986d8b9b719b7e31602e6b5bf5e66927ca0ed69190"
     },
     {
+      "blob": "46a290945cfe7c493ab4ddd2f1d1f7afc9312777",
+      "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
+      "sha256": "302b42e437f88d24c17da78710c2ba515bcda59c9e94f3789d84a889fc58545d"
+    },
+    {
       "blob": "e1e518ade274e41255033dd0d1a29f0979ae2508",
       "path": "tests/test_v0_3_s09_pressure_operator_cache.py",
       "sha256": "662192ea40a49af7330f5588a82f4d0b723d7665c0c13425fd27c321b7280ca2"
+    },
+    {
+      "blob": "30197b12f4396b4358831c53e34084c5a5959126",
+      "path": "tests/test_v0_4_s18_r1_dispatch_record.py",
+      "sha256": "766d421045acc0c1ca0a1a12ce1a1c979f3548c7d0297914cc344677a1f9fc65"
     },
     {
       "blob": "4166f9695b69016d411aa4217a0e8a4c948f33df",
@@ -79,6 +109,11 @@
       "blob": "28ce90143d2dda3a685301c08b7359c46d1b6e19",
       "path": "tests/test_v0_4_s18_r5_channel_pcg_control.py",
       "sha256": "8b7eadf2565b5962cefb4fe53e5503e9695decc3292918f9d9a0a75d6328d9ca"
+    },
+    {
+      "blob": "87e177c6d54af19df48a3cc660aa92765327e515",
+      "path": "tests/test_v0_4_s18_r5_postcondition.py",
+      "sha256": "a6d28deae8a22f9b21e90923e58478ede32a32ce8fd2c0d89f7c720e56fe3e0b"
     },
     {
       "blob": "5a91c16e63e15ce55150ffcf1f702ac489d27e8a",
@@ -94,6 +129,16 @@
       "blob": "1ebcf1c894b874a4613baa46e368b46b4339e662",
       "path": "tests/test_v0_5_s23_baselines.py",
       "sha256": "84e7b73bdcea1c93e6f3e41e086c26eb5f68d54f12f9de9b998971a2fa746784"
+    },
+    {
+      "blob": "b200e7e82a5bd482f722cb2ddc3ea4d9bc2478ad",
+      "path": "tests/test_v0_5_s26_assembly.py",
+      "sha256": "91414588f52aeceb0d45bbe11673da43325fd25632b08b6e3185b84fb86cafe9"
+    },
+    {
+      "blob": "d7b2affa7d41e5e34a86531b0963b36f986f065e",
+      "path": "tests/test_v0_5_s26_rework.py",
+      "sha256": "0157e2aef75ccf95116a165ebc2365e3c819512df19b062ef5a9d959b7c4643b"
     }
   ],
   "nodeids": [
@@ -102,6 +147,7 @@
     "tests/test_channel_no_slip_modal_stokes.py::test_fixed_iteration_pressure_mode_preserves_the_requested_work_count",
     "tests/test_channel_no_slip_modal_stokes.py::test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge",
     "tests/test_channel_no_slip_modal_stokes.py::test_zero_force_has_exact_zero_solution_and_diagnostics",
+    "tests/test_phase8_p82_local_candidate_record.py::test_p82_record_preserves_well_formed_frozen_source_identities",
     "tests/test_phase8_p83_channel_complete_stress_application.py::test_channel_complete_stress_restart_rejects_tamper",
     "tests/test_phase8_p83_channel_complete_stress_application.py::test_channel_progress_tamper_is_rejected_before_target_mutation",
     "tests/test_phase9_p972_channel_pressure_transpose.py::test_manufactured_primal_and_transpose_pressure_solves_recover_state",
@@ -119,6 +165,16 @@
     "tests/test_phase9_p974_channel_functional_runtime.py::test_p974_production_import_applies_the_complete_checkpoint_contract[completed_steps-progress counters differ]",
     "tests/test_phase9_p974_channel_functional_runtime.py::test_p974_production_import_applies_the_complete_checkpoint_contract[format_version-unsupported complete-stress Channel checkpoint]",
     "tests/test_phase9_p974_channel_functional_runtime.py::test_p974_step_is_input_pure_and_replay_is_bitwise",
+    "tests/test_phase9_p981_public_api_surface_inventory.py::test_inventory_matches_the_exact_functional_export_surface",
+    "tests/test_phase9_p981_public_api_surface_inventory.py::test_source_bindings_remain_well_formed_historical_baseline_records",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[channel_functional-channel_activity_batch_one-_run_functional]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[channel_production-channel_complete_stress-_run_channel]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[periodic_functional-periodic_activity_batch_one-_run_functional]",
+    "tests/test_rc4_pressure_adjudication.py::test_active_mode_rms_survives_the_registered_float64_stress_matrix",
+    "tests/test_rc4_pressure_adjudication.py::test_complete_analysis_matches_the_frozen_record_aggregates",
+    "tests/test_rc4_pressure_adjudication.py::test_dense_gradient_and_capability_truth_gates_are_live",
+    "tests/test_rc4_pressure_adjudication.py::test_registered_scale_grid_and_operator_matrix_is_reproducible",
+    "tests/test_rc4_pressure_adjudication.py::test_scale_relative_breakdown_rejects_the_absolute_magic_threshold",
     "tests/test_rc4_pressure_metadata_identity_connection.py::test_v4_identities_bind_pressure_policy_without_layout_version_changes",
     "tests/test_rc4_pressure_policy_implementation.py::test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops",
     "tests/test_rc4_pressure_policy_implementation.py::test_float32_bound_fast_path_avoids_exact_direction_reduction",
@@ -137,14 +193,21 @@
     "tests/test_v0_3_s06_pressure_and_pickle.py::test_float32_fixed_work_saturates_before_roundoff_breakdown[shape1-10-50]",
     "tests/test_v0_3_s06_pressure_and_pickle.py::test_production_fixed_work_uses_the_minimum_floor_state",
     "tests/test_v0_3_s06_pressure_and_pickle.py::test_transpose_fixed_work_uses_the_minimum_floor_state",
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py::test_revert_proxy_reconstructs_exact_f94b9be_method_and_restores_class",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_and_direct_warm_start_sequences_are_byte_identical",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_warm_operator_is_byte_identical_and_saves_one_action[-100]",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_warm_operator_is_byte_identical_and_saves_one_action[0]",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_warm_operator_is_byte_identical_and_saves_one_action[100]",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_external_none_warm_start_clears_operator_cache",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_in_place_warm_start_update_invalidates_operator_cache",
+    "tests/test_v0_4_s18_r1_dispatch_record.py::test_r1_dispatch_binds_only_exact_forward_source_changes",
     "tests/test_v0_4_s18_r4_shared_step_progress.py::test_projected_runtimes_inherit_one_inverse_and_refresh_implementation",
     "tests/test_v0_4_s18_r5_channel_pcg_control.py::test_all_four_paths_use_the_shared_control_without_old_floor_state",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[implicit-30-RuntimeError-pressure-loop and diagnostics postconditions disagree-None]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[implicit-40-RuntimeError-pressure-loop and diagnostics postconditions disagree-None]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[implicit-44-RuntimeError-pressure-loop and diagnostics postconditions disagree-None]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[production-30-ChannelPressureConvergenceError-production Channel pressure solve did not satisfy its contract-fixed_work_completed]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[transpose-30-FunctionalConvergenceError-standalone Channel pressure transpose solve is unacceptable-fixed_work_completed]",
     "tests/test_v0_4_s18_r5_r0057_rework.py::test_r0057_import_and_rework_preserve_history_and_bind_sources",
     "tests/test_v0_4_s19_self_compare.py::test_pcg_transpose_import_uses_the_unchanged_definition_not_stable_api",
     "tests/test_v0_5_s23_baselines.py::test_released_checkpoint_sixteen_step_continuation[channel_default_float64_default]",
@@ -170,7 +233,24 @@
     "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_odd_grid.json]",
     "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_relative_tolerance.json]",
     "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_relative_tolerance_float32_floor.json]",
-    "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_reuse_off.json]"
+    "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_reuse_off.json]",
+    "tests/test_v0_5_s26_assembly.py::test_capability_table_is_exact_and_resolves_function_identity",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M1]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M2]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M3]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M4]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M5]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M6]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M7]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M8]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S1]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S2]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S3]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S4]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S5]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S6]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S7]",
+    "tests/test_v0_5_s26_rework.py::test_exact_moves_preserve_every_frozen_source_unit_and_hash"
   ],
   "selected_nodeids": [
     "tests/test_architecture_import_boundaries.py::test_configuration_has_only_reviewed_planning_composition_edges",
@@ -178,6 +258,7 @@
     "tests/test_channel_no_slip_modal_stokes.py::test_fixed_iteration_pressure_mode_preserves_the_requested_work_count",
     "tests/test_channel_no_slip_modal_stokes.py::test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge",
     "tests/test_channel_no_slip_modal_stokes.py::test_zero_force_has_exact_zero_solution_and_diagnostics",
+    "tests/test_phase8_p82_local_candidate_record.py::test_p82_record_preserves_well_formed_frozen_source_identities",
     "tests/test_phase8_p83_channel_complete_stress_application.py::test_channel_complete_stress_restart_rejects_tamper",
     "tests/test_phase8_p83_channel_complete_stress_application.py::test_channel_progress_tamper_is_rejected_before_target_mutation",
     "tests/test_phase9_p972_channel_pressure_transpose.py::test_manufactured_primal_and_transpose_pressure_solves_recover_state",
@@ -195,6 +276,16 @@
     "tests/test_phase9_p974_channel_functional_runtime.py::test_p974_production_import_applies_the_complete_checkpoint_contract[completed_steps-progress counters differ]",
     "tests/test_phase9_p974_channel_functional_runtime.py::test_p974_production_import_applies_the_complete_checkpoint_contract[format_version-unsupported complete-stress Channel checkpoint]",
     "tests/test_phase9_p974_channel_functional_runtime.py::test_p974_step_is_input_pure_and_replay_is_bitwise",
+    "tests/test_phase9_p981_public_api_surface_inventory.py::test_inventory_matches_the_exact_functional_export_surface",
+    "tests/test_phase9_p981_public_api_surface_inventory.py::test_source_bindings_remain_well_formed_historical_baseline_records",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[channel_functional-channel_activity_batch_one-_run_functional]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[channel_production-channel_complete_stress-_run_channel]",
+    "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu[periodic_functional-periodic_activity_batch_one-_run_functional]",
+    "tests/test_rc4_pressure_adjudication.py::test_active_mode_rms_survives_the_registered_float64_stress_matrix",
+    "tests/test_rc4_pressure_adjudication.py::test_complete_analysis_matches_the_frozen_record_aggregates",
+    "tests/test_rc4_pressure_adjudication.py::test_dense_gradient_and_capability_truth_gates_are_live",
+    "tests/test_rc4_pressure_adjudication.py::test_registered_scale_grid_and_operator_matrix_is_reproducible",
+    "tests/test_rc4_pressure_adjudication.py::test_scale_relative_breakdown_rejects_the_absolute_magic_threshold",
     "tests/test_rc4_pressure_metadata_identity_connection.py::test_v4_identities_bind_pressure_policy_without_layout_version_changes",
     "tests/test_rc4_pressure_policy_implementation.py::test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops",
     "tests/test_rc4_pressure_policy_implementation.py::test_float32_bound_fast_path_avoids_exact_direction_reduction",
@@ -213,14 +304,21 @@
     "tests/test_v0_3_s06_pressure_and_pickle.py::test_float32_fixed_work_saturates_before_roundoff_breakdown[shape1-10-50]",
     "tests/test_v0_3_s06_pressure_and_pickle.py::test_production_fixed_work_uses_the_minimum_floor_state",
     "tests/test_v0_3_s06_pressure_and_pickle.py::test_transpose_fixed_work_uses_the_minimum_floor_state",
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py::test_revert_proxy_reconstructs_exact_f94b9be_method_and_restores_class",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_and_direct_warm_start_sequences_are_byte_identical",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_warm_operator_is_byte_identical_and_saves_one_action[-100]",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_warm_operator_is_byte_identical_and_saves_one_action[0]",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_cached_warm_operator_is_byte_identical_and_saves_one_action[100]",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_external_none_warm_start_clears_operator_cache",
     "tests/test_v0_3_s09_pressure_operator_cache.py::test_in_place_warm_start_update_invalidates_operator_cache",
+    "tests/test_v0_4_s18_r1_dispatch_record.py::test_r1_dispatch_binds_only_exact_forward_source_changes",
     "tests/test_v0_4_s18_r4_shared_step_progress.py::test_projected_runtimes_inherit_one_inverse_and_refresh_implementation",
     "tests/test_v0_4_s18_r5_channel_pcg_control.py::test_all_four_paths_use_the_shared_control_without_old_floor_state",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[implicit-30-RuntimeError-pressure-loop and diagnostics postconditions disagree-None]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[implicit-40-RuntimeError-pressure-loop and diagnostics postconditions disagree-None]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[implicit-44-RuntimeError-pressure-loop and diagnostics postconditions disagree-None]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[production-30-ChannelPressureConvergenceError-production Channel pressure solve did not satisfy its contract-fixed_work_completed]",
+    "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception[transpose-30-FunctionalConvergenceError-standalone Channel pressure transpose solve is unacceptable-fixed_work_completed]",
     "tests/test_v0_4_s18_r5_r0057_rework.py::test_r0057_import_and_rework_preserve_history_and_bind_sources",
     "tests/test_v0_4_s19_self_compare.py::test_pcg_transpose_import_uses_the_unchanged_definition_not_stable_api",
     "tests/test_v0_5_s23_baselines.py::test_released_checkpoint_sixteen_step_continuation[channel_default_float64_default]",
@@ -246,7 +344,24 @@
     "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_odd_grid.json]",
     "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_relative_tolerance.json]",
     "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_relative_tolerance_float32_floor.json]",
-    "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_reuse_off.json]"
+    "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory[channel_default_float64_reuse_off.json]",
+    "tests/test_v0_5_s26_assembly.py::test_capability_table_is_exact_and_resolves_function_identity",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M1]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M2]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M3]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M4]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M5]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M6]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M7]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[M8]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S1]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S2]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S3]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S4]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S5]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S6]",
+    "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations[S7]",
+    "tests/test_v0_5_s26_rework.py::test_exact_moves_preserve_every_frozen_source_unit_and_hash"
   ],
   "source_commit": "4b720938896af6cae0719569e95be471b33e0935"
 }

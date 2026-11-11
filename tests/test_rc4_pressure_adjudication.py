@@ -7,8 +7,14 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 
-from benchmarks import diagnose_channel_pressure_contract as diagnostic
+from pssolver.functional.errors import FunctionalConvergenceError
+from pssolver.linear_solvers.stokes.channel_no_slip import (
+    ChannelPressureConvergenceError,
+    PCGRole,
+)
+from qualification.s28a_pcg_equivalence import StandaloneTransposeDiagnostics, _rhs, reference
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,115 +68,34 @@ def test_rc441_record_binds_the_plan_and_reproducible_diagnostic():
     }
 
 
-def test_active_mode_rms_survives_the_registered_float64_stress_matrix():
-    result = diagnostic._norm_stress()
+@pytest.mark.parametrize("role", ["production", "transpose"])
+def test_channel_pressure_convergence_classifications_on_live_solver(role):
+    case = dict(shape=(8, 4, 4), dtype="float64", seed=9,
+                fixed_iterations=5, max_iterations=5, length_scale=1.,
+                friction=.1, viscosity=.73, relative_tolerance=1e-10)
+    _, solver = reference._build_solver(case)
+    rhs = _rhs(solver, case)
+    if role == "production":
+        state = dict(pressure_guess=None, pressure_guess_action=None,
+                     pressure_guess_action_exponent=None)
 
-    assert result["active_mode_rms_passed"] is True
-    assert result["active_mode_rms_nonfinite_or_zero_count"] == 0
-    assert result["scaled_global_l2_public_float_passed"] is False
-    assert result["scaled_global_l2_nonfinite_or_zero_count"] == 3
-    failures = [
-        item for item in result["records"] if not item["global_l2_finite"]
-    ]
-    assert [item["shape"] for item in failures] == [
-        [3, 2, 2],
-        [4, 3, 2],
-        [5, 4, 3],
-    ]
-    assert all(item["scale_exponent"] == 1023 for item in failures)
-    assert all(item["active_rms_finite"] for item in failures)
+        def solve(value):
+            result, _, report = solver.solve(value, state, role=PCGRole.PRODUCTION)
+            return result, report
 
+        error_type = ChannelPressureConvergenceError
+    else:
+        context = StandaloneTransposeDiagnostics(solver)
 
-def test_scale_relative_breakdown_rejects_the_absolute_magic_threshold():
-    result = diagnostic._breakdown_cases()
+        def solve(value):
+            result = context.solve(value)
+            return result, context.last_transpose_diagnostics.to_metadata()
 
-    assert result["absolute_magic_threshold_rejected"] is True
-    assert result["scale_relative_test_distinguishes_tiny_from_zero"] is True
-    tiny = result["records"]["operator_tiny_but_well_scaled"]
-    assert tiny["absolute_1e_30_declares_breakdown"] is True
-    assert tiny["relative_test_declares_breakdown"] is False
-    assert result["records"]["true_orthogonal_breakdown"][
-        "relative_test_declares_breakdown"
-    ] is True
-
-
-def test_registered_scale_grid_and_operator_matrix_is_reproducible():
-    result = diagnostic._scale_sweep()
-
-    assert result["passed"] is True
-    assert result["all_solve_outcomes_acceptable"] is True
-    assert result["maximum_scale_covariance_relative_l2"] <= result[
-        "scale_covariance_bound"
-    ]
-    assert [item["active_pressure_degrees_of_freedom"] for item in result["grids"]] == [
-        11,
-        17,
-        59,
-    ]
-    for grid in result["grids"]:
-        for action in grid["actions"].values():
-            fixed = action["fixed_work"]["scale_trials"]
-            tolerance = action["relative_tolerance"]["scale_trials"]
-            assert {item["iterations"] for item in fixed} == {5}
-            assert {item["termination_reason"] for item in fixed} == {
-                "fixed_work_completed"
-            }
-            assert len({item["iterations"] for item in tolerance}) == 1
-            assert {item["termination_reason"] for item in tolerance} == {
-                "relative_tolerance_met"
-            }
-
-
-def test_dense_gradient_and_capability_truth_gates_are_live():
-    dense = diagnostic._dense_oracle()
-    gradient = diagnostic._gradient_oracle()
-    capability = diagnostic._capability_truth_table()
-
-    assert dense["passed"] is True
-    assert gradient["passed"] is True
-    assert capability["declaration_runtime_capabilities_equal"] is True
-    assert capability["explicit_vjp_false_is_truthful"] is True
-    assert capability["custom_autograd_adjoint_exists"] is True
-    assert capability["finding"].startswith("METADATA_REPAIR_COMPLETE")
-    components = {
-        row["subject"]: row for row in capability["truth_table"]
-    }
-    assert components["functional_runtime"]["is_runtime"] is True
-    assert components["implicit_adjoint_component"]["is_runtime"] is False
-    assert components["implicit_adjoint_component"][
-        "connected_to_executable_runtime"
-    ] is True
-
-
-def test_complete_analysis_matches_the_frozen_record_aggregates():
-    live = diagnostic.build_report()
-    record = _record()
-
-    assert live["classification"] == record["classification"]
-    assert live["selected_scale_contract"]["decision_class"] == (
-        record["selected_scale_contract"]["decision_class"]
-    )
-    assert live["completion"]["analysis_complete"] is True
-    assert live["evidence"]["P02_P03_P04_P05_scale_grid_primal_transpose"][
-        "maximum_scale_covariance_relative_l2"
-    ] == pytest.approx(
-        record["results"]["P03_scale_sweep"][
-            "maximum_pressure_scale_covariance_relative_l2"
-        ],
-        rel=0.0,
-        abs=0.0,
-    )
-    live_inner_error = live["evidence"]["P08_dense_and_gradient_oracles"][
-        "dense"
-    ]["primal_transpose_inner_product_relative_error"]
-    frozen_inner_error = record["results"]["P05_primal_transpose"][
-        "inner_product_relative_error"
-    ]
-    inner_error_bound = record["results"]["P05_primal_transpose"]["bound"]
-    assert live_inner_error <= inner_error_bound
-    assert frozen_inner_error <= inner_error_bound
-    assert live_inner_error == pytest.approx(
-        frozen_inner_error,
-        rel=0.0,
-        abs=0.01 * inner_error_bound,
-    )
+        error_type = FunctionalConvergenceError
+    result, report = solve(rhs)
+    assert bool(torch.isfinite(result).all())
+    assert report["termination_reason"] == "fixed_work_completed"
+    assert report["achieved_iteration_count"] == 5
+    with pytest.raises(error_type) as error:
+        solve(torch.full_like(rhs, float("nan")))
+    assert error.value.details["termination_reason"] == "nonfinite_input"

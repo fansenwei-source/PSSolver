@@ -13,6 +13,67 @@
       "path": "benchmarks/verify_v0_4_s18_r5_pcg_equivalence.py",
       "replacement": "qualification/s28a_pcg_equivalence.py",
       "sha256": "bfb38c6c49eed0bbdbdd281200cd791979ab18b0ffb934eff2495e07a130c30e"
+    },
+    {
+      "authority": "R-0110 \u00a72",
+      "chain": [
+        {
+          "line": 17,
+          "module": "pssolver.functional.channel_pressure",
+          "name": null
+        },
+        {
+          "line": 18,
+          "module": "pssolver.functional.channel_pressure_adjoint",
+          "name": null
+        }
+      ],
+      "path": "benchmarks/probe_v0_4_s18_r5_postcondition.py",
+      "replacement": "qualification/s28a_fault_child.py",
+      "sha256": "339dccb4995f66029af78a19219a4f7ee5ab617b6ab7aea037bf284d6818431a"
+    },
+    {
+      "authority": "R-0110 \u00a72",
+      "chain": [
+        {
+          "line": 433,
+          "module": "pssolver.runtime.package_construction",
+          "name": "PackageRuntimeConstructionInput"
+        },
+        {
+          "line": 433,
+          "module": "pssolver.runtime.package_construction",
+          "name": "build_package_simulation_runtime"
+        },
+        {
+          "line": 529,
+          "module": "pssolver.applications.channel_beris_edwards",
+          "name": "load_channel_initial_q"
+        },
+        {
+          "line": 530,
+          "module": "pssolver.runtime.channel_beris_edwards",
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest"
+        },
+        {
+          "line": 530,
+          "module": "pssolver.runtime.channel_beris_edwards",
+          "name": "build_channel_beris_edwards_runtime"
+        },
+        {
+          "line": 811,
+          "module": "pssolver.workflows.channel_beris_edwards",
+          "name": "_load_checkpoint"
+        },
+        {
+          "line": 811,
+          "module": "pssolver.workflows.channel_beris_edwards",
+          "name": "write_channel_beris_edwards_checkpoint"
+        }
+      ],
+      "path": "benchmarks/run_rc426_cross_device_checkpoint.py",
+      "replacement": "tests/test_v0_5_s28a_solver_state.py",
+      "sha256": "484e5e4192b79ef707d9b21307e14ef989695a8962f002ae95f95bc70d826e9c"
     }
   ],
   "modules": {

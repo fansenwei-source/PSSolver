@@ -1082,7 +1082,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "256810cd9bddbd18192c303b926cbb607b625a505d1d6adc3bb0d4d1c6a952f6",
+      "chains_ref": "714eeb285bf1d252a2c3fe8c970e888e9de236365b3c666362065cb7c6f538bb",
       "historical_node": null,
       "path": "tests/test_analyze_v0_3_s09_h100.py",
       "reason": "Test function unchanged.",
@@ -2063,7 +2063,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "c668dbfcc6fc079bb078d7f1bbf82bef58e2a3950357e3914f7ee518c4fbc804",
+      "chains_ref": "b75ca2d32f083341ec89ba18323c086ecf6b8bac61c5fe798576b83fcc5b5e62",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2072,7 +2072,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "c965c9f7f1988708e35ee11f389537de34b3c42a7344eb102d5af8fd40fbfe48",
+      "chains_ref": "cc11bbceb3404f6da7641af574df34d8ef22e3afdbdd8c2396d10930e1448b1b",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2081,7 +2081,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "e6ca5fc17c29f23d81dbbfd9d4b00ae1ccbf9fd51f24c2c05dd6d543284f2ba4",
+      "chains_ref": "cb909542cedd5fc0cef3984aa41f44929b04e3a7b14ed64b3145711443deef9f",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2090,7 +2090,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "8c2adc97aaee91fdb54058d0448a784cb76af9ee14cf37c8124a626927c94f15",
+      "chains_ref": "dfb87c10428692d3cd4a41daaf59a2d0378fe51a4ac1605cb20dc4776b19da53",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2099,7 +2099,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "f4deb9ae27bd61b4a9c2afb56e9e5f00a634c4a6aed1e37e80779582027f296a",
+      "chains_ref": "a1f7b446cbb44681d969ea7d0b0e1d2fd2a7d59a017076512800839f4bacf8c3",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2108,7 +2108,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "4494c81e33fd020becf9a694a7aaa5f8322b3117d17212581600b714d10f1865",
+      "chains_ref": "2f59eadd03621c11e1a7ab25fa947dc24fb321a5dee11f7f707eb00d2ff829d4",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2117,16 +2117,16 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "8331a0524a1f4592b5d0ab0d60d971fa1d9c5060b0173ea0a3065cda58342af2",
+      "chains_ref": "78925841fb44dc760e67572dcff82503e042b64f114b3ee5ee1d9f9dff4cd1fd",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Engine/API driver migration; assertion text unchanged.",
+      "rule": "R4",
       "unit": "Fig4NumericsCliTests::test_beris_edwards_identity_parameters_and_hashes_are_recorded"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "fae4784a300c18f72b02cf37773a4c15228e2cb2964ece62b7b4d09975f53f97",
+      "chains_ref": "8e78f56804ce0bc14fb90209b964a5600f9b35d0764c070b44dd035c869d9077",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2135,7 +2135,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "554fd829cd087571289e21a8a267fa39a8f650fa03b4f8864fc4018e50bf70b0",
+      "chains_ref": "3b4e4c4bddcce8c884544a6a93d9e9c6d13121f8cebcdad0423cd0683c4030fa",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2144,7 +2144,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "180be73ad551ed1f18e104b3f2fe0cbac6a8cfc7b268821b12d12d14035335a1",
+      "chains_ref": "2a1a6ddaee3b508d9fa878aa26162ad2252930392386e40dbc5ccd698fc2d45a",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2153,7 +2153,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "2565deb4babc7f2ac7bf0961e64ac55f1a9ef59e5297f71bf665b9195476753d",
+      "chains_ref": "c481db84826f47309e446321aa8f2f91e3e46401627bdbcbe98eaafe65d47eb0",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2162,7 +2162,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "3ca707fed108f982bfdbf1fc039f0c17d86fe1aff60cb7e9eb1291aaa0b08f0b",
+      "chains_ref": "5b88419bcd8947e5cb506b0fb65ee8e2eff4a840f46966200b92a91362c485ac",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2171,7 +2171,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "6a50580cf2ce5a0adb4b2fe95679509cb3e248f6a1c2f00e70f7920f2f54b149",
+      "chains_ref": "61b265f0b405de04f22bf064102dd87095f936d229c53e91768eb5c7eeb89482",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2180,7 +2180,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "465bd15ca9e49448799469c04de361bec2f448f60a289be736980b19da34261b",
+      "chains_ref": "e2a6742f1e6af8d1209ef6f3fe22432d28a1fffd17faadef77ef36c825b42d36",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2189,7 +2189,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "97df66eecaa11572e6f9731986a42b61d7c265084191560274cb5a77e3a08b1b",
+      "chains_ref": "e9efe1db76de40502312d67848560fff8854bb82e76ddcc859d469162c29313f",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2198,7 +2198,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "2dc108497a9ee87dc8e5b6c99d2e45fa1e0a69b716e133907a3b0188f0c6f996",
+      "chains_ref": "01ce7f7df054c8f8c49d2f4f2894f2fde5364322ac961e75595b50ffdeb03932",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2207,7 +2207,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "fa07607c88c5ed6a1f923f42aecda942c959c9d9bc18c589a1a1fbac58de4d7d",
+      "chains_ref": "24a5c92f9a8fa9b92b8ac0554a391ef9c7b10b90fb7aefc8eac0604ed1c38e46",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -2216,7 +2216,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "ecb83eb28c9aeca3affc2cdadbaa67699dc562754b57fbb4c6ae6c710978ae36",
+      "chains_ref": "37c9761254a083a5da878952b6d8236c87a06e5e4df6ba3d7ca77a04823cdb41",
       "historical_node": null,
       "path": "tests/test_fig4_numerics_cli.py",
       "reason": "Test function unchanged.",
@@ -4123,12 +4123,12 @@
       "unit": "test_p82_record_is_local_candidate_and_does_not_overclaim_h100_closure"
     },
     {
-      "assertions_text_unchanged": true,
+      "assertions_text_unchanged": false,
       "chains_ref": "879fe7d88ff8ab21bc6828689ddfecb990a7aac9742f08dc5cf3e812936dc5f3",
-      "historical_node": null,
+      "historical_node": "tests/test_phase8_p82_local_candidate_record.py::test_p82_record_preserves_well_formed_frozen_source_identities",
       "path": "tests/test_phase8_p82_local_candidate_record.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_p82_record_preserves_well_formed_frozen_source_identities"
     },
     {
@@ -4916,7 +4916,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "afd3c31815de0d0a2ab90064444d1c119098b431ed02e1c586a99e618ec978cd",
+      "chains_ref": "9361b1266c2dc693ed349b56b9f815d0fd2829b5939104499dd8c3c7f0b42500",
       "historical_node": null,
       "path": "tests/test_phase8_p850_finite_anchoring_plan.py",
       "reason": "Test function unchanged.",
@@ -6373,17 +6373,17 @@
       "unit": "test_p974_record_is_json_safe_and_keeps_frozen_solver_byte_identity"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "4cedfe7454845c50bb5d3cd4f3fbf69a0c3bf9ecef016f3e6ec69c459f51f382",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "00eb53950b41931003c0c7b0d1f7ece4a7bd53f04e6320f9d7833be1db4bcc45",
+      "historical_node": "tests/test_phase9_p981_public_api_surface_inventory.py::test_inventory_matches_the_exact_functional_export_surface",
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_inventory_matches_the_exact_functional_export_surface"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "858b39f057593d079af79bda15a6acd0f7b15af2109b295fe3fb04fab21b9975",
+      "chains_ref": "df6fdf39d1e3a924d26d05cf197fcc8f88b64cf98f78b38d7e8f761bab5ddb94",
       "historical_node": null,
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
       "reason": "Test function unchanged.",
@@ -6392,7 +6392,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "d5f7d2ff390eac2e12fbd4b3684ab8b95e28297b82f61a72ce3ff949110b8434",
+      "chains_ref": "69899557f405cca491bd6afdfed34bdb3eb4a0f57dd9c92b935372eef47575ad",
       "historical_node": null,
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
       "reason": "Test function unchanged.",
@@ -6401,7 +6401,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "b31ae61f8296abfc2938431c81d3553a838510dc5d3dcae3acc2234923a4b909",
+      "chains_ref": "ec49f1c3366a64f2cfb7bc35781160ca954a6e29224dc838e59fe1b21b0bd82f",
       "historical_node": null,
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
       "reason": "Test function unchanged.",
@@ -6410,7 +6410,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "8dbf6c1bf599fc28c8f0d36dcb7ec054f12df7a1dac69bda522026b156e8c425",
+      "chains_ref": "ac78f4aeba841addd4ea6f50712418b4734287c1dcf23905bb7d39b17f1e132d",
       "historical_node": null,
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
       "reason": "Test function unchanged.",
@@ -6418,17 +6418,17 @@
       "unit": "test_review_groups_partition_every_export_once"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "567ba69ad5661e66b79174f322632c809874d3d3fe6faa778abdfa5eee223d7d",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "7181b1cb66d5d40ee04032a89f5f9ef6feb5eba34e993c3bcfcbf95c62f1d378",
+      "historical_node": "tests/test_phase9_p981_public_api_surface_inventory.py::test_source_bindings_remain_well_formed_historical_baseline_records",
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_source_bindings_remain_well_formed_historical_baseline_records"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "3c36d50d9a27ab8f9adee6a92ef1de0a05648134a9f44f56ca0e1eab92341796",
+      "chains_ref": "09d66779473d142f96458a710b91a31de58c4d88930eaee0ef94480f3126611b",
       "historical_node": null,
       "path": "tests/test_phase9_p981_public_api_surface_inventory.py",
       "reason": "Test function unchanged.",
@@ -7095,10 +7095,10 @@
     {
       "assertions_text_unchanged": true,
       "chains_ref": "0791b65a16e447921a969a7ab6b89ee7780e77531d605446084d58a8109c52b9",
-      "historical_node": null,
+      "historical_node": "tests/test_rc426_cross_device_checkpoint_harness.py::test_periodic_channel_cell_protocol_executes_on_cpu",
       "path": "tests/test_rc426_cross_device_checkpoint_harness.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_periodic_channel_cell_protocol_executes_on_cpu"
     },
     {
@@ -8344,35 +8344,44 @@
       "unit": "test_historical_successor_sources_match_the_current_files_exactly"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "04d71515ab4dd71ad3e1ae1ca0ce64e4adb19ba4185879e8960850d155b35a81",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "531e4ced69f602daf452d0db805fbb0bea6566d9e896c80c77eeef74d84f9eba",
+      "historical_node": "tests/test_rc4_pressure_adjudication.py::test_active_mode_rms_survives_the_registered_float64_stress_matrix",
       "path": "tests/test_rc4_pressure_adjudication.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R6",
       "unit": "test_active_mode_rms_survives_the_registered_float64_stress_matrix"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "68cc9da016b99f87c4e174aaf00cc995a593b0a0d2ecd020fd2aa0dd55ca4192",
+      "assertions_text_unchanged": false,
+      "chains_ref": "3bf74c2e0bf7da9f27e8abde70f6805b90a23bdbf7691d5bc7e3fcda6e1a8322",
       "historical_node": null,
       "path": "tests/test_rc4_pressure_adjudication.py",
-      "reason": "Test function unchanged.",
+      "reason": "New S-28a coverage.",
       "rule": "R1",
+      "unit": "test_channel_pressure_convergence_classifications_on_live_solver"
+    },
+    {
+      "assertions_text_unchanged": false,
+      "chains_ref": "577ad381f9d7946958579c6ead66077a8a73ebc168bb38df4a98276d223f88ff",
+      "historical_node": "tests/test_rc4_pressure_adjudication.py::test_complete_analysis_matches_the_frozen_record_aggregates",
+      "path": "tests/test_rc4_pressure_adjudication.py",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R6",
       "unit": "test_complete_analysis_matches_the_frozen_record_aggregates"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "7f0521df1d8b8b1cf005607de2e20d2e30d3726f7b2f142ae1089493692ce42d",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "3d9c328847ddba8fe38b692638284d0eac140e47523688d7a4cc3c4a5d128b74",
+      "historical_node": "tests/test_rc4_pressure_adjudication.py::test_dense_gradient_and_capability_truth_gates_are_live",
       "path": "tests/test_rc4_pressure_adjudication.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R6",
       "unit": "test_dense_gradient_and_capability_truth_gates_are_live"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "fee17c159545f92c69783ea85034674187d2748a3ab0994dc64ec27a18a5d8a2",
+      "chains_ref": "7b4b6cc63e0c1a1fb94de9983963f08c416d372ef7cf3fb9e99758ad971eb194",
       "historical_node": null,
       "path": "tests/test_rc4_pressure_adjudication.py",
       "reason": "Test function unchanged.",
@@ -8380,21 +8389,21 @@
       "unit": "test_rc441_record_binds_the_plan_and_reproducible_diagnostic"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "fe7a35e126ff4e790295166646540b2a40f99a318bf6e5aa0d23fd48c64ddddf",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "3e8d42852086657504495a4e05064742e53287cac5e704941c4aaca63aab74d3",
+      "historical_node": "tests/test_rc4_pressure_adjudication.py::test_registered_scale_grid_and_operator_matrix_is_reproducible",
       "path": "tests/test_rc4_pressure_adjudication.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R6",
       "unit": "test_registered_scale_grid_and_operator_matrix_is_reproducible"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "edd90f28ad9a49f39e26e6f61fcea17cd83137022e329182ba1b3e70a745b0fa",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "03bffca119031904f69b1045b0eab70dd637118b6671a9534abbc89926c8bb7e",
+      "historical_node": "tests/test_rc4_pressure_adjudication.py::test_scale_relative_breakdown_rejects_the_absolute_magic_threshold",
       "path": "tests/test_rc4_pressure_adjudication.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R6",
       "unit": "test_scale_relative_breakdown_rejects_the_absolute_magic_threshold"
     },
     {
@@ -10082,7 +10091,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "fe16ce0d8eac1f17cee5c48c92919a830fa0857cae93a5532e6fb10f9b8daf75",
+      "chains_ref": "e9418b08c7ce83ab9bcef667d2fcb51113437283228524f121f14da25c1e11bc",
       "historical_node": null,
       "path": "tests/test_rc6_3_compile_preflight_record.py",
       "reason": "Test function unchanged.",
@@ -10091,7 +10100,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "9513d2fad973eabcefb01a1a350df75a79add2b4dfdec0b72a0f0eaec79667ae",
+      "chains_ref": "62cec6280e4e9b6e74c92198858b13154bf45f0d22dc63701329421aae248f40",
       "historical_node": null,
       "path": "tests/test_rc6_3_compile_preflight_record.py",
       "reason": "Test function unchanged.",
@@ -10100,7 +10109,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "1fc745e82ed836128594db703d8702fb2fd6fe99ee7bc5ac69264bd585aa76d6",
+      "chains_ref": "9a54850ee6a18f75080e0ab8dc8a65a3cd1300082fe50d6ff0e4960209f6f598",
       "historical_node": null,
       "path": "tests/test_rc6_3_compile_preflight_record.py",
       "reason": "Test function unchanged.",
@@ -10109,7 +10118,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "e26dbed14bc3ccf7396397e752b4a42d809b837da7fc4d01d27889f1d5fea438",
+      "chains_ref": "55c6ccd0a72f7f5b00c268577b61a4f5f7c6b8cafd184bc9d47b93e9893cbb07",
       "historical_node": null,
       "path": "tests/test_rc6_3_compile_preflight_record.py",
       "reason": "Test function unchanged.",
@@ -10118,7 +10127,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "ed693dafb701ca68c818d3485184106fc2596d7918b396f33a25e0a604bb96ca",
+      "chains_ref": "7dc279fcc4e350c114dfe9bcb7b26f2818bb2b8ba9a6c8f663669c8dff1f55bc",
       "historical_node": null,
       "path": "tests/test_rc6_3_compile_preflight_record.py",
       "reason": "Test function unchanged.",
@@ -11108,6 +11117,15 @@
     },
     {
       "assertions_text_unchanged": true,
+      "chains_ref": "40d5e2ee9ba22f4d3dfc7fd4aa2d0ccb952b6d5309b17c5bbf2a30706311cc90",
+      "historical_node": null,
+      "path": "tests/test_v0_3_s06_fixed_work_rework_record.py",
+      "reason": "Test function unchanged.",
+      "rule": "R1",
+      "unit": "test_s06_rework_items_are_verified_at_exact_fix_sources"
+    },
+    {
+      "assertions_text_unchanged": true,
       "chains_ref": "2952244798d3d2b91350c4f1d5e3db1da4b5a13bb3ac267d4a10045e3b695ea7",
       "historical_node": null,
       "path": "tests/test_v0_3_s06_fixed_work_rework_record.py",
@@ -11195,6 +11213,15 @@
       "reason": "Test function unchanged.",
       "rule": "R1",
       "unit": "test_s06_record_binds_the_roadmap_and_runtime_sources"
+    },
+    {
+      "assertions_text_unchanged": true,
+      "chains_ref": "68678b10ae727c9f46776bc811eb5870411cd35261aafb1fe852e4f006c8f306",
+      "historical_node": null,
+      "path": "tests/test_v0_3_s06_numerics_serialization_record.py",
+      "reason": "Test function unchanged.",
+      "rule": "R1",
+      "unit": "test_s06_registry_advances_all_review_items_through_r0016"
     },
     {
       "assertions_text_unchanged": true,
@@ -11486,7 +11513,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "30e9e16f1c1c640b15857b1b5c424784e80e8f3ad77e60a5cbc5705fb7ece4cb",
+      "chains_ref": "fd6f4ddd6b7e07008c815c9ff66c2ec09e9f56d2da0b638e715c3d3a2d60ab27",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -11495,7 +11522,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "edbe19811d4db70a8e400130b8bd6744b185ca68e18f37c154b30ff61c0ab3ec",
+      "chains_ref": "3972589e570ee95048f074f871da9026358f6a22141c88e2d5d3233f9661e06a",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -11504,7 +11531,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "268e70fb7abb8d67e1dddfc29a0566c561f8da5ceb4598e3e83a94ab49733edb",
+      "chains_ref": "ba519e6ef371fe616502235494c8bd54dc98049a9176ec79531e2515f244fb56",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -11513,7 +11540,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "13a91fa73f3ce785433a999e86596e1e9e81d6d813ee525c4debffc62b7dd4f0",
+      "chains_ref": "9fadfebf7d345ad9db680cbcc349b9dcd31afa75390e79afed2f80718ba75139",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -11521,17 +11548,17 @@
       "unit": "test_job_is_single_gpu_diagnostic_without_qualification_claims"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "a492d8672cbbeea9a37d0b1023eb47cd62a05f7128c7ce173622777fe926f1fe",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "fb2e90d8708d7b78d8652ce8a4d62f61c12befa5a8158732e6c734f1b950fc66",
+      "historical_node": "tests/test_v0_3_s09_ap_cache_diagnostic.py::test_revert_proxy_reconstructs_exact_f94b9be_method_and_restores_class",
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R6",
       "unit": "test_revert_proxy_reconstructs_exact_f94b9be_method_and_restores_class"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "19c3de2195d9156208eae2480a13df5497dd23c8a5b4a44a0492133f960c733b",
+      "chains_ref": "60c7b7dc752424313a64fa9b3608d222c4f87012b9ff3bf678925aa7b75647e3",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -11540,7 +11567,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "d1faa59078d5dee321114b7dc2035e16c25b2aee7328d396c1900d9ce81a1877",
+      "chains_ref": "520a75dada8818317bd50da2214b4ec34d74f9ea62713bc96b6f861ddc952502",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -11549,7 +11576,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "57f56de508735373f0b0e4805e0ce58db926059084a0033ddc2b093dbe142efa",
+      "chains_ref": "57dddc1009470e3dfac7f41850f86890eb513e5fcca0124cc9d88a60f25259e0",
       "historical_node": null,
       "path": "tests/test_v0_3_s09_ap_cache_diagnostic.py",
       "reason": "Test function unchanged.",
@@ -12170,7 +12197,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "be25878cfbc634671b67d428eca055d59db9fe4de62b9e01b1270cec6eacdeb9",
+      "chains_ref": "f0b08e7efe318902a6d396b046f8d1895f031ef014217e47fa13842f298beae8",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_dispatch.py",
       "reason": "Test function unchanged.",
@@ -12179,7 +12206,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "54e83d4da45b7d69cb4a514f077c80c003a3cfc01c6af8c41d1aad502aff8ec3",
+      "chains_ref": "eee40a7dff6127106588789397d91b1d283cbd5e0e1233dd239212fb5e24afd6",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_dispatch_record.py",
       "reason": "Test function unchanged.",
@@ -12187,17 +12214,17 @@
       "unit": "test_r1_concrete_and_consumer_boundary_blobs_were_frozen_at_switch"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "34c4c71f31b28752e870d5cb63ac17b14e9545c3a8c3fc4582151c0166861a44",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "2f41816e519077271c2e7f42884e8ac3187ca011bb7c1655a170f609cf06a975",
+      "historical_node": "tests/test_v0_4_s18_r1_dispatch_record.py::test_r1_dispatch_binds_only_exact_forward_source_changes",
       "path": "tests/test_v0_4_s18_r1_dispatch_record.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_r1_dispatch_binds_only_exact_forward_source_changes"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "aeb770c54b3cd38e597e7b0d905aa3125224c1ff69599159120ae6588be85647",
+      "chains_ref": "507c27d2b74a5c26f18b07b918e5d4ba4d59a80a662c40c12f067df1caf5e37c",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_dispatch_record.py",
       "reason": "Test function unchanged.",
@@ -12206,7 +12233,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "82d257505e90836ae796b4164c565a67783594d6956137212eb0e81295f54be3",
+      "chains_ref": "38bafcfee7ef9503a3399c5125af555eb179e23801a4706a80ce638fe6c9b9cf",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_dispatch_record.py",
       "reason": "Test function unchanged.",
@@ -12251,7 +12278,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "10721359265b83c437319de9bdfcf0f6de7a19e5fa1d60742bc1f9ae82596f2a",
+      "chains_ref": "b372669669f9ed2debd66bc3539b6bd619882cbbfc946f1d6a57708383613e4b",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_shadow_registry.py",
       "reason": "Test function unchanged.",
@@ -12260,7 +12287,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "a117c298cc9c769a79f2602a0745102051c7edb7a7293ab7a5867cb0c0a1ca24",
+      "chains_ref": "78ee3f66fb28bc5312fd3ea94f802e61e92e3adfdb75c265e65e9f489806c99d",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_shadow_registry.py",
       "reason": "Test function unchanged.",
@@ -12269,7 +12296,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "eaa33820227cbf574c69eacdfbee220e971001fdcd1d680a1946e77966a5b396",
+      "chains_ref": "0509611317da647a61aa55f2e3a9860edf35003e88c23713ec630d56a04e64c2",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_shadow_registry.py",
       "reason": "Test function unchanged.",
@@ -12278,7 +12305,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "294ebf1460513fdb1b66d23b70562fc1d9833e855ad43789c21e30c96426cfe4",
+      "chains_ref": "8c5930ce7acffaf76c70b8886912ef3aed8533238679315c069f18cd63781650",
       "historical_node": null,
       "path": "tests/test_v0_4_s18_r1_shadow_registry.py",
       "reason": "Test function unchanged.",
@@ -12502,6 +12529,24 @@
       "unit": "test_tolerance_and_fixed_work_iteration_limits_remain_distinct"
     },
     {
+      "assertions_text_unchanged": true,
+      "chains_ref": "217f864d0eb3fdbaccf6b053701b12409029283ddfb686145d6f5431af0dd64c",
+      "historical_node": "tests/test_v0_4_s18_r5_postcondition.py::test_failed_floor_retry_preserves_parent_path_exception",
+      "path": "tests/test_v0_4_s18_r5_postcondition.py",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
+      "unit": "test_failed_floor_retry_preserves_parent_path_exception"
+    },
+    {
+      "assertions_text_unchanged": true,
+      "chains_ref": "1616878b2ddb34dd9944b84587f19b1afe7ef3defab2bce3a83857eea9c519e1",
+      "historical_node": null,
+      "path": "tests/test_v0_4_s18_r5_postcondition.py",
+      "reason": "Test function unchanged.",
+      "rule": "R1",
+      "unit": "test_postcondition_never_overwrites_a_prior_rejection"
+    },
+    {
       "assertions_text_unchanged": false,
       "chains_ref": "215814c441bba9670664692951e18a392c0d533804076a7d9c3253f3e6631c4d",
       "historical_node": "tests/test_v0_4_s18_r5_r0057_rework.py::test_r0057_import_and_rework_preserve_history_and_bind_sources",
@@ -12656,7 +12701,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "cbbb0d9abd5d9c11e4b7c27c8b00105c839534edce4e06cb8ac114bc4b175451",
+      "chains_ref": "af64a9ee59ec656c691789fda4bae7dc3ed2b719d6672d54fd28d259f2f0f691",
       "historical_node": null,
       "path": "tests/test_v0_4_s19_py310_mean.py",
       "reason": "Test function unchanged.",
@@ -12926,7 +12971,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "e28a41bcd095ba6dca190fce4a5f792e1e4ce2c3bf4f50359ef1192a4ceb7a1e",
+      "chains_ref": "91882d71f7186601e2df823a77bcb56a5c57e7c1acf37b551fc3a2a7a9f244ba",
       "historical_node": "tests/test_v0_5_s23_baselines.py::test_released_checkpoint_sixteen_step_continuation",
       "path": "tests/test_v0_5_s23_baselines.py",
       "reason": "Original function runs on the installed reachable predecessor.",
@@ -12935,7 +12980,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "6f8be228032e22b48d438689301622493f66f3bb1583ef2cc43808e75d305f05",
+      "chains_ref": "7633445e367c8b7bc25b0e3673190b5b62302378de5380febd5fdeab8baff643",
       "historical_node": "tests/test_v0_5_s23_baselines.py::test_replay_recorded_release_trajectory",
       "path": "tests/test_v0_5_s23_baselines.py",
       "reason": "Original function runs on the installed reachable predecessor.",
@@ -12944,7 +12989,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "0366ba25b0f362fbaf236f0318d9721c364730f1817ced5de3402b048a999408",
+      "chains_ref": "63b465deb544d09b00b1cda4364f1c4fe7ffc5419a1b0fa1576d90cb5b0bf215",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_baselines.py",
       "reason": "Test function unchanged.",
@@ -12971,7 +13016,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "fda82d358de61043eb6fb8c48d4e4c1dfe1211310c7c39f614719407901cc13d",
+      "chains_ref": "c43bf7181369df57c2cc6c537eea6f7a55c3d8bab5b1f1fff385642e2d098a9e",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_references.py",
       "reason": "Test function unchanged.",
@@ -12980,7 +13025,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "bf407a74d2b69ad5438bc3889ad2e90e91e8d1f6996c8468be6d5c71abaf3cab",
+      "chains_ref": "00b0b31b0f7207d50c3eee0110f630dca73ca52133938f0662bd154745adb296",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_references.py",
       "reason": "Test function unchanged.",
@@ -12989,7 +13034,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "623f0d730b23849bd8723e59b7fa2e8bdf3f978a2ce5d24246ae52018300f626",
+      "chains_ref": "219ecb2a85b643c0d0fb59fe46fd265dd1fe3f49181cd8fb18d67f779e561bc3",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_references.py",
       "reason": "Test function unchanged.",
@@ -12998,7 +13043,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "e0f25a867717bb2b6b4d274772d020fe51f5157b8faef3cfc0c5d6fd66116cb7",
+      "chains_ref": "e601070b39da0d67613053dee408f323675ff52c648d613066bce5c7922e1412",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_sampling.py",
       "reason": "Test function unchanged.",
@@ -13007,7 +13052,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "2002fbfec9cd95e36a0f10e8bc1a432a93e1fa95d23fcbc8f3f31b756bac5813",
+      "chains_ref": "73293796d73e5b5d346ca508faf942b6f728f2c7a4508ee77b0f7b0fb808d5c7",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_sampling.py",
       "reason": "Test function unchanged.",
@@ -13016,7 +13061,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "375d45655657fbbe9254e06038fc135c42c64f5573b201e544fb8629c3c71252",
+      "chains_ref": "7a401c5152d04b34c59529ef86c9253b70d89f250fcbc55631886319dc8c989c",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_sampling.py",
       "reason": "Test function unchanged.",
@@ -13025,7 +13070,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "448503b03b782d50e5582bee1ffd95dd220788c926350ebbef6c81c1b7addb16",
+      "chains_ref": "909c2033101fcea8621dabfd4554dff85df54698214e80a3d3164f67e2700270",
       "historical_node": null,
       "path": "tests/test_v0_5_s23_sampling.py",
       "reason": "Test function unchanged.",
@@ -13079,7 +13124,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "94cfd6dbff59a4a4ada6cd4edccf41411f9ed202e21ace4a6bb625b8934b8170",
+      "chains_ref": "b9448ed3adf114f71def0028bb24b4dc036b9c22e8fb6054bc1e3b44dafd1908",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13088,7 +13133,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "68d91116942996e28e090ccd93918faf2b5879e5d9cc4be81f59fd07f83d3785",
+      "chains_ref": "2053cc9813a84eab285bb0f9c252a0fd8e6bfa63c0822ef4645750005853f83a",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13097,7 +13142,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "69163d8faf986b04ae5750fce2516bdb18b21957b360cdf87e7df5eeb4fe80e4",
+      "chains_ref": "087ca9a06a8103764c3fc644fd2430cabdb110ed45d0a50d89631a8f863486bb",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13106,7 +13151,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "c96063d5a6e2010da8f58de5bac784dd03153fa81ecc77e7b4f8e7480327871a",
+      "chains_ref": "084eee0234596e1dbfa075756c29b8f77cc2bfb4ecbaaa95b4948f70cba0b4cb",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13115,7 +13160,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "b4d5c5d44fbe1e5ece4493501a590147a70250e04fbb291568b3693702eeb719",
+      "chains_ref": "094a744e880381359c747ee8ef9d5a875f3e148853dd32659ec7397cfcbc95f6",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13124,7 +13169,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "2a0e901e5d437dc31a8299748c6e83be5e6c69997b8add6218964b753d846a95",
+      "chains_ref": "d2c0fdf1d4297db6fb422d6f8b9fa33e4434d5602f5c42f2df6b0c8c76b698b6",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13133,7 +13178,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "52a9922d58b7e8f18d29e073bdb2bcb17b8215f2cad110bd8ec5cfcea4f008a4",
+      "chains_ref": "9a7ad7f6719aecbc90f03849cb57b24f91c74841f866da00132196595f818cf5",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13142,7 +13187,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "9d4e4e3493eca2bf73199d63756ae010c691630686e5ea4e61d02f0b9c10b691",
+      "chains_ref": "a140471e85e7926ab59fd4b2533628dfcff67590b7ddb082509baa305028e2ff",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13151,16 +13196,16 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "f35f57d0cea470b52412acae113a29a82a20e6aee8f5d732993549e6b8ca59bb",
+      "chains_ref": "b51d4ae6b918e594447eec7c69431d573537cb84787b5e85443b80fc662a2da3",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Engine/API driver migration; assertion text unchanged.",
+      "rule": "R4",
       "unit": "test_registered_exact_unit_bytes_and_lines_are_enforced"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "565f26d9172105617ee0a53e5dfa624e775187e26e509ed76c97e1dc1c042bd4",
+      "chains_ref": "dbb8a2a6841efde6e84b36c5908ebdf9942bb34c18478f8fd278a64e6237d68b",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13169,7 +13214,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "89bb737c2e758cf73c3ada3fd7dfe2d0ef0b00ffb1644ebe9513f996f4b9bd01",
+      "chains_ref": "48d18fbec5674932b6e64cb6d970bcf1dd485d9693c9a46551b3f79dadac3053",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_engineering.py",
       "reason": "Test function unchanged.",
@@ -13178,7 +13223,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "4b69fd07afde323f9b833c08908c2fff88ffe4e308e9faf1af3d89bb651decf8",
+      "chains_ref": "2daa231a63d241945e103d66c5f8be815a4e9f03119c12cb4cbb534cd02a2d51",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_stokes_extraction.py",
       "reason": "Test function unchanged.",
@@ -13187,7 +13232,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "610ccc06b722e91b844cd4eeaaf2b9837d03794adcad92b83d1476d7507fe7c7",
+      "chains_ref": "bed0f729796eea767f6dc50c3284d6d251ab4514c1dc93446226eb4d06c3558f",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_stokes_extraction.py",
       "reason": "Test function unchanged.",
@@ -13196,7 +13241,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "dc011fe9b3c56dae09ce35f0e7a720e2fe444bbd2299282903b0a8a238bea324",
+      "chains_ref": "c6e00b44b02717929ab99b9726f297b3ee890180048f9b526b2b87285e0c1bc8",
       "historical_node": null,
       "path": "tests/test_v0_5_s25_stokes_extraction.py",
       "reason": "Test function unchanged.",
@@ -13205,7 +13250,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "6f363d2d038226acd85bf73857a6b5953ac936f8b7f7615bf6543a29dfdd8911",
+      "chains_ref": "1ddff063324304a8390cd59deba0f5794dd12ad7ae9f2a2835c565ee407320c2",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13213,17 +13258,17 @@
       "unit": "test_all_nineteen_periodic_plans_match_installed_s25"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "cd3e8d1f81f10f442affdb2c7276ddecf90862a76417adc7c68e54b328a873f0",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "c8fa099c91380ddafffea8448d8d3c689578fd80b0b5cb63ac9df5691c54bf79",
+      "historical_node": "tests/test_v0_5_s26_assembly.py::test_capability_table_is_exact_and_resolves_function_identity",
       "path": "tests/test_v0_5_s26_assembly.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_capability_table_is_exact_and_resolves_function_identity"
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "9ae2b3f8eaee042ae0b3c47ba32083109ade042c5e85b37c4566af462cf456f4",
+      "chains_ref": "3f0872fa56dcaffd85fee44254d26320e084a0c1b7c6696c3459c50dab0c8a7a",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13232,7 +13277,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "571350bf54f2ec01ca69646c0ae44aae66b2cd08ea723bb85e4a739e47b483d7",
+      "chains_ref": "b771e06fcceaa3024e03a85ddb2250f9414338e5862d625d62c19f1b5d90a2f3",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13241,7 +13286,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "566b177cc28febb837ea2f942cd806e7a919138ef87068da32bad4a0f3acacd6",
+      "chains_ref": "8f0c09aff36ab79dcee701b4e6bf39e7d9327184e119b52956c426b4717d61dc",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13250,7 +13295,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "476a83a5f5192c08a60a98b03a269ac34330596f978b12d1333401c83f6ce7a5",
+      "chains_ref": "49e079ccb483107e02e868cfc964ebfd2f9cd4bdb92b3e9701efc11906ff1668",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13259,7 +13304,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "a9c13b341499d8dd44c81fdf85858f03a6feb53938160a16e60defd097d9dcb8",
+      "chains_ref": "d2695609ad04fb7a865c3b2aaf61bc2b865259876fef0d6c13cd9d3716327888",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13268,7 +13313,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "eac5cd1139376c166a91fb041eecda461b08624957369d413a1c5123db2315bb",
+      "chains_ref": "2ee2b4065333f9799b2ad08178e1e9bea4d5d6d61716cff642d5423a6a053045",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_assembly.py",
       "reason": "Test function unchanged.",
@@ -13276,12 +13321,12 @@
       "unit": "test_rejections_do_not_construct_tensors"
     },
     {
-      "assertions_text_unchanged": true,
-      "chains_ref": "d49e1023b84bb94380278f8929176aca426d125b7921a82e97c8aa1e4eb130b4",
-      "historical_node": null,
+      "assertions_text_unchanged": false,
+      "chains_ref": "0e2995b83c67d583e43281a9fcd74f3bab70d018eeab9c9aa6cbacce7d0d34a2",
+      "historical_node": "tests/test_v0_5_s26_assembly.py::test_rejections_have_exact_codes_and_no_tensor_operations",
       "path": "tests/test_v0_5_s26_assembly.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_rejections_have_exact_codes_and_no_tensor_operations"
     },
     {
@@ -13294,12 +13339,12 @@
       "unit": "test_exact_move_guard_rejects_frozen_hash_change"
     },
     {
-      "assertions_text_unchanged": true,
+      "assertions_text_unchanged": false,
       "chains_ref": "c3757a4cef9a8c330fc23bb5b14d740310c66068e7a4a21b9902d03b29910ffc",
-      "historical_node": null,
+      "historical_node": "tests/test_v0_5_s26_rework.py::test_exact_moves_preserve_every_frozen_source_unit_and_hash",
       "path": "tests/test_v0_5_s26_rework.py",
-      "reason": "Test function unchanged.",
-      "rule": "R1",
+      "reason": "Original function runs on the installed reachable predecessor.",
+      "rule": "R5",
       "unit": "test_exact_moves_preserve_every_frozen_source_unit_and_hash"
     },
     {
@@ -13313,7 +13358,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "e7133185dd523a28bc22c1b9ca3b41d35bd460f8e036e089ef2204e43c30fd24",
+      "chains_ref": "1f674231608165eece5312023b65205a3aeefbc53d06f023a695e9824d795c70",
       "historical_node": null,
       "path": "tests/test_v0_5_s26_rework.py",
       "reason": "Test function unchanged.",
@@ -13457,7 +13502,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "6d39609a5808832d8f7deb96ee3041055c74441b1f5e77bf8ed00183bbe353f2",
+      "chains_ref": "e368b55420d98b99a020ff3fd3754533685fe36aeb7c832d04014d5ef6145e2c",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13466,7 +13511,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "a3506efa7d045561fd1c23fe5a447008e884310c0c2bf36e430a89a3cba5bd38",
+      "chains_ref": "b4f335275618de055c622ca54a58dcdfb8c9f0818b8af9fe85c75d895754646d",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13475,7 +13520,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "7e4af0dde8b9dc41de4de3a474792f547e678fb2190b55209324c6dde68cd810",
+      "chains_ref": "3ab4f680052fb7a322b0496582ce7b87787aa28b3b306e081034b32d55bf0c00",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13484,7 +13529,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "debbe4d1dcfab0d28ee649f3fadd86f0802474673736e23300c387dd29735cee",
+      "chains_ref": "0a3d4bc5c99a72296af8cdc5cc72aceeeeaa25f5fb4b494bd29884873b5caa82",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13493,7 +13538,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "12f8a8818c587304ce0fc6928221651dd3664474598c75f12d37c880cf61e3d7",
+      "chains_ref": "15aaedd86bd8976589c55aa71a5bcef44dd8087819122362feb0a95ad39dd9b1",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13502,7 +13547,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "0e4fc0915fc6b8682dc4a49592627035c9cae620a48b25714a559de2d8a427c2",
+      "chains_ref": "70bbf561056f53b14be1f6a267d4f0235d8fbcc2309c788d22edb2ccc68be69f",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13511,7 +13556,7 @@
     },
     {
       "assertions_text_unchanged": true,
-      "chains_ref": "c2890ec2f452f73bff53bd4cf63e89073b07b29d8673030c1700453ef09b0418",
+      "chains_ref": "26d10d7ded2da06ba741c1498845705a1fe8038937b7ef15937929a6ccbc8cc8",
       "historical_node": null,
       "path": "tests/test_v0_5_s27_r0096_rework.py",
       "reason": "Test function unchanged.",
@@ -13601,7 +13646,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "07042a3f0664ea6a24f92c93b819909f436970300816749cd3bd8eeca89da93f",
+      "chains_ref": "57f665308a0d3276d660c34ac11176eab962dabeb35127897321a8784a718752",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_solver_state.py",
       "reason": "New S-28a coverage.",
@@ -13610,7 +13655,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "cb3085a0dc9652f6e65364243174fd611b6e46812affecbb589a33d665dfc4a1",
+      "chains_ref": "ffc5b5a4929358c0ac7588abde81948613ffe83fd18f32f1096023be1a8b5d7e",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_solver_state.py",
       "reason": "New S-28a coverage.",
@@ -13619,7 +13664,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "78f81bb2d43d9f61f0b2b0a51fc2c1c40d69c1b10957fb7e2ccf1120909bf92b",
+      "chains_ref": "47e0d8b2bd23425c5536ae70fc35e8c599679558815fc461027deefe409743c0",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_solver_state.py",
       "reason": "New S-28a coverage.",
@@ -13628,7 +13673,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "14ed7d574afa8a9acccd1a62f5a8f21edf07462fe25217c6159c08d45552a3d5",
+      "chains_ref": "25177cec768864b7933a0cc7726a516dae61325111d7bef8baab9093bd25044b",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_solver_state.py",
       "reason": "New S-28a coverage.",
@@ -13637,7 +13682,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "5554a23d545499520c51506210d7114838cec083dfe40ba6221867ee5922a081",
+      "chains_ref": "a1cd8484e2db98ee7d13c6b6b2dded97671bd254c2c25ff7eb19ef455558a1b5",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_solver_state.py",
       "reason": "New S-28a coverage.",
@@ -13646,7 +13691,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "b46194e6a03244c7055e4b933d38465f0d1ff8dfda9345578655bd13bffa8aa2",
+      "chains_ref": "083db315b21d2eef5faf3775588ef9818cae4898668b8089323d3e994e2fafc6",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_solver_state.py",
       "reason": "New S-28a coverage.",
@@ -13655,7 +13700,16 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "8824c42b4963c8b92a6e985d8727e5b551a98f8030cf101e10a13f3cace18f10",
+      "chains_ref": "123b258acff11510527b95185d3385f58c1f55052968209d82ae2f1241172f0e",
+      "historical_node": null,
+      "path": "tests/test_v0_5_s28a_successor.py",
+      "reason": "New S-28a coverage.",
+      "rule": "R1",
+      "unit": "test_channel_registry_mapping_rejects_unknown_identity_and_wrong_family"
+    },
+    {
+      "assertions_text_unchanged": false,
+      "chains_ref": "65a8722ed5b6992bda766e73f475e344aab7040e5989414ccad4c40564573e1c",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_successor.py",
       "reason": "New S-28a coverage.",
@@ -13664,7 +13718,7 @@
     },
     {
       "assertions_text_unchanged": false,
-      "chains_ref": "8fa94109795df7773c2da5ff625db4353a6a2856ced21ccc2a030681e5c7eb8f",
+      "chains_ref": "186c9de6d21eaea2474c2d0351e03ad6af379f81a81e9fb087360bb35a53d0a7",
       "historical_node": null,
       "path": "tests/test_v0_5_s28a_successor.py",
       "reason": "New S-28a coverage.",
