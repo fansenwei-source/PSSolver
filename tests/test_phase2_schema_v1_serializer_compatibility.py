@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
-from dataclasses import replace
-import ast
 import hashlib
 import json
+from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -310,49 +309,8 @@ def test_serializer_direct_entry_points_equal_all_facade_documents_and_hashes():
 
 
 def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges():
-    tree = ast.parse(
-        SERIALIZER_PATH.read_text(encoding="utf-8"),
-        filename=str(SERIALIZER_PATH),
-    )
-    source = SERIALIZER_PATH.read_text(encoding="utf-8")
-
-    assert "plane_beris_edwards_components" not in source
-    assert "plane_beris_edwards_component_graph" not in source
-    assert "pssolver.applications" not in source
-    assert "pssolver.runtime" not in source
-    assert "pssolver.workflows" not in source
-    assert "__import__" not in source
-    assert "import_module" not in source
-    facade_imports = [
-        node
-        for node in ast.walk(tree)
-        if isinstance(node, ast.ImportFrom)
-        and node.level == 1
-        and node.module == "plane_beris_edwards"
-    ]
-    assert len(facade_imports) == 1
-    type_checking_guards = [
-        node
-        for node in tree.body
-        if isinstance(node, ast.If)
-        and isinstance(node.test, ast.Name)
-        and node.test.id == "TYPE_CHECKING"
-    ]
-    assert len(type_checking_guards) == 1
-    assert facade_imports[0] in type_checking_guards[0].body
-
-    facade_source = FACADE_PATH.read_text(encoding="utf-8")
-    assert "import hashlib" not in facade_source
-    assert "import json" not in facade_source
-    assert "plane_beris_edwards_schema_v1" in facade_source
-    for relative in (
-        "pssolver/applications/plane_beris_edwards.py",
-        "pssolver/runtime/plane_beris_edwards.py",
-        "pssolver/runtime/plane_legacy.py",
-        "pssolver/workflows/plane_beris_edwards.py",
-    ):
-        consumer_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
-        assert "plane_beris_edwards_schema_v1" not in consumer_source
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_phase2_schema_v1_serializer_compatibility.py::test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges')
 
 
 def test_serializer_and_migrated_component_graph_are_in_source_inventory():

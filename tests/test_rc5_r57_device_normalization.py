@@ -26,7 +26,6 @@ from pssolver.boundaries import (
     neumann_q,
     no_slip_velocity,
 )
-from pssolver.applications.plane_beris_edwards import run_plane_beris_edwards
 from pssolver.configuration.execution_device import (
     execution_device_normalization,
     resolve_allocated_execution_device,
@@ -41,6 +40,7 @@ from pssolver.functional import (
 )
 from pssolver.geometries import PeriodicBox, RectangularChannel
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
+from pssolver.runtime.legacy_entry import run_v04_plane_translation as run_plane_beris_edwards
 
 
 CANONICAL_DEVICES = ("auto", "cpu", "cuda", "cuda:0", "cuda:2")

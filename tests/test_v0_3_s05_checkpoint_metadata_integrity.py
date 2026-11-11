@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -24,8 +24,24 @@ from pssolver.io import (
     verify_checkpoint_metadata,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime import FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION, PlaneFiniteQAnchoringCheckpoint, PlaneRobinScalarCheckpoint
-from pssolver.workflows import PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION, PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION, PlaneWorkflowCheckpoint, build_plane_checkpoint_compatibility_identity, load_finite_q_anchoring_checkpoint, load_plane_checkpoint, read_plane_checkpoint_header, upgrade_finite_q_anchoring_checkpoint_directory, upgrade_plane_checkpoint_directory_v2, write_finite_q_anchoring_checkpoint, write_plane_checkpoint
+from pssolver.runtime import (
+    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
+    PlaneFiniteQAnchoringCheckpoint,
+    PlaneRobinScalarCheckpoint,
+)
+from pssolver.workflows import (
+    PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PlaneWorkflowCheckpoint,
+    build_plane_checkpoint_compatibility_identity,
+    load_finite_q_anchoring_checkpoint,
+    load_plane_checkpoint,
+    read_plane_checkpoint_header,
+    upgrade_finite_q_anchoring_checkpoint_directory,
+    upgrade_plane_checkpoint_directory_v2,
+    write_finite_q_anchoring_checkpoint,
+    write_plane_checkpoint,
+)
 
 
 def _tensor(value: float = 0.0) -> torch.Tensor:
@@ -233,7 +249,7 @@ def test_current_formats_are_sealed_and_tamper_before_payload_load(
 
     if kind == "plane":
         monkeypatch.setattr(
-            "pssolver.workflows.plane_checkpoint._load_tensor",
+            "pssolver.configuration.legacy_plane._load_tensor",
             lambda *_args, **_kwargs: pytest.fail("payload load started"),
         )
     elif kind == "channel":

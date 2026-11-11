@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import replace
 import hashlib
 import json
 import math
@@ -33,7 +32,6 @@ from pssolver.planning import (
     StaticLiftExtension,
     StaticLiftingPlan,
 )
-from pssolver.runtime.static_lifting import PlaneStaticLiftingRuntime
 from pssolver.systems.algebraic import AlgebraicSystemSpec
 from pssolver.systems.equations import (
     EquationFieldSpec,
@@ -465,39 +463,6 @@ def test_localized_quintic_transition_rejects_invalid_width(width):
         )
 
 
-def test_lifting_runtime_applies_policy_only_to_fresh_construction():
-    plan = _plan()
-    runtime = PlaneStaticLiftingRuntime(
-        plan,
-        dtype=torch.float64,
-        device="cpu",
-        batch_size=1,
-        fresh_initial_conditioning=localized_quintic_wall_transition(0.5),
-        affected_field="concentration",
-    )
-    physical = {
-        "c": torch.full(plan.domain_shape, 1.0 / 3.0, dtype=torch.float64)
-    }
-    fresh = runtime.extract_initial_remainders(
-        physical,
-        apply_fresh_conditioning=True,
-    )["c"]
-    restored_construction = runtime.extract_initial_remainders(
-        physical,
-        apply_fresh_conditioning=False,
-    )["c"]
-    raw = runtime.operator.extract_homogeneous_remainder("c", physical["c"])
-
-    assert torch.equal(restored_construction, raw)
-    assert not torch.equal(fresh, raw)
-    assert runtime.fresh_initial_conditioning_metadata()["fresh_only"] is True
-    assert (
-        runtime.fresh_initial_conditioning_metadata()["affected_field"]
-        == "concentration"
-    )
-    assert "fresh_initial_remainder_conditioning" not in (
-        runtime.restart_metadata()["lifting"]
-    )
 
 
 def test_explicit_linear_lift_correction_is_model_supplied_and_one_time():

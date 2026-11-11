@@ -4,12 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
 from collections import Counter
 from pathlib import Path
 
-from qualification.s24_source_audit import BASE, retained_changes, source_units
-from tests.v0_3_s03_successor import resolve_s03_successor
+from qualification.s24_source_audit import retained_changes
 from tools import check
 
 
@@ -18,26 +16,8 @@ S24_ENDPOINT = "aee82899d091b0d3bbfa62f0fe1cf83817574285"
 
 
 def test_rework_is_forward_bound_without_rewriting_successor_141():
-    record = json.loads(
-        (ROOT / "notes/PSSolver_v0_3_0_s03_successor_142_s24_rework.json").read_text()
-    )
-    original = ROOT / "notes/PSSolver_v0_3_0_s03_successor_141_s24_retirement.json"
-    assert (
-        hashlib.sha256(original.read_bytes()).hexdigest() == record["unchanged_record_141_sha256"]
-    )
-    assert record["historical_records_rewritten"] is False
-    for relative, binding in record["historical_successor_sources"].items():
-        if relative == "tests/test_architecture_stage_c.py":
-            continue
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolve_s03_successor(
-            relative, binding["historical_sha256"]
-        ), relative
-    for relative, expected in record["introduced_sources"].items():
-        if relative == "tests/test_architecture_stage_c.py":
-            continue
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolve_s03_successor(
-            relative, expected
-        ), relative
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_v0_5_s24_rework.py::test_rework_is_forward_bound_without_rewriting_successor_141')
 
 
 def test_retained_ast_equal_units_keep_the_exact_baseline_text():
@@ -70,13 +50,8 @@ def test_every_changed_retained_test_unit_has_a_disposition_and_exact_history():
 
 
 def test_current_lifting_file_and_rc1_rejection_are_restored_byte_exact():
-    relative = "tests/test_phase8_p844_lifting_workflow_restart.py"
-    original = subprocess.check_output(["git", "show", BASE + ":" + relative], cwd=ROOT)
-    assert (ROOT / relative).read_bytes() == original
-    relative = "tests/test_v0_3_s08_historical_cpu_coverage.py"
-    original = subprocess.check_output(["git", "show", BASE + ":" + relative], cwd=ROOT).decode()
-    name = "test_authentic_rc1_lifted_plane_rejects_before_tensor_load"
-    assert source_units((ROOT / relative).read_text())[name] == source_units(original)[name]
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_v0_5_s24_rework.py::test_current_lifting_file_and_rc1_rejection_are_restored_byte_exact')
 
 
 def test_private_lifting_fixture_is_retained_and_not_rejected_by_s24():

@@ -97,7 +97,7 @@ def test_classification_is_total_unique_and_keeps_the_original_gpu_boundary():
         "gpu",
         "baseline_fingerprint",
     }
-    assert len(gpu) == 7
+    assert len(gpu) == 6
     assert all(node.split("::")[0] in mapping for node in gpu)
     for name in (
         "test_release_v0_1.py",

@@ -1,0 +1,1130 @@
+{
+  "authority": "S-27 r2.1 single units/added_units table",
+  "exact_moves": [
+    {
+      "sha256": "779368724ab547ddea10d391bbd36cc093f885a383fd0c0f6784b7563b5775ca",
+      "source": "pssolver/configuration/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        91,
+        134
+      ],
+      "unit": "PeriodicBerisEdwardsRunSpec"
+    },
+    {
+      "sha256": "87631be1cc70db1efba003d241e3b34d9f9dc3b08940e82156f5692a55095934",
+      "source": "pssolver/configuration/public_periodic_simulation_compiler.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        137,
+        145
+      ],
+      "unit": "_exact_keys"
+    },
+    {
+      "sha256": "fad2de04fc242033b000b19d9a9fcfb5f2b41e42765f67b72068a703a423120a",
+      "source": "pssolver/configuration/public_periodic_simulation_compiler.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        148,
+        362
+      ],
+      "unit": "compile_periodic_public_simulation"
+    },
+    {
+      "sha256": "f069ea7c4598b39a65b4a69411801241abefd464def08f70bafda4d183cd7026",
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        365,
+        370
+      ],
+      "unit": "_sha256"
+    },
+    {
+      "sha256": "947a1545c96662334cea6c7479e36f2ae8acdc48811ec0d9d3f823357f2bdbbb",
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        373,
+        402
+      ],
+      "unit": "_reject_input"
+    },
+    {
+      "sha256": "6faf8a52247cd9173ee8839b171c570148fd51e00f1103adc0cb65c6e1799673",
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        861,
+        878
+      ],
+      "unit": "_reject_restart"
+    },
+    {
+      "sha256": "d84e0da42792b6a26d0ab7d336de06e337d368a917a60d467d5bbd870c339cde",
+      "source": "pssolver/applications/periodic_beris_edwards.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        405,
+        465
+      ],
+      "unit": "load_periodic_initial_q"
+    },
+    {
+      "sha256": "4bd0b607fb2e509d79868a6465912137a6a09e85a1ea8874ee673b0b718205c6",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        524,
+        536
+      ],
+      "unit": "_periodic_run_spec_dynamics"
+    },
+    {
+      "sha256": "3692d02aed78933eb85ae5a3a30fde9dcfa9a122bbb82fa0a2fd239bf9afa010",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        539,
+        558
+      ],
+      "unit": "periodic_forward_dynamics_identity"
+    },
+    {
+      "sha256": "fb6225c74bcc364ffefd01ab04885bcd86330c659361924d3544073827fede5b",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        561,
+        582
+      ],
+      "unit": "_periodic_state_layout_identity"
+    },
+    {
+      "sha256": "43d7e13c91e19ad45c863b827b9316bd6f704ed07f798df93d7f8100c448ebfa",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        585,
+        596
+      ],
+      "unit": "_periodic_backend_restart_identity"
+    },
+    {
+      "sha256": "25afa82a37e81084ffe330961f2cc46eb8232d2fb00cbf45c305058f5cc9c66f",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        599,
+        615
+      ],
+      "unit": "build_periodic_checkpoint_compatibility_identity"
+    },
+    {
+      "sha256": "1bcceac514d8d0045124683545f081d6c92e63c64eb73683e2919c9140712eee",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        618,
+        641
+      ],
+      "unit": "_validate_periodic_embedded_identity"
+    },
+    {
+      "sha256": "74ab884946617bdafde4005bf94a00e2d3952ba526371b9dd232e6b2cc3804e5",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        644,
+        685
+      ],
+      "unit": "_validate_legacy_periodic_upgrade_contract"
+    },
+    {
+      "sha256": "e31d1999f5c9cf94acc3cc219ef15766d8fc284c27ad927ad57072604e605a09",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        688,
+        737
+      ],
+      "unit": "upgrade_periodic_checkpoint"
+    },
+    {
+      "sha256": "7ef87321d2125d03aa4dc5c672dc4e9860828d9b2388614737f302a1a6448ea8",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/configuration/legacy_periodic.py",
+      "target_lines": [
+        740,
+        779
+      ],
+      "unit": "upgrade_periodic_checkpoint_directory"
+    },
+    {
+      "sha256": "48c759256ac84d2cbd0635bd987e17fcf1cc99f41707da8a5d67ca3326f3c6d5",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        63,
+        64
+      ],
+      "unit": "_sha256"
+    },
+    {
+      "sha256": "a1febd85482d72c207948a0e77729bd0293b65ab19b09de0082192a199094aad",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        67,
+        74
+      ],
+      "unit": "_require_sha256"
+    },
+    {
+      "sha256": "4e727e2e3d7eb02408c4f228ef009a69ba74c9814b5ff58dabe5c89297d24f7c",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        77,
+        84
+      ],
+      "unit": "_json_mapping"
+    },
+    {
+      "sha256": "6b2d0db968be197379199e6e1b4799541cff0b01a7415faef57e7c4c9ba30d9d",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        87,
+        100
+      ],
+      "unit": "_clone_tensors"
+    },
+    {
+      "sha256": "f37b1d421b9596e2ea287cc52299ff06813aa2096662fba1b0b561d64161676a",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        103,
+        132
+      ],
+      "unit": "_validate_progress"
+    },
+    {
+      "sha256": "e46452023461fcac6b2dc26970bb984280759816989121ffe6415a7522399d94",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        135,
+        189
+      ],
+      "unit": "PeriodicCheckpointHeader"
+    },
+    {
+      "sha256": "31a78b724d49e3a43723f6f836da8d2e2c6be2904621c94f0e9deb73b47146fe",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        192,
+        291
+      ],
+      "unit": "PeriodicWorkflowCheckpoint"
+    },
+    {
+      "sha256": "091e56c14922ace51fc1a3a16e4844fcb86bb0462cf67cc83bef5d0a5d70c573",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        294,
+        299
+      ],
+      "unit": "_write_tensor"
+    },
+    {
+      "sha256": "aa9b3f97db34f24dbba049505b56b04760dcecda93037cdd938c66283aa22f30",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        302,
+        341
+      ],
+      "unit": "write_periodic_checkpoint"
+    },
+    {
+      "sha256": "ba00b69c224e9614f3aae70a7fe3b8d937e0a685847ce617b098e2eee9b0b5e6",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        344,
+        419
+      ],
+      "unit": "_read_metadata"
+    },
+    {
+      "sha256": "7f3f8fb5728456110e750c33450325c9325d041ba3ebb409ef5cb8ad8d50c887",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        422,
+        503
+      ],
+      "unit": "read_periodic_checkpoint_header"
+    },
+    {
+      "sha256": "cd88ad5a52ff5dc859783f0502155c37d5220c2e8a6c62bc3d09cd0204a0f37e",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        506,
+        565
+      ],
+      "unit": "_load_tensor"
+    },
+    {
+      "sha256": "014507baaab9a34a5f0aff77357f9cceecd142730cda277e84b1707f21a656f7",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        568,
+        613
+      ],
+      "unit": "load_periodic_checkpoint"
+    },
+    {
+      "sha256": "cc920b778fe39c74c48c0c09111d1cf3589baeb27b2e8f91267abf891e137c1d",
+      "source": "pssolver/workflows/periodic_checkpoint.py",
+      "target": "pssolver/io/legacy/periodic_workflow.py",
+      "target_lines": [
+        616,
+        625
+      ],
+      "unit": "_legacy_periodic_format_for_generation"
+    },
+    {
+      "sha256": "b9f93e5fca9724badfccb5d51e0529aee43c53bcc51b39ea10d9628d8988c5f7",
+      "source": "pssolver/runtime/periodic_beris_edwards.py",
+      "target": "pssolver/models/active_nematics/engine_terms.py",
+      "target_lines": [
+        17,
+        96
+      ],
+      "unit": "_BerisEdwardsPeriodicStokes"
+    },
+    {
+      "sha256": "43a07977041144c65a19c7112a0916ece4722e07232f85f4ca7ebf19ce59b8d7",
+      "source": "pssolver/workflows/periodic_beris_edwards.py",
+      "target": "pssolver/runtime/observations.py",
+      "target_lines": [
+        16,
+        49
+      ],
+      "unit": "PeriodicObservation"
+    },
+    {
+      "sha256": "b05d354d02a7b544aa70cfcecc3e596c40a2cd899528eba159c5a20f811928a5",
+      "source": "pssolver/workflows/periodic_beris_edwards.py",
+      "target": "pssolver/runtime/observations.py",
+      "target_lines": [
+        52,
+        78
+      ],
+      "unit": "PeriodicDiagnostic"
+    },
+    {
+      "sha256": "86415e95bf7c42537a7975f77ac7a82f1023e7b8029dca3846bcf1106783725a",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/cli/plane.py",
+      "target_lines": [
+        15,
+        18
+      ],
+      "unit": "parse_args"
+    },
+    {
+      "sha256": "3ad3123376f0b3b1b5671ece0c28d20d68890b5ecf88f93b6344d6a9e8d282a0",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        45,
+        45
+      ],
+      "unit": "PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION"
+    },
+    {
+      "sha256": "5da803b5f00da0c84eafc02553232fdbfefb4e57455c2feb0e70d6fab5d11fae",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        46,
+        46
+      ],
+      "unit": "PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION"
+    },
+    {
+      "sha256": "fb5f05b621930de86808bc86651d21d30472fec923fae3ef8564d0c02effad14",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        47,
+        47
+      ],
+      "unit": "PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION"
+    },
+    {
+      "sha256": "b8686aa35da2473ff42e5ad60e9d949f6587bb5bda481c4763a053337ce4e49f",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        48,
+        48
+      ],
+      "unit": "PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION"
+    },
+    {
+      "sha256": "968d36f401657c7195beb0e2d28b8b4a5323e0aa2c425a24ab557c38362c82cb",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        49,
+        49
+      ],
+      "unit": "PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION"
+    },
+    {
+      "sha256": "73ea38438ff7612ec6e99b5d8c74b01c5d686ff3dfeae98c503b673dba75ff84",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        50,
+        63
+      ],
+      "unit": "_PLANE_V2_REQUIRED_KEYS"
+    },
+    {
+      "sha256": "b4662e603f72e0418fc336957eb7b9db7535117ff670b4878956f0a2793f2e14",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        64,
+        66
+      ],
+      "unit": "_PLANE_V2_OPTIONAL_KEYS"
+    },
+    {
+      "sha256": "61e35fc9ad27e01b776219231297f490d6fcfb4d49a59fb690e43784f0cb1da3",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        68,
+        70
+      ],
+      "unit": "_PLANE_V3_REQUIRED_KEYS"
+    },
+    {
+      "sha256": "ceb6a0807e6b688b9c7b06a9d7625650e9084b47fde31b89612cc1fa2604afcc",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        73,
+        74
+      ],
+      "unit": "_sha256"
+    },
+    {
+      "sha256": "a1febd85482d72c207948a0e77729bd0293b65ab19b09de0082192a199094aad",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        77,
+        84
+      ],
+      "unit": "_require_sha256"
+    },
+    {
+      "sha256": "6b2d0db968be197379199e6e1b4799541cff0b01a7415faef57e7c4c9ba30d9d",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        87,
+        100
+      ],
+      "unit": "_clone_tensors"
+    },
+    {
+      "sha256": "347c6eb4a442fa6b1d782ae2e3e94aa0e927c18f37c3b35ef49cc19dca2c5e36",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        103,
+        124
+      ],
+      "unit": "PlaneCheckpointHeader"
+    },
+    {
+      "sha256": "8469aa81610bc325071e11e7389a451629b04408b886afe847a15fb03f9993d3",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        127,
+        309
+      ],
+      "unit": "PlaneWorkflowCheckpoint"
+    },
+    {
+      "sha256": "1b9ba9df6f19bd6d8c0a0a6dc084695be3f85285f045201ecd569173d0b50e75",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        312,
+        323
+      ],
+      "unit": "_plane_run_spec_dynamics"
+    },
+    {
+      "sha256": "5bd06845fc41e6ee8e40aa7643efce2b8e7238df64a74102598c905c52f4798d",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        326,
+        345
+      ],
+      "unit": "plane_forward_dynamics_identity"
+    },
+    {
+      "sha256": "572251a330d4f72221e9d91316e43bad60b7204eb80d9c9bf7cd89f9258e2455",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        348,
+        364
+      ],
+      "unit": "plane_run_spec_dynamics_identity"
+    },
+    {
+      "sha256": "c50ceaa27eb1b8d547eda933c9a7cd44d323d0efef55313edb15b96ca5b2a26e",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        367,
+        388
+      ],
+      "unit": "_plane_state_layout_identity"
+    },
+    {
+      "sha256": "70574192ea3b188e3a224b517a7118b495bffcdb207de3847f3c1f67dc5cd4ca",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        391,
+        407
+      ],
+      "unit": "_plane_backend_restart_identity"
+    },
+    {
+      "sha256": "d0345956bd8ae681c1d4c16fe960a188d9e683c6a7e901987bceff57306a225c",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        410,
+        435
+      ],
+      "unit": "build_plane_checkpoint_compatibility_identity"
+    },
+    {
+      "sha256": "a98cb5bef5f0c04fe2e0cade3eeebf13572ebe9d5f57e78565c400aaf21c0fa5",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        438,
+        461
+      ],
+      "unit": "_validate_plane_checkpoint_embedded_identity"
+    },
+    {
+      "sha256": "b8d0f3adc331903f3166112e95b43ad1504d6010f268b50f23b3fe6a071d9f87",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        464,
+        498
+      ],
+      "unit": "_lifting_compatibility_identity"
+    },
+    {
+      "sha256": "4d8181b6aa107adc7916f4d5a424ab11ca249c44a010011f5cb113c101dd32fa",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        501,
+        516
+      ],
+      "unit": "_validate_plane_forward_identity_schema"
+    },
+    {
+      "sha256": "091e56c14922ace51fc1a3a16e4844fcb86bb0462cf67cc83bef5d0a5d70c573",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        519,
+        524
+      ],
+      "unit": "_write_tensor"
+    },
+    {
+      "sha256": "c6be67a6ac64ba3d4f09c4792dc609290dfbd1f0356388930d6f1de465f7e0a9",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        527,
+        576
+      ],
+      "unit": "_write_plane_checkpoint"
+    },
+    {
+      "sha256": "c5dcb470a17b85cb2578871a1a0b7449d530c34b6fcc9fd46e459cf494022f61",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        579,
+        589
+      ],
+      "unit": "write_plane_checkpoint"
+    },
+    {
+      "sha256": "2b48a7baae2c35a1982d815503da10be7c3404a0debbd9504aaf3dde596d2030",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        592,
+        632
+      ],
+      "unit": "_read_metadata"
+    },
+    {
+      "sha256": "42b853d3bccb0c4cebeabba6d358d76be0b9609460090f055ac27488aa160962",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        635,
+        693
+      ],
+      "unit": "read_plane_checkpoint_header"
+    },
+    {
+      "sha256": "1b1249e0ccb6551dc0215d442cabd83d27e4062cd1f4f8ee26e3e069b1ad85a9",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        696,
+        748
+      ],
+      "unit": "_load_tensor"
+    },
+    {
+      "sha256": "e93e22b5560c886ec67d5372e037cf7eb5ea08fe68f06e8e59d809645fd7cf4d",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        751,
+        805
+      ],
+      "unit": "load_plane_checkpoint"
+    },
+    {
+      "sha256": "d23887369c52c66a8297fcbe81beef18c84cb53cb59fe5af1ca5f19f695635f3",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        808,
+        821
+      ],
+      "unit": "_legacy_plane_registry_key"
+    },
+    {
+      "sha256": "8325385886748546b348a226e7cd059beb66df47f560311deaa4c454440a5c7e",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        824,
+        858
+      ],
+      "unit": "_validate_legacy_plane_upgrade_contract"
+    },
+    {
+      "sha256": "0a125819a25c5c80b164ebf4db82d582d205f0cb5795c4c1816af8c91f8b74d8",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        861,
+        916
+      ],
+      "unit": "upgrade_plane_checkpoint_v1"
+    },
+    {
+      "sha256": "c65a51ce5987104e2df2f684dacea441a35dbde88b32494fe96a4e84601313e3",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        919,
+        938
+      ],
+      "unit": "upgrade_plane_checkpoint_v2"
+    },
+    {
+      "sha256": "7100359ad0b7c3a2b1e50a1f4bc26f48089a9a89cc601a50300c2f9ab28d3a91",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        941,
+        995
+      ],
+      "unit": "upgrade_plane_checkpoint_directory_v1"
+    },
+    {
+      "sha256": "12d409571cd9c7c70d0b91adca8a84835d9cffb57c55dfe4d73a5297fd09f0ec",
+      "source": "pssolver/workflows/plane_checkpoint.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "target_lines": [
+        998,
+        1027
+      ],
+      "unit": "upgrade_plane_checkpoint_directory_v2"
+    },
+    {
+      "sha256": "a59c10daa7021fd45961bbb7b3d7bde523cc52280d6d0451d65bf8d4ed786c36",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        20,
+        70
+      ],
+      "unit": "PlaneObservation"
+    },
+    {
+      "sha256": "a38c50bfb18692f53c1688dd7effed04bd557439fab32648e2b8330015cb6179",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        73,
+        126
+      ],
+      "unit": "PlaneDiagnostic"
+    },
+    {
+      "sha256": "ea8c49353974e4912c3467baa8bbc22ff12084df12475a6b50d6b718f938a676",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        129,
+        141
+      ],
+      "unit": "DIAGNOSTIC_DTYPE"
+    },
+    {
+      "sha256": "256680790ad798361f9122c4e92b8620a26ba3358fd62aa8673778a84617478c",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        142,
+        145
+      ],
+      "unit": "DIAGNOSTIC_HEADER"
+    },
+    {
+      "sha256": "86610caacbd25f462c7ba08cb08b7f67ded4b63377bf17daa5d153bef97c0c3e",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        179,
+        190
+      ],
+      "unit": "_atomic_save"
+    },
+    {
+      "sha256": "13c5b3334f88d20b3377b34052a83f0dbf9770ba070bfc00cb272db05b6d5d8f",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        193,
+        217
+      ],
+      "unit": "write_plane_observation"
+    },
+    {
+      "sha256": "1f38e89d8913658f201e0e63fe71a8cea27b97f0f0d355c33e3ea29130cfcb03",
+      "source": "pssolver/workflows/plane_observation.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/plane_observations.py",
+      "target_lines": [
+        265,
+        293
+      ],
+      "unit": "write_plane_diagnostics"
+    },
+    {
+      "sha256": "35d63ad1b4fe70b4a53608ee699a04001854ceaed54e9f7a491407e1251c4d69",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        356,
+        356
+      ],
+      "unit": "DISTORTION_ODD_Z_BC"
+    },
+    {
+      "sha256": "fe256370e8c14bf5f7a6d2e0ba8477dfccc6742e265d04e7b0d434ab15575fcf",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        374,
+        374
+      ],
+      "unit": "IMPLEMENTATION_SOURCE_FILES"
+    },
+    {
+      "sha256": "52996e8e6adf08182e870de54c81699116ee375263f983373aa025df35d127f3",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        359,
+        359
+      ],
+      "unit": "PRESSURE_MODAL_BC"
+    },
+    {
+      "sha256": "9022a3e592ed0eade9eecb46a8cea7282f7569b3323483fe09c842d68c1fb07b",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        353,
+        353
+      ],
+      "unit": "Q_BC"
+    },
+    {
+      "sha256": "8741ef1e41877a8a5bd397b66c60295dd648447fb90c8351f587ad263dc0bc9a",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        355,
+        355
+      ],
+      "unit": "U_NORMAL_BC"
+    },
+    {
+      "sha256": "912ff83e00fd0dc6a5819bfc4869a7031154d4f9e9e3f36c14bb93340ba70887",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        354,
+        354
+      ],
+      "unit": "U_TANGENTIAL_BC"
+    },
+    {
+      "sha256": "2c7dc44c5c0fd8d883f229394af4e4ce2ef0483330ea51b0e3aab591d00b1dc5",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        352,
+        352
+      ],
+      "unit": "_LEGACY_BOUNDARIES"
+    },
+    {
+      "sha256": "ee32f52ccf9bf4567c9a3dff877259a66dd2e0d37f943f513bfa72d22dfc42de",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        348,
+        348
+      ],
+      "unit": "_PROJECT_ROOT"
+    },
+    {
+      "sha256": "1d7dcd1f6cdedda8f99f0b3b79b3c7e4d84e0c6d26ed1f285730fab6dc7a1dbb",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        377,
+        383
+      ],
+      "unit": "file_sha256"
+    },
+    {
+      "sha256": "ed30545c1143e965048fd884c4d2f5f66daab26efdadcebd455b1eaf83b06f40",
+      "source": "pssolver/applications/plane_beris_edwards.py",
+      "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "target_lines": [
+        386,
+        394
+      ],
+      "unit": "tensor_sha256"
+    }
+  ],
+  "new_units": [
+    {
+      "authority": "r2 \u00a73.3 backend_restart literal by run_spec.runtime_path (R-0091 F2, R-0093 G1)",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "unit": "plane_backend_restart"
+    },
+    {
+      "authority": "r2 \u00a73.2 module export list",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "unit": "__all__"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_progress"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_axis"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_map_state"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_diagnostics"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_join"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_remember_layouts"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "initial_state"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_member_state"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "_controls"
+    },
+    {
+      "authority": "r2 \u00a74.5 per-member whole-step programs (R-0094)",
+      "target": "pssolver/engine/members.py",
+      "unit": "execute"
+    },
+    {
+      "authority": "r2 \u00a74.4 (stateless Plane Stokes)",
+      "target": "pssolver/linear_solvers/stokes/plane_free_slip_stateless.py",
+      "unit": "solve_force_hats_stateless"
+    },
+    {
+      "authority": "r2 \u00a73.4 local component tuple for the moved observation units",
+      "target": "pssolver/runtime/plane_observations.py",
+      "unit": "VELOCITY_COMPONENTS"
+    },
+    {
+      "authority": "r2 \u00a74.4 Plane constraint adapter (S-27 \u00a73.4)",
+      "target": "pssolver/engine/constraints.py",
+      "unit": "PlaneStokesConstraint"
+    },
+    {
+      "authority": "r2 \u00a74.2 group-wise constraint write-back",
+      "target": "pssolver/engine/program.py",
+      "unit": "_constraint_physical"
+    },
+    {
+      "authority": "r2 \u00a74.2 group-wise evolved projection/inverse/refresh",
+      "target": "pssolver/engine/program.py",
+      "unit": "_evolved_transform"
+    },
+    {
+      "authority": "r2 \u00a74.1 capability factory (S-27 \u00a73.4)",
+      "target": "pssolver/models/active_nematics/engine_terms.py",
+      "unit": "plane_explicit_term"
+    },
+    {
+      "authority": "r2 \u00a74.1 capability factory (S-27 \u00a73.4)",
+      "target": "pssolver/models/active_nematics/engine_terms.py",
+      "unit": "plane_stokes_term"
+    },
+    {
+      "authority": "r2 \u00a74.1 plane_slab per-component bases (S-27 \u00a73.1-3.2)",
+      "target": "pssolver/planning/assemble.py",
+      "unit": "_field_basis"
+    },
+    {
+      "authority": "r2 \u00a74.1 plane_slab basis validation (S-27 \u00a73.1-3.2)",
+      "target": "pssolver/planning/assemble.py",
+      "unit": "_validate_basis"
+    }
+  ],
+  "policy": "R-0084 F005: exact unit bytes, rule and relative line; new glue has zero diagnostics",
+  "rewrite_authority": "S-27 r2.1 units/added_units; no superseded parallel list",
+  "rewritten_units": [
+    {
+      "authority": "r2 Appendix B: R-0091 F5; R-0093 G5",
+      "target": "pssolver/cli/plane.py",
+      "unit": "_print_workflow_summary"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F5; R-0093 G5",
+      "target": "pssolver/cli/plane.py",
+      "unit": "main"
+    },
+    {
+      "authority": "r2 Appendix B: S-27 sections 3/6.2",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "unit": "translate_plane"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F2b; R-0093 G1/G2",
+      "target": "pssolver/configuration/legacy_plane.py",
+      "unit": "validate_plane_restore"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F6; R-0093 G6",
+      "target": "pssolver/engine/groups.py",
+      "unit": "_get_field_index"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F6; R-0093 G6",
+      "target": "pssolver/engine/groups.py",
+      "unit": "_normalize_field_key"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F6; R-0093 G6",
+      "target": "pssolver/engine/groups.py",
+      "unit": "_normalize_field_indices"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F6; R-0093 G6",
+      "target": "pssolver/engine/groups.py",
+      "unit": "_transform_group_indexer"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F6; R-0093 G6",
+      "target": "pssolver/engine/groups.py",
+      "unit": "select_group"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F6; R-0093 G6",
+      "target": "pssolver/engine/groups.py",
+      "unit": "store_group"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 C1-C6",
+      "target": "pssolver/runtime/plane_observations.py",
+      "unit": "capture_plane_observation"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 C4/C7/C8",
+      "target": "pssolver/runtime/plane_observations.py",
+      "unit": "capture_plane_diagnostic"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 C7/C8",
+      "target": "pssolver/runtime/plane_observations.py",
+      "unit": "_projected_normal_force"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 C7/C8",
+      "target": "pssolver/runtime/plane_observations.py",
+      "unit": "_flow_diagnostics"
+    },
+    {
+      "authority": "r2 Appendix B: S-27 section 5.2; R-0091 F4; R-0092 metadata",
+      "target": "pssolver/runtime/plane_observations.py",
+      "unit": "PlaneCapture"
+    },
+    {
+      "authority": "r2 Appendix B R1: name-only rewrite of applications/plane_beris_edwards.py:_reject_restart (avoids the Periodic _reject_restart in the same module)",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "unit": "_reject_plane_restart"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F2b; R-0093 G1-G4",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "unit": "_restore_plane_progress"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F4; R-0092; R-0093 G5; R-0095 source_runtime_path",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "unit": "_run_v04_plane_translation_owned"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F2b; R-0093 G1-G4",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "unit": "restore_plane_state"
+    },
+    {
+      "authority": "r2 Appendix B: R-0091 F4; R-0092; R-0093 G5; R-0095 source_runtime_path",
+      "target": "pssolver/runtime/legacy_entry.py",
+      "unit": "run_v04_plane_translation"
+    }
+  ],
+  "source_commit": "aee82899d091b0d3bbfa62f0fe1cf83817574285"
+}

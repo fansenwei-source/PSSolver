@@ -5,10 +5,10 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-from pssolver.applications import plane_beris_edwards as plane_application
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
 )
+from pssolver.runtime import legacy_entry as plane_application
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +43,7 @@ def test_historical_plane_module_is_a_retained_compatibility_shim_only():
     source = (ROOT / "Plane_beris_edwards_stokes.py").read_text(
         encoding="utf-8"
     )
-    assert "pssolver.applications.plane_beris_edwards import main" in source
+    assert "pssolver.cli.plane import main" in source
     assert "Plane_beris_edwards_stokes.py" not in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )

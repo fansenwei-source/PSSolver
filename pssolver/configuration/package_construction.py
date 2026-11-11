@@ -26,11 +26,10 @@ _IMPLEMENTATION_BUILDERS = {
         "pssolver.engine.engine.Engine"
     ),
     RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION: (
-        "pssolver.runtime.plane_legacy.build_legacy_plane_runtime"
+        "pssolver.engine.engine.Engine"
     ),
     RuntimeConstructionKind.PLANE_COMPILED_V2: (
-        "pssolver.runtime.plane_application_bridge."
-        "build_package_compiled_plane_runtime"
+        "pssolver.engine.engine.Engine"
     ),
 }
 

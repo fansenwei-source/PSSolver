@@ -34,6 +34,17 @@ from pssolver.planning.assemble import (
 from pssolver.planning.capabilities import CAPABILITIES, basis_signature, lookup
 
 
+EXPECTED_CAPABILITIES = [
+    ("constraint", ("stokes", "periodic^2×free_slip"), "pssolver.models.active_nematics.engine_terms:plane_stokes_term", "autograd"),
+    ("explicit", ("beris_edwards_q", "periodic^2×neumann"), "pssolver.models.active_nematics.engine_terms:plane_explicit_term", None),
+    ("constraint", ("stokes", "periodic^3"), "pssolver.models.active_nematics.engine_terms:periodic_stokes_term", "autograd"),
+    ("explicit", ("beris_edwards_q", "periodic^3"), "pssolver.models.active_nematics.engine_terms:periodic_explicit_term", None),
+    ("explicit", ("pointwise", "periodic^3"), "pssolver.engine.terms:pointwise_explicit_term", None),
+    ("linear_recipe", ("beris_edwards", "any"), "pssolver.models.active_nematics:beris_edwards_linear_operator", None),
+    ("linear_recipe", ("expression", "periodic^3"), "pssolver.engine.terms:expression_symbol", None),
+]
+
+
 class ScalarModel(Model):
     phi = EvolvedField()
     epsilon = Parameter(.05)
@@ -91,7 +102,7 @@ def rejected_problem(code):
         return problem(RejectionModel(code))
     changes = {
         "M5": dict(boundaries={"phi": ("neumann",) * 3}),
-        "S1": dict(geometry=GeometryInput("plane_slab", (8, 8, 8), (1., 1., 1.))),
+        "S1": dict(geometry=GeometryInput("rectangular_channel", (8, 8, 8), (1., 1., 1.))),
         "S2": dict(boundaries={"phi": ("periodic", "periodic", "nonzero_dirichlet")}),
         "S3": dict(boundaries={"phi": ("periodic", "periodic", "robin")}),
         "S4": dict(integrator="sbdf2"),
@@ -194,13 +205,15 @@ def test_capability_table_is_exact_and_resolves_function_identity():
     from pssolver.models.active_nematics.engine_terms import (
         periodic_explicit_term,
         periodic_stokes_term,
+        plane_explicit_term,
+        plane_stokes_term,
     )
 
-    assert len(CAPABILITIES) == 5
+    assert [(item.kind, item.key, item.implementation, item.adjoint_mode) for item in CAPABILITIES] == EXPECTED_CAPABILITIES
     assert basis_signature(("periodic",) * 3) == "periodic^3"
-    assert lookup("constraint", PeriodicStokesConstraint.key) is CAPABILITIES[0]
+    assert lookup("constraint", PeriodicStokesConstraint.key) is CAPABILITIES[2]
     assert [_resolve(item) for item in CAPABILITIES] == [
-        periodic_stokes_term, periodic_explicit_term, pointwise_explicit_term,
+        plane_stokes_term, plane_explicit_term, periodic_stokes_term, periodic_explicit_term, pointwise_explicit_term,
         beris_edwards_linear_operator, expression_symbol]
     with pytest.raises(ValueError):
         _resolve(None)
@@ -210,7 +223,7 @@ def test_complete_stress_preset_remains_qualified_in_legacy_catalog():
     import pssolver
     from pssolver.presets.beris_edwards import CompleteStressBerisEdwards
 
-    assert len(CAPABILITIES) == 5
+    assert [(item.kind, item.key, item.implementation, item.adjoint_mode) for item in CAPABILITIES] == EXPECTED_CAPABILITIES
     catalog = json.dumps(pssolver.capability_catalog().to_metadata())
     assert "beris_edwards" in catalog and "periodic" in catalog and "qualified" in catalog
     assert CompleteStressBerisEdwards.Q.reference("Q").components == ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")

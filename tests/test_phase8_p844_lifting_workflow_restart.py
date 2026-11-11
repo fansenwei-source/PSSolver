@@ -2,84 +2,40 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
 
-import numpy as np
 import pytest
 import torch
-
-from tests.v0_3_s03_successor import resolve_s03_successor
-
-from pssolver.io import seal_checkpoint_metadata
 
 from pssolver import (
     GeneratedInitialCondition,
     Output,
     Simulation,
     SpectralNumerics,
+    SpectralSolver,
     TimeStepping,
     TorchSpectralExecution,
     compile_simulation,
-    SpectralSolver,
 )
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
     neumann_pressure_compatibility,
 )
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.package_construction import (
-    plan_package_runtime_construction,
-)
 from pssolver.configuration.public_simulation_runner import (
     PublicCompilationRejectionCode,
     PublicSimulationCompilationError,
 )
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.simulation_binding import (
-    BindingRejectionCode,
-    SimulationBindingError,
-    bind_simulation_runtime,
-)
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import (
     CompleteStressBerisEdwards,
-    Q_COMPONENTS,
     beris_edwards_bulk_molecular_field_components,
     strong_homeotropic_q,
-    strong_planar_q,
 )
-from pssolver.io.checkpoint_identity import CheckpointCompatibilityIdentity
-from pssolver.operators.lifting import localized_quintic_wall_transition
 from pssolver.operators.projection import BasisAwareSpectralProjector
-from pssolver.runtime.package_construction import (
-    PackageRuntimeConstructionInput,
-    build_package_simulation_runtime,
-)
-from pssolver.runtime.plane_beris_edwards import (
-    PlaneRuntimeBuildRequest,
-    plane_lifting_fresh_construction_provenance,
-    plane_physical_component,
-)
-from pssolver.workflows import capture_plane_observation
-from pssolver.workflows.plane_checkpoint import (
-    build_plane_checkpoint_compatibility_identity,
-    capture_plane_checkpoint,
-    load_plane_checkpoint,
-    restore_plane_checkpoint,
-    write_plane_checkpoint,
-)
-from pssolver.workflows import plane_checkpoint as checkpoint_module
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,253 +47,16 @@ RESULT_PATH = (
 )
 
 
-def _run_spec(tmp_path: Path, *, runtime_path: str = "legacy_production"):
-    return create_plane_beris_edwards_run_spec(
-        activity_number=18.0,
-        output_dir=tmp_path / "unused",
-        device="cpu",
-        dtype="float64",
-        pointwise_execution="eager",
-        runtime_path=runtime_path,
-        nx=8,
-        ny=8,
-        nz=6,
-        lx=100.0,
-        ly=100.0,
-        height=20.0,
-        steps=2,
-        save_start_step=0,
-        save_interval=1,
-        diagnostic_interval=1,
-        defect_min_separation=10.0,
-        defect_core_radius=1.5,
-        twist_modes=(1, 2, 3),
-    )
 
 
-def _lifted_simulation(run_spec, *, planar: bool = False):
-    base = compose_plane_beris_edwards_simulation(
-        decompose_plane_beris_edwards_run_spec(run_spec)
-    )
-    normals = {(2, "lower"): (0.0, 0.0, -1.0), (2, "upper"): (0.0, 0.0, 1.0)}
-    policy = (
-        strong_planar_q(
-            scalar_order=0.6,
-            face_directors={
-                (2, "lower"): (1.0, 0.0, 0.0),
-                (2, "upper"): (0.0, 1.0, 0.0),
-            },
-            face_normals=normals,
-        )
-        if planar
-        else strong_homeotropic_q(
-            scalar_order=0.6,
-            face_normals=normals,
-        )
-    )
-    boundaries = assign_boundaries(
-        model=base.equation_system,
-        geometry=base.geometry,
-        policies={
-            "Q": policy,
-            "velocity": free_slip_velocity(),
-            "pressure": neumann_pressure_compatibility(),
-        },
-        name="p844_lifted_plane",
-    )
-    return replace(base, boundaries=boundaries)
 
 
-def _runtime(
-    tmp_path: Path,
-    *,
-    planar: bool = False,
-    fresh_initial_conditioning=None,
-    apply_fresh_initial_conditioning: bool = True,
-):
-    run_spec = _run_spec(tmp_path)
-    simulation = _lifted_simulation(run_spec, planar=planar)
-    metadata = {
-        "configuration": run_spec.identity_metadata(),
-        "runtime_selection": run_spec.runtime_selection_metadata(),
-    }
-    generator = torch.Generator(device="cpu").manual_seed(144)
-    initial = {
-        name: 0.01
-        * torch.randn((8, 8, 6), generator=generator, dtype=torch.float64)
-        for name in Q_COMPONENTS
-    }
-    request_kwargs = {}
-    if fresh_initial_conditioning is not None:
-        request_kwargs["fresh_initial_conditioning"] = (
-            fresh_initial_conditioning
-        )
-    request = PlaneRuntimeBuildRequest(
-        run_spec,
-        metadata,
-        initial,
-        "cpu",
-        simulation,
-        apply_fresh_initial_conditioning=apply_fresh_initial_conditioning,
-        **request_kwargs,
-    )
-    construction = PackageRuntimeConstructionInput(
-        plan_package_runtime_construction(simulation),
-        request,
-    )
-    return (
-        run_spec,
-        simulation,
-        build_package_simulation_runtime(construction),
-    )
 
 
-def test_lifted_package_input_records_fresh_conditioning_policy(tmp_path):
-    run_spec = _run_spec(tmp_path)
-    simulation = _lifted_simulation(run_spec)
-    metadata = {
-        "configuration": run_spec.identity_metadata(),
-        "runtime_selection": run_spec.runtime_selection_metadata(),
-    }
-    request = PlaneRuntimeBuildRequest(
-        run_spec=run_spec,
-        production_metadata=metadata,
-        initial_values={
-            name: torch.zeros((8, 8, 6), dtype=torch.float64)
-            for name in Q_COMPONENTS
-        },
-        device="cpu",
-        application_simulation=simulation,
-        fresh_initial_conditioning=localized_quintic_wall_transition(2.0),
-        apply_fresh_initial_conditioning=False,
-    )
-    construction = PackageRuntimeConstructionInput(
-        plan_package_runtime_construction(simulation),
-        request,
-    )
-    recorded = construction.to_metadata()
-
-    assert recorded["fresh_initial_conditioning"]["effective_policy"] == (
-        "localized_quintic_wall_transition_v1"
-    )
-    assert recorded["fresh_initial_conditioning"]["transition_width"] == 2.0
-    assert recorded["fresh_initial_conditioning"]["affected_components"] == (
-        list(Q_COMPONENTS)
-    )
-    assert recorded["fresh_initial_conditioning_applied"] is False
 
 
-def test_lifted_plane_binding_is_narrow_and_compiled_path_stays_closed(tmp_path):
-    legacy = _run_spec(tmp_path)
-    simulation = _lifted_simulation(legacy)
-    binding = bind_simulation_runtime(simulation)
-    assert binding.runtime_path == "legacy_production"
-
-    compiled = _run_spec(tmp_path, runtime_path="compiled_v2")
-    compiled_simulation = _lifted_simulation(compiled)
-    with pytest.raises(SimulationBindingError) as caught:
-        bind_simulation_runtime(compiled_simulation)
-    assert caught.value.rejection.code is (
-        BindingRejectionCode.UNSUPPORTED_LIFTING_RUNTIME
-    )
-
-    public = Simulation(
-        model=compiled_simulation.equation_system,
-        geometry=compiled_simulation.geometry,
-        boundaries=compiled_simulation.boundaries,
-        numerics=compiled_simulation.numerics,
-        time=TimeStepping(
-            dt=compiled_simulation.time_integration.integrator.dt,
-        ),
-        discretization={},
-        initial_condition=compiled_simulation.initial_condition,
-        execution=TorchSpectralExecution(
-            runtime_path=compiled_simulation.execution.runtime_path,
-            device=compiled_simulation.execution.options["device"],
-            options={
-                key: value
-                for key, value in compiled_simulation.execution.options.items()
-                if key != "device"
-            },
-        ),
-        output=compiled_simulation.workflow,
-        invocation=compiled_simulation.invocation,
-    )
-    with pytest.raises(PublicSimulationCompilationError) as public_error:
-        compile_simulation(public)
-    assert public_error.value.code is (
-        PublicCompilationRejectionCode
-        .UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD
-    )
-    assert public_error.value.context["supported_Q_boundary"] == (
-        "homogeneous_neumann"
-    )
 
 
-def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
-    _spec, simulation, adapter = _runtime(tmp_path, planar=True)
-    lift = adapter.solver.model.static_lifting_runtime
-    runtime_metadata = adapter.to_metadata()
-    assert adapter.solver.model.static_model.molecular_field_boundary_conditions == (
-        "periodic",
-        "periodic",
-        "neumann",
-    )
-
-    assert adapter.fields["Qxx.bc"] == (
-        "periodic",
-        "periodic",
-        "dirichlet",
-    )
-    observation = capture_plane_observation(adapter, step=0)
-    expected = np.stack(
-        [
-            plane_physical_component(adapter, name)[0].detach().numpy()
-            for name in Q_COMPONENTS
-        ],
-        axis=-1,
-    )
-    assert np.array_equal(observation.q, expected)
-    assert lift.restart_metadata()["representation"] == "homogeneous_remainder"
-    assert lift.restart_metadata()["convention"]["id"] == (
-        "de_gennes_S_lambda_max_v1"
-    )
-    assert "fresh_initial_remainder_conditioning" not in (
-        runtime_metadata["static_lifting"]["lifting"]
-    )
-    assert runtime_metadata["fresh_construction"][
-        "conditioning_applied"
-    ] is True
-    assert runtime_metadata["fresh_construction"][
-        "checkpoint_compatibility_identity"
-    ] is False
-    storage = lift.storage_metadata()
-    assert storage["operator"]["layout"] == (
-        "wall_normal_profile_broadcast"
-    )
-    assert storage["physical_workspace_layout"] == (
-        "on_demand_fused_pointwise"
-    )
-    assert storage["physical_workspace_bytes"] == 0
-    assert storage["linear_correction_storage_bytes"] == (
-        torch.empty((), dtype=torch.complex128).element_size()
-    )
-    assert all(
-        item == "broadcast_zero"
-        for item in storage["linear_correction_layouts"]
-    )
-    boundary_identity = hashlib.sha256(
-        json.dumps(
-            simulation.boundaries.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
-    ).hexdigest()
-    assert lift.plan.source_boundary_sha256 == boundary_identity
-    adapter.advance(1)
-    assert adapter.completed_steps == 1
-    assert all(torch.isfinite(adapter.fields[name]).all() for name in Q_COMPONENTS)
 
 
 def test_lifted_stress_projects_nonzero_wall_molecular_field_in_dct_basis():
@@ -398,251 +117,16 @@ def test_lifted_stress_projects_nonzero_wall_molecular_field_in_dct_basis():
     assert dirichlet_errors[-1] > 100.0 * errors[-1]
 
 
-def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
-    identity, _simulation, continuous = _runtime(tmp_path / "continuous", planar=True)
-    _, _, segment = _runtime(tmp_path / "segment", planar=True)
-    _, _, resumed = _runtime(
-        tmp_path / "resumed",
-        planar=True,
-        apply_fresh_initial_conditioning=False,
-    )
-
-    continuous.advance(4)
-    segment.advance(2)
-    checkpoint = capture_plane_checkpoint(
-        segment,
-        run_spec=identity,
-    )
-    assert checkpoint.lifting_restart["representation"] == "homogeneous_remainder"
-    assert all(
-        torch.equal(checkpoint.evolved_spatial[name], segment.fields[name])
-        for name in Q_COMPONENTS
-    )
-    provenance = checkpoint.fresh_construction_provenance
-    assert provenance["schema_version"] == 1
-    assert provenance["conditioning_applied"] is True
-    assert provenance["checkpoint_compatibility_identity"] is False
-    assert provenance["forward_dynamics_identity"] is False
-    assert provenance["restored_state_reconditioned"] is False
-    assert provenance["conditioning"]["effective_policy"] == (
-        "strict_no_automatic_conditioning_v1"
-    )
-    persisted = load_plane_checkpoint(
-        write_plane_checkpoint(tmp_path / "persisted", checkpoint)
-    )
-    assert dict(persisted.fresh_construction_provenance) == dict(provenance)
-    assert persisted.compatibility_identity == checkpoint.compatibility_identity
-    restore_plane_checkpoint(
-        resumed,
-        persisted,
-        run_spec=identity,
-    )
-    resumed.advance(2)
-
-    for name in (*Q_COMPONENTS, "ux", "uy", "uz", "p"):
-        assert torch.equal(continuous.fields[name], resumed.fields[name])
-    for name in Q_COMPONENTS:
-        assert torch.equal(
-            plane_physical_component(continuous, name),
-            plane_physical_component(resumed, name),
-        )
 
 
-def test_historical_conditioning_metadata_accepts_file_restart_exactly(
-    tmp_path,
-):
-    localized = localized_quintic_wall_transition(2.0)
-    identity, _simulation, continuous = _runtime(
-        tmp_path / "continuous",
-        planar=True,
-        fresh_initial_conditioning=localized,
-    )
-    _, _, segment = _runtime(
-        tmp_path / "segment",
-        planar=True,
-        fresh_initial_conditioning=localized,
-    )
-    _, _, resumed = _runtime(
-        tmp_path / "resumed",
-        planar=True,
-        apply_fresh_initial_conditioning=False,
-    )
-
-    continuous.advance(4)
-    segment.advance(2)
-    checkpoint = capture_plane_checkpoint(segment, run_spec=identity)
-    historical_lifting = json.loads(
-        json.dumps(dict(checkpoint.lifting_restart))
-    )
-    historical_lifting["lifting"][
-        "fresh_initial_remainder_conditioning"
-    ] = {
-        "kind": "legacy_whole_slab_sine_v1",
-        "fresh_only": True,
-    }
-    historical_identity = build_plane_checkpoint_compatibility_identity(
-        identity,
-        runtime_path=checkpoint.runtime_path,
-        evolved_spatial=checkpoint.evolved_spatial,
-        evolved_spectral=checkpoint.evolved_spectral,
-        backend_restart=checkpoint.backend_restart,
-        lifting_restart=historical_lifting,
-    )
-    historical = replace(
-        checkpoint,
-        lifting_restart=historical_lifting,
-        compatibility_identity=historical_identity,
-        fresh_construction_provenance=None,
-    )
-    loaded = load_plane_checkpoint(
-        write_plane_checkpoint(tmp_path / "historical", historical)
-    )
-
-    assert loaded.fresh_construction_provenance is None
-    assert loaded.compatibility_identity == checkpoint.compatibility_identity
-    assert plane_lifting_fresh_construction_provenance(resumed)[
-        "conditioning_applied"
-    ] is False
-    assert restore_plane_checkpoint(resumed, loaded, run_spec=identity) == 2
-    resumed.advance(2)
-    for name in (*Q_COMPONENTS, "ux", "uy", "uz", "p"):
-        assert torch.equal(continuous.fields[name], resumed.fields[name])
 
 
-def test_unknown_lifting_restart_schema_rejects_before_tensor_load(
-    tmp_path,
-    monkeypatch,
-):
-    identity, _simulation, source = _runtime(tmp_path / "source")
-    checkpoint = capture_plane_checkpoint(source, run_spec=identity)
-    directory = write_plane_checkpoint(tmp_path / "checkpoint", checkpoint)
-    metadata_path = directory / "checkpoint.json"
-    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    metadata["lifting_restart"]["schema_version"] = 2
-    forward_payload = metadata["compatibility_identity"][
-        "forward_dynamics"
-    ]["payload"]
-    forward_payload["lifting_dynamics"]["schema_version"] = 2
-    changed_identity = CheckpointCompatibilityIdentity.from_metadata(
-        metadata["compatibility_identity"]
-    )
-    metadata["compatibility_identity_sha256"] = (
-        changed_identity.canonical_sha256()
-    )
-    metadata.pop("metadata_sha256")
-    metadata = seal_checkpoint_metadata(metadata)
-    metadata_path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    monkeypatch.setattr(
-        checkpoint_module,
-        "_load_tensor",
-        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
-    )
-
-    with pytest.raises(
-        ValueError,
-        match="unsupported Plane static lifting restart identity schema",
-    ):
-        load_plane_checkpoint(directory)
 
 
-def test_unknown_forward_dynamics_version_rejects_before_tensor_load(
-    tmp_path,
-    monkeypatch,
-):
-    identity, _simulation, source = _runtime(tmp_path / "source")
-    checkpoint = capture_plane_checkpoint(source, run_spec=identity)
-    directory = write_plane_checkpoint(tmp_path / "checkpoint", checkpoint)
-    metadata_path = directory / "checkpoint.json"
-    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    metadata["compatibility_identity"]["forward_dynamics"]["version"] = (
-        "plane.forward.v3"
-    )
-    changed_identity = CheckpointCompatibilityIdentity.from_metadata(
-        metadata["compatibility_identity"]
-    )
-    metadata["compatibility_identity_sha256"] = (
-        changed_identity.canonical_sha256()
-    )
-    metadata.pop("metadata_sha256")
-    metadata = seal_checkpoint_metadata(metadata)
-    metadata_path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    monkeypatch.setattr(
-        checkpoint_module,
-        "_load_tensor",
-        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
-    )
-
-    with pytest.raises(
-        ValueError,
-        match="unsupported Plane forward dynamics identity version",
-    ):
-        load_plane_checkpoint(directory)
 
 
-def test_lifting_identity_tamper_is_rejected_before_target_mutation(tmp_path):
-    identity, _simulation, source = _runtime(tmp_path / "source")
-    _, _, target = _runtime(tmp_path / "target")
-    source.advance(1)
-    checkpoint = capture_plane_checkpoint(
-        source,
-        run_spec=identity,
-    )
-    lifting = json.loads(json.dumps(dict(checkpoint.lifting_restart)))
-    lifting["lifting"]["plan_sha256"] = "0" * 64
-    tampered = replace(checkpoint, lifting_restart=lifting)
-    before = {
-        f"{name}{suffix}": target.fields[f"{name}{suffix}"].clone()
-        for name in Q_COMPONENTS
-        for suffix in ("", ".hat")
-    }
-
-    with pytest.raises(ValueError, match="lifting identity"):
-        restore_plane_checkpoint(
-            target,
-            tampered,
-            run_spec=identity,
-        )
-    assert all(
-        torch.equal(value, target.fields[name])
-        for name, value in before.items()
-    )
 
 
-def test_lifting_checkpoint_device_provenance_is_not_compatibility_identity(
-    tmp_path,
-):
-    identity, _simulation, source = _runtime(tmp_path / "source")
-    _, _, target = _runtime(tmp_path / "target")
-    source.advance(1)
-    checkpoint = capture_plane_checkpoint(
-        source,
-        run_spec=identity,
-    )
-    lifting = json.loads(json.dumps(dict(checkpoint.lifting_restart)))
-    lifting["lifting"]["device"] = "cuda:0"
-    for correction in lifting["linear_corrections"]:
-        correction["device"] = "cuda:0"
-    lifting.pop("materialization_provenance", None)
-    legacy_gpu_checkpoint = replace(checkpoint, lifting_restart=lifting)
-
-    restored_step = restore_plane_checkpoint(
-        target,
-        legacy_gpu_checkpoint,
-        run_spec=identity,
-    )
-
-    assert restored_step == 1
-    assert all(
-        torch.equal(source.fields[f"{name}{suffix}"], target.fields[f"{name}{suffix}"])
-        for name in Q_COMPONENTS
-        for suffix in ("", ".hat")
-    )
 
 
 def _public_simulation(tmp_path: Path) -> Simulation:

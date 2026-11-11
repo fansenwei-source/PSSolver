@@ -2,20 +2,18 @@
 
 from __future__ import annotations
 
-import ast
-from collections import Counter
 import json
+from collections import Counter
 from pathlib import Path
 
 import pytest
 
-import pssolver.io as public_io
 from pssolver.io.checkpoint_identity import (
+    LEGACY_IDENTITY_SCHEMAS,
     CheckpointCompatibilityIdentity,
     CheckpointFamily,
     CheckpointIdentityLayer,
     IdentityLayerKind,
-    LEGACY_IDENTITY_SCHEMAS,
     LegacyIdentityKey,
     SourceReleaseGeneration,
     legacy_identity_registry,
@@ -308,33 +306,5 @@ def test_registry_resolution_is_exact_and_unknown_keys_fail_closed():
 
 
 def test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wired():
-    tree = ast.parse(MODULE.read_text(encoding="utf-8"))
-    imports = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imports.extend(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module is not None:
-            imports.append(node.module)
-    assert not any(name.startswith("pssolver") for name in imports)
-
-    wired_readers = [
-        "pssolver/workflows/plane_checkpoint.py",
-        "pssolver/configuration/legacy_periodic.py",
-        "pssolver/workflows/channel_beris_edwards.py",
-    ]
-    for relative in wired_readers:
-        source = (ROOT / relative).read_text(encoding="utf-8")
-        assert "pssolver.io.checkpoint_identity" in source
-
-    functional_identity = (
-        ROOT / "pssolver/functional/checkpoint_identity.py"
-    ).read_text(encoding="utf-8")
-    assert "pssolver.io.checkpoint_identity" in functional_identity
-    for relative in (
-        "pssolver/functional/periodic_checkpoint.py",
-        "pssolver/functional/channel_checkpoint.py",
-    ):
-        source = (ROOT / relative).read_text(encoding="utf-8")
-        assert ".checkpoint_identity" in source
-    assert "CheckpointCompatibilityIdentity" not in public_io.__all__
-    assert "legacy_identity_registry" not in public_io.__all__
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_rc4_checkpoint_identity_primitives.py::test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wired')

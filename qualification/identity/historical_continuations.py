@@ -58,6 +58,8 @@ def replay(fixture: Path, work: Path) -> dict:
         for _ in range(16):
             if name == "production_periodic":
                 old.advance_periodic(runtime)
+            elif name == "production_plane_legacy":
+                old.advance_plane(runtime)
             else:
                 runtime.advance(1)
             records.append(capture(runtime))

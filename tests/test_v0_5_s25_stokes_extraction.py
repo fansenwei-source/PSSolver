@@ -15,7 +15,6 @@ import torch
 from pssolver.linear_solvers.stokes.periodic import PeriodicModalStokesSolver
 from pssolver.models.active_nematics.stokes import BerisEdwardsFreeSlipStokes
 from qualification.identity.records import tensor_record
-from qualification.identity.runtime_case import RuntimeCase
 from qualification.identity.runtime_case_v2 import RuntimeCaseV2
 from qualification.identity.scenarios import scenarios
 
@@ -71,8 +70,8 @@ def test_legacy_forward_preserves_result_diagnostics_and_mro(tmp_path, dtype, fa
         assert actual == reference["static"]
         assert _diagnostics(flow) == reference["diagnostics"]
         return
-    case = RuntimeCase(scene, tmp_path)
-    flow = case.solver.model.static_model
+    case = RuntimeCaseV2(scene, tmp_path)
+    flow = case.engine.constraint.term
     expected_forward = _old_method(
         "pssolver/models/active_nematics/stokes.py",
         "BerisEdwardsFreeSlipStokes",
@@ -89,9 +88,9 @@ def test_legacy_forward_preserves_result_diagnostics_and_mro(tmp_path, dtype, fa
         patch.object(BerisEdwardsFreeSlipStokes, "forward", expected_forward),
         patch.object(PeriodicModalStokesSolver, "solve_force_hats", expected_solve),
     ):
-        expected = tensor_record(case.solver.model.compute_static())
+        expected = tensor_record(flow.forward(case.engine.field_view(case.state), {"alpha": case.engine.default_controls["alpha"]}))
         diagnostics = _diagnostics(flow)
-    actual = tensor_record(case.solver.model.compute_static())
+    actual = tensor_record(flow.forward(case.engine.field_view(case.state), {"alpha": case.engine.default_controls["alpha"]}))
     assert actual == expected
     assert _diagnostics(flow) == diagnostics
 
@@ -126,8 +125,8 @@ def test_legacy_force_recording_precedes_solver_failure_and_preserves_overrides(
     scene = next(
         row for row in scenarios() if row["id"] == "plane_legacy_production_float64_default"
     )
-    case = RuntimeCase(scene, tmp_path)
-    flow = case.solver.model.static_model
+    case = RuntimeCaseV2(scene, tmp_path)
+    flow = case.engine.constraint.term
     original = flow.compute_nematic_force
     calls = []
 
@@ -146,6 +145,6 @@ def test_legacy_force_recording_precedes_solver_failure_and_preserves_overrides(
         patch.object(flow, "solve_force_hats", solve),
     ):
         with pytest.raises(RuntimeError, match="test injected solve failure"):
-            case.solver.model.compute_static()
+            flow.forward(case.engine.field_view(case.state), {"alpha": case.engine.default_controls["alpha"]})
     assert calls == ["force", "solve"]
     assert not math.isnan(float(flow.last_total_tangential_force_mean[0]))

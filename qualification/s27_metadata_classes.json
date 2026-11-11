@@ -1,0 +1,682 @@
+{
+ "schema": "s27_metadata_classes.v1",
+ "basis": "S-25 design 4.4 + R-0092",
+ "rules": [
+  {
+   "pattern": "/elapsed_seconds",
+   "class": "per_run"
+  },
+  {
+   "pattern": "/initial_condition/source",
+   "class": "per_run"
+  },
+  {
+   "pattern": "/runtime_environment/**",
+   "class": "environment"
+  },
+  {
+   "pattern": "/implementation_provenance/**",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/runtime_selection/adapter",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/runtime_selection/compiled_architecture/**",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/runtime_construction/**",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/workflow/checkpoint_format_version",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/workflow/cross_backend_restart_supported",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/runtime/adapter",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/public_compilation/compilation_identity_sha256",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/public_compilation/construction_plan/**",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/public_compilation/application_request_type",
+   "class": "implementation"
+  },
+  {
+   "pattern": "/S_bulk/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/S_initial/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/active_stress_beta/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/activity_number/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/activity_number_definition/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/application/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/benchmark_target/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/boundary_conditions/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/completed_steps/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/configuration/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dealias_fraction/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dealias_rule/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/device/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/diagnostic_interval/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/diagnostics/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/domain/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dt/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dtype/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/eta/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/flow_alignment/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/frank_k/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/friction/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/gamma/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/height/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/initial_condition/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/initial_defect_gas/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/initial_neumann_twist/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/ldg_coefficients/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/ldg_l1/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/model/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/model_limitations/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/molecular_field_linear_space/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/normal_velocity_boundary_conditions/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/normalization/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/numerics/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/parameterization/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/pointwise_execution/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/projected_transform_execution/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_boundary_conditions/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_elastic_relaxation/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_equilibrium_amplitude/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_evolved_boundary_conditions/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_wall_model_note/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/reproduction_status/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/restart/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/retained_normal_velocity_modes/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/retained_q_modes/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/runtime_selection/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/save_hydrodynamics/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/save_interval/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/save_start_step/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/scan_variable/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/schema_version/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/seed/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/shape/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/solver/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/spectral_storage/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/status/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/steps/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/stress_divergence_sum_space/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/tangential_velocity_boundary_conditions/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/tf32/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/transform_execution_order/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/validation_config_sha256/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/velocity_wall_model/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/workflow/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/zero_mode_policy/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/zeta/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/checkpoint_steps/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/configuration_sha256/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/precision/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/pressure_gauge/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/public_compilation/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/runtime/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/runtime_identity_sha256/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/saved_steps/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/tangential_zero_mode_policy/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/uniform_velocity_mode_action/**",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/S_bulk",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/S_initial",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/active_stress_beta",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/activity_number",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/activity_number_definition",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/application",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/benchmark_target",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/boundary_conditions",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/completed_steps",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/configuration",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dealias_fraction",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dealias_rule",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/device",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/diagnostic_interval",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/diagnostics",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/domain",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dt",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/dtype",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/eta",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/flow_alignment",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/frank_k",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/friction",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/gamma",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/height",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/initial_condition",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/initial_defect_gas",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/initial_neumann_twist",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/ldg_coefficients",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/ldg_l1",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/model",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/model_limitations",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/molecular_field_linear_space",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/normal_velocity_boundary_conditions",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/normalization",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/numerics",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/parameterization",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/pointwise_execution",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/projected_transform_execution",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_boundary_conditions",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_elastic_relaxation",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_equilibrium_amplitude",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_evolved_boundary_conditions",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/q_wall_model_note",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/reproduction_status",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/restart",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/retained_normal_velocity_modes",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/retained_q_modes",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/runtime_selection",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/save_hydrodynamics",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/save_interval",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/save_start_step",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/scan_variable",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/schema_version",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/seed",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/shape",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/solver",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/spectral_storage",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/status",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/steps",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/stress_divergence_sum_space",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/tangential_velocity_boundary_conditions",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/tf32",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/transform_execution_order",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/validation_config_sha256",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/velocity_wall_model",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/workflow",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/zero_mode_policy",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/zeta",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/checkpoint_steps",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/configuration_sha256",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/precision",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/pressure_gauge",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/public_compilation",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/runtime",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/runtime_identity_sha256",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/saved_steps",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/tangential_zero_mode_policy",
+   "class": "declaration"
+  },
+  {
+   "pattern": "/uniform_velocity_mode_action",
+   "class": "declaration"
+  }
+ ]
+}

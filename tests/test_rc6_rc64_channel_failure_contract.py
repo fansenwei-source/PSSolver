@@ -21,9 +21,8 @@ from pssolver.functional.errors import (
     FunctionalConvergenceError,
     translate_functional_exception,
 )
-from pssolver.workflows.plane_beris_edwards import (
-    PlaneBerisEdwardsWorkflow,
-)
+from pssolver.runtime.plane_observations import PlaneCapture
+from pssolver.runtime.runner import Runner, RunSchedule
 
 
 class _FailingPlaneAdapter:
@@ -38,7 +37,7 @@ class _FailingPlaneAdapter:
         self.projector = object()
         self.fields = {}
 
-    def advance(self, steps, *, pre_update_callback=None):
+    def prepare_constraints_(self, state, *, diagnostics):
         raise self._error
 
     def synchronize_for_observation(self):
@@ -155,15 +154,16 @@ def test_plane_execution_error_finalizes_running_metadata(tmp_path):
         step=0,
         details={"finite": False},
     )
-    workflow = PlaneBerisEdwardsWorkflow(
+    workflow = Runner(
         _FailingPlaneAdapter(error),
-        _plane_spec(tmp_path),
-        tmp_path,
-        {"initial_condition": {}, "numerics": {}},
+        schedule=RunSchedule(1, 1, 0, True, 1, None),
+        output_directory=tmp_path,
+        capture=PlaneCapture(True, "legacy_production", 2.0 / 3.0, 0.0),
+        metadata={"initial_condition": {}, "numerics": {}, "workflow": {}},
     )
 
     with pytest.raises(SimulationStateError) as captured:
-        workflow.run()
+        workflow.run(SimpleNamespace(completed_steps=0), start_step=0)
 
     assert captured.value is error
     metadata = json.loads((tmp_path / "metadata.json").read_text())

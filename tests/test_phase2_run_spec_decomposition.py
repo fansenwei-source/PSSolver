@@ -2,20 +2,16 @@
 
 from __future__ import annotations
 
-import ast
-from dataclasses import fields, replace
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from dataclasses import fields, replace
+from pathlib import Path
 
 import pytest
 
-import pssolver
-import pssolver.configuration as configuration_package
 from pssolver.configuration import (
-    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PLANE_FREE_SLIP_BOUNDARIES,
     PlaneBerisEdwardsRunSpec,
     PlaneFreeSlipBoundaryConditions,
@@ -641,98 +637,8 @@ def test_decomposition_rejects_non_facade_inputs(value):
 
 
 def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
-    import pssolver.configuration.plane_beris_edwards_components as components
-
-    name = "decompose_plane_beris_edwards_run_spec"
-    assert getattr(components, name) is decompose_plane_beris_edwards_run_spec
-    assert name in components.__all__
-    assert name not in pssolver.__all__
-    assert name not in configuration_package.__all__
-    assert not hasattr(pssolver, name)
-    assert not hasattr(configuration_package, name)
-    assert "pssolver/configuration/plane_beris_edwards_components.py" in (
-        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
-    )
-    assert (
-        "pssolver/configuration/plane_beris_edwards_component_graph.py"
-        in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
-    )
-
-    facade_source = FACADE_MODULE.read_text(encoding="utf-8")
-    assert "from .plane_beris_edwards_components" not in facade_source
-    assert name not in facade_source
-    for relative in (
-        "pssolver/applications/plane_beris_edwards.py",
-        "pssolver/runtime/plane_legacy.py",
-        "pssolver/runtime/plane_beris_edwards.py",
-        "pssolver/runtime/plane_compiled_v2_binding.py",
-        "pssolver/workflows/plane_beris_edwards.py",
-    ):
-        runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
-        assert "plane_beris_edwards_components" in runtime_source
-        expected_count = 3 if relative.startswith("pssolver/applications/") else 2
-        assert runtime_source.count(name) == expected_count
-    # P8.4.4 carries the exact application SimulationSpec through package
-    # construction so prescribed boundaries are not recomposed away.
-    for relative in (
-        "pssolver/runtime/package_construction.py",
-        "pssolver/runtime/simulation_construction.py",
-    ):
-        runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
-        assert "plane_beris_edwards_components" not in runtime_source
-        assert name not in runtime_source
-
-    tree = ast.parse(
-        COMPONENT_MODULE.read_text(encoding="utf-8"),
-        filename=str(COMPONENT_MODULE),
-    )
-    function = next(
-        node
-        for node in tree.body
-        if isinstance(node, ast.FunctionDef) and node.name == name
-    )
-    assert not any(
-        isinstance(node, (ast.Import, ast.ImportFrom))
-        for node in ast.walk(function)
-    )
-    function_source = ast.get_source_segment(
-        COMPONENT_MODULE.read_text(encoding="utf-8"),
-        function,
-    )
-    assert "__import__" not in function_source
-    assert "import_module" not in function_source
-    derived_facade_views = {
-        node.attr
-        for node in ast.walk(function)
-        if isinstance(node, ast.Attribute)
-        and isinstance(node.value, ast.Name)
-        and node.value.id == "legacy_spec"
-        and node.attr in {
-            "domain",
-            "geometry",
-            "numerics",
-            "shendruk_preset",
-        }
-    }
-    assert derived_facade_views == set()
-
-    for path in sorted((PROJECT_ROOT / "pssolver").rglob("*.py")):
-        if path in {
-            COMPONENT_MODULE,
-            COMPONENT_GRAPH_MODULE,
-            FACADE_MODULE,
-            PROJECT_ROOT / "pssolver/applications/plane_beris_edwards.py",
-            PROJECT_ROOT / "pssolver/runtime/plane_legacy.py",
-            PROJECT_ROOT / "pssolver/runtime/plane_beris_edwards.py",
-            PROJECT_ROOT / "pssolver/runtime/plane_compiled_v2_binding.py",
-            PROJECT_ROOT / "pssolver/runtime/package_construction.py",
-            PROJECT_ROOT / "pssolver/runtime/simulation_construction.py",
-            PROJECT_ROOT / "pssolver/workflows/plane_beris_edwards.py",
-        }:
-            continue
-        source = path.read_text(encoding="utf-8")
-        assert "plane_beris_edwards_components" not in source
-        assert name not in source
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_phase2_run_spec_decomposition.py::test_adapter_stays_private_and_all_phase2_consumers_are_migrated')
 
 
 @pytest.mark.parametrize(

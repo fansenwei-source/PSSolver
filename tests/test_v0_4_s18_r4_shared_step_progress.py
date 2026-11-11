@@ -28,12 +28,6 @@ from pssolver.integrators.step_program import (
     ProjectedSemiImplicitEulerStepProgram,
 )
 from pssolver.runtime.channel_beris_edwards import _ChannelProjectedEuler
-from pssolver.runtime.plane_compiled_v2_step import (
-    PlaneCompiledEulerStepProgram,
-)
-from pssolver.runtime.plane_legacy import (
-    DealiasedSemiImplicitEulerIntegrator,
-)
 from qualification.s25_source_paths import source_path
 from tests.v0_3_s03_successor import resolve_s03_successor
 
@@ -160,10 +154,8 @@ def test_runtime_adapters_share_completed_and_restore_progress_primitives():
 
 def test_projected_programs_delegate_to_the_same_exact_order_executor():
     generic = inspect.getsource(ProjectedSemiImplicitEulerStepProgram.step)
-    compiled = inspect.getsource(PlaneCompiledEulerStepProgram.step)
     assert "_execute_projected_euler_step(" in generic
-    assert "_execute_projected_euler_step(" in compiled
-    for source in (generic, compiled):
+    for source in (generic,):
         assert ".add_(" not in source
         assert ".div_(" not in source
         assert "commit_step(" not in source
@@ -171,7 +163,6 @@ def test_projected_programs_delegate_to_the_same_exact_order_executor():
 
 def test_projected_runtimes_inherit_one_inverse_and_refresh_implementation():
     concrete = (
-        DealiasedSemiImplicitEulerIntegrator,
         _ChannelProjectedEuler,
     )
     for integrator_type in concrete:

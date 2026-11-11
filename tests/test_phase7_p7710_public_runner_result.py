@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError
 import hashlib
 import json
-from pathlib import Path
 import sys
+from dataclasses import FrozenInstanceError, replace
+from pathlib import Path
 from types import ModuleType, SimpleNamespace
 
 import numpy as np
@@ -23,7 +23,6 @@ from pssolver import (
     compile_simulation,
     run_simulation,
 )
-from dataclasses import replace
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
@@ -194,7 +193,7 @@ def test_run_simulation_dispatches_plane_once_and_returns_public_result(
     simulation = _plane_simulation(tmp_path, runtime_path=runtime_path)
     compiled = compile_simulation(simulation)
     observed = {}
-    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    fake = ModuleType("pssolver.runtime.legacy_entry")
 
     def run_plane_beris_edwards(
         run_spec,
@@ -211,10 +210,10 @@ def test_run_simulation_dispatches_plane_once_and_returns_public_result(
         )
         return _application_result()
 
-    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    fake.run_v04_plane_translation = run_plane_beris_edwards
     monkeypatch.setitem(
         sys.modules,
-        "pssolver.applications.plane_beris_edwards",
+        "pssolver.runtime.legacy_entry",
         fake,
     )
     progress = (0, 1)
@@ -263,7 +262,7 @@ def test_run_simulation_compiles_public_declaration_before_dispatch(
     tmp_path,
 ):
     simulation = _plane_simulation(tmp_path)
-    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    fake = ModuleType("pssolver.runtime.legacy_entry")
     calls = []
 
     def run_plane_beris_edwards(
@@ -277,10 +276,10 @@ def test_run_simulation_compiles_public_declaration_before_dispatch(
         calls.append((run_spec, progress, public_compilation_metadata))
         return _application_result()
 
-    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    fake.run_v04_plane_translation = run_plane_beris_edwards
     monkeypatch.setitem(
         sys.modules,
-        "pssolver.applications.plane_beris_edwards",
+        "pssolver.runtime.legacy_entry",
         fake,
     )
 
@@ -298,11 +297,11 @@ def test_public_runner_rejects_incomplete_application_result(
     tmp_path,
 ):
     compiled = compile_simulation(_plane_simulation(tmp_path))
-    fake = ModuleType("pssolver.applications.plane_beris_edwards")
-    fake.run_plane_beris_edwards = lambda run_spec, **_kwargs: object()
+    fake = ModuleType("pssolver.runtime.legacy_entry")
+    fake.run_v04_plane_translation = lambda run_spec, **_kwargs: object()
     monkeypatch.setitem(
         sys.modules,
-        "pssolver.applications.plane_beris_edwards",
+        "pssolver.runtime.legacy_entry",
         fake,
     )
 

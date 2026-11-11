@@ -43,8 +43,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 70
-    assert len({entry["id"] for entry in entries}) == 70
+    assert len(entries) == record["issue_count"] == 71
+    assert len({entry["id"] for entry in entries}) == 71
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -52,7 +52,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("claimed_fixed", 0)
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
-        "open": 0,
+        "open": 1,
         "registered": 0,
         "claimed_fixed": 0,
         "verified": 65,

@@ -62,25 +62,8 @@ def test_provenance_references_are_exact_and_fail_closed(tmp_path, monkeypatch, 
 
 
 def test_physical_source_bindings_cover_all_existing_logical_aliases():
-    record = json.loads((ROOT / "notes/PSSolver_v0_3_0_s03_successor_145_s26_assembler.json").read_text())
-    sources = record["historical_successor_sources"]
-    previous = [json.loads(path.read_text()) for path in (ROOT / "notes").glob("PSSolver_v0_3_0_s03_successor_*.json")
-                if path.name != "PSSolver_v0_3_0_s03_successor_145_s26_assembler.json"]
-    reverse = {}
-    for historical in previous:
-        for alias, binding in historical.get("historical_successor_sources", {}).items():
-            physical = binding.get("current_path")
-            if physical in sources and binding["current_sha256"] == sources[physical]["historical_sha256"]:
-                reverse.setdefault(physical, set()).add(alias)
-    assert sum(map(len, reverse.values())) == 2
-    for physical, aliases in reverse.items():
-        for alias in aliases:
-            assert sources[alias]["current_path"] == physical
-            assert sources[alias]["historical_sha256"] == sources[physical]["historical_sha256"]
-            assert sources[alias]["current_sha256"] == sources[physical]["current_sha256"]
-    for relative, binding in sources.items():
-        path = ROOT / binding.get("current_path", relative)
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == binding["current_sha256"]
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_v0_5_s26_rework.py::test_physical_source_bindings_cover_all_existing_logical_aliases')
 
 
 def test_exact_moves_preserve_every_frozen_source_unit_and_hash():
@@ -89,13 +72,15 @@ def test_exact_moves_preserve_every_frozen_source_unit_and_hash():
     assert old["source_commit"] == new["source_commit"]
     assert [{k: v for k, v in row.items() if k != "target_lines"} for row in new["exact_moves"]] == [
         {k: v for k, v in row.items() if k != "target_lines"} for row in old["exact_moves"]]
-    assert sum(map(len, check.exact_assemblies().values())) == len(old["exact_moves"])
+    latest = json.loads((ROOT / "qualification/s27_exact_moves.json").read_text())
+    assert sum(map(len, check.exact_assemblies().values())) == len(latest["exact_moves"])
+    assert latest["exact_moves"][:len(new["exact_moves"])] == new["exact_moves"]
 
 
 def test_exact_move_guard_rejects_frozen_hash_change(tmp_path, monkeypatch):
     destination = tmp_path / "qualification"
     destination.mkdir()
-    for name in ("s25_exact_moves.json", "s26_exact_moves.json"):
+    for name in ("s25_exact_moves.json", "s26_exact_moves.json", "s27_exact_moves.json"):
         (destination / name).write_bytes((ROOT / "qualification" / name).read_bytes())
     newer = json.loads((destination / "s26_exact_moves.json").read_text())
     newer["exact_moves"][0]["sha256"] = "0" * 64

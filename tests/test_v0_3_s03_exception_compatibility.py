@@ -11,10 +11,8 @@ import pssolver
 from pssolver import compile_simulation, run_simulation
 from pssolver.applications import (
     channel_beris_edwards as channel_application,
-    plane_beris_edwards as plane_application,
 )
 from pssolver.configuration import legacy_periodic as periodic_application
-from pssolver.runtime import legacy_entry as periodic_workflow
 from pssolver.functional import (
     FunctionalCheckpointError,
     FunctionalCheckpointIOError,
@@ -22,10 +20,12 @@ from pssolver.functional import (
 )
 from pssolver.io.checkpoint import (
     CheckpointError,
-    CheckpointIOError,
     CheckpointIntegrityError,
+    CheckpointIOError,
     CheckpointNotFoundError,
 )
+from pssolver.runtime import legacy_entry as periodic_workflow
+from pssolver.runtime import legacy_entry as plane_application
 from pssolver.workflows import channel_beris_edwards as channel_workflow
 from tests.test_phase8_p82_periodic_application import (
     _simulation as periodic_simulation,
@@ -193,8 +193,9 @@ def test_plane_application_preflight_preserves_checkpoint_integrity_error(
         raise sentinel
 
     monkeypatch.setattr(plane_application, "read_plane_checkpoint_header", reject)
+    monkeypatch.setattr("pssolver.io.checkpoint.read_checkpoint_json", lambda *_args, **_kwargs: {})
     with pytest.raises(CheckpointIntegrityError) as caught:
-        plane_application.run_plane_beris_edwards(spec)
+        plane_application.run_v04_plane_translation(spec)
 
     assert caught.value is sentinel
     assert isinstance(caught.value, CheckpointError)

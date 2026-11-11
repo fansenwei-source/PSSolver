@@ -5,8 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+
 import pytest
 
+import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 from pssolver import (
     Output,
     Simulation,
@@ -22,6 +24,10 @@ from pssolver.boundaries import (
     no_slip_velocity,
 )
 from pssolver.configuration import create_plane_beris_edwards_run_spec
+from pssolver.configuration import legacy_plane as plane_checkpoint_module
+from pssolver.configuration.legacy_plane import (
+    upgrade_plane_checkpoint_directory_v1,
+)
 from pssolver.functional import (
     FunctionalCheckpointCompatibilityError,
     build_channel_activity_functional_runtime,
@@ -30,11 +36,6 @@ from pssolver.functional import (
 from pssolver.geometries import RectangularChannel
 from pssolver.io.checkpoint_identity import SourceReleaseGeneration
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.workflows import plane_checkpoint as plane_checkpoint_module
-from pssolver.workflows.plane_checkpoint import (
-    upgrade_plane_checkpoint_directory_v1,
-)
-import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "historical_cpu_coverage_v1"

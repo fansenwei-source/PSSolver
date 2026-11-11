@@ -1,0 +1,2244 @@
+{
+  "guard_references": [
+    {
+      "file": "qualification/s26_impact.py",
+      "kind": "dotted_string",
+      "line": 69,
+      "module": "pssolver.engine.memberwise_transforms"
+    },
+    {
+      "file": "qualification/s26_test_classify.py",
+      "kind": "dotted_string",
+      "line": 15,
+      "module": "pssolver.engine.memberwise_transforms"
+    },
+    {
+      "file": "qualification/s27_impact.py",
+      "kind": "dotted_string",
+      "line": 517,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "qualification/s27_impact.py",
+      "kind": "dotted_string",
+      "line": 518,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_impact.py",
+      "kind": "dotted_string",
+      "line": 520,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_impact.py",
+      "kind": "dotted_string",
+      "line": 521,
+      "module": "pssolver.workflows.plane_observation"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 26,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 27,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 28,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 29,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 30,
+      "module": "pssolver.runtime.plane_compiled_v2_step"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 31,
+      "module": "pssolver.runtime.plane_application_bridge"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 32,
+      "module": "pssolver.runtime.static_lifting"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 33,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 34,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 35,
+      "module": "pssolver.workflows.plane_observation"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 36,
+      "module": "pssolver.workflows.plane_compiled_v2"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "dotted_string",
+      "line": 37,
+      "module": "pssolver.planning.plane_compiled_v2"
+    },
+    {
+      "file": "qualification/s27_move_check_source.py",
+      "kind": "file_string",
+      "line": 251,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_statement_map.py",
+      "kind": "file_string",
+      "line": 121,
+      "module": "pssolver.workflows.plane_observation"
+    },
+    {
+      "file": "qualification/s27_statement_map.py",
+      "kind": "file_string",
+      "line": 162,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_statement_map.py",
+      "kind": "file_string",
+      "line": 194,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "qualification/s27_statement_map.py",
+      "kind": "file_string",
+      "line": 274,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_statement_map.py",
+      "kind": "file_string",
+      "line": 18,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "qualification/s27_test_classify.py",
+      "kind": "dotted_string",
+      "line": 20,
+      "module": "pssolver.engine.memberwise_transforms"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 194,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 195,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 197,
+      "module": "pssolver.runtime.plane_application_bridge"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 198,
+      "module": "pssolver.workflows.plane_compiled_v2"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 321,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 396,
+      "module": "pssolver.runtime.static_lifting"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 438,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 439,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 440,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 441,
+      "module": "pssolver.runtime.plane_compiled_v2_step"
+    },
+    {
+      "file": "tests/test_architecture_import_boundaries.py",
+      "kind": "dotted_string",
+      "line": 442,
+      "module": "pssolver.runtime.plane_compiled_v2_step"
+    },
+    {
+      "file": "tests/test_architecture_stage_r.py",
+      "kind": "file_string",
+      "line": 25,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_fig4_numerics_cli.py",
+      "kind": "file_string",
+      "line": 166,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_fig4_numerics_cli.py",
+      "kind": "file_string",
+      "line": 213,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_fig4_numerics_cli.py",
+      "kind": "file_string",
+      "line": 214,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_fig4_numerics_cli.py",
+      "kind": "file_string",
+      "line": 216,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_fig4_numerics_cli.py",
+      "kind": "file_string",
+      "line": 217,
+      "module": "pssolver.workflows.plane_observation"
+    },
+    {
+      "file": "tests/test_fig4_numerics_cli.py",
+      "kind": "file_string",
+      "line": 218,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_components.py",
+      "kind": "file_string",
+      "line": 1059,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_components.py",
+      "kind": "file_string",
+      "line": 1060,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_components.py",
+      "kind": "file_string",
+      "line": 1061,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_components.py",
+      "kind": "file_string",
+      "line": 1062,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 665,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 666,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 667,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 668,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 669,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 724,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 725,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 726,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 727,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "tests/test_phase2_run_spec_decomposition.py",
+      "kind": "file_string",
+      "line": 730,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_schema_v1_serializer_compatibility.py",
+      "kind": "file_string",
+      "line": 349,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_schema_v1_serializer_compatibility.py",
+      "kind": "file_string",
+      "line": 350,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase2_schema_v1_serializer_compatibility.py",
+      "kind": "file_string",
+      "line": 351,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_phase2_schema_v1_serializer_compatibility.py",
+      "kind": "file_string",
+      "line": 352,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase7_p7711_public_entry_equivalence.py",
+      "kind": "file_string",
+      "line": 512,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_phase7_p776_production_connection.py",
+      "kind": "file_string",
+      "line": 26,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase8_p844_lifting_workflow_restart.py",
+      "kind": "file_string",
+      "line": 245,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase8_p844_lifting_workflow_restart.py",
+      "kind": "file_string",
+      "line": 250,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_phase8_p844_lifting_workflow_restart.py",
+      "kind": "file_string",
+      "line": 251,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_phase8_p844_lifting_workflow_restart.py",
+      "kind": "file_string",
+      "line": 252,
+      "module": "pssolver.runtime.static_lifting"
+    },
+    {
+      "file": "tests/test_phase8_p844_lifting_workflow_restart.py",
+      "kind": "file_string",
+      "line": 253,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_phase8_p844_lifting_workflow_restart.py",
+      "kind": "file_string",
+      "line": 254,
+      "module": "pssolver.workflows.plane_observation"
+    },
+    {
+      "file": "tests/test_rc4_checkpoint_identity_primitives.py",
+      "kind": "file_string",
+      "line": 321,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_rc4_fresh_initial_conditioning.py",
+      "kind": "file_string",
+      "line": 111,
+      "module": "pssolver.runtime.static_lifting"
+    },
+    {
+      "file": "tests/test_rc4_fresh_initial_conditioning.py",
+      "kind": "file_string",
+      "line": 112,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_rc4_fresh_initial_conditioning.py",
+      "kind": "file_string",
+      "line": 113,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_rc4_lifting_capability_contract.py",
+      "kind": "file_string",
+      "line": 231,
+      "module": "pssolver.runtime.static_lifting"
+    },
+    {
+      "file": "tests/test_rc4_lifting_capability_contract.py",
+      "kind": "file_string",
+      "line": 232,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_rc4_lifting_capability_contract.py",
+      "kind": "file_string",
+      "line": 233,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_rc4_lifting_capability_contract.py",
+      "kind": "file_string",
+      "line": 234,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_rc4_lifting_correctness_plan.py",
+      "kind": "file_string",
+      "line": 135,
+      "module": "pssolver.runtime.static_lifting"
+    },
+    {
+      "file": "tests/test_rc4_plane_checkpoint_identity_record.py",
+      "kind": "file_string",
+      "line": 52,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_rc4_plane_checkpoint_identity_record.py",
+      "kind": "file_string",
+      "line": 53,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_rc4_plane_checkpoint_identity_record.py",
+      "kind": "file_string",
+      "line": 54,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_rc4_plane_checkpoint_identity_record.py",
+      "kind": "file_string",
+      "line": 55,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_rc5_r54_packaging_surface.py",
+      "kind": "dotted_string",
+      "line": 46,
+      "module": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_rc6_1_plane_diagnostic_error_record.py",
+      "kind": "file_string",
+      "line": 179,
+      "module": "pssolver.workflows.plane_compiled_v2"
+    },
+    {
+      "file": "tests/test_v0_3_s05_checkpoint_metadata_integrity.py",
+      "kind": "dotted_string",
+      "line": 236,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 98,
+      "module": "pssolver.planning.plane_compiled_v2"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 102,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 103,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 104,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 109,
+      "module": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 110,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 111,
+      "module": "pssolver.workflows.plane_compiled_v2"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 144,
+      "module": "pssolver.planning.plane_compiled_v2"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 148,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 149,
+      "module": "pssolver.runtime.plane_compiled_v2_binding"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 150,
+      "module": "pssolver.runtime.plane_compiled_v2_step"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 151,
+      "module": "pssolver.workflows.plane_compiled_v2"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0052_scope_rework.py",
+      "kind": "file_string",
+      "line": 168,
+      "module": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r0056_import.py",
+      "kind": "file_string",
+      "line": 65,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r2_checkpoint_artifacts.py",
+      "kind": "file_string",
+      "line": 131,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py",
+      "kind": "file_string",
+      "line": 55,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/test_v0_4_s20_closeout.py",
+      "kind": "file_string",
+      "line": 59,
+      "module": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "tests/v0_5_s24_registry_reference.py",
+      "kind": "dotted_string",
+      "line": 24,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/v0_5_s24_registry_reference.py",
+      "kind": "dotted_string",
+      "line": 25,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/v0_5_s24_registry_reference.py",
+      "kind": "dotted_string",
+      "line": 26,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "tests/v0_5_s24_registry_reference.py",
+      "kind": "dotted_string",
+      "line": 33,
+      "module": "pssolver.runtime.plane_beris_edwards"
+    }
+  ],
+  "modules": [
+    {
+      "module": "pssolver.applications.plane_beris_edwards",
+      "path": "pssolver/applications/plane_beris_edwards.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.runtime.plane_beris_edwards",
+      "path": "pssolver/runtime/plane_beris_edwards.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.runtime.plane_legacy",
+      "path": "pssolver/runtime/plane_legacy.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.runtime.plane_compiled_v2_binding",
+      "path": "pssolver/runtime/plane_compiled_v2_binding.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.runtime.plane_compiled_v2_step",
+      "path": "pssolver/runtime/plane_compiled_v2_step.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.runtime.plane_application_bridge",
+      "path": "pssolver/runtime/plane_application_bridge.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.runtime.static_lifting",
+      "path": "pssolver/runtime/static_lifting.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.workflows.plane_beris_edwards",
+      "path": "pssolver/workflows/plane_beris_edwards.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.workflows.plane_checkpoint",
+      "path": "pssolver/workflows/plane_checkpoint.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.workflows.plane_observation",
+      "path": "pssolver/workflows/plane_observation.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.workflows.plane_compiled_v2",
+      "path": "pssolver/workflows/plane_compiled_v2.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.planning.plane_compiled_v2",
+      "path": "pssolver/planning/plane_compiled_v2.py",
+      "reason": "S-27 reviewed Plane retirement; retained carriers and observations move to the shared Engine/Runner boundary."
+    },
+    {
+      "module": "pssolver.engine.memberwise_transforms",
+      "path": "pssolver/engine/memberwise_transforms.py",
+      "reason": "R-0094 / S-27 r1.4: whole singleton member programs replace transform-only splitting."
+    }
+  ],
+  "provenance_references": [
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+      "file_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+      "file_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+      "file_sha256": "922661f5a1311020e8a2b7e3cbe35d207d59ae221b53b8b1d3da539071cca1a0",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+      "file_sha256": "922661f5a1311020e8a2b7e3cbe35d207d59ae221b53b8b1d3da539071cca1a0",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+      "file_sha256": "922661f5a1311020e8a2b7e3cbe35d207d59ae221b53b8b1d3da539071cca1a0",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+      "file_sha256": "922661f5a1311020e8a2b7e3cbe35d207d59ae221b53b8b1d3da539071cca1a0",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+      "file_sha256": "922661f5a1311020e8a2b7e3cbe35d207d59ae221b53b8b1d3da539071cca1a0",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc426_cross_device_checkpoint_plan.json",
+      "file_sha256": "06e4f18c7a9617355612ee4975b8650700b3a89fd724041c056ecf46bc3a39f2",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json",
+      "file_sha256": "3742ea254678a6156fd6ae14039adda427bce30d0019480aa2bf4ff42fe57aa8",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json",
+      "file_sha256": "3742ea254678a6156fd6ae14039adda427bce30d0019480aa2bf4ff42fe57aa8",
+      "kind": "record_string",
+      "pointer": "/expected_changed_file_boundaries/conditional_runtime_repair/3",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+      "file_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+      "file_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+      "file_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+      "file_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json",
+      "file_sha256": "d4d95ec3d719f85abf5a93c30c37877a78696bfa90699a3de517e201f23d7f79",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json",
+      "file_sha256": "d4d95ec3d719f85abf5a93c30c37877a78696bfa90699a3de517e201f23d7f79",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json",
+      "file_sha256": "d4d95ec3d719f85abf5a93c30c37877a78696bfa90699a3de517e201f23d7f79",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json",
+      "file_sha256": "d4d95ec3d719f85abf5a93c30c37877a78696bfa90699a3de517e201f23d7f79",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+      "file_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+      "file_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+      "file_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+      "file_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+      "file_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json",
+      "file_sha256": "2e0c122fbf7aa269c8746195c03b2d3f431e2f699c8536dc050b534266ad7c8d",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json",
+      "file_sha256": "2e0c122fbf7aa269c8746195c03b2d3f431e2f699c8536dc050b534266ad7c8d",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json",
+      "file_sha256": "0ab513797736922cdda66bfb9c87b1c070323475e4e5b120cedfe6955aa0568d",
+      "kind": "record_string",
+      "pointer": "/provenance/source_sha256/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json",
+      "file_sha256": "0ab513797736922cdda66bfb9c87b1c070323475e4e5b120cedfe6955aa0568d",
+      "kind": "record_string",
+      "pointer": "/provenance/source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json",
+      "file_sha256": "4716b47e589dac8f13b56458ace00179e4fd0815042f81f2d034e6547edb03b4",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json",
+      "file_sha256": "4716b47e589dac8f13b56458ace00179e4fd0815042f81f2d034e6547edb03b4",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+      "file_sha256": "5fae30a021f032979039bf2b1fde0edbeec2bfa405a1df14a9c3f4be2b59522b",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+      "file_sha256": "5fae30a021f032979039bf2b1fde0edbeec2bfa405a1df14a9c3f4be2b59522b",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json",
+      "file_sha256": "b91c44b8a426e405797fc03001a6d1f6ab228d8b8a803e50272b6e4a94742e73",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json",
+      "file_sha256": "b91c44b8a426e405797fc03001a6d1f6ab228d8b8a803e50272b6e4a94742e73",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json",
+      "file_sha256": "b16f46a582d55d017dae213b8d09f372fb6ed7a2c0015a79ea96eb8f3cae0661",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+      "file_sha256": "a24742f32fe6365a4aeebc0b468267ca5f1b23553980701c81794d6eac6ac7a1",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+      "file_sha256": "a24742f32fe6365a4aeebc0b468267ca5f1b23553980701c81794d6eac6ac7a1",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+      "file_sha256": "a24742f32fe6365a4aeebc0b468267ca5f1b23553980701c81794d6eac6ac7a1",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+      "file_sha256": "a24742f32fe6365a4aeebc0b468267ca5f1b23553980701c81794d6eac6ac7a1",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json",
+      "file_sha256": "d216a566fb1bc43ae70da88ac0134ab60597c86960423d283a1fb060299251ed",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json",
+      "file_sha256": "d216a566fb1bc43ae70da88ac0134ab60597c86960423d283a1fb060299251ed",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+      "file_sha256": "c33455b02eb894d78776096a24e657049a1ebc4f3a5c75d0d9fdee7db429b190",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+      "file_sha256": "c33455b02eb894d78776096a24e657049a1ebc4f3a5c75d0d9fdee7db429b190",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
+      "file_sha256": "2d9dd723432e8640e148faaf90725590c81799d9d18398861f6e9f07e70bed03",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
+      "file_sha256": "2d9dd723432e8640e148faaf90725590c81799d9d18398861f6e9f07e70bed03",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+      "file_sha256": "f0f46d9aa970c75e6415a323f8a2605636a76c8792c70441c03e5c0de29557e2",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+      "file_sha256": "f0f46d9aa970c75e6415a323f8a2605636a76c8792c70441c03e5c0de29557e2",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+      "file_sha256": "f0f46d9aa970c75e6415a323f8a2605636a76c8792c70441c03e5c0de29557e2",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+      "file_sha256": "f0f46d9aa970c75e6415a323f8a2605636a76c8792c70441c03e5c0de29557e2",
+      "kind": "record_string",
+      "pointer": "/implementation_files/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_public_errors_metadata.json",
+      "file_sha256": "c8dd4782e2f00f85302cd427c75bb0497fe6a24a8488596d7798acc1e3cc07dd",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_public_errors_metadata.json",
+      "file_sha256": "c8dd4782e2f00f85302cd427c75bb0497fe6a24a8488596d7798acc1e3cc07dd",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_02_rework.json",
+      "file_sha256": "3789c3a5aa1dea3c14b3fe5aa4f953a73a06916e2f970ebd9b6b1a6dc06011c1",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_02_rework.json",
+      "file_sha256": "3789c3a5aa1dea3c14b3fe5aa4f953a73a06916e2f970ebd9b6b1a6dc06011c1",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_09_s05_metadata_integrity.json",
+      "file_sha256": "e92d5e71410e8c55754f3fc32b4c46d4bbcf0567765c26ab10bc3f1004786e52",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_09_s05_metadata_integrity.json",
+      "file_sha256": "e92d5e71410e8c55754f3fc32b4c46d4bbcf0567765c26ab10bc3f1004786e52",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_102_r0056_import.json",
+      "file_sha256": "71745ff012103d79fca45a42d90be0e268aac20531b8f88cc6c3c112a5a5e619",
+      "kind": "record_string",
+      "pointer": "/unchanged_r4_batch_change_dispositions/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/31",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/30",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/26",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/25",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/24",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/23",
+      "value": "pssolver/runtime/plane_application_bridge.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/18",
+      "value": "pssolver/planning/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch.json",
+      "file_sha256": "c9a66942e6728043867330ae98afa1d56d2601b493a1fa4762b55dfaf8ffc740",
+      "kind": "record_string",
+      "pointer": "/frozen_sources/3",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/runtime/plane_compiled_v2_step.py",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/runtime/plane_compiled_v2_binding.py",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/runtime/plane_application_bridge.py",
+      "value": "pssolver/runtime/plane_application_bridge.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/planning/plane_compiled_v2.py",
+      "value": "pssolver/planning/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_134_s22_foundation.json",
+      "file_sha256": "03ab3dd3283c7f3bcc44076e38dc2e72a0b0b0845662610a8be0f48897308093",
+      "kind": "record_string",
+      "pointer": "/unchanged_runtime_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_141_s24_retirement.json",
+      "file_sha256": "4bc28f1c3477361bdca12c687d8a46da36f4acd333f4da2e4225c3a8121d14f8",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_141_s24_retirement.json",
+      "file_sha256": "4bc28f1c3477361bdca12c687d8a46da36f4acd333f4da2e4225c3a8121d14f8",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_142_s24_rework.json",
+      "file_sha256": "6f6661d907c119e1b234caacb670138661324082b35f95112bee53107c79afe0",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_142_s24_rework.json",
+      "file_sha256": "6f6661d907c119e1b234caacb670138661324082b35f95112bee53107c79afe0",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_compiled_v2_step.py",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_compiled_v2_binding.py",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_143_s25_engine.json",
+      "file_sha256": "b3de47a6b9f01131d8bcb5626360af3c07a5455d2a37995549af0d555a67715e",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_144_s25_memberwise.json",
+      "file_sha256": "1e5204b912a80879420bdbc8081fe49de6c667224f849a26cf8049c778da2587",
+      "kind": "record_string",
+      "pointer": "/introduced_sources/@pssolver/engine/memberwise_transforms.py",
+      "value": "pssolver/engine/memberwise_transforms.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_145_s26_assembler.json",
+      "file_sha256": "96c6e4163e609282976ec181d64e1c4e015f6d8ad863ce6162011ff2224edc9b",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/engine/memberwise_transforms.py",
+      "value": "pssolver/engine/memberwise_transforms.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_17_s07_packaging_metadata_docs.json",
+      "file_sha256": "042a652740951017d3cb92e8aead82cd6ca1d0e9e725fb05acfd597205cab823",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_17_s07_packaging_metadata_docs.json",
+      "file_sha256": "042a652740951017d3cb92e8aead82cd6ca1d0e9e725fb05acfd597205cab823",
+      "kind": "record_string",
+      "pointer": "/runtime_sources/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json",
+      "file_sha256": "65be86ac77af8247df2a7cce0dea457f1706d9a4dcb037367ac4b6b6d5b08064",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json",
+      "file_sha256": "65be86ac77af8247df2a7cce0dea457f1706d9a4dcb037367ac4b6b6d5b08064",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json",
+      "file_sha256": "65be86ac77af8247df2a7cce0dea457f1706d9a4dcb037367ac4b6b6d5b08064",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_95_s18_r2_checkpoint_integrity.json",
+      "file_sha256": "c987bf7878897f7258b9410f47b30fd817a59f8041d4b2058dd4c54e11524814",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_97_s18_r4_step_progress.json",
+      "file_sha256": "0b0acdd15cef8c13f972d0eafcffbffe395912290f5d99cb1cd0432761abe546",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_97_s18_r4_step_progress.json",
+      "file_sha256": "0b0acdd15cef8c13f972d0eafcffbffe395912290f5d99cb1cd0432761abe546",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_compiled_v2_step.py",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_3_0_s03_successor_97_s18_r4_step_progress.json",
+      "file_sha256": "0b0acdd15cef8c13f972d0eafcffbffe395912290f5d99cb1cd0432761abe546",
+      "kind": "record_string",
+      "pointer": "/historical_successor_sources/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R1/eight_stack_layers_and_files/7/files/0",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R1/eight_stack_layers_and_files/6/files/2",
+      "value": "pssolver/runtime/plane_application_bridge.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R1/eight_stack_layers_and_files/5/files/0",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R4/existing_files_in_scope/9",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R4/existing_files_in_scope/5",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R4/existing_files_in_scope/4",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/batches/R2/existing_files_in_scope/8",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/31/path",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/30/path",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/26/path",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/25/path",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/24/path",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/23/path",
+      "value": "pssolver/runtime/plane_application_bridge.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/18/path",
+      "value": "pssolver/planning/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R1/read_only_frozen/3/path",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/out_of_scope/6/path",
+      "value": "pssolver/planning/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/read_only_frozen/15/path",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/read_only_frozen/14/path",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/read_only_frozen/11/path",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/batch_change/13/path",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/batch_change/10/path",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/batch_change/9/path",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R4/batch_change/8/path",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R2/read_only_frozen/12/path",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R2/read_only_frozen/11/path",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
+      "file_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5",
+      "kind": "record_string",
+      "pointer": "/scope_classification_v2/R2/batch_change/11/path",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/PSSolver_v0_4_0_s20_closeout_triage.json",
+      "file_sha256": "9ad39f4b45244975a0d93898e722e915896b09105bb32f5b190df119cefbaccf",
+      "kind": "record_string",
+      "pointer": "/r4_retained_files/4/path",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/p2_5_4/consumer",
+      "value": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/p2_5_3/next_consumer",
+      "value": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/p2_5_3/consumer",
+      "value": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/p2_5_2/next_consumer",
+      "value": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/p2_5_2/consumer",
+      "value": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/p2_5_1/next_consumer",
+      "value": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/completed_consumers/3",
+      "value": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/completed_consumers/2",
+      "value": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/completed_consumers/1",
+      "value": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/completed_consumers/0",
+      "value": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/order/3",
+      "value": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/order/2",
+      "value": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/order/1",
+      "value": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/migration/6/order/0",
+      "value": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/consumers/4/module",
+      "value": "pssolver.workflows.plane_checkpoint"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/consumers/3/module",
+      "value": "pssolver.workflows.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/consumers/2/module",
+      "value": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/consumers/1/module",
+      "value": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_2_run_spec_inventory.json",
+      "file_sha256": "7a0714e9e9bf5b14075f9ab7a792acd313476cedb2a487d262be3f1ee61d4fea",
+      "kind": "record_string",
+      "pointer": "/consumers/0/module",
+      "value": "pssolver.applications.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_3_p36_local_qualification.json",
+      "file_sha256": "7165d622717a4204b0432e010fe7c8f4b23c59ee38fe0ecc06cc0d38870a835b",
+      "kind": "record_string",
+      "pointer": "/package_gate/installed_phase3_modules_imported/5",
+      "value": "pssolver.runtime.plane_beris_edwards"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_3_p36_local_qualification.json",
+      "file_sha256": "7165d622717a4204b0432e010fe7c8f4b23c59ee38fe0ecc06cc0d38870a835b",
+      "kind": "record_string",
+      "pointer": "/package_gate/installed_phase3_modules_imported/4",
+      "value": "pssolver.runtime.plane_legacy"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_4_contract.json",
+      "file_sha256": "beffaabf004a37b3c7c06630e96078f070dec77203ee074606f8c6c6b4fcc6b2",
+      "kind": "record_string",
+      "pointer": "/p4_0_source_oracle/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_4_contract.json",
+      "file_sha256": "beffaabf004a37b3c7c06630e96078f070dec77203ee074606f8c6c6b4fcc6b2",
+      "kind": "record_string",
+      "pointer": "/p4_0_source_oracle/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p51_compiled_declarations.json",
+      "file_sha256": "7c69e8d4a0a182829cd2adfc16862b3a034d135dda3d4dcd09d2f06b60d59049",
+      "kind": "record_string",
+      "pointer": "/source_identity/@pssolver/planning/plane_compiled_v2.py",
+      "value": "pssolver/planning/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p52_construction_binding.json",
+      "file_sha256": "d69adb74205b27fbd00662c6278a9a4186d0102b9466293266a153b507ac5093",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/runtime/plane_compiled_v2_binding.py",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p53_compiled_euler_step.json",
+      "file_sha256": "fd07fd749b395bed2f561307c3ad2fe91094341175051cd754b9b70e9e1464df",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/runtime/plane_compiled_v2_step.py",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p54_observation_checkpoint.json",
+      "file_sha256": "64ea9e60b7852e29e1e2f4725edce269601bc3fb2a5ad3eda8b90f05aa56ad4a",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p55_application_connection.json",
+      "file_sha256": "e660d3a2a40f615e1dd59f87f4a5e3b1bae35a46da2ed4121df767979a2e39af",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p55_application_connection.json",
+      "file_sha256": "e660d3a2a40f615e1dd59f87f4a5e3b1bae35a46da2ed4121df767979a2e39af",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p55_application_connection.json",
+      "file_sha256": "e660d3a2a40f615e1dd59f87f4a5e3b1bae35a46da2ed4121df767979a2e39af",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/runtime/plane_compiled_v2_binding.py",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p55_application_connection.json",
+      "file_sha256": "e660d3a2a40f615e1dd59f87f4a5e3b1bae35a46da2ed4121df767979a2e39af",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p56_local_closure.json",
+      "file_sha256": "0a30e27340e9d1982680742b8e04b01cd19b5b4cafa18c8361541426a37208c9",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p56_local_closure.json",
+      "file_sha256": "0a30e27340e9d1982680742b8e04b01cd19b5b4cafa18c8361541426a37208c9",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p56_local_closure.json",
+      "file_sha256": "0a30e27340e9d1982680742b8e04b01cd19b5b4cafa18c8361541426a37208c9",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/runtime/plane_compiled_v2_step.py",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_p56_local_closure.json",
+      "file_sha256": "0a30e27340e9d1982680742b8e04b01cd19b5b4cafa18c8361541426a37208c9",
+      "kind": "record_string",
+      "pointer": "/validation/source_identity/@pssolver/runtime/plane_compiled_v2_binding.py",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_plane_inventory.json",
+      "file_sha256": "01110304d27257f3f42aa887bad02085d377b02c2082ce570539dd7b7a663126",
+      "kind": "record_string",
+      "pointer": "/source_oracle/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_plane_inventory.json",
+      "file_sha256": "01110304d27257f3f42aa887bad02085d377b02c2082ce570539dd7b7a663126",
+      "kind": "record_string",
+      "pointer": "/source_oracle/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_plane_inventory.json",
+      "file_sha256": "01110304d27257f3f42aa887bad02085d377b02c2082ce570539dd7b7a663126",
+      "kind": "record_string",
+      "pointer": "/source_oracle/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_plane_inventory.json",
+      "file_sha256": "01110304d27257f3f42aa887bad02085d377b02c2082ce570539dd7b7a663126",
+      "kind": "record_string",
+      "pointer": "/source_oracle/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_5_plane_inventory.json",
+      "file_sha256": "01110304d27257f3f42aa887bad02085d377b02c2082ce570539dd7b7a663126",
+      "kind": "record_string",
+      "pointer": "/source_oracle/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p770_model_geometry_coupling_inventory.json",
+      "file_sha256": "9e137d9eba689ac75aaf86808ed3a9a1cb9e9d6173ce5458fc239d62c417cc62",
+      "kind": "record_string",
+      "pointer": "/source_identities/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p770_model_geometry_coupling_inventory.json",
+      "file_sha256": "9e137d9eba689ac75aaf86808ed3a9a1cb9e9d6173ce5458fc239d62c417cc62",
+      "kind": "record_string",
+      "pointer": "/source_identities/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p770_model_geometry_coupling_inventory.json",
+      "file_sha256": "9e137d9eba689ac75aaf86808ed3a9a1cb9e9d6173ce5458fc239d62c417cc62",
+      "kind": "record_string",
+      "pointer": "/source_identities/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.json",
+      "file_sha256": "44299230f62ad3d1433e0e07779ae566ea98a736101df56f01ce6b30efc17a27",
+      "kind": "record_string",
+      "pointer": "/qualified_source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p775_package_construction.json",
+      "file_sha256": "be5c067b12fd4048fe3dd5cbf707a3f9dd1cc353b3fa7c8dd3d3cf089e6b9801",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_application_bridge.py",
+      "value": "pssolver/runtime/plane_application_bridge.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p775_package_construction.json",
+      "file_sha256": "be5c067b12fd4048fe3dd5cbf707a3f9dd1cc353b3fa7c8dd3d3cf089e6b9801",
+      "kind": "record_string",
+      "pointer": "/compatibility_bridges/plane_compiled/target",
+      "value": "pssolver.workflows.plane_compiled_v2"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p775_package_construction.json",
+      "file_sha256": "be5c067b12fd4048fe3dd5cbf707a3f9dd1cc353b3fa7c8dd3d3cf089e6b9801",
+      "kind": "record_string",
+      "pointer": "/compatibility_bridges/plane_compiled/path",
+      "value": "pssolver.runtime.plane_application_bridge"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p776_h100_closure.json",
+      "file_sha256": "0368fef23c1e90ee499ba6325e83988572240ccdaf659c1c597372be4e554173",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_7_p776_production_connection.json",
+      "file_sha256": "bbe9f64a4d792033aa0c5acb8e9e8ebf5618dd3119bb48bfeef66dfba269e57c",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p844_lifting_workflow_restart.json",
+      "file_sha256": "e417752006638d608190eb91631e38eb1ce1b54d386fbe74b3f690bd89e2509a",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p844_lifting_workflow_restart.json",
+      "file_sha256": "e417752006638d608190eb91631e38eb1ce1b54d386fbe74b3f690bd89e2509a",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p844_lifting_workflow_restart.json",
+      "file_sha256": "e417752006638d608190eb91631e38eb1ce1b54d386fbe74b3f690bd89e2509a",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p844_lifting_workflow_restart.json",
+      "file_sha256": "e417752006638d608190eb91631e38eb1ce1b54d386fbe74b3f690bd89e2509a",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p844_lifting_workflow_restart.json",
+      "file_sha256": "e417752006638d608190eb91631e38eb1ce1b54d386fbe74b3f690bd89e2509a",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p844_lifting_workflow_restart.json",
+      "file_sha256": "e417752006638d608190eb91631e38eb1ce1b54d386fbe74b3f690bd89e2509a",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p845_fused_reconstruction_recovery.json",
+      "file_sha256": "543fed86977237a83f48451d4f1ec620d0c7c3c17d93b19c3f0be75f856180e7",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p845_memory_recovery.json",
+      "file_sha256": "45dc94b64ed171cb938c01fdb61425fae5d56f2f770cae4a5882af5c8958ba71",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p845_memory_recovery.json",
+      "file_sha256": "45dc94b64ed171cb938c01fdb61425fae5d56f2f770cae4a5882af5c8958ba71",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "notes/architecture_v0_2/phase_8_p84_lifting_plan.json",
+      "file_sha256": "60c8ec672bbe1dcb71dbd56318bbf34915c9941414a34f2fb88123724c2577c0",
+      "kind": "record_string",
+      "pointer": "/reviewed_source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/68/path",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/66/path",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/61/path",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/60/observed_importers/0",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/60/path",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/51/observed_importers/3",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/25/observed_importers/5",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/25/observed_importers/0",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/24/observed_importers/4",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/18/observed_importers/2",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/18/observed_importers/1",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/18/observed_importers/0",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/16/observed_importers/1",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/16/observed_importers/0",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/12/observed_importers/8",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/12/observed_importers/7",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/12/observed_importers/6",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/lint_baseline.json",
+      "file_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
+      "kind": "record_string",
+      "pointer": "/diagnostics/12/observed_importers/5",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/s24_frozen_sources.json",
+      "file_sha256": "843ea5416324f7df638e8c5bfcdad8d665465d5b6a0e046e051b8c4b948b1d41",
+      "kind": "record_string",
+      "pointer": "/files/254/path",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_observation.py",
+      "value": "pssolver/workflows/plane_observation.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_compiled_v2.py",
+      "value": "pssolver/workflows/plane_compiled_v2.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_checkpoint.py",
+      "value": "pssolver/workflows/plane_checkpoint.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/workflows/plane_beris_edwards.py",
+      "value": "pssolver/workflows/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/static_lifting.py",
+      "value": "pssolver/runtime/static_lifting.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_legacy.py",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_compiled_v2_step.py",
+      "value": "pssolver/runtime/plane_compiled_v2_step.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_compiled_v2_binding.py",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_beris_edwards.py",
+      "value": "pssolver/runtime/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/runtime/plane_application_bridge.py",
+      "value": "pssolver/runtime/plane_application_bridge.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/planning/plane_compiled_v2.py",
+      "value": "pssolver/planning/plane_compiled_v2.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/source_sha256/@pssolver/applications/plane_beris_edwards.py",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/functions_over_150/57/file",
+      "value": "pssolver/runtime/plane_legacy.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/functions_over_150/56/file",
+      "value": "pssolver/runtime/plane_compiled_v2_binding.py"
+    },
+    {
+      "file": "qualification/structure_metrics/e32ac21.json",
+      "file_sha256": "678fd5e7cac3b257741476e0f628ece4a2a3f779da404f7927aceb673d8a0deb",
+      "kind": "record_string",
+      "pointer": "/functions_over_150/1/file",
+      "value": "pssolver/applications/plane_beris_edwards.py"
+    }
+  ],
+  "registry_files": [
+    "qualification/historical_s27_tests.json",
+    "qualification/s27_exact_moves.json",
+    "qualification/s27_expected_unimportable.json",
+    "qualification/s27_impact_targets.json",
+    "qualification/s27_metadata_classes.json",
+    "qualification/s27_r2_tables.json",
+    "qualification/s27_retired_modules.json",
+    "qualification/s27_statement_map.json",
+    "qualification/s27_test_disposition.json"
+  ],
+  "retired_tests": [
+    "tests/test_phase5_compiled_declarations.py",
+    "tests/test_phase5_compiled_binding.py",
+    "tests/test_phase5_compiled_step.py",
+    "tests/test_phase5_compiled_workflow_adapter.py",
+    "tests/test_phase5_local_closure.py",
+    "tests/test_phase2_plane_workflow_migration.py",
+    "tests/test_phase7_p774_runtime_construction_binding.py",
+    "tests/test_phase7_p775_package_construction.py",
+    "tests/test_phase2_plane_runtime_selector_migration.py",
+    "tests/test_phase3_legacy_connection.py",
+    "tests/test_rc4_lifting_h100_qualification.py",
+    "tests/test_diagnose_plane_static_lifting_recovery.py",
+    "tests/test_diagnose_rc4_lifting_correctness.py",
+    "tests/test_phase8_p845_h100_qualification.py",
+    "tests/test_profile_plane_runtime_timestep.py"
+  ],
+  "retirement_reference_policy": "S-27 r2 section 6.3 categories; old per-line lists retained only as reference.",
+  "source_commit": "327a192ba879da0991110eca99f4b69b9a45c84e"
+}

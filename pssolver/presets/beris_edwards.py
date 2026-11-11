@@ -21,11 +21,12 @@ class CompleteStressBerisEdwards(Model):
     pressure = ConstrainedField(("p",))
     alpha = Parameter()
 
-    def __init__(self, *, material, ldg_l1, stokes, **parameters):
+    def __init__(self, *, material, ldg_l1, stokes, distortion_odd_boundary_conditions=None, **parameters):
         super().__init__(**parameters)
         self.material = material
         self.ldg_l1 = ldg_l1
         self.stokes = stokes
+        self.distortion_odd_boundary_conditions = distortion_odd_boundary_conditions
 
     def terms(self, f, p):
         material = self.material
@@ -63,6 +64,8 @@ class CompleteStressBerisEdwards(Model):
                     "ldg_l1": self.ldg_l1,
                     "flow_alignment": material["flow_alignment"],
                     "zero_mode_policy": self.stokes["tangential_zero_mode_policy"],
+                    **({"distortion_odd_boundary_conditions": self.distortion_odd_boundary_conditions}
+                       if self.distortion_odd_boundary_conditions is not None else {}),
                 },
                 execution_options=("molecular_field_linear_space", "stress_divergence_sum_space"),
             ),

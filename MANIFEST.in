@@ -21,7 +21,6 @@ include pssolver/api/runner.py
 include pssolver/api/simulation.py
 include pssolver/applications/__init__.py
 include pssolver/applications/channel_beris_edwards.py
-include pssolver/applications/plane_beris_edwards.py
 include pssolver/backends/__init__.py
 include pssolver/backends/bounded.py
 include pssolver/backends/tensor_product.py
@@ -83,7 +82,7 @@ include pssolver/engine/engine.py
 include pssolver/engine/field_view.py
 include pssolver/engine/imex.py
 include pssolver/engine/linear.py
-include pssolver/engine/memberwise_transforms.py
+include pssolver/engine/members.py
 include pssolver/engine/program.py
 include pssolver/engine/progress.py
 include pssolver/engine/state.py
@@ -181,7 +180,6 @@ include pssolver/planning/engine_plan.py
 include pssolver/planning/lifting.py
 include pssolver/planning/package_construction.py
 include pssolver/planning/plan.py
-include pssolver/planning/plane_compiled_v2.py
 include pssolver/planning/robin.py
 include pssolver/planning/simulation.py
 include pssolver/planning/term_analysis.py
@@ -194,17 +192,12 @@ include pssolver/runtime/channel_beris_edwards.py
 include pssolver/runtime/finite_q_anchoring.py
 include pssolver/runtime/legacy_entry.py
 include pssolver/runtime/observations.py
+include pssolver/runtime/plane_observations.py
 include pssolver/runtime/package_construction.py
-include pssolver/runtime/plane_application_bridge.py
-include pssolver/runtime/plane_beris_edwards.py
-include pssolver/runtime/plane_compiled_v2_binding.py
-include pssolver/runtime/plane_compiled_v2_step.py
-include pssolver/runtime/plane_legacy.py
 include pssolver/runtime/robin_scalar.py
 include pssolver/runtime/runner.py
 include pssolver/runtime/simulation_construction.py
 include pssolver/runtime/state_validation.py
-include pssolver/runtime/static_lifting.py
 include pssolver/snapshots.py
 include pssolver/solver.py
 include pssolver/systems/__init__.py
@@ -218,7 +211,8 @@ include pssolver/workflows/__init__.py
 include pssolver/workflows/channel_beris_edwards.py
 include pssolver/workflows/channel_checkpoint_observation.py
 include pssolver/workflows/finite_q_anchoring.py
-include pssolver/workflows/plane_beris_edwards.py
-include pssolver/workflows/plane_checkpoint.py
-include pssolver/workflows/plane_compiled_v2.py
-include pssolver/workflows/plane_observation.py
+include pssolver/cli/__init__.py
+include pssolver/cli/plane.py
+include pssolver/configuration/legacy_plane.py
+include pssolver/engine/groups.py
+include pssolver/linear_solvers/stokes/plane_free_slip_stateless.py

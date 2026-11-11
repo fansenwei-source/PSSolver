@@ -55,8 +55,37 @@ class Runner:
         self.saved = []
         self.checkpoints = []
         self.diagnostics = []
+        self.constraint_diagnostics = {}
+
+    def _prepare(self, state):
+        diagnostics = {}
+        self.engine.prepare_constraints_(state, diagnostics=diagnostics)
+        if diagnostics:
+            self.constraint_diagnostics = diagnostics
+        assert state.constrained_current
+
+    def _diagnostic(self, state, step):
+        assert state.constrained_current
+        extra = {}
+        if getattr(self.capture, "wants_constraint_diagnostics", False):
+            extra["constraint_diagnostics"] = self.constraint_diagnostics
+        return self.capture.diagnostic(self.engine.field_view(state), step=step, **extra)
 
     def run(self, state, *, start_step, progress=None):
+        if not hasattr(self.capture, "begin_run"):
+            return self._run(state, start_step=start_step, progress=progress)
+        self.capture.begin_run(self.output_directory, self.metadata)
+        started = time.time()
+        try:
+            return self._run(state, start_step=start_step, progress=progress)
+        except BaseException as error:
+            self.capture.record_failure(
+                self.output_directory, self.metadata, error, state=state,
+                saved=self.saved, checkpoints=self.checkpoints, elapsed=time.time() - started,
+            )
+            raise
+
+    def _run(self, state, *, start_step, progress=None):
         start = start_step
         steps = self.schedule.steps
         if self.schedule.save_start_step > start + steps:
@@ -70,7 +99,10 @@ class Runner:
         executed = 0
         for local_step in iterator:
             if local_step != executed:
-                raise ValueError("progress must yield consecutive local steps starting at zero")
+                raise ValueError(getattr(
+                    self.capture, "progress_order_error",
+                    "progress must yield consecutive local steps starting at zero",
+                ))
             absolute = start + local_step
             diagnostic_due = (
                 self.schedule.diagnostics and absolute % self.schedule.diagnostic_interval == 0
@@ -80,11 +112,12 @@ class Runner:
                 and absolute % self.schedule.save_interval == 0
             )
             if diagnostic_due or save_due:
-                self.engine.prepare_constraints_(state)
+                self._prepare(state)
             if diagnostic_due:
-                self.diagnostics.append(
-                    self.capture.diagnostic(self.engine.field_view(state), step=absolute)
-                )
+                value = self._diagnostic(state, absolute)
+                self.diagnostics.append(value)
+                if hasattr(self.capture, "progress_diagnostic"):
+                    self.capture.progress_diagnostic(iterator, value)
             if save_due:
                 observation = self.capture.observation(self.engine.field_view(state), step=absolute)
                 _save_observation(
@@ -93,7 +126,10 @@ class Runner:
                     hydrodynamics=self.capture.hydrodynamics,
                 )
                 self.saved.append(absolute)
-            self.engine.step_(state)
+            diagnostics = {}
+            self.engine.step_(state, diagnostics=diagnostics)
+            if diagnostics:
+                self.constraint_diagnostics = diagnostics
             executed += 1
             interval = self.schedule.checkpoint_interval
             if interval is not None and state.completed_steps % interval == 0:
@@ -104,27 +140,27 @@ class Runner:
                         *((name, fields[name]) for name in names),
                         *((f"{name}.hat", fields[f"{name}.hat"]) for name in names),
                     ),
-                    application_family="periodic_complete_stress",
+                    application_family=self.capture.application_family,
                     stage="checkpoint",
                     step=state.completed_steps,
                 )
-                self.engine.prepare_constraints_(state)
+                self._prepare(state)
                 engine_state.write(
                     self.output_directory / f"checkpoint_{state.completed_steps}",
                     state,
                     plan_identity_sha256=self.engine.plan.identity_sha256,
                     plan_metadata=self.engine.plan.to_metadata(),
                     refresh_interval=self.engine.plan.integrator.refresh_interval,
-                    run_provenance={
-                        "legacy_configuration_sha256": self.metadata["configuration_sha256"],
-                        "legacy_runtime_identity_sha256": self.metadata["runtime_identity_sha256"],
-                    },
+                    run_provenance=self.capture.checkpoint_provenance(self.metadata),
                 )
                 self.checkpoints.append(state.completed_steps)
         if executed != steps:
-            raise ValueError(f"progress yielded {executed} steps; expected exactly {steps}")
+            raise ValueError(getattr(
+                self.capture, "progress_length_error",
+                f"progress yielded {executed} steps; expected exactly {steps}",
+            ))
         final_step = start + steps
-        self.engine.prepare_constraints_(state)
+        self._prepare(state)
         final = self.capture.observation(self.engine.field_view(state), step=final_step)
         if final_step not in self.saved:
             _save_observation(
@@ -135,7 +171,7 @@ class Runner:
             self.saved.append(final_step)
         if self.schedule.diagnostics:
             self.diagnostics.append(
-                self.capture.diagnostic(self.engine.field_view(state), step=final_step)
+                self._diagnostic(state, final_step)
             )
             write_structured_diagnostics(
                 self.output_directory,
@@ -148,8 +184,6 @@ class Runner:
             status="complete",
             completed_steps=final_step,
             elapsed_seconds=elapsed,
-            saved_steps=self.saved,
-            checkpoint_steps=self.checkpoints,
             diagnostics=diagnostics_metadata_envelope(
                 application_family=self.capture.application_family,
                 runtime_path=self.capture.runtime_path,
@@ -157,6 +191,9 @@ class Runner:
                 steps=[value.step for value in self.diagnostics],
                 dtype=self.capture.diagnostic_dtype,
             ),
+        )
+        self.capture.finalize_metadata(
+            self.metadata, state=state, saved=self.saved, checkpoints=self.checkpoints,
         )
         (self.output_directory / "metadata.json").write_text(
             json.dumps(self.metadata, indent=2, sort_keys=True) + "\n",

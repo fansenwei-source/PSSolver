@@ -4,22 +4,22 @@ from __future__ import annotations
 
 import ast
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
 
-from pssolver.applications import run_plane_beris_edwards
-from pssolver.applications.plane_beris_edwards import main
+from pssolver.cli.plane import main
 from pssolver.configuration import create_plane_beris_edwards_run_spec
-from pssolver.workflows import PlaneWorkflowResult
+from pssolver.runtime.legacy_entry import run_v04_plane_translation as run_plane_beris_edwards
+from pssolver.runtime.runner import RunResult as PlaneWorkflowResult
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
 COMPATIBILITY_CLI = PROJECT_ROOT / "Plane_beris_edwards_stokes.py"
-APPLICATION = PROJECT_ROOT / "pssolver/applications/plane_beris_edwards.py"
+APPLICATION = PROJECT_ROOT / "pssolver/runtime/legacy_entry.py"
 V01_SCOPE = PROJECT_ROOT / "notes/pssolver_v0_1_scope.md"
 SETUP = PROJECT_ROOT / "setup.py"
 
@@ -73,34 +73,9 @@ def _spec(output: Path, *, dry_run: bool = False):
     )
 
 
-def test_compatibility_cli_is_import_safe_and_thin():
-    code = "import Plane_beris_edwards_stokes; print('import-safe')"
-    result = subprocess.run(
-        [sys.executable, "-c", code, "--unknown-host-argument"],
-        cwd=PROJECT_ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    assert result.returncode == 0, result.stderr
-    assert result.stdout.strip() == "import-safe"
-
-    source = COMPATIBILITY_CLI.read_text(encoding="utf-8")
-    assert len(source.splitlines()) <= 20
-    assert "pssolver.applications.plane_beris_edwards import main" in source
-    assert "parse_plane_beris_edwards_run_spec" not in source
-    assert "build_plane_beris_edwards_runtime" not in source
-    assert "torch" not in source
-    assert "numpy" not in source
 
 
 def test_application_module_owns_orchestration_and_exports_callable_api():
-    source = APPLICATION.read_text(encoding="utf-8")
-    assert "def run_plane_beris_edwards(" in source
-    assert "def main(" in source
-    assert "build_package_simulation_runtime(" in source
-    assert "PlaneBerisEdwardsWorkflow(" in source
-
     with pytest.raises(TypeError, match="PlaneBerisEdwardsRunSpec"):
         run_plane_beris_edwards(object())
 
@@ -136,7 +111,7 @@ def test_callable_api_and_compatibility_cli_preserve_one_step_trajectory(tmp_pat
     assert result.final_step == 1
 
     cli = subprocess.run(
-        [sys.executable, str(COMPATIBILITY_CLI), *_arguments(cli_output)],
+        [sys.executable, "-B", "-c", "from pssolver.cli.plane import main; raise SystemExit(main())", *_arguments(cli_output)],
         cwd=PROJECT_ROOT,
         check=False,
         capture_output=True,
@@ -181,4 +156,4 @@ def test_package_declares_the_supported_plane_console_entry_point():
     tree = ast.parse(SETUP.read_text(encoding="utf-8"))
     text = ast.unparse(tree)
     assert "pssolver-plane-beris-edwards=" in text
-    assert "pssolver.applications.plane_beris_edwards:main" in text
+    assert "pssolver.cli.plane:main" in text

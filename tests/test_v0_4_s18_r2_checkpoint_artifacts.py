@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import ast
 import hashlib
 import json
 from pathlib import Path
@@ -122,31 +121,8 @@ def test_sized_tensor_record_preserves_finite_q_layout(tmp_path: Path) -> None:
 
 
 def test_r2_writers_delegate_to_one_private_owner() -> None:
-    expected = {
-        "pssolver/experimental/modal_block_checkpoint.py": ("write_reference_tensor_record"),
-        "pssolver/functional/channel_checkpoint.py": ("write_standard_tensor_record"),
-        "pssolver/integrators/reference_checkpoint.py": ("write_reference_tensor_record"),
-        "pssolver/workflows/finite_q_anchoring.py": ("write_sized_tensor_record"),
-        "pssolver/io/legacy/periodic_workflow.py": ("write_standard_tensor_record"),
-        "pssolver/workflows/plane_checkpoint.py": ("write_standard_tensor_record"),
-    }
-    for relative, helper in expected.items():
-        source = (ROOT / relative).read_text(encoding="utf-8")
-        tree = ast.parse(source)
-        imports = {
-            alias.name
-            for node in ast.walk(tree)
-            if isinstance(node, ast.ImportFrom)
-            and node.module == "pssolver.io._checkpoint_artifacts"
-            for alias in node.names
-        }
-        assert helper in imports or any(
-            alias.asname == helper
-            for node in ast.walk(tree)
-            if isinstance(node, ast.ImportFrom)
-            and node.module == "pssolver.io._checkpoint_artifacts"
-            for alias in node.names
-        )
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_v0_4_s18_r2_checkpoint_artifacts.py::test_r2_writers_delegate_to_one_private_owner')
 
 
 def test_r2_does_not_move_directory_publication_into_shared_artifacts() -> None:

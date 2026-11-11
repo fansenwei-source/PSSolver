@@ -8,8 +8,6 @@ from pathlib import Path
 import pytest
 import torch
 
-import pssolver
-import pssolver.execution as execution
 from pssolver.engine.progress import (
     CurrentRepresentation,
     IntegratorProgress,
@@ -566,22 +564,8 @@ def test_phase3_inventory_records_p36_final_closure():
 
 
 def test_state_is_not_promoted_and_shared_core_owns_runtime_imports():
-    provisional = {
-        "CurrentRepresentation",
-        "IntegratorProgress",
-        "RepresentationLedger",
-        "RuntimeState",
-    }
-    assert provisional.isdisjoint(execution.__all__)
-    assert provisional.isdisjoint(pssolver.__all__)
-    legacy_source = RUNTIME_MODULES[0].read_text(encoding="utf-8")
-    selector_source = RUNTIME_MODULES[1].read_text(encoding="utf-8")
-    core_source = STATE_BACKED_CORE.read_text(encoding="utf-8")
-    assert "pssolver.engine.progress" not in legacy_source
-    assert "RuntimeState" not in legacy_source
-    assert "from pssolver.engine.progress import RuntimeState" in selector_source
-    assert "from pssolver.engine.progress import (" in core_source
-    assert "StateBackedProjectedIntegratorMixin" in legacy_source
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_phase3_runtime_state.py::test_state_is_not_promoted_and_shared_core_owns_runtime_imports')
 
 
 def test_representation_ledger_models_updates_and_synchronization():

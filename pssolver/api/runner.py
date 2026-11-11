@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-import json
 from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Callable
 
-from pssolver.core._canonical import canonical_json
-from pssolver.core._canonical import canonical_sha256
+from pssolver.core._canonical import canonical_json, canonical_sha256
 
 from .results import SimulationResult, SimulationRunStatus
 from .simulation import Simulation
+
 
 if TYPE_CHECKING:
     from pssolver.configuration.simulation import SimulationSpec
@@ -154,8 +154,8 @@ def _run_plane_application(
     progress: Iterable[int] | None,
     emit_metadata: bool,
 ) -> tuple[object | None, str | Path | None]:
-    from pssolver.applications.plane_beris_edwards import (
-        run_plane_beris_edwards,
+    from pssolver.runtime.legacy_entry import (
+        run_v04_plane_translation,
     )
 
     kwargs = {}
@@ -163,7 +163,7 @@ def _run_plane_application(
         kwargs["application_simulation"] = (
             compiled.application_specification
         )
-    result = run_plane_beris_edwards(
+    result = run_v04_plane_translation(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
@@ -217,8 +217,8 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
             _PublicApplicationRunnerRegistration(
                 "plane_complete_stress_beris_edwards",
                 (
-                    "pssolver.applications.plane_beris_edwards."
-                    "run_plane_beris_edwards"
+                    "pssolver.runtime.legacy_entry."
+                    "run_v04_plane_translation"
                 ),
                 _run_plane_application,
             )

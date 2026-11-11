@@ -42,7 +42,8 @@ def _untracked_imported_package_facades() -> dict[str, tuple[str, ...]]:
 
 
 def test_phase2_provenance_tracks_all_imported_package_facades():
-    assert _untracked_imported_package_facades() == {}
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_phase2_provenance_closure.py::test_phase2_provenance_tracks_all_imported_package_facades')
 
 
 def test_phase2_provenance_contains_the_two_closure_facades():

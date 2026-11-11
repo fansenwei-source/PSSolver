@@ -49,14 +49,14 @@ class FieldPlan:
     name: str
     role: Literal["evolved", "constrained"]
     components: tuple[str, ...]
-    boundary_conditions: tuple[str, ...]
+    boundary_conditions: tuple[str, ...] | tuple[tuple[str, ...], ...]
 
 
 @dataclass(frozen=True, slots=True)
 class TransformGroup:
     components: tuple[str, ...]
     boundary_conditions: tuple[str, ...]
-    indexing: Literal["contiguous_slice"]
+    indexing: Literal["contiguous_slice", "advanced"]
 
 
 @dataclass(frozen=True, slots=True)

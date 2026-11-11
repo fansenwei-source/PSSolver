@@ -10,9 +10,9 @@ allowance.
 from __future__ import annotations
 
 import ast
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +28,7 @@ class ImportEdge:
 # Allowed internal dependency layers for packages governed in Phase 0.
 # Applications are composition roots and are checked separately below.
 ALLOWED_INTERNAL_LAYERS = {
+    "cli": frozenset({"cli"}),
     "engine": frozenset({"engine", "core", "planning", "backends", "operators", "linear_solvers", "models"}),
     # Top-level modules are compatibility facades or small legacy roots.  They
     # retain distinct names so an allowance for one facade cannot silently
@@ -190,14 +191,7 @@ V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER = {
 # These are migration debts present in the frozen v0.1.2 source.  Each entry
 # is narrow, observed, documented by the Phase 0 ADRs, and scheduled for
 # removal rather than being treated as an acceptable layer-wide dependency.
-EXPECTED_LEGACY_EXCEPTIONS = {
-    ImportEdge("pssolver.runtime.plane_legacy", "pssolver.integrator"),
-    ImportEdge("pssolver.runtime.plane_legacy", "pssolver.solver"),
-    ImportEdge(
-        "pssolver.runtime.plane_application_bridge",
-        "pssolver.workflows.plane_compiled_v2",
-    ),
-}
+EXPECTED_LEGACY_EXCEPTIONS = set()
 
 
 TENSOR_FREE_LAYERS = frozenset(
@@ -230,6 +224,7 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
+    ImportEdge("pssolver.configuration.legacy_plane", "pssolver.planning.assemble"),
     ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.engine_plan"),
     ImportEdge("pssolver.configuration.legacy_periodic", "pssolver.planning.assemble"),
     ImportEdge(
@@ -309,18 +304,8 @@ REVIEWED_MODEL_TO_STOKES_IMPLEMENTATION_EDGES = {
 
 
 REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES = {
-    ImportEdge(
-        "pssolver.workflows.channel_beris_edwards",
-        "pssolver.core._canonical",
-    ),
-    ImportEdge(
-        "pssolver.workflows.finite_q_anchoring",
-        "pssolver.core._canonical",
-    ),
-    ImportEdge(
-        "pssolver.workflows.plane_checkpoint",
-        "pssolver.core._canonical",
-    ),
+    ImportEdge('pssolver.workflows.channel_beris_edwards', 'pssolver.core._canonical'),
+    ImportEdge('pssolver.workflows.finite_q_anchoring', 'pssolver.core._canonical'),
 }
 
 
@@ -375,30 +360,11 @@ REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES = {
 # opt-in composition namespace.  The exact cross-layer edges are frozen here;
 # this is not a layer-wide experimental allowance.
 REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES = {
-    ImportEdge(
-        "pssolver.experimental.boundary_pilots",
-        "pssolver.boundaries",
-    ),
-    ImportEdge(
-        "pssolver.experimental.boundary_pilots",
-        "pssolver.boundaries.robin",
-    ),
-    ImportEdge(
-        "pssolver.experimental.boundary_pilots",
-        "pssolver.runtime.finite_q_anchoring",
-    ),
-    ImportEdge(
-        "pssolver.experimental.boundary_pilots",
-        "pssolver.runtime.robin_scalar",
-    ),
-    ImportEdge(
-        "pssolver.experimental.boundary_pilots",
-        "pssolver.runtime.static_lifting",
-    ),
-    ImportEdge(
-        "pssolver.experimental.boundary_pilots",
-        "pssolver.workflows.finite_q_anchoring",
-    ),
+    ImportEdge('pssolver.experimental.boundary_pilots', 'pssolver.boundaries'),
+    ImportEdge('pssolver.experimental.boundary_pilots', 'pssolver.boundaries.robin'),
+    ImportEdge('pssolver.experimental.boundary_pilots', 'pssolver.runtime.finite_q_anchoring'),
+    ImportEdge('pssolver.experimental.boundary_pilots', 'pssolver.runtime.robin_scalar'),
+    ImportEdge('pssolver.experimental.boundary_pilots', 'pssolver.workflows.finite_q_anchoring'),
 }
 
 
@@ -435,16 +401,29 @@ REVIEWED_S25_EDGES = {
     ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.io.legacy.periodic_workflow'),
     ImportEdge('pssolver.runtime.observations', 'pssolver.errors'),
     ImportEdge('pssolver.runtime.state_validation', 'pssolver.errors'),
-    ImportEdge('pssolver.runtime.plane_beris_edwards', 'pssolver.engine.progress'),
-    ImportEdge('pssolver.runtime.plane_compiled_v2_binding', 'pssolver.engine.progress'),
-    ImportEdge('pssolver.runtime.plane_compiled_v2_binding', 'pssolver.engine.workspace'),
-    ImportEdge('pssolver.runtime.plane_compiled_v2_step', 'pssolver.engine.progress'),
-    ImportEdge('pssolver.runtime.plane_compiled_v2_step', 'pssolver.engine.workspace'),
     ImportEdge('pssolver.runtime.robin_scalar', 'pssolver.engine.progress'),
     ImportEdge('pssolver.runtime.runner', 'pssolver.io'),
     ImportEdge('pssolver.runtime.runner', 'pssolver.io.diagnostic_io'),
     ImportEdge('pssolver.runtime.runner', 'pssolver.io.engine_state'),
 }
+
+
+# S-27 r2: exact table-derived edges; owners locked in the companion test.
+REVIEWED_S27_EDGES = {
+    ImportEdge('pssolver.cli.plane', 'pssolver.configuration'),
+    ImportEdge('pssolver.cli.plane', 'pssolver.configuration.plane_beris_edwards_components'),
+    ImportEdge('pssolver.cli.plane', 'pssolver.runtime.legacy_entry'),
+    ImportEdge('pssolver.cli.plane', 'pssolver.runtime.runner'),
+    ImportEdge('pssolver.configuration.legacy_plane', 'pssolver.io._checkpoint_artifacts'),
+    ImportEdge('pssolver.configuration.legacy_plane', 'pssolver.io.checkpoint'),
+    ImportEdge('pssolver.configuration.legacy_plane', 'pssolver.io.checkpoint_identity'),
+    ImportEdge('pssolver.configuration.legacy_plane', 'pssolver.planning.assemble'),
+    ImportEdge('pssolver.runtime.legacy_entry', 'pssolver.engine.state'),
+    ImportEdge('pssolver.runtime.plane_observations', 'pssolver.engine.field_view'),
+    ImportEdge('pssolver.runtime.plane_observations', 'pssolver.errors'),
+    ImportEdge('pssolver.runtime.plane_observations', 'pssolver.run_metadata'),
+}
+
 
 def test_systems_layer_has_only_the_authorized_dependency_edges():
     assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
@@ -701,6 +680,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if edge in REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES:
             continue
         if edge in REVIEWED_S25_EDGES:
+            continue
+        if edge in REVIEWED_S27_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)

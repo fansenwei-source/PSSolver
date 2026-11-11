@@ -8,28 +8,24 @@ directly.  Selection and validation happen once before runtime allocation.
 from __future__ import annotations
 
 from dataclasses import dataclass
+
+from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
-from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.package_construction import (
     PackageRuntimeConstructionPlan,
 )
+
 from .channel_beris_edwards import ChannelBerisEdwardsRuntimeBuildRequest
-from .plane_beris_edwards import PlaneRuntimeBuildRequest
 from .simulation_construction import (
     RuntimeAdapter,
     build_bound_simulation_runtime,
 )
-from .plane_application_bridge import (
-    build_package_compiled_plane_runtime as build_package_compiled_plane_runtime,
-)
 
 
-PackageBuildRequest = (
-    PlaneRuntimeBuildRequest | ChannelBerisEdwardsRuntimeBuildRequest
-)
+PackageBuildRequest = ChannelBerisEdwardsRuntimeBuildRequest
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,7 +41,6 @@ class PackageRuntimeConstructionInput:
         if not isinstance(
             self.request,
             (
-                PlaneRuntimeBuildRequest,
                 ChannelBerisEdwardsRuntimeBuildRequest,
             ),
         ):
@@ -73,21 +68,10 @@ class PackageRuntimeConstructionInput:
             "device": str(self.request.device),
             "application_builder_supplied": False,
         }
-        if isinstance(self.request, PlaneRuntimeBuildRequest):
-            conditioning = (
-                self.request.fresh_initial_conditioning_metadata()
-            )
-            if conditioning is not None:
-                metadata["fresh_initial_conditioning"] = conditioning
-                metadata["fresh_initial_conditioning_applied"] = (
-                    self.request.apply_fresh_initial_conditioning
-                )
         return metadata
 
 
 def _request_simulation(request: PackageBuildRequest):
-    if isinstance(request, PlaneRuntimeBuildRequest):
-        return request.simulation
     if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
         return request.run_spec.simulation
     return request.run_spec.simulation

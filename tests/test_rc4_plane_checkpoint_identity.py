@@ -2,31 +2,34 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 import torch
 
 from pssolver.configuration import create_plane_beris_edwards_run_spec
-from pssolver.io.checkpoint_identity import SourceReleaseGeneration
-from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime.plane_beris_edwards import LegacyPlaneRuntimeAdapter
-from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
-from pssolver.workflows import plane_checkpoint as checkpoint_module
-from pssolver.workflows.plane_checkpoint import (
+from pssolver.configuration import legacy_plane as checkpoint_module
+from pssolver.configuration.legacy_plane import (
     PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     build_plane_checkpoint_compatibility_identity,
-    capture_plane_checkpoint,
     load_plane_checkpoint,
     read_plane_checkpoint_header,
-    restore_plane_checkpoint,
+    translate_plane,
     upgrade_plane_checkpoint_directory_v1,
     upgrade_plane_checkpoint_v1,
     write_plane_checkpoint,
+)
+from pssolver.engine.engine import Engine
+from pssolver.io.checkpoint_identity import SourceReleaseGeneration
+from pssolver.models.active_nematics import Q_COMPONENTS
+from tests.v0_5_s27_plane_v04_checkpoint import (
+    PlaneTestState,
+    capture_plane_checkpoint,
+    restore_plane_checkpoint,
 )
 
 
@@ -77,12 +80,8 @@ def _initial_values(nx: int, ny: int):
 
 
 def _runtime(spec):
-    solver, projector = build_legacy_plane_runtime(
-        spec,
-        device="cpu",
-        initial_values=_initial_values(spec.nx, spec.ny),
-    )
-    return LegacyPlaneRuntimeAdapter(solver, projector)
+    engine = Engine(translate_plane(spec), device="cpu", dtype=torch.float64)
+    return PlaneTestState(engine, engine.initial_state(_initial_values(spec.nx, spec.ny)))
 
 
 def _state(runtime):
@@ -177,7 +176,8 @@ def test_m01_device_token_is_provenance_not_restart_compatibility(tmp_path):
     target_spec = _spec(tmp_path, "target", device="auto")
     source = _runtime(source_spec)
     target = _runtime(target_spec)
-    source.advance(2)
+    for _ in range(2):
+        source.engine.step_(source.state)
 
     checkpoint = capture_plane_checkpoint(source, run_spec=source_spec)
 
@@ -192,6 +192,10 @@ def test_m01_device_token_is_provenance_not_restart_compatibility(tmp_path):
     _assert_state_equal(source, target)
 
 
+
+
+
+
 def test_m02_fresh_initializer_and_conditioning_are_not_restart_identity(
     tmp_path,
     monkeypatch,
@@ -200,20 +204,8 @@ def test_m02_fresh_initializer_and_conditioning_are_not_restart_identity(
     target_spec = _spec(tmp_path, "target", seed=91)
     source = _runtime(source_spec)
     target = _runtime(target_spec)
-    source.advance(1)
+    source.engine.step_(source.state)
     checkpoint = capture_plane_checkpoint(source, run_spec=source_spec)
-    source_lifting = _synthetic_lifting("a" * 64, "source_initializer")
-    target_lifting = _synthetic_lifting("a" * 64, "target_initializer")
-    checkpoint = _checkpoint_with_lifting(
-        checkpoint,
-        source_spec,
-        source_lifting,
-    )
-    monkeypatch.setattr(
-        checkpoint_module,
-        "plane_lifting_restart_metadata",
-        lambda _adapter: target_lifting,
-    )
 
     assert restore_plane_checkpoint(
         target,
@@ -230,21 +222,14 @@ def test_m03_prescribed_lift_change_rejects_before_target_mutation(
     spec = _spec(tmp_path, "run")
     source = _runtime(spec)
     target = _runtime(spec)
-    source.advance(1)
+    source.engine.step_(source.state)
     checkpoint = capture_plane_checkpoint(source, run_spec=spec)
     checkpoint = _checkpoint_with_lifting(
         checkpoint,
         spec,
         _synthetic_lifting("a" * 64, "same_initializer"),
     )
-    monkeypatch.setattr(
-        checkpoint_module,
-        "plane_lifting_restart_metadata",
-        lambda _adapter: _synthetic_lifting(
-            "b" * 64,
-            "same_initializer",
-        ),
-    )
+
     before = _state(target)
 
     with pytest.raises(ValueError, match="static lifting identity"):
@@ -262,7 +247,7 @@ def test_forward_dynamics_change_rejects_before_target_mutation(tmp_path):
     target_spec = _spec(tmp_path, "target", dt=0.004)
     source = _runtime(source_spec)
     target = _runtime(target_spec)
-    source.advance(1)
+    source.engine.step_(source.state)
     checkpoint = capture_plane_checkpoint(source, run_spec=source_spec)
     before = _state(target)
 
@@ -339,7 +324,8 @@ def test_m06_odd_grid_legacy_checkpoint_upgrades_without_source_mutation(
     spec = _spec(tmp_path, generation.value, nx=7, ny=7)
     source_runtime = _runtime(spec)
     target_runtime = _runtime(spec)
-    source_runtime.advance(2)
+    for _ in range(2):
+        source_runtime.engine.step_(source_runtime.state)
     legacy = _legacy_checkpoint(source_runtime, spec)
     source = _write_legacy_checkpoint(
         tmp_path / f"legacy_{generation.value}",

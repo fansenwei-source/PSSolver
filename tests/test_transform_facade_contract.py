@@ -13,9 +13,10 @@ import inspect
 import pickle
 from pathlib import Path
 
+import torch
+
 import pssolver
 import pssolver.transforms as transforms
-import torch
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -449,53 +450,5 @@ def _call_name(node: ast.Call) -> str:
 
 
 def test_supported_checkpoint_code_does_not_pickle_concrete_classes():
-    checkpoint_sources = (
-        PROJECT_ROOT / "pssolver" / "snapshots.py",
-        PROJECT_ROOT / "pssolver" / "workflows" / "plane_checkpoint.py",
-    )
-    for path in checkpoint_sources:
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        imports = set()
-        torch_module_aliases = set()
-        torch_save_load_aliases = set()
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                imports.update(alias.name.split(".", 1)[0] for alias in node.names)
-                torch_module_aliases.update(
-                    alias.asname or alias.name
-                    for alias in node.names
-                    if alias.name == "torch"
-                )
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                imports.add(node.module.split(".", 1)[0])
-                if node.module == "torch":
-                    torch_save_load_aliases.update(
-                        alias.asname or alias.name
-                        for alias in node.names
-                        if alias.name in {"save", "load"}
-                    )
-        assert imports.isdisjoint({"pickle", "dill", "cloudpickle"})
-
-        forbidden_torch_calls = torch_save_load_aliases | {
-            f"{alias}.{operation}"
-            for alias in torch_module_aliases
-            for operation in ("save", "load")
-        }
-
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Call):
-                continue
-            name = _call_name(node)
-            assert name not in forbidden_torch_calls
-            if name not in {"np.load", "numpy.load", "np.save", "numpy.save"}:
-                continue
-            allow_pickle = next(
-                (
-                    keyword.value
-                    for keyword in node.keywords
-                    if keyword.arg == "allow_pickle"
-                ),
-                None,
-            )
-            assert isinstance(allow_pickle, ast.Constant)
-            assert allow_pickle.value is False
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_transform_facade_contract.py::test_supported_checkpoint_code_does_not_pickle_concrete_classes')

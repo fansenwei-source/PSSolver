@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import platform
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -36,6 +37,8 @@ from pssolver.boundaries import (
 )
 from pssolver.configuration import create_plane_beris_edwards_run_spec
 from pssolver.configuration.legacy_periodic import translate_periodic
+from pssolver.configuration.legacy_plane import load_plane_checkpoint as load_plane_checkpoint
+from pssolver.configuration.legacy_plane import translate_plane
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.engine import Engine
 from pssolver.functional import (
@@ -58,14 +61,10 @@ from pssolver.runtime.channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
     build_channel_beris_edwards_runtime,
 )
-from pssolver.runtime.legacy_entry import restore_periodic_state
-from pssolver.runtime.plane_beris_edwards import LegacyPlaneRuntimeAdapter
-from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
+from pssolver.runtime.legacy_entry import restore_periodic_state, restore_plane_state
 from pssolver.workflows.channel_beris_edwards import (
     _load_checkpoint,
 )
-from pssolver.workflows.plane_checkpoint import load_plane_checkpoint as load_plane_checkpoint
-from pssolver.workflows.plane_checkpoint import restore_plane_checkpoint as restore_plane_checkpoint
 
 
 # Explicit re-export used by historical_continuations.
@@ -355,6 +354,28 @@ def build_channel_complete_stress(root: Path):
     return run_spec, adapter
 
 
+@dataclass
+class _PlaneFixtureState:
+    engine: object
+    state: object
+
+    @property
+    def fields(self):
+        return self.engine.field_view(self.state)
+
+    @property
+    def completed_steps(self):
+        return self.state.completed_steps
+
+
+def restore_plane_checkpoint(handle, checkpoint, *, run_spec):
+    return restore_plane_state(handle.engine, handle.state, checkpoint, run_spec=run_spec)
+
+
+def advance_plane(handle):
+    handle.engine.step_(handle.state)
+
+
 def build_plane_legacy(root: Path):
     run_spec = create_plane_beris_edwards_run_spec(
         activity_number=18.0,
@@ -383,12 +404,8 @@ def build_plane_legacy(root: Path):
     initial = {
         name: coordinate.mul((index + 1) * 1.0e-3) for index, name in enumerate(Q_COMPONENTS)
     }
-    solver, projector = build_legacy_plane_runtime(
-        run_spec,
-        device="cpu",
-        initial_values=initial,
-    )
-    return run_spec, LegacyPlaneRuntimeAdapter(solver, projector)
+    engine = Engine(translate_plane(run_spec), device="cpu", dtype=torch.float64)
+    return run_spec, _PlaneFixtureState(engine, engine.initial_state(initial))
 
 
 def _field_records(adapter, components: tuple[str, ...]) -> dict[str, object]:
@@ -431,7 +448,14 @@ def channel_complete_continuation_records(adapter) -> dict[str, object]:
 
 
 def plane_continuation_records(adapter) -> dict[str, object]:
-    return _field_records(adapter, tuple(Q_COMPONENTS))
+    records = {}
+    for name in Q_COMPONENTS:
+        records[name] = _tensor_record(adapter.fields[name])
+        records[f"{name}.hat"] = _tensor_record(adapter.fields[f"{name}.hat"])
+    records["completed_steps"] = adapter.completed_steps
+    records["integrator_step_count"] = int(adapter.state.refresh_phase[0])
+    records["integrator_refresh_count"] = int(adapter.state.refresh_phase[1])
+    return records
 
 
 def _real_dtype(dtype: np.dtype) -> np.dtype:

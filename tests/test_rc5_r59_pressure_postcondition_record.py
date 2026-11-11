@@ -118,16 +118,8 @@ def test_r59_record_binds_implementation_and_exact_sources():
 
 
 def test_r59_registers_exact_historical_successors():
-    successors = _record()["historical_successor_sources"]
-    assert successors
-    for relative, registration in successors.items():
-        assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(ROOT / relative) == resolve_s03_successor(
-            relative,
-            _r510_successor(relative, registration["current_sha256"]),
-        )
-        assert registration["introduced_by_phase"] == "R5-9"
-        assert registration["reason"]
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_rc5_r59_pressure_postcondition_record.py::test_r59_registers_exact_historical_successors')
 
 
 def test_r59_pressure_contract_is_truthful_and_machine_readable():

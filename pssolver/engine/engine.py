@@ -13,12 +13,12 @@ from pssolver.operators.projection import BasisAwareSpectralProjector
 from pssolver.planning.capabilities import CAPABILITIES, lookup
 from pssolver.planning.engine_plan import Plan
 
-from . import program
-from .constraints import PeriodicStokesConstraint
+from . import members, program
+from .constraints import PeriodicStokesConstraint, PlaneStokesConstraint
 from .field_view import FieldView
+from .groups import _transform_group_indexer
 from .imex import SemiImplicitEuler
 from .linear import DiagonalOperator
-from .memberwise_transforms import _MemberwiseTransforms
 from .progress import _refresh_counters_from_completed_steps
 from .state import State
 
@@ -41,7 +41,7 @@ def _capability(kind, reference):
 @dataclass(frozen=True, slots=True)
 class _ProjectorHost:
     shape: tuple[int, ...]
-    transform_backend: TensorProductTransformBackend | _MemberwiseTransforms
+    transform_backend: TensorProductTransformBackend
 
 
 class Engine:
@@ -54,12 +54,22 @@ class Engine:
             raise ValueError("engine dtype must be torch.float32 or torch.float64")
         if not isinstance(batch, int) or isinstance(batch, bool) or batch < 1:
             raise ValueError("engine batch must be a positive integer")
+        if batch > 1:
+            member = Engine(plan, device=device, dtype=dtype, batch=1, kernels=kernels)
+            # Constants and metadata belong to the one singleton implementation.
+            # Only observe/field_view use these on the aggregate State.
+            self.__dict__.update(member.__dict__)
+            self.batch = batch
+            self._member_engine = member
+            self._member_buffer = None
+            self._member_layouts = {}
+            return
         if (
-            plan.geometry.kind != "periodic_box"
+            plan.geometry.kind not in {"periodic_box", "plane_slab"}
             or len(plan.constraints) > 1
             or plan.integrator.scheme != "semi_implicit_euler"
             or plan.integrator.history_length != 0
-            or plan.integrator.refresh_interval is not None
+            or (plan.geometry.kind == "periodic_box" and plan.integrator.refresh_interval is not None)
             or plan.boundary_data
         ):
             raise ValueError("engine supports only registered Periodic Euler plans")
@@ -76,8 +86,12 @@ class Engine:
         constraint_capabilities = [_capability("constraint", item.solver) for item in plan.constraints]
         self._beris_edwards = (
             [item.key for item in linear_capabilities] == [("beris_edwards", "any")]
-            and [item.key for item in explicit_capabilities] == [("beris_edwards_q", "periodic^3")]
-            and [item.key for item in constraint_capabilities] == [("stokes", "periodic^3")]
+            and [item.key for item in explicit_capabilities] in [
+                [("beris_edwards_q", "periodic^3")], [("beris_edwards_q", "periodic^2×neumann")]
+            ]
+            and [item.key for item in constraint_capabilities] in [
+                [("stokes", "periodic^3")], [("stokes", "periodic^2×free_slip")]
+            ]
         )
         self.plan = plan
         self.device = torch.device(device)
@@ -96,8 +110,6 @@ class Engine:
             hermitian_axis=geometry.hermitian_axis,
             periodic_transform_execution=geometry.periodic_transform_execution,
         )
-        if batch > 1:
-            self.transform_backend = _MemberwiseTransforms(self.transform_backend, batch)
         host = _ProjectorHost(self.shape, self.transform_backend)
         self.projector = BasisAwareSpectralProjector(
             host,
@@ -105,13 +117,26 @@ class Engine:
             transform_execution=plan.dealias.transform_execution,
         )
         self.components = tuple(name for field in plan.fields for name in field.components)
+        self.component_indices = MappingProxyType(
+            {name: index for index, name in enumerate(self.components)}
+        )
         self.component_boundaries = tuple(
-            field.boundary_conditions for field in plan.fields for _ in field.components
+            basis for field in plan.fields for basis in (
+                (field.boundary_conditions,) * len(field.components)
+                if isinstance(field.boundary_conditions[0], str) else field.boundary_conditions
+            )
         )
         self.evolved_count = sum(
             len(field.components) for field in plan.fields if field.role == "evolved"
         )
-        self.boundaries = plan.geometry.axis_kinds
+        self.boundaries = self.component_boundaries[0]
+        self.transform_groups = tuple(
+            (tuple(self.components.index(name) for name in group.components),
+             group.boundary_conditions, group.indexing)
+            for group in plan.groups
+        )
+        for indices, _boundaries, indexing in self.transform_groups:
+            assert _transform_group_indexer(list(indices), "contiguous_slice")[1] == indexing
         self._observable_slices = MappingProxyType(
             {
                 field.name: slice(
@@ -132,10 +157,15 @@ class Engine:
         self.scheme = SemiImplicitEuler()
         if self._beris_edwards:
             self.explicit = _resolve(explicit_capabilities[0])(self.projector, plan.explicit[0])
-            term = _resolve(constraint_capabilities[0])(
-                host, self.projector, plan.constraints[0], self.explicit
-            )
-            self.constraint = PeriodicStokesConstraint(
+            factory = _resolve(constraint_capabilities[0])
+            if plan.geometry.kind == "plane_slab":
+                term = factory(host, self.projector, plan.constraints[0], self.explicit,
+                               boundaries=dict(zip(self.components, self.component_boundaries, strict=True)))
+                constraint_type = PlaneStokesConstraint
+            else:
+                term = factory(host, self.projector, plan.constraints[0], self.explicit)
+                constraint_type = PeriodicStokesConstraint
+            self.constraint = constraint_type(
                 term,
                 pressure_diagnostics=plan.constraints[0].pressure_diagnostics,
             )
@@ -213,6 +243,16 @@ class Engine:
         self.projector.forward_transform(physical, bc)
         self.projector.inverse_transform(spectral, bc)
         self.projector.project_real_spectrum_(spectral, bc)
+        if self.plan.geometry.kind == "plane_slab":
+            for _, group_bc, _ in self.transform_groups:
+                if group_bc == bc:
+                    continue
+                group_spectral = backend.forward(physical, group_bc)
+                for axis in range(len(self.shape)):
+                    backend.gradient_hat(group_spectral, group_bc, axis)
+                self.projector.forward_transform(physical, group_bc)
+                self.projector.inverse_transform(group_spectral, group_bc)
+                self.projector.project_real_spectrum_(group_spectral, group_bc)
 
     def _clear_cache(self):
         cache = self.explicit.q_gradient_cache if self._beris_edwards else None
@@ -237,6 +277,8 @@ class Engine:
         )
 
     def initial_state(self, evolved, *, diagnostics=None):
+        if self.batch > 1:
+            return members.initial_state(self, evolved, diagnostics=diagnostics)
         expected = self.components[: self.evolved_count]
         if tuple(evolved) != expected:
             raise ValueError("initial values must contain ordered evolved components")
@@ -261,13 +303,14 @@ class Engine:
             ]
         )
         state = State(
-            spectral, spatial, (), {}, 0, _refresh_counters_from_completed_steps(0, None), False
+            spectral, spatial, (), {}, 0,
+            _refresh_counters_from_completed_steps(0, self.plan.integrator.refresh_interval), False
         )
         self._clear_cache()
         try:
             if not self._beris_edwards:
-                projected = self.projector.project_real_spectrum(spectral, self.boundaries)
-                physical = self.projector.inverse_transform(projected, self.boundaries)
+                projected = program._evolved_transform(self, spectral, "project_real_spectrum")
+                physical = program._evolved_transform(self, projected, "inverse_transform")
                 return replace(state, spectral=projected, spatial=physical)
             # The construction solve validates the constraint; it does not
             # publish its fields into the initially zero constraint slots.
@@ -277,18 +320,20 @@ class Engine:
                     alpha = torch.zeros(self.shape, device=self.device, dtype=self.dtype)
                 self.constraint.constrained_hats(self.field_view(state), alpha, diagnostics=diagnostics)
                 state.solver = self.constraint.seed(state)
-            self.projector.project_real_spectrum_(spectral[: self.evolved_count], self.boundaries)
+            program._evolved_transform(
+                self, spectral[: self.evolved_count], "project_real_spectrum_", inplace=True,
+            )
             spatial[: self.evolved_count].copy_(
-                self.projector.inverse_transform(
-                    spectral[: self.evolved_count],
-                    self.boundaries,
-                )
+                program._evolved_transform(self, spectral[: self.evolved_count], "inverse_transform")
             )
             return state
         finally:
             self._clear_cache()
 
     def _execute(self, operation, state, controls, *, inplace, diagnostics):
+        if self.batch > 1:
+            return members.execute(self, operation, state, controls,
+                                   inplace=inplace, diagnostics=diagnostics)
         self._clear_cache()
         try:
             return operation(

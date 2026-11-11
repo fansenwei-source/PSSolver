@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
-from pssolver.api import capability_catalog
 import pssolver.functional.api as stable_functional
+from pssolver.api import capability_catalog
 from pssolver.experimental import boundary_pilots
 
 
@@ -177,21 +177,14 @@ expected = {
         "channel_beris_edwards",
         "finite_q_anchoring",
         "package_construction",
-        "plane_application_bridge",
-        "plane_beris_edwards",
-        "plane_legacy",
         "robin_scalar",
         "simulation_construction",
         "state_validation",
-        "static_lifting",
     ],
     "pssolver.workflows": [
         "channel_beris_edwards",
         "channel_checkpoint_observation",
         "finite_q_anchoring",
-        "plane_beris_edwards",
-        "plane_checkpoint",
-        "plane_observation",
     ],
 }
 observed = {}

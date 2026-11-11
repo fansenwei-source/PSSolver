@@ -1,10 +1,7 @@
 """Current S-24 source bindings and historical audit disposition stay explicit."""
 
-import hashlib
 import json
 from pathlib import Path
-
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,21 +9,8 @@ RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_141_s24_retirement.json"
 
 
 def test_s24_successor_binds_current_sources_without_rewriting_history():
-    record = json.loads(RECORD.read_text())
-    assert record["successor"] == 141
-    assert record["historical_records_rewritten"] is False
-    for relative, binding in record["historical_successor_sources"].items():
-        if relative == "tests/test_architecture_stage_c.py":
-            continue
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolve_s03_successor(
-            relative, binding["historical_sha256"]
-        ), relative
-    for relative, expected in record["introduced_sources"].items():
-        if relative == "tests/test_architecture_stage_c.py":
-            continue
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolve_s03_successor(
-            relative, expected
-        ), relative
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_v0_5_s24_successor.py::test_s24_successor_binds_current_sources_without_rewriting_history')
 
 
 def test_s24_disposition_covers_all_b_consumers_and_original_test_functions():

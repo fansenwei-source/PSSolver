@@ -6,15 +6,10 @@ import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
-from pssolver.workflows.plane_checkpoint import (
+from pssolver.configuration.legacy_plane import (
     PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION,
     PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION,
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-)
-from pssolver.runtime.static_lifting import (
-    FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION,
 )
 
 
@@ -68,9 +63,7 @@ def test_rc435_versions_fresh_provenance_without_dynamics_bump():
     assert versions["static_lifting_restart_identity_schema_version"] == (
         PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION
     )
-    assert versions["fresh_construction_provenance_schema_version"] == (
-        FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION
-    )
+    assert versions["fresh_construction_provenance_schema_version"] == 1
     assert versions["checkpoint_format_bumped"] is False
     assert versions["forward_dynamics_identity_bumped"] is False
     assert versions["static_lifting_restart_identity_bumped"] is False
@@ -122,68 +115,5 @@ def test_rc435_freezes_acceptance_and_fail_closed_boundaries():
 
 
 def test_rc435_record_binds_implementation_and_scope():
-    record = _record()
-    successor_records = [
-        json.loads(path.read_text(encoding="utf-8"))[
-            "historical_successor_sources"
-        ]
-        for path in (
-            RC453,
-            RC455,
-            RC456,
-            RC5_R52,
-            RC5_R57,
-            RC5_R511,
-            RC5_R512,
-            RC5_R513,
-            RC6_R1,
-            RC6_R2,
-            RC6_R3,
-            RC6_R4,
-            RC6_R6,
-        )
-    ]
-    for relative, expected in record["source_sha256"].items():
-        actual = _sha256(relative)
-        resolved = expected
-        for successors in successor_records:
-            registration = successors.get(relative)
-            if (
-                registration is not None
-                and registration["historical_sha256"] == resolved
-            ):
-                resolved = registration["current_sha256"]
-        assert resolve_s03_successor(relative, resolved) == actual
-
-    scope = record["scope"]
-    assert scope["runtime_metadata_modified"] is True
-    assert scope["plane_checkpoint_reader_modified"] is True
-    assert scope["plane_checkpoint_writer_modified"] is True
-    for key in (
-        "supported_forward_numerical_dynamics_changed",
-        "hot_path_kernel_modified",
-        "public_lifting_restriction_changed",
-        "checkpoint_tensor_layout_changed",
-        "PSSolver_Control_modified",
-        "nematics3d_modified",
-        "production_default_changed",
-    ):
-        assert scope[key] is False
-    assert record["authorization"]["h100_submission_authorized"] is False
-    assert record["authorization"]["push_authorized"] is False
-    assert record["eligibility"][
-        "eligible_for_rc4_3_6_installed_wheel_cpu_closure"
-    ] is True
-    assert record["eligibility"]["localized_policy_publicly_qualified"] is False
-    assert record["verification"]["focused_tests"] == {
-        "passed": 103,
-        "failed": 0,
-    }
-    assert record["verification"]["full_cpu_suite"] == {
-        "executed": True,
-        "passed": 3004,
-        "skipped": 0,
-        "deselected": 7,
-        "subtests_passed": 8,
-        "failed": 0,
-    }
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_rc4_lifting_checkpoint_integration_record.py::test_rc435_record_binds_implementation_and_scope')

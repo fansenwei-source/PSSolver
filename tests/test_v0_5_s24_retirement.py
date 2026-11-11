@@ -15,9 +15,9 @@ import numpy as np
 import pytest
 
 import pssolver
+from pssolver.configuration.legacy_plane import read_plane_checkpoint_header
 from pssolver.io import CheckpointCompatibilityError
 from pssolver.linear_solvers.stokes import _pressure_policy
-from pssolver.workflows.plane_checkpoint import read_plane_checkpoint_header
 
 
 ROOT = Path(__file__).resolve().parents[1]

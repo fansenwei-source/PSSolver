@@ -16,6 +16,14 @@ class Capability:
 
 CAPABILITIES = (
     Capability(
+        "constraint", ("stokes", "periodic^2×free_slip"),
+        "pssolver.models.active_nematics.engine_terms:plane_stokes_term", "autograd",
+    ),
+    Capability(
+        "explicit", ("beris_edwards_q", "periodic^2×neumann"),
+        "pssolver.models.active_nematics.engine_terms:plane_explicit_term", None,
+    ),
+    Capability(
         "constraint",
         ("stokes", "periodic^3"),
         "pssolver.models.active_nematics.engine_terms:periodic_stokes_term",
@@ -55,4 +63,6 @@ def lookup(kind, key):
 
 def basis_signature(axis_kinds):
     """Run-length encode consecutive basis kinds, preserving axis order."""
+    if tuple(axis_kinds) == ("periodic", "periodic", "neumann"):
+        return "periodic^2×neumann"
     return "/".join(f"{name}^{sum(1 for _ in values)}" for name, values in groupby(axis_kinds))

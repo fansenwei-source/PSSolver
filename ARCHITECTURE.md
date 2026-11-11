@@ -298,3 +298,18 @@ are recorded in `qualification/s25_expected_unimportable.json` for S-30. S-24's 
 audit ends at aee8289; S-25 changes are audited independently by
 `qualification/s25_test_disposition.json`. This section describes an unqualified draft,
 not a claim that T1–T25 or K2 has passed.
+
+## S-27 Plane draft boundary
+
+Plane now uses the same assembler, Engine and Runner. Its legacy checkpoint carriers,
+identity and upgrade rules live in `configuration.legacy_plane` until S-28; they are
+not a second execution path. `runtime.plane_observations` captures caller-provided fields
+and diagnostics, and `cli.plane` delegates to `runtime.legacy_entry`. Channel remains
+on its existing path. Frozen transform and Stokes implementations are unchanged.
+
+For batch greater than one, `engine.members` runs complete singleton programs using
+one internal Engine and one reusable in-place State buffer. Pure calls concatenate
+member results; diagnostics are separate dictionaries per member. No backend kernel
+sees an enlarged batch problem. Singleton execution has no member Engine or buffer.
+The transform-only member adapter is retired, with its original tests retained in the
+S-27 historical runner. This is a draft boundary, not a qualification claim.

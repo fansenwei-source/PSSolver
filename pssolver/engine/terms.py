@@ -13,8 +13,14 @@ def expression_symbol(backend, boundaries, monomials, dtype):
         symbol = one
         basis = boundaries
         for axis, order in enumerate(orders):
-            for _ in range(order):
-                symbol, basis = backend.gradient_hat(symbol, basis, axis)
+            if order and order % 2 == 0:
+                modes = backend.get_metadata(basis).axis_modes[axis]
+                shape = [1] * len(boundaries)
+                shape[axis] = modes.numel()
+                symbol = symbol * (-(modes ** 2)).reshape(shape) ** (order // 2)
+            else:
+                for _ in range(order):
+                    symbol, basis = backend.gradient_hat(symbol, basis, axis)
         result = result + coefficient * symbol
     return result.real if all(n % 2 == 0 for _, orders in monomials for n in orders) else result
 

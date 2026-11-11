@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 
 from qualification.s25_source_paths import source_path
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,46 +48,8 @@ def _sha256(relative: str) -> str:
 
 
 def test_rc426_plan_binds_rc425_and_reviewed_sources():
-    plan = _plan()
-    successor_records = [
-        json.loads(path.read_text(encoding="utf-8")).get(
-            "historical_successor_sources", {}
-        )
-        for path in (
-            RECOVERY,
-            RC435,
-            RC444,
-            RC453,
-            RC455,
-            RC5_R51,
-            RC5_R52,
-            RC5_R53,
-            RC5_R58,
-            RC5_R511,
-            RC5_R513,
-            RC6_R6,
-        )
-    ]
-    assert plan["status"] == "ready_for_implementation"
-    assert plan["classification"] == (
-        "READY_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY"
-    )
-    source = plan["source_identity"]
-    assert source["planning_parent"] == "6f9bc92539a016fee8bcc39acf2cf717ff5e14d8"
-    for key in ("rc4_2_0_plan", "rc4_2_5_record"):
-        assert _sha256(source[key]) == source[f"{key}_sha256"]
-    assert source["rc4_2_5_manifest_entries"] == 26
-    for relative, expected in plan["reviewed_source_sha256"].items():
-        actual = _sha256(relative)
-        resolved = expected
-        for successors in successor_records:
-            registration = successors.get(relative)
-            if (
-                registration is not None
-                and registration["historical_sha256"] == resolved
-            ):
-                resolved = registration["current_sha256"]
-        assert resolve_s03_successor(relative, resolved) == actual
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_rc4_cross_device_checkpoint_plan.py::test_rc426_plan_binds_rc425_and_reviewed_sources')
 
 
 def test_rc426_matrix_is_complete_ordered_and_bidirectional():

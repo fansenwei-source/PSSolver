@@ -120,3 +120,28 @@ def periodic_stokes_term(host, projector, plan, explicit):
         q_gradient_cache=explicit.q_gradient_cache,
         pointwise_kernels=explicit.pointwise_kernels,
     )
+
+
+def plane_explicit_term(projector, plan):
+    """Materialize the mixed-basis term with the legacy numerical inputs."""
+    cache = BerisEdwardsQGradientCache() if plan.q_gradient_reuse else None
+    kernels = BerisEdwardsPointwiseKernels(plan.pointwise_execution)
+    return BerisEdwardsQNonlinearModel(
+        projector, ("periodic", "periodic", "neumann"), **plan.arguments,
+        q_gradient_cache=cache, pointwise_kernels=kernels, static_lifting_runtime=None,
+    )
+
+
+def plane_stokes_term(host, projector, plan, explicit, *, boundaries):
+    """Compose the frozen Plane class without invoking its stateful solver."""
+    return BerisEdwardsFreeSlipStokes(
+        host, spectral_projector=projector, **plan.arguments,
+        cache_force_diagnostics=plan.pressure_diagnostics,
+        cache_pressure_diagnostics=plan.pressure_diagnostics,
+        q_gradient_cache=explicit.q_gradient_cache, pointwise_kernels=explicit.pointwise_kernels,
+        q_boundary_conditions=boundaries["Qxx"],
+        tangential_velocity_boundary_conditions=boundaries["ux"],
+        normal_velocity_boundary_conditions=boundaries["uz"],
+        pressure_boundary_conditions=boundaries["p"],
+        static_lifting_runtime=None,
+    )

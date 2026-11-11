@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import platform
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -23,9 +23,6 @@ from pssolver import (
     compile_simulation,
     run_simulation,
 )
-from pssolver.applications.plane_beris_edwards import (
-    run_plane_beris_edwards,
-)
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -36,6 +33,9 @@ from pssolver.configuration.public_simulation_runner import PUBLIC_PLANE_APPLICA
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
+from pssolver.runtime.legacy_entry import (
+    run_v04_plane_translation as run_plane_beris_edwards,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]

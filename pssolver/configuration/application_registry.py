@@ -84,10 +84,10 @@ _PLANE = ApplicationRegistration(
     "_compile_plane_public_simulation",
     False, "plane", ("periodic", "periodic", "bounded"),
     _COMPLETE_CAPABILITIES, ("legacy_production", "compiled_v2"),
-    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest",
-    "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime",
-    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol",
-    True, "Plane construction requires PlaneRuntimeBuildRequest",
+    "pssolver.planning.engine_plan.EnginePlan",
+    "pssolver.engine.engine.Engine",
+    "pssolver.engine.engine.Engine",
+    False, "Plane construction requires EnginePlan",
 )
 _PERIODIC = ApplicationRegistration(
     "complete_stress_beris_edwards", "periodic_box",
@@ -137,8 +137,8 @@ RUNTIMES = (
         None,
     ),
     RuntimeRegistration(
-        _PLANE, "compiled_v2", "plane_compiled_v2", "caller", "compiled_builder",
-        "pssolver.runtime.plane_application_bridge.build_package_compiled_plane_runtime",
+        _PLANE, "compiled_v2", "plane_compiled_v2", "package", None,
+        None,
         "compiled Plane construction requires Plane request",
     ),
 )

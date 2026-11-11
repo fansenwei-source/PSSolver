@@ -9,32 +9,28 @@ timestep dispatch is introduced.
 from __future__ import annotations
 
 from collections.abc import Callable
+
 from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.construction import (
     BuilderProvision,
     RuntimeConstructionBinding,
 )
-from .channel_beris_edwards import ChannelBerisEdwardsRuntimeAdapterProtocol, ChannelBerisEdwardsRuntimeBuildRequest
-from .plane_beris_edwards import PlaneRuntimeAdapterProtocol, PlaneRuntimeBuildRequest
+
+from .channel_beris_edwards import (
+    ChannelBerisEdwardsRuntimeAdapterProtocol,
+    ChannelBerisEdwardsRuntimeBuildRequest,
+)
 from .channel_beris_edwards import (
     build_channel_beris_edwards_runtime as build_channel_beris_edwards_runtime,
 )
-from .plane_beris_edwards import (
-    build_plane_beris_edwards_runtime as build_plane_beris_edwards_runtime,
-)
 
 
-RuntimeAdapter = (
-    PlaneRuntimeAdapterProtocol
-    | ChannelBerisEdwardsRuntimeAdapterProtocol
-)
+RuntimeAdapter = ChannelBerisEdwardsRuntimeAdapterProtocol
 RuntimeBuilder = Callable[[], object]
 
 
 def _request_simulation(request: object):
-    if isinstance(request, PlaneRuntimeBuildRequest):
-        return request.simulation
     if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
         return request.run_spec.simulation
     raise TypeError(
@@ -82,11 +78,7 @@ def _require_builder_contract(
 
 def build_bound_simulation_runtime(
     binding: RuntimeConstructionBinding,
-    request: (
-        PlaneRuntimeBuildRequest
-
-        | ChannelBerisEdwardsRuntimeBuildRequest
-    ),
+    request: ChannelBerisEdwardsRuntimeBuildRequest,
     *,
     legacy_builder: RuntimeBuilder | None = None,
     compiled_builder: RuntimeBuilder | None = None,

@@ -36,12 +36,12 @@ from pssolver.models.active_nematics.boundaries import (
 )
 from pssolver.operators.lifting import (
     FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION,
-    FreshInitialConditioningPolicy,
     LEGACY_WHOLE_SLAB_SINE,
     LOCALIZED_QUINTIC_WALL_TRANSITION,
+    STRICT_NO_AUTOMATIC_CONDITIONING,
+    FreshInitialConditioningPolicy,
     MaterializedLinearLiftCorrection,
     PlaneStaticLiftingOperator,
-    STRICT_NO_AUTOMATIC_CONDITIONING,
     legacy_whole_slab_sine_conditioning,
     localized_quintic_wall_transition,
     materialize_plane_static_lifting,
@@ -79,10 +79,6 @@ from pssolver.runtime.robin_scalar import (
     PlaneRobinScalarCheckpoint,
     PlaneRobinScalarRuntime,
 )
-from pssolver.runtime.static_lifting import (
-    FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION,
-    PlaneStaticLiftingRuntime,
-)
 from pssolver.workflows.finite_q_anchoring import (
     FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION,
     PlaneFiniteQAnchoringWorkflow,
@@ -112,7 +108,6 @@ __all__ = [
     "FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION",
     "FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION",
     "FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION",
-    "FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION",
     "FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION",
     "LEGACY_WHOLE_SLAB_SINE",
     "LOCALIZED_QUINTIC_WALL_TRANSITION",
@@ -137,7 +132,6 @@ __all__ = [
     "PlaneRobinScalarLoweringPlan",
     "PlaneRobinScalarRuntime",
     "PlaneStaticLiftingOperator",
-    "PlaneStaticLiftingRuntime",
     "QuadraticFiniteQAnchoring",
     "RobinFaceLaw",
     "RobinImpedanceSupportError",

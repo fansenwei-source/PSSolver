@@ -1,4 +1,4 @@
-"""Explicit S-25 production Periodic adapter; the frozen v1 driver stays intact."""
+"""Production Engine test driver; the frozen v0.4 v1 driver stays intact."""
 
 import json
 from pathlib import Path
@@ -6,15 +6,18 @@ from pathlib import Path
 import torch
 
 from qualification.identity.records import tensor_record
-from qualification.identity.runtime_case import RuntimeCase, complete_simulation
+from qualification.identity.runtime_case import RuntimeCase, complete_simulation, initial_values
 
 
 class RuntimeCaseV2(RuntimeCase):
-    """Use Engine/State only for production Periodic, and v1 for other families."""
+    """Use Engine/State for Periodic/Plane; retain the Channel/functional driver."""
 
     def __init__(self, scene: dict, root: Path):
-        self.engine_periodic = scene["family"] == "periodic"
-        if not self.engine_periodic:
+        self.engine_family = scene["family"] in {"periodic", "plane"}
+        if scene["family"] == "plane":
+            self._engine_plane(scene, root)
+            return
+        if not self.engine_family:
             super().__init__(scene, root)
             return
         from pssolver.configuration.legacy_periodic import translate_periodic
@@ -36,6 +39,49 @@ class RuntimeCaseV2(RuntimeCase):
             self.translation.initial_values, diagnostics=self.last_diagnostics
         )
 
+    def _engine_plane(self, scene, root):
+        self.scene, self.family, self.functional = scene, "plane", False
+        self.index = 0
+        from pssolver.configuration import create_plane_beris_edwards_run_spec
+        from pssolver.configuration.legacy_plane import translate_plane
+        from pssolver.engine import Engine
+        from pssolver.models.active_nematics import Q_COMPONENTS
+
+        options = dict(self.scene["options"])
+        options.pop("shape", None)
+        self.spec = create_plane_beris_edwards_run_spec(
+            activity_number=18.0,
+            output_dir=root / "output",
+            nx=self.scene["shape"][0],
+            ny=self.scene["shape"][1],
+            nz=self.scene["shape"][2],
+            lx=16.0,
+            ly=16.0,
+            height=12.0,
+            parameterization="fixed-k",
+            frank_k=1 / 81,
+            dt=0.001,
+            steps=self.scene["steps"],
+            save_start_step=0,
+            save_interval=64,
+            diagnostic_interval=64,
+            device="cpu",
+            dtype=self.scene["dtype"],
+            pointwise_execution=options.pop("pointwise_execution", "eager"),
+            tf32="off",
+            runtime_path=self.scene["runtime_path"],
+            **options,
+        )
+        values = initial_values(self.scene)
+        initial = {
+            name: torch.tensor(values[..., i], dtype=getattr(torch, self.scene["dtype"]))
+            for i, name in enumerate(Q_COMPONENTS)
+        }
+        self.configuration_identity = self.spec.identity_metadata()
+        self.engine = Engine(translate_plane(self.spec), device="cpu", dtype=getattr(torch, scene["dtype"]))
+        self.last_diagnostics = {}
+        self.state = self.engine.initial_state(initial, diagnostics=self.last_diagnostics)
+
     def prepare(self):
         self.engine.prepare_constraints_(
             self.state, controls={"alpha": self.engine.default_controls["alpha"]},
@@ -43,7 +89,7 @@ class RuntimeCaseV2(RuntimeCase):
         )
 
     def step(self):
-        if not self.engine_periodic:
+        if not self.engine_family:
             return super().step()
         self.prepare()
         before = self.record()
@@ -52,14 +98,14 @@ class RuntimeCaseV2(RuntimeCase):
         return before
 
     def observe(self):
-        if not self.engine_periodic:
+        if not self.engine_family:
             return super().observe()
         self.prepare()
         fields = self.engine.field_view(self.state)
         return {name: tensor_record(fields[name]) for name in self.engine.components}
 
     def record(self):
-        if not self.engine_periodic:
+        if not self.engine_family:
             return super().record()
         fields = self.engine.field_view(self.state)
         return {
@@ -79,12 +125,14 @@ class RuntimeCaseV2(RuntimeCase):
                 "operator_action": None,
                 "operator_action_working_exponent": None,
                 "operator_action_matches_guess": False,
-                "pressure_iterations": self.last_diagnostics["pressure_iterations"],
+                "pressure_iterations": self.last_diagnostics[
+                    "last_pressure_iterations" if self.family == "plane" else "pressure_iterations"
+                ],
             },
         }
 
     def export(self, path):
-        if not self.engine_periodic:
+        if not self.engine_family:
             return super().export(path)
         from pssolver.io import engine_state
 
@@ -99,7 +147,7 @@ class RuntimeCaseV2(RuntimeCase):
         )
 
     def restore(self, path, step):
-        if not self.engine_periodic:
+        if not self.engine_family:
             return super().restore(path, step)
         from pssolver.io import engine_state
         from pssolver.io.legacy.periodic_workflow import load_periodic_checkpoint
@@ -115,6 +163,14 @@ class RuntimeCaseV2(RuntimeCase):
                 device=self.engine.device,
                 batch=self.engine.batch,
             )
+        elif self.family == "plane":
+            from pssolver.configuration.legacy_plane import load_plane_checkpoint
+            from pssolver.runtime.legacy_entry import restore_plane_state
+
+            restore_plane_state(
+                self.engine, self.state, load_plane_checkpoint(path), run_spec=self.spec,
+                diagnostics=self.last_diagnostics,
+            )
         else:
             restore_periodic_state(
                 self.engine, self.state, load_periodic_checkpoint(path), run_spec=self.spec
@@ -122,8 +178,19 @@ class RuntimeCaseV2(RuntimeCase):
         self.index = step
 
     def identity(self):
-        if not self.engine_periodic:
+        if not self.engine_family:
             return super().identity()
+        if self.family == "plane":
+            return {
+                "configuration": self.configuration_identity,
+                "runtime": {
+                    "requested": self.spec.runtime_path.value,
+                    "effective": self.spec.runtime_path.value,
+                    "adapter": "Engine",
+                    "fallback_used": False,
+                    "separated_architecture": None,
+                },
+            }
         stokes = self.spec.simulation.equation_system.parameters["stokes"]["parameters"]
         policy = stokes["tangential_zero_mode_policy"]
         return {

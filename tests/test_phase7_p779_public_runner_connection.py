@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError
 import json
-from pathlib import Path
 import sys
+from dataclasses import FrozenInstanceError
+from pathlib import Path
 from types import ModuleType, SimpleNamespace
 
 import numpy as np
@@ -30,7 +30,11 @@ from pssolver.boundaries import (
     neumann_pressure_compatibility,
     neumann_q,
 )
-from pssolver.configuration.public_simulation_runner import PUBLIC_PLANE_APPLICATION, PublicCompilationRejectionCode, PublicSimulationCompilationError
+from pssolver.configuration.public_simulation_runner import (
+    PUBLIC_PLANE_APPLICATION,
+    PublicCompilationRejectionCode,
+    PublicSimulationCompilationError,
+)
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
@@ -334,7 +338,7 @@ def test_compiled_product_is_immutable():
 def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
     compiled = compile_simulation(_simulation())
     observed = {}
-    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    fake = ModuleType("pssolver.runtime.legacy_entry")
 
     def run_plane_beris_edwards(
         run_spec,
@@ -364,10 +368,10 @@ def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
             diagnostics=(),
         )
 
-    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    fake.run_v04_plane_translation = run_plane_beris_edwards
     monkeypatch.setitem(
         sys.modules,
-        "pssolver.applications.plane_beris_edwards",
+        "pssolver.runtime.legacy_entry",
         fake,
     )
     progress = (0, 1)
@@ -408,7 +412,7 @@ def test_run_simulation_represents_plane_dry_run_without_false_outputs(
     monkeypatch,
 ):
     compiled = compile_simulation(_simulation())
-    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    fake = ModuleType("pssolver.runtime.legacy_entry")
 
     def run_plane_beris_edwards(
         run_spec,
@@ -425,10 +429,10 @@ def test_run_simulation_represents_plane_dry_run_without_false_outputs(
         )
         return None
 
-    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    fake.run_v04_plane_translation = run_plane_beris_edwards
     monkeypatch.setitem(
         sys.modules,
-        "pssolver.applications.plane_beris_edwards",
+        "pssolver.runtime.legacy_entry",
         fake,
     )
 
@@ -485,7 +489,7 @@ def test_public_runner_has_no_top_level_application_or_runtime_import():
         for name in top_level_imports
         if any(name == item or name.startswith(f"{item}.") for item in forbidden)
     }
-    assert "pssolver.applications.plane_beris_edwards" in imports
+    assert "pssolver.runtime.legacy_entry" in imports
 
 
 def test_public_exports_include_compile_and_run_connection():

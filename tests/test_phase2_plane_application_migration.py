@@ -8,16 +8,16 @@ from types import SimpleNamespace
 
 import pytest
 
-from pssolver.applications import plane_beris_edwards as application
 from pssolver.configuration import (
     PlaneRuntimePath,
     create_plane_beris_edwards_run_spec,
 )
+from pssolver.runtime import legacy_entry as application
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 APPLICATION_PATH = (
-    PROJECT_ROOT / "pssolver" / "applications" / "plane_beris_edwards.py"
+    PROJECT_ROOT / "pssolver" / "runtime" / "legacy_entry.py"
 )
 FLAT_APPLICATION_READS = {
     "S_initial",
@@ -111,8 +111,8 @@ def _run_spec_reads() -> set[str]:
         for node in tree.body
         if isinstance(node, ast.FunctionDef)
         and node.name in {
-            "run_plane_beris_edwards",
-            "_run_plane_beris_edwards_owned",
+            "run_v04_plane_translation",
+            "_run_v04_plane_translation_owned",
         }
     )
     return {
@@ -134,9 +134,10 @@ def _forbid_expensive_application_work(monkeypatch):
     for name in (
         "create_initial_condition",
         "sample_periodic_neutral_defects_2d",
-        "build_package_simulation_runtime",
+        "Engine",
     ):
         monkeypatch.setattr(application, name, forbidden)
+    monkeypatch.setattr("pssolver.io.checkpoint.read_checkpoint_json", lambda *_args, **_kwargs: {})
 
 
 def test_application_uses_one_component_graph_and_only_facade_identity_methods(
@@ -158,7 +159,7 @@ def test_application_uses_one_component_graph_and_only_facade_identity_methods(
         spy,
     )
     spec = _spec(tmp_path, dry_run=True)
-    assert application.run_plane_beris_edwards(spec) is None
+    assert application.run_v04_plane_translation(spec) is None
     assert len(calls) == 1
     assert calls[0][0] is spec
     assert FLAT_APPLICATION_READS.isdisjoint(_run_spec_reads())
@@ -172,7 +173,7 @@ def test_dry_run_emits_metadata_before_allocation_and_creates_no_output(
     _forbid_expensive_application_work(monkeypatch)
     spec = _spec(tmp_path, dry_run=True)
 
-    assert application.run_plane_beris_edwards(
+    assert application.run_v04_plane_translation(
         spec,
         emit_metadata=True,
     ) is None
@@ -202,7 +203,7 @@ def test_cross_runtime_restart_is_rejected_before_output_or_allocation(
         ValueError,
         match="cross-runtime Plane checkpoint restart is unsupported",
     ):
-        application.run_plane_beris_edwards(spec)
+        application.run_v04_plane_translation(spec)
     assert not spec.output_dir.exists()
 
 
@@ -243,6 +244,6 @@ def test_lifting_dynamics_restart_mismatch_rejects_before_allocation(
     )
 
     with pytest.raises(ValueError, match="static lifting dynamics"):
-        application.run_plane_beris_edwards(spec)
+        application.run_v04_plane_translation(spec)
 
     assert not spec.output_dir.exists()

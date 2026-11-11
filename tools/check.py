@@ -166,29 +166,35 @@ def lint_counts(executable: str, relative: str, source: bytes) -> Counter:
 
 
 def unit_span(source: str, name: str) -> tuple[int, int]:
-    units = [node for node in ast.parse(source).body if getattr(node, "name", None) == name]
+    units = [node for node in ast.parse(source).body if getattr(node, "name", None) == name
+             or isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == name for t in node.targets)]
     if len(units) != 1:
         raise ValueError(f"missing or ambiguous exact unit: {name}")
     node = units[0]
-    return min([node.lineno, *(d.lineno for d in node.decorator_list)]), node.end_lineno
+    return min([node.lineno, *(d.lineno for d in getattr(node, "decorator_list", []))]), node.end_lineno
 
 
 def exact_assemblies() -> dict[str, list[dict]]:
     """Validate every registered span against its reachable, byte-identical source."""
-    previous = json.loads((ROOT / "qualification/s25_exact_moves.json").read_text())
-    manifest = json.loads((ROOT / "qualification/s26_exact_moves.json").read_text())
+    first = json.loads((ROOT / "qualification/s25_exact_moves.json").read_text())
+    previous = json.loads((ROOT / "qualification/s26_exact_moves.json").read_text())
+    manifest = json.loads((ROOT / "qualification/s27_exact_moves.json").read_text())
     def identities(record):
         return [
             {key: value for key, value in entry.items() if key != "target_lines"}
             for entry in record["exact_moves"]
         ]
-    if (manifest["source_commit"] != previous["source_commit"]
-            or identities(manifest) != identities(previous)):
+    if (previous["source_commit"] != first["source_commit"]
+            or identities(previous) != identities(first)):
         raise ValueError("S-26 exact moves changed a source, unit or frozen hash")
+    inherited = manifest["exact_moves"][:len(previous["exact_moves"])]
+    if (manifest["source_commit"] != previous["source_commit"]
+            or identities({"exact_moves": inherited}) != identities(previous)):
+        raise ValueError("S-27 exact moves changed an inherited source, unit or frozen hash")
     result = {}
     for entry in manifest["exact_moves"]:
         original = subprocess.check_output(
-            ["git", "show", manifest["source_commit"] + ":" + entry["source"]], cwd=ROOT
+            ["git", "show", entry.get("source_commit", manifest["source_commit"]) + ":" + entry["source"]], cwd=ROOT
         ).decode()
         current = (ROOT / entry["target"]).read_text()
         old_start, old_end = unit_span(original, entry["unit"])

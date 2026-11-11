@@ -20,6 +20,44 @@ S25_DELETED_REGISTRY_MODULES = (
     "pssolver.runtime.periodic_beris_edwards.",
 )
 
+S27_IDENTITY_MAP = {
+    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest": "pssolver.planning.engine_plan.EnginePlan",
+    "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime": "pssolver.engine.engine.Engine",
+    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol": "pssolver.engine.engine.Engine",
+}
+
+
+def _forward_plane_value(value, *, plane):
+    """Closed S-27 mapping; unknown retired identities and wrong families fail."""
+    if isinstance(value, str):
+        if value.startswith("pssolver.runtime.plane_beris_edwards."):
+            assert plane, "deleted Plane identity in another application"
+            assert value in S27_IDENTITY_MAP, f"unmapped Plane identity: {value}"
+            return S27_IDENTITY_MAP[value]
+        return value
+    if isinstance(value, dict):
+        result = {key: _forward_plane_value(item, plane=plane) for key, item in value.items()}
+        if plane and "runtime_accepts_builders" in result:
+            assert result["runtime_accepts_builders"] is True
+            assert result["runtime_request_error"] == "Plane construction requires PlaneRuntimeBuildRequest"
+            result["runtime_accepts_builders"] = False
+            result["runtime_request_error"] = "Plane construction requires EnginePlan"
+        return result
+    if isinstance(value, tuple):
+        result = tuple(_forward_plane_value(item, plane=plane) for item in value)
+        if plane and result and result[0] == "plane_compiled_v2":
+            assert result[-2:] == ("caller", "compiled_builder")
+            result = (*result[:-2], "package", None)
+        return result
+    return value
+
+
+def _forward_value(value, application):
+    return _forward_plane_value(
+        _forward_periodic_value(value, periodic=application.geometry_name == "periodic_box"),
+        plane=application.geometry_name == "plane_slab",
+    )
+
 
 def _forward_periodic_value(value, *, periodic):
     """Translate only the closed Periodic identity set; never pass a missing key."""
@@ -40,6 +78,7 @@ def _validated_registry():
     registry = release_registry()
     for item in registry.APPLICATIONS:
         _forward_periodic_value(asdict(item), periodic=item.geometry_name == "periodic_box")
+        _forward_plane_value(asdict(item), plane=item.geometry_name == "plane_slab")
     return registry
 
 
@@ -65,7 +104,7 @@ def release_registry():
 
 def retained_application_metadata():
     return tuple(
-        _forward_periodic_value(item.compiler_metadata(), periodic=item.geometry_name == "periodic_box")
+        _forward_value(item.compiler_metadata(), item)
         for item in _validated_registry().APPLICATIONS
         if item.lowering_kind != "channel_legacy"
     )
@@ -73,7 +112,7 @@ def retained_application_metadata():
 
 def retained_runtime_bindings():
     return {
-        item.key: _forward_periodic_value(item.binding_fields(), periodic=item.application.geometry_name == "periodic_box")
+        item.key: _forward_value(item.binding_fields(), item.application)
         for item in _validated_registry().RUNTIMES
         if item.application.lowering_kind != "channel_legacy"
         and item.runtime_path != "separated_canary"
@@ -85,7 +124,7 @@ def retained_application_records():
     for item in _validated_registry().APPLICATIONS:
         if item.lowering_kind == "channel_legacy":
             continue
-        record = _forward_periodic_value(asdict(item), periodic=item.geometry_name == "periodic_box")
+        record = _forward_value(asdict(item), item)
         record["runtime_paths"] = tuple(
             name for name in record["runtime_paths"] if name != "separated_canary"
         )

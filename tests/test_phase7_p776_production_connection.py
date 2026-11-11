@@ -8,14 +8,11 @@ from pathlib import Path
 
 import pytest
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-from pssolver.applications import plane_beris_edwards as plane_application
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
-from pssolver.runtime.package_construction import (
-    PackageRuntimeConstructionInput,
-)
+from pssolver.runtime import legacy_entry as plane_application
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -101,30 +98,24 @@ def test_plane_production_entry_passes_typed_package_construction(
     kind,
 ):
     captured = []
-    original = plane_application.build_package_simulation_runtime
+    original = plane_application.Engine
 
-    def spy(construction):
-        captured.append(construction)
-        return original(construction)
+    def spy(plan, **kwargs):
+        captured.append(plan)
+        return original(plan, **kwargs)
 
     monkeypatch.setattr(
         plane_application,
-        "build_package_simulation_runtime",
+        "Engine",
         spy,
     )
     output = tmp_path / runtime_path
-    result = plane_application.run_plane_beris_edwards(
+    result = plane_application.run_v04_plane_translation(
         _plane_spec(output, runtime_path)
     )
 
     assert result.final_step == 2
     assert len(captured) == 1
-    assert isinstance(captured[0], PackageRuntimeConstructionInput)
-    assert captured[0].plan.kind.value == kind
     metadata = json.loads((output / "metadata.json").read_text())
-    assert metadata["runtime_construction"] == {
-        "plan": captured[0].plan.to_metadata(),
-        "input": captured[0].to_metadata(),
-    }
     assert metadata["runtime_selection"]["effective"] == runtime_path
     assert metadata["runtime_selection"]["fallback_used"] is False

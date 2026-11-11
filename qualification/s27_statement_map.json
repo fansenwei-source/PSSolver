@@ -1,0 +1,241 @@
+{
+  "authority": "S-27 r1.4 sections 18-20; R-0091 F4, R-0092 metadata, R-0093 G1-G6",
+  "candidate": {
+    "0": {
+      "ast_sha256": "952ee3e12ca92f47aaa78f6f4d9d2fbee76506535349ce24ca71e8bfaf92ed04",
+      "disposition": "rewritten",
+      "reason": "G5 result docstring",
+      "statement": "'Execute one validated Plane run through the supported application API.\\n\\n    A dry-run returns None after resolving and optionally printing metadata.\\n    A simulation returns its RunResult. The caller owns progress\\n    presentation; omitting progress selects the quiet consecutive range.\\n    '"
+    },
+    "100": {
+      "ast_sha256": "2ad76815e7870b775e2c2a9bde103ff4f01a65f097ab6ab5e4eea6db7f5a49a9",
+      "disposition": "rewritten",
+      "reason": "R-0092 runtime construction metadata",
+      "statement": "metadata['runtime_construction'] = {'plan_identity_sha256': engine.plan.identity_sha256, 'engine': 'pssolver.engine.engine.Engine', 'operation_order': ['prepare_constraints', 'explicit', 'euler', 'project', 'inverse']}"
+    },
+    "101": {
+      "ast_sha256": "a08aa918153c61aaa2381fb334c9b9bbf0d0d18e4e01917b585f6146bcf08309",
+      "disposition": "rewritten",
+      "reason": "R-0092 runtime selection metadata",
+      "statement": "metadata['runtime_selection'] = {**run_spec.runtime_selection_metadata(), 'requested': execution.runtime_path.value, 'effective': execution.runtime_path.value, 'adapter': 'Engine', 'fallback_used': False, 'separated_architecture': None}"
+    },
+    "102": {
+      "ast_sha256": "547b51b39243163354539c4544ae6ec55fa3f8b14452bae9ad28af061d02fcae",
+      "disposition": "rewritten",
+      "reason": "FieldView tensor access",
+      "statement": "metadata['initial_condition']['projected_q_sha256'] = tensor_sha256(tuple((fields[name] for name in ('Qxx', 'Qxy', 'Qxz', 'Qyy', 'Qyz'))))"
+    },
+    "103": {
+      "ast_sha256": "53ace811656f4e89b7e380e1a0b7817f06d93eb1f90f244bf80a48f9fa6f1555",
+      "disposition": "rewritten",
+      "reason": "FieldView boundary access",
+      "statement": "q_runtime_boundaries = fields['Qxx.bc']"
+    },
+    "107": {
+      "ast_sha256": "672a5b7d3029697639ac00345aea5cb7778eca5e84c6ed99042fc427c5303068",
+      "disposition": "replaced_by_runner",
+      "reason": "Runner start step",
+      "statement": "start_step = 0"
+    },
+    "108": {
+      "ast_sha256": "e6592779b76823974d852a208529c73ce26b6342c2e430915ed07b68adf4248c",
+      "disposition": "replaced_by_runner",
+      "reason": "Caller-owned diagnostics",
+      "statement": "restored_diagnostics = {}"
+    },
+    "109": {
+      "ast_sha256": "ac4cfae87357ee86f6dc40c61be79562cd65dc481877aa778fcfcbf207c9855e",
+      "disposition": "rewritten",
+      "reason": "Fresh restart metadata",
+      "statement": "metadata['restart'] = {'kind': 'fresh'}"
+    },
+    "110": {
+      "ast_sha256": "d513c51e2c7072cecff6e6aa8298ddbfbc75fdce4a1198c91cff46913ca6e535",
+      "disposition": "replaced_by_runner",
+      "reason": "R-0095 F-C: declaration source_runtime_path from sealed checkpoint provenance; validated restore and progress",
+      "statement": "if is_restart:\n    try:\n        if restart_kind == 'engine_state':\n            state = engine_state.read(workflow_spec.restart_from, plan_identity_sha256=plan.identity_sha256, dtype=real_dtype, batch=1, device=device)\n            start_step = state.completed_steps\n            state.constrained_current = False\n            engine.prepare_constraints_(state, diagnostics=restored_diagnostics)\n            metadata['restart'] = {'kind': 'engine_state', 'source': str(Path(workflow_spec.restart_from).expanduser().resolve()), 'source_runtime_path': engine_header['run_provenance']['legacy_configuration']['runtime_path'], 'source_completed_steps': start_step}\n        else:\n            checkpoint = load_plane_checkpoint(workflow_spec.restart_from)\n            start_step = restore_plane_state(engine, state, checkpoint, run_spec=run_spec, diagnostics=restored_diagnostics)\n            metadata['restart'] = {'kind': 'same_backend_plane_workflow_checkpoint', 'source': str(Path(workflow_spec.restart_from).expanduser().resolve()), 'source_runtime_path': checkpoint.runtime_path.value, 'source_runtime_identity_sha256': checkpoint.runtime_identity_sha256, 'source_completed_steps': checkpoint.completed_steps, 'cross_backend_adapter_used': False}\n    except (SimulationRestartError, CheckpointError):\n        raise\n    except Exception as exc:\n        raise SimulationRestartError(str(exc) or 'Plane checkpoint restore failed', application_family='plane_complete_stress_beris_edwards', stage='restart_restore', step=state.completed_steps, details={'reason': 'checkpoint_restore_failed', 'legacy_exception_type': type(exc).__name__}) from exc\n    metadata['initial_condition']['used_for_runtime_construction_only'] = True"
+    },
+    "111": {
+      "ast_sha256": "e8b384d1b49300bcfafefccfb6ebef1881a1ddbacfc724a397f719246fcfd83e",
+      "disposition": "rewritten",
+      "reason": "R-0092 workflow implementation metadata",
+      "statement": "metadata['workflow'] = {'schema_version': 1, 'runtime_path': execution.runtime_path.value, 'checkpoint_format_version': 'engine_state.v1', 'cross_backend_restart_supported': True, 'start_step': start_step, 'requested_additional_steps': workflow_spec.steps, 'completion_marker_order': 'metadata_then_COMPLETE'}"
+    },
+    "112": {
+      "ast_sha256": "0e9610fa39992d2414297abdbfe80c8f44a314ed0455759f6088d313033815e2",
+      "disposition": "replaced_by_runner",
+      "reason": "Runner schedule/capture construction",
+      "statement": "workflow = Runner(engine, schedule=RunSchedule(steps=workflow_spec.steps, save_interval=workflow_spec.save_interval, save_start_step=workflow_spec.save_start_step, diagnostics=workflow_spec.diagnostics, diagnostic_interval=workflow_spec.diagnostic_interval, checkpoint_interval=workflow_spec.checkpoint_interval), output_directory=output_dir, capture=PlaneCapture(hydrodynamics=workflow_spec.save_hydrodynamics, runtime_path=execution.runtime_path.value, viscosity=stokes.viscosity, friction=stokes.friction), metadata=metadata)"
+    },
+    "113": {
+      "ast_sha256": "94dc270e4e4df4adab1d0d45dd0bd86523494a393727fdce4696a76cb158bcbb",
+      "disposition": "replaced_by_runner",
+      "reason": "Latest solve diagnostics transfer",
+      "statement": "workflow.constraint_diagnostics.update(restored_diagnostics)"
+    },
+    "114": {
+      "ast_sha256": "8a50ac15b5d05d651d530517b16a6a3bfa6dcd67207809443b0147b051dc2357",
+      "disposition": "replaced_by_runner",
+      "reason": "Runner execution and return",
+      "statement": "return workflow.run(state, start_step=start_step, progress=progress)"
+    },
+    "6": {
+      "ast_sha256": "8403218102092f814264c5ff5da523e23fe38e8e735c1be7f950823ab002b0ec",
+      "disposition": "deleted_with_reason",
+      "reason": "Explicit rejection replacing private lifting construction",
+      "statement": "if lifting_plan is not None:\n    raise ValueError('private Plane lifting construction is retired')"
+    },
+    "74": {
+      "ast_sha256": "ee9ce4f2bf8990507db992f9ac2b9e657e61136481a065ace69c550d1a316f97",
+      "disposition": "rewritten",
+      "reason": "Checkpoint format dispatch",
+      "statement": "restart_kind = None"
+    },
+    "75": {
+      "ast_sha256": "ad6d8f667e6788bbafc98e86dcf00e903cc755a30f7183e47bf279c6a0f74a27",
+      "disposition": "rewritten",
+      "reason": "Native checkpoint header",
+      "statement": "engine_header = None"
+    },
+    "76": {
+      "ast_sha256": "c15df3b5ec8fe477f290ce33709e4e665e43da6a3843595703e6fec330832e53",
+      "disposition": "rewritten",
+      "reason": "Native read-only preflight",
+      "statement": "if is_restart:\n    from pssolver.io.checkpoint import read_checkpoint_json\n    restart_metadata = read_checkpoint_json(Path(workflow_spec.restart_from) / 'checkpoint.json', operation='plane_checkpoint_import')\n    if restart_metadata.get('format_kind') == 'engine_state':\n        engine_header = engine_state.read_header(workflow_spec.restart_from, plan_identity_sha256=translate_plane(run_spec).identity_sha256, dtype=real_dtype, batch=1)\n        restart_kind = 'engine_state'\n        if save_start_step > engine_header['completed_steps'] + steps:\n            _reject_plane_restart('save_start_step must not exceed the absolute final step', reason='save_start_step_after_final_step', step=engine_header['completed_steps'], details={'save_start_step': save_start_step, 'absolute_final_step': engine_header['completed_steps'] + steps})"
+    },
+    "77": {
+      "ast_sha256": "1af4b346194f60878247b756e192afd19e0e47b91cab406a07b2ac028014cce2",
+      "disposition": "rewritten",
+      "reason": "Legacy validation retained for legacy checkpoint",
+      "statement": "if is_restart and restart_kind != 'engine_state':\n    try:\n        restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)\n    except SimulationRestartError:\n        raise\n    except CheckpointError:\n        raise\n    except Exception as exc:\n        _reject_plane_restart(str(exc) or 'Plane checkpoint preflight failed', reason='checkpoint_preflight_failed', details={'legacy_exception_type': type(exc).__name__}, exception=exc)\n    restart_step = getattr(restart_header, 'completed_steps', 0)\n    if restart_header.runtime_path is not execution.runtime_path:\n        _reject_plane_restart('cross-runtime Plane checkpoint restart is unsupported', reason='runtime_path_mismatch', step=restart_step, details={'checkpoint_runtime_path': restart_header.runtime_path.value, 'target_runtime_path': execution.runtime_path.value})\n    if restart_header.format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:\n        _reject_plane_restart('legacy Plane checkpoint requires explicit identity upgrade', reason='legacy_identity_upgrade_required', step=restart_step)\n    checkpoint_identity = restart_header.compatibility_identity\n    if checkpoint_identity is None:\n        _reject_plane_restart('checkpoint compatibility identity is missing', reason='compatibility_identity_missing', step=restart_step)\n    checkpoint_forward = checkpoint_identity.forward_dynamics.to_metadata()['payload']\n    checkpoint_run_spec = checkpoint_forward.get('run_spec_dynamics')\n    target_run_spec = plane_run_spec_dynamics_identity(run_spec).to_metadata()\n    if checkpoint_run_spec != target_run_spec:\n        _reject_plane_restart('checkpoint forward dynamics does not match target', reason='forward_dynamics_mismatch', step=restart_step)\n    checkpoint_lifting = checkpoint_forward.get('lifting_dynamics')\n    if lifting_plan is None:\n        target_lifting_plan_sha256 = None\n    else:\n        target_lifting_plan_sha256 = lifting_plan.canonical_sha256()\n    if checkpoint_lifting is None:\n        checkpoint_lifting_plan_sha256 = None\n    elif isinstance(checkpoint_lifting, dict):\n        lifting_identity = checkpoint_lifting.get('lifting')\n        checkpoint_lifting_plan_sha256 = lifting_identity.get('plan_sha256') if isinstance(lifting_identity, dict) else None\n    else:\n        checkpoint_lifting_plan_sha256 = None\n    if checkpoint_lifting_plan_sha256 != target_lifting_plan_sha256:\n        _reject_plane_restart('checkpoint static lifting dynamics does not match target', reason='static_lifting_dynamics_mismatch', step=restart_step)\n    if save_start_step > restart_header.completed_steps + steps:\n        _reject_plane_restart('save_start_step must not exceed the absolute final step', reason='save_start_step_after_final_step', step=restart_step, details={'save_start_step': save_start_step, 'absolute_final_step': restart_header.completed_steps + steps})"
+    },
+    "95": {
+      "ast_sha256": "915ecb9324b05045c64effd3c84f5a37f5b5f6d33b34500eddc288b7595f0e56",
+      "disposition": "replaced_by_engine",
+      "reason": "Translate declaration to Plan",
+      "statement": "plan = translate_plane(run_spec)"
+    },
+    "96": {
+      "ast_sha256": "bf04b015a5f65b7fb4c1e111a344221905f5076a1c5433f0b0cb0637e79268cf",
+      "disposition": "replaced_by_engine",
+      "reason": "Engine constructor",
+      "statement": "engine = Engine(plan, device=device, dtype=real_dtype)"
+    },
+    "97": {
+      "ast_sha256": "3db602920e2efe8c13246e46fe20fffc81566e37f27b58aa9874dbd538217111",
+      "disposition": "replaced_by_engine",
+      "reason": "Engine initial state",
+      "statement": "state = engine.initial_state({name: value.to(device=device) for name, value in initial_values.items()})"
+    },
+    "98": {
+      "ast_sha256": "55b575f509b9d763258e11ae5f2a1c66c5859558d3fa5b4323cb8a47dbd56539",
+      "disposition": "replaced_by_engine",
+      "reason": "FieldView",
+      "statement": "fields = engine.field_view(state)"
+    },
+    "99": {
+      "ast_sha256": "aa82983797353e4f634a94c003ed1ff2cd0af832af5c1b5a441bb6bf5b18f164",
+      "disposition": "replaced_by_engine",
+      "reason": "Engine projector",
+      "statement": "spectral_projector = engine.projector"
+    }
+  },
+  "source": {
+    "0": {
+      "ast_sha256": "1cc4ea535a4e713d82be926303c917af1abbbd044b86c81e57a280af6cf388e0",
+      "disposition": "rewritten",
+      "reason": "Result type/docstring; R-0093 G5",
+      "statement": "'Execute one validated Plane run through the supported application API.\\n\\n    A dry-run returns None after resolving and optionally printing metadata.\\n    A simulation returns its PlaneWorkflowResult. The caller owns progress\\n    presentation; omitting progress selects the quiet consecutive range.\\n    '"
+    },
+    "100": {
+      "ast_sha256": "fee002d0aa7c0328ab046e561842bb33984545cc80f093a3e62c0b2cb690d791",
+      "disposition": "rewritten",
+      "reason": "FieldView tensor access; same projected bytes",
+      "statement": "metadata['initial_condition']['projected_q_sha256'] = tensor_sha256(tuple((plane_physical_component(runtime_adapter, name) for name in ('Qxx', 'Qxy', 'Qxz', 'Qyy', 'Qyz'))))"
+    },
+    "101": {
+      "ast_sha256": "d2ffd6f927c32da43b559c35fdfd20c3ac5fe19571a430ecd9b746d3bedcc2b7",
+      "disposition": "rewritten",
+      "reason": "FieldView boundary access",
+      "statement": "q_runtime_boundaries = runtime_adapter.fields.get_boundary_conditions('Qxx')"
+    },
+    "105": {
+      "ast_sha256": "4b683d076cd8bd242a43d78ff8d09b4d3f5846e2fad3371a035bdb3d4bb69775",
+      "disposition": "replaced_by_runner",
+      "reason": "Runner owns capture/schedule/restart",
+      "statement": "workflow = PlaneBerisEdwardsWorkflow(runtime_adapter, run_spec, output_dir, metadata)"
+    },
+    "106": {
+      "ast_sha256": "9219b7e919255700a36f12d982e363c6d6802a1b0250be14e28b466bf9a63c99",
+      "disposition": "replaced_by_runner",
+      "reason": "Runner execution",
+      "statement": "workflow_result = workflow.run(progress=progress)"
+    },
+    "107": {
+      "ast_sha256": "e1339f07a46a87603293cdbf1fc60cae7d57c91c77eb1ceb97dff70279ed7b59",
+      "disposition": "replaced_by_runner",
+      "reason": "RunResult return",
+      "statement": "return workflow_result"
+    },
+    "6": {
+      "ast_sha256": "71b566b546642c75763aa8cb884a8467a4904be3f31bada6fc94712fbff7dd2a",
+      "disposition": "deleted_with_reason",
+      "reason": "Fresh conditioning declaration is retired; Engine performs construction solve",
+      "statement": "fresh_initial_conditioning = strict_no_automatic_conditioning()"
+    },
+    "74": {
+      "ast_sha256": "9a096f606859338fefb3ddae09aac53096d14bd693ee94fecf9a83244035a6e8",
+      "disposition": "deleted_with_reason",
+      "reason": "Private lifting construction is retired and explicitly rejected",
+      "statement": "if lifting_plan is not None:\n    metadata['static_lifting'] = {'plan': lifting_plan.to_metadata(), 'plan_sha256': lifting_plan.canonical_sha256(), 'evolved_representation': 'homogeneous_remainder', 'saved_observation_representation': 'physical_field', 'nonhomogeneous_neumann_supported': False}\n    metadata['initial_condition']['boundary_compatibility'] = {**fresh_initial_conditioning.to_metadata(affected_field='Q', affected_components=lifting_plan.component_order), 'target_representation': 'homogeneous_dirichlet_remainder', 'applied_to_this_construction': not is_restart}"
+    },
+    "75": {
+      "ast_sha256": "85d948ea68c769d96266f1f1154011f90b512bc633dd58415c05909bc800b45f",
+      "disposition": "rewritten",
+      "reason": "Old checkpoint validation retained; native engine-state header path added",
+      "statement": "if is_restart:\n    try:\n        restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)\n    except SimulationRestartError:\n        raise\n    except CheckpointError:\n        raise\n    except Exception as exc:\n        _reject_restart(str(exc) or 'Plane checkpoint preflight failed', reason='checkpoint_preflight_failed', details={'legacy_exception_type': type(exc).__name__}, exception=exc)\n    restart_step = getattr(restart_header, 'completed_steps', 0)\n    if restart_header.runtime_path is not execution.runtime_path:\n        _reject_restart('cross-runtime Plane checkpoint restart is unsupported', reason='runtime_path_mismatch', step=restart_step, details={'checkpoint_runtime_path': restart_header.runtime_path.value, 'target_runtime_path': execution.runtime_path.value})\n    if restart_header.format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:\n        _reject_restart('legacy Plane checkpoint requires explicit identity upgrade', reason='legacy_identity_upgrade_required', step=restart_step)\n    checkpoint_identity = restart_header.compatibility_identity\n    if checkpoint_identity is None:\n        _reject_restart('checkpoint compatibility identity is missing', reason='compatibility_identity_missing', step=restart_step)\n    checkpoint_forward = checkpoint_identity.forward_dynamics.to_metadata()['payload']\n    checkpoint_run_spec = checkpoint_forward.get('run_spec_dynamics')\n    target_run_spec = plane_run_spec_dynamics_identity(run_spec).to_metadata()\n    if checkpoint_run_spec != target_run_spec:\n        _reject_restart('checkpoint forward dynamics does not match target', reason='forward_dynamics_mismatch', step=restart_step)\n    checkpoint_lifting = checkpoint_forward.get('lifting_dynamics')\n    if lifting_plan is None:\n        target_lifting_plan_sha256 = None\n    else:\n        target_lifting_plan_sha256 = lifting_plan.canonical_sha256()\n    if checkpoint_lifting is None:\n        checkpoint_lifting_plan_sha256 = None\n    elif isinstance(checkpoint_lifting, dict):\n        lifting_identity = checkpoint_lifting.get('lifting')\n        checkpoint_lifting_plan_sha256 = lifting_identity.get('plan_sha256') if isinstance(lifting_identity, dict) else None\n    else:\n        checkpoint_lifting_plan_sha256 = None\n    if checkpoint_lifting_plan_sha256 != target_lifting_plan_sha256:\n        _reject_restart('checkpoint static lifting dynamics does not match target', reason='static_lifting_dynamics_mismatch', step=restart_step)\n    if save_start_step > restart_header.completed_steps + steps:\n        _reject_restart('save_start_step must not exceed the absolute final step', reason='save_start_step_after_final_step', step=restart_step, details={'save_start_step': save_start_step, 'absolute_final_step': restart_header.completed_steps + steps})"
+    },
+    "93": {
+      "ast_sha256": "67c034820b6b455fe2fb7ea43d0fd73197c56d23339edfb28a27b2b66e59e4ec",
+      "disposition": "replaced_by_engine",
+      "reason": "Legacy build request replaced by Plan and Engine",
+      "statement": "runtime_request = PlaneRuntimeBuildRequest(run_spec=run_spec, production_metadata=metadata, initial_values=initial_values, device=device, application_simulation=application_simulation if lifting_plan is not None else None, fresh_initial_conditioning=fresh_initial_conditioning, apply_fresh_initial_conditioning=not is_restart)"
+    },
+    "94": {
+      "ast_sha256": "0d663593bfcfa1db414cc6cb51b5cb153efea54501f7b748cdd278a55161acd6",
+      "disposition": "replaced_by_engine",
+      "reason": "Legacy construction replaced by Engine",
+      "statement": "construction = PackageRuntimeConstructionInput(plan=plan_package_runtime_construction(application_simulation), request=runtime_request)"
+    },
+    "95": {
+      "ast_sha256": "bc0502b063c49beb9ac3e85f1e9c88d1e4d2bcead0665709b5a35293e6f1aa48",
+      "disposition": "rewritten",
+      "reason": "R-0092 implementation metadata fixed values",
+      "statement": "metadata['runtime_construction'] = {'plan': construction.plan.to_metadata(), 'input': construction.to_metadata()}"
+    },
+    "96": {
+      "ast_sha256": "a7d5f699153878b8c01515eea317099464222bbe48bde19880bcf1041dc8955d",
+      "disposition": "replaced_by_engine",
+      "reason": "Engine constructor",
+      "statement": "runtime_adapter = build_package_simulation_runtime(construction)"
+    },
+    "97": {
+      "ast_sha256": "7b6f1492a4ad4b824e24d32c3511787d376a9c8ad57ad64edef2b0db22ab8b99",
+      "disposition": "replaced_by_engine",
+      "reason": "Engine projector",
+      "statement": "spectral_projector = runtime_adapter.projector"
+    },
+    "98": {
+      "ast_sha256": "4228bdb2e4822c669ee4cf7a05c59c6b8dd232ea048fdc29a8f55379ade79d11",
+      "disposition": "rewritten",
+      "reason": "R-0092 runtime selection implementation fields",
+      "statement": "metadata['runtime_selection'] = {**run_spec.runtime_selection_metadata(), **runtime_adapter.to_metadata()}"
+    },
+    "99": {
+      "ast_sha256": "2abbdab10218f784f34e4bc4db1ac3c47d7d38f0d8da45170a5dab1ef4520e14",
+      "disposition": "deleted_with_reason",
+      "reason": "Private lifting runtime metadata no longer supported",
+      "statement": "if lifting_plan is not None:\n    metadata['initial_condition']['evolved_remainder_sha256'] = tensor_sha256(tuple((runtime_adapter.fields[name] for name in ('Qxx', 'Qxy', 'Qxz', 'Qyy', 'Qyz'))))"
+    }
+  }
+}

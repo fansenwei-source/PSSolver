@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import sys
 from dataclasses import replace
 from pathlib import Path
-import sys
 from types import ModuleType
 
 import pytest
@@ -132,17 +132,17 @@ def test_run_rejects_replaced_compilation_components_before_dispatch(
     alternate = compile_simulation(_simulation(tmp_path / "alternate"))
     tampered = replace(original, **{field: getattr(alternate, field)})
     invoked = False
-    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    fake = ModuleType("pssolver.runtime.legacy_entry")
 
     def forbidden_dispatch(*_args, **_kwargs):
         nonlocal invoked
         invoked = True
         raise AssertionError("tampered compilation reached application dispatch")
 
-    fake.run_plane_beris_edwards = forbidden_dispatch
+    fake.run_v04_plane_translation = forbidden_dispatch
     monkeypatch.setitem(
         sys.modules,
-        "pssolver.applications.plane_beris_edwards",
+        "pssolver.runtime.legacy_entry",
         fake,
     )
 

@@ -150,7 +150,7 @@ def _input(value, fields):
 
 def _boundaries(problem):
     geometry = problem.geometry
-    if geometry.kind != "periodic_box":
+    if geometry.kind not in {"periodic_box", "plane_slab"}:
         _reject(
             "geometry_not_migrated",
             "geometry awaits migration",
@@ -166,7 +166,20 @@ def _boundaries(problem):
         )
     if set(problem.boundaries) != set(problem.model.fields):
         _reject("incompatible_boundaries", "every field requires its declared boundary basis")
-    for boundaries in problem.boundaries.values():
+    for name, boundaries in problem.boundaries.items():
+        if isinstance(boundaries, Mapping):
+            components = problem.model.fields[name].reference(name).components
+            if set(boundaries) != set(components):
+                _reject("incompatible_boundaries", "every component requires a boundary basis")
+            values = tuple(tuple(boundaries[item]) for item in components)
+        else:
+            values = (tuple(boundaries),)
+        for value in values:
+            _validate_basis(value, geometry.kind)
+    return ("periodic",) * 3 if geometry.kind == "periodic_box" else ("periodic", "periodic", "bounded")
+
+
+def _validate_basis(boundaries, geometry_kind):
         if any("robin" in str(item) or "anchoring" in str(item) for item in boundaries):
             _reject(
                 "robin_or_anchoring",
@@ -181,9 +194,19 @@ def _boundaries(problem):
                 source="B8/S2-07, D-0007",
                 opens_in="0.6",
             )
-        if tuple(boundaries) != ("periodic",) * 3:
+        if geometry_kind == "periodic_box" and tuple(boundaries) != ("periodic",) * 3:
             _reject("incompatible_boundaries", "periodic_box requires three periodic axes")
-    return ("periodic",) * 3
+        if geometry_kind == "plane_slab" and tuple(boundaries) not in {
+            ("periodic", "periodic", "neumann"), ("periodic", "periodic", "dirichlet")
+        }:
+            _reject("incompatible_boundaries", "plane_slab requires a homogeneous mixed basis")
+
+
+def _field_basis(problem, name):
+    value = problem.boundaries[name]
+    if isinstance(value, Mapping):
+        return tuple(tuple(value[item]) for item in problem.model.fields[name].reference(name).components)
+    return tuple(value)
 
 
 def _arguments(term, execution, consumed):
@@ -205,14 +228,19 @@ def assemble(problem):
         _reject(
             "integrator_not_available", "only Euler is available", source="D-0039", opens_in="0.7"
         )
-    if problem.integrator.refresh_interval is not None:
+    if problem.geometry.kind == "periodic_box" and problem.integrator.refresh_interval is not None:
         _reject(
             "refresh_not_supported",
             "Periodic refresh must remain disabled",
             source="P2",
             opens_in="never",
         )
-    sig = basis_signature(bc)
+    if problem.integrator.refresh_interval is not None and (
+        not isinstance(problem.integrator.refresh_interval, int)
+        or isinstance(problem.integrator.refresh_interval, bool)
+        or problem.integrator.refresh_interval <= 0
+    ):
+        _reject("refresh_not_supported", "refresh_interval must be positive or None")
     fields = model.fields
     execution = problem.execution
     linear, explicit, constraints, kernels = [], [], [], {}
@@ -221,6 +249,7 @@ def assemble(problem):
     for index, term in enumerate(model.terms(*model.namespaces())):
         if isinstance(term, (Linear, Explicit)):
             target = _reference(term.target, fields, role="evolved")
+            sig = basis_signature(_field_basis(problem, target))
         if isinstance(term, Linear):
             if term.diagonal is not None:
                 capability = lookup("linear_recipe", (term.diagonal.name, "any"))
@@ -288,6 +317,14 @@ def assemble(problem):
         elif isinstance(term, Constraint):
             inputs = tuple(_reference(value, fields) for value in term.inputs)
             outputs = tuple(_reference(value, fields, role="constrained") for value in term.outputs)
+            sig = basis_signature(bc)
+            if problem.geometry.kind == "plane_slab":
+                velocity = _field_basis(problem, "velocity") if "velocity" in fields else ()
+                pressure = _field_basis(problem, "pressure") if "pressure" in fields else ()
+                if velocity == (("periodic", "periodic", "neumann"),
+                                ("periodic", "periodic", "neumann"),
+                                ("periodic", "periodic", "dirichlet")) and pressure == ("periodic", "periodic", "neumann"):
+                    sig = "periodic^2×free_slip"
             capability = lookup("constraint", (term.kind, sig))
             if capability is None:
                 _reject("missing_constraint_solver", "no constraint solver for this basis")
@@ -313,23 +350,26 @@ def assemble(problem):
             "unused execution option or unsupported gradient reuse",
         )
     plan_fields = tuple(
-        FieldPlan(name, value.role, value.reference(name).components, bc)
+        FieldPlan(name, value.role, value.reference(name).components, _field_basis(problem, name))
         for name, value in fields.items()
     )
-    groups = tuple(
-        TransformGroup(
-            tuple(
-                component
-                for item in plan_fields
-                if item.role == role
-                for component in item.components
-            ),
-            bc,
-            "contiguous_slice",
-        )
-        for role in ("evolved", "constrained")
-        if any(item.role == role for item in plan_fields)
-    )
+    groups = []
+    for role in ("evolved", "constrained"):
+        grouped = {}
+        ordered = []
+        for item in plan_fields:
+            if item.role != role:
+                continue
+            bases = item.boundary_conditions
+            if isinstance(bases[0], str):
+                bases = (bases,) * len(item.components)
+            for component, basis in zip(item.components, bases, strict=True):
+                grouped.setdefault(basis, []).append(component)
+                ordered.append(component)
+        for basis, components in grouped.items():
+            indices = [ordered.index(component) for component in components]
+            indexing = "contiguous_slice" if indices == list(range(indices[0], indices[0] + len(indices))) else "advanced"
+            groups.append(TransformGroup(tuple(components), basis, indexing))
     for name in problem.outputs.observables:
         if name not in fields:
             _reject("invalid_field_reference", "observable references an undeclared field")
@@ -348,12 +388,12 @@ def assemble(problem):
             "multidim",
         ),
         fields=plan_fields,
-        groups=groups,
+        groups=tuple(groups),
         linear=tuple(linear),
         explicit=tuple(explicit),
         constraints=tuple(constraints),
         dealias=DealiasPlan(numerics.dealias_rule, numerics.projected_transform_execution),
-        integrator=IntegratorPlan("semi_implicit_euler", problem.integrator.dt, 0, None),
+        integrator=IntegratorPlan("semi_implicit_euler", problem.integrator.dt, 0, problem.integrator.refresh_interval),
         parameters=tuple(
             ParameterPlan(name, value.kind, value.controllable, value.default)
             for name, value in model.parameters.items()

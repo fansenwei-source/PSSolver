@@ -9,22 +9,13 @@ from pathlib import Path
 import pytest
 import torch
 
-import pssolver.runtime as runtime_api
-from pssolver.applications import plane_beris_edwards as application
 from pssolver.configuration import (
     PlaneRuntimePath,
     create_plane_beris_edwards_run_spec,
     parse_plane_beris_edwards_run_spec,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime import (
-    PlaneRuntimeBuildRequest,
-    build_plane_beris_edwards_runtime,
-)
-from pssolver.workflows import read_plane_checkpoint_header
-from pssolver.workflows.plane_compiled_v2 import (
-    build_plane_compiled_v2_runtime,
-)
+from pssolver.runtime import legacy_entry as application
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,16 +54,6 @@ def _initial_values():
     }
 
 
-def _request(spec):
-    return PlaneRuntimeBuildRequest(
-        run_spec=spec,
-        production_metadata={
-            "configuration": spec.identity_metadata(),
-            "runtime_selection": spec.runtime_selection_metadata(),
-        },
-        initial_values=_initial_values(),
-        device="cpu",
-    )
 
 
 def _sha256(path: Path) -> str:
@@ -103,56 +84,8 @@ def test_runtime_selector_default_is_unchanged_and_compiled_is_explicit(tmp_path
     }
 
 
-def test_compiled_factory_builds_private_adapter_without_fallback(tmp_path):
-    spec = _spec(tmp_path, "factory", runtime_path="compiled_v2")
-    adapter = build_plane_beris_edwards_runtime(
-        _request(spec),
-        compiled_builder=lambda: build_plane_compiled_v2_runtime(
-            spec,
-            device="cpu",
-            initial_values=_initial_values(),
-        ),
-    )
-    callbacks = []
-
-    adapter.advance(
-        2,
-        pre_update_callback=lambda solver, step: callbacks.append(
-            (solver is adapter.solver, step)
-        ),
-    )
-
-    assert adapter.runtime_path is PlaneRuntimePath.COMPILED_V2
-    assert adapter.completed_steps == 2
-    assert callbacks == [(True, 0), (True, 1)]
-    assert adapter.to_metadata()["requested"] == "compiled_v2"
-    assert adapter.to_metadata()["effective"] == "compiled_v2"
-    assert adapter.to_metadata()["fallback_used"] is False
-    assert adapter.backend_restart_metadata()["kind"] == (
-        "compiled_v2_plane_stateless"
-    )
-    assert not hasattr(runtime_api, "CompiledV2PlaneRuntimeAdapter")
 
 
-def test_compiled_factory_propagates_construction_failure_without_fallback(
-    tmp_path,
-):
-    spec = _spec(tmp_path, "failure", runtime_path="compiled_v2")
-
-    with pytest.raises(RuntimeError, match="fallback is forbidden"):
-        build_plane_beris_edwards_runtime(_request(spec))
-
-    def fail():
-        raise RuntimeError("sentinel compiled construction failure")
-
-    with pytest.raises(
-        RuntimeError,
-        match="sentinel compiled construction failure",
-    ):
-        build_plane_beris_edwards_runtime(
-            _request(spec),
-            compiled_builder=fail,
-        )
 
 
 def test_compiled_dry_run_is_tensor_free_and_creates_no_output(
@@ -173,12 +106,12 @@ def test_compiled_dry_run_is_tensor_free_and_creates_no_output(
 
     monkeypatch.setattr(
         application,
-        "build_package_simulation_runtime",
+        "Engine",
         forbidden,
     )
     monkeypatch.setattr(application, "create_initial_condition", forbidden)
 
-    assert application.run_plane_beris_edwards(spec, emit_metadata=True) is None
+    assert application.run_v04_plane_translation(spec, emit_metadata=True) is None
     metadata = json.loads(capsys.readouterr().out)
     assert metadata["runtime_selection"]["requested"] == "compiled_v2"
     assert metadata["runtime_selection"]["effective"] == "compiled_v2"
@@ -192,8 +125,8 @@ def test_compiled_application_is_byte_identical_to_legacy_for_short_run(
     legacy = _spec(tmp_path, "legacy", runtime_path="legacy_production")
     compiled = _spec(tmp_path, "compiled", runtime_path="compiled_v2")
 
-    legacy_result = application.run_plane_beris_edwards(legacy)
-    compiled_result = application.run_plane_beris_edwards(compiled)
+    legacy_result = application.run_v04_plane_translation(legacy)
+    compiled_result = application.run_v04_plane_translation(compiled)
 
     assert legacy_result is not None
     assert compiled_result is not None
@@ -221,7 +154,7 @@ def test_compiled_application_runs_in_float32(tmp_path):
         steps=2,
     )
 
-    result = application.run_plane_beris_edwards(compiled)
+    result = application.run_v04_plane_translation(compiled)
 
     assert result is not None
     assert result.final_step == 2
@@ -244,7 +177,7 @@ def test_compiled_construction_failure_leaves_no_output_directory(
 
     monkeypatch.setattr(
         application,
-        "build_package_simulation_runtime",
+        "Engine",
         fail,
     )
 
@@ -252,7 +185,7 @@ def test_compiled_construction_failure_leaves_no_output_directory(
         RuntimeError,
         match="sentinel package-runtime construction failure",
     ):
-        application.run_plane_beris_edwards(compiled)
+        application.run_v04_plane_translation(compiled)
 
     assert not compiled.output_dir.exists()
 
@@ -271,10 +204,9 @@ def test_compiled_application_split_restart_is_byte_identical(tmp_path):
         steps=2,
         checkpoint_interval=2,
     )
-    application.run_plane_beris_edwards(continuous)
-    application.run_plane_beris_edwards(segment)
+    application.run_v04_plane_translation(continuous)
+    application.run_v04_plane_translation(segment)
     checkpoint = segment.output_dir / "checkpoint_2"
-    header = read_plane_checkpoint_header(checkpoint)
     resumed = _spec(
         tmp_path,
         "resumed",
@@ -284,9 +216,8 @@ def test_compiled_application_split_restart_is_byte_identical(tmp_path):
         restart_from=checkpoint,
     )
 
-    resumed_result = application.run_plane_beris_edwards(resumed)
+    resumed_result = application.run_v04_plane_translation(resumed)
 
-    assert header.runtime_path is PlaneRuntimePath.COMPILED_V2
     assert resumed_result.start_step == 2
     assert resumed_result.final_step == 4
     assert resumed_result.saved_steps == (4,)

@@ -1,0 +1,2104 @@
+[
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc437_lifting_h100",
+    "path": "benchmarks/analyze_rc437_lifting_h100.py",
+    "sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 23,
+        "name": "PlaneRuntimeBuildRequest",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 23,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc437_lifting_h100_recovery",
+    "path": "benchmarks/analyze_rc437_lifting_h100_recovery.py",
+    "sha256": "56340ecb934a5ed68506b13ab88b6544b8e3a431dd0d2ba522b30dd0179897dd",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 32,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 23,
+        "name": "PlaneRuntimeBuildRequest",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 23,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc437_lifting_h100_recovery",
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc458_reserved_memory_recovery",
+    "path": "benchmarks/analyze_rc458_reserved_memory_recovery.py",
+    "sha256": "3d732f5972589fbad3198cb7bc3baf4c93a7a848889a67624a5746e8a2701087",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_reserved_memory_recovery",
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_reserved_memory_recovery",
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_reserved_memory_recovery",
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc458_tf32_h100",
+    "path": "benchmarks/analyze_rc458_tf32_h100.py",
+    "sha256": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc458_transform_counter_recovery",
+    "path": "benchmarks/analyze_rc458_transform_counter_recovery.py",
+    "sha256": "1e096655363c3824b03911c340964cffd92c52c3393b1d5fd0cbe75af856a319",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc458_transform_counter_recovery",
+          "benchmarks.analyze_rc458_tf32_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc5_g1_cumulative_closure",
+    "path": "benchmarks/analyze_rc5_g1_cumulative_closure.py",
+    "sha256": "6eb46b0471ebe2a3f27f0c3d448bc966eee8c1ff2da5648aff6311ac9827fa51",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_cumulative_closure",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_cumulative_closure",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_cumulative_closure",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc5_g1_focused_performance_h100",
+    "path": "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+    "sha256": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc5_g1_h100",
+    "path": "benchmarks/analyze_rc5_g1_h100.py",
+    "sha256": "6e0453958165ed7239602fefdc7f4c0f23cbdd11efdd1419d14b6b3a8498e994",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc5_g1_measurement_window_h100",
+    "path": "benchmarks/analyze_rc5_g1_measurement_window_h100.py",
+    "sha256": "22d9c21bbc44782fbcf88b3cca1d9762299c7404e08c4b4bc847f3a1151510bc",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_measurement_window_h100",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_measurement_window_h100",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_measurement_window_h100",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc5_g1_timing_instrumentation",
+    "path": "benchmarks/analyze_rc5_g1_timing_instrumentation.py",
+    "sha256": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.analyze_rc6_single_h100",
+    "path": "benchmarks/analyze_rc6_single_h100.py",
+    "sha256": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.assemble_rc5_g1_auxiliary",
+    "path": "benchmarks/assemble_rc5_g1_auxiliary.py",
+    "sha256": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.assemble_rc5_g1_auxiliary",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc5_g1_auxiliary",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc5_g1_auxiliary",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.assemble_rc6_h100_auxiliary",
+    "path": "benchmarks/assemble_rc6_h100_auxiliary.py",
+    "sha256": "62b24f4d2870c001d3477f30026a5b293e4c495addc02e524cb586c82ddec973",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.assemble_rc6_h100_auxiliary",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc6_h100_auxiliary",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.assemble_rc6_h100_auxiliary",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.build_rc6_single_h100_stage_plan",
+    "path": "benchmarks/build_rc6_single_h100_stage_plan.py",
+    "sha256": "1732c639efcf36bf3d46b759e4eaef9c189f6ecdcaedddb2d8b380600dbce2e3",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.build_rc6_single_h100_stage_plan",
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.build_rc6_single_h100_stage_plan",
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.build_rc6_single_h100_stage_plan",
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.diagnose_plane_static_lifting_recovery",
+    "path": "benchmarks/diagnose_plane_static_lifting_recovery.py",
+    "sha256": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.diagnose_plane_static_lifting_recovery",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 48,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.diagnose_rc451_cross_runtime_residuals",
+    "path": "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+    "sha256": "c214e485f459d31296dc58fd9531cbb444636c7f4cf701d5e15405a3f0141d3c",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.diagnose_rc451_cross_runtime_residuals",
+          "pssolver.workflows.plane_observation"
+        ],
+        "kind": "missing_module",
+        "line": 76,
+        "name": "DIAGNOSTIC_DTYPE",
+        "target": "pssolver.workflows.plane_observation"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc451_cross_runtime_residuals",
+          "pssolver.workflows.plane_observation"
+        ],
+        "kind": "missing_module",
+        "line": 76,
+        "name": "DIAGNOSTIC_HEADER",
+        "target": "pssolver.workflows.plane_observation"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.diagnose_rc4_lifting_correctness",
+    "path": "benchmarks/diagnose_rc4_lifting_correctness.py",
+    "sha256": "4e50626e4009090d82cfb489cc21da0e876b162dffc19b84546d8c91cf352339",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.diagnose_rc4_lifting_correctness",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 70,
+        "name": "PlaneRuntimeBuildRequest",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc4_lifting_correctness",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 70,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+    "path": "benchmarks/diagnose_rc5_g1_timing_instrumentation.py",
+    "sha256": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.profile_plane_runtime_timestep",
+    "path": "benchmarks/profile_plane_runtime_timestep.py",
+    "sha256": "aa682428089be0c00903c3f863ae12b1f565bf3ccdec5a97866068214c39d658",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.profile_rc437_plane_runtime",
+    "path": "benchmarks/profile_rc437_plane_runtime.py",
+    "sha256": "a5a0e0e50ab8c29822415b452f2c1bb868f1c8fd3ce4e64a3649ef9e39d93aa5",
+    "static": []
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.profile_rc458_runtime_family",
+    "path": "benchmarks/profile_rc458_runtime_family.py",
+    "sha256": "b0d4b3d3efab3248eee3328c7f1eaa31d3bfcf30d365a58ae9186404c6670e04",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.profile_rc5_g1_runtime_family",
+    "path": "benchmarks/profile_rc5_g1_runtime_family.py",
+    "sha256": "040b04fe92456f083e038a4b9fe593a64f5587759dc799a0bf5c4a286ab38b2c",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.profile_rc5_g1_runtime_family",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc5_g1_runtime_family",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_rc5_g1_runtime_family",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+    "path": "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
+    "sha256": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.qualify_plane_static_lifting",
+    "path": "benchmarks/qualify_plane_static_lifting.py",
+    "sha256": "7c463932a7f4cc1f9eef4d1c337b3bf6c1b20e6743f7389d2fe07448b27d534a",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.qualify_plane_static_lifting",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 79,
+        "name": "PlaneRuntimeBuildRequest",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_plane_static_lifting",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 79,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_plane_static_lifting",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 83,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_plane_static_lifting",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 83,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.qualify_rc437_lifting_cuda",
+    "path": "benchmarks/qualify_rc437_lifting_cuda.py",
+    "sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 23,
+        "name": "PlaneRuntimeBuildRequest",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 23,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 24,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.runtime.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.qualify_rc437_lifting_cuda_recovery",
+    "path": "benchmarks/qualify_rc437_lifting_cuda_recovery.py",
+    "sha256": "7bc54dc13b78c8a07ef289d2eb7a9d81582a0e21aa1f70c04345402eb3bb60c9",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 32,
+        "name": "plane_physical_component",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc437_lifting_cuda_recovery",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 33,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.qualify_rc458_tf32_scope",
+    "path": "benchmarks/qualify_rc458_tf32_scope.py",
+    "sha256": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.qualify_rc458_tf32_scope",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc458_tf32_scope",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.qualify_rc458_tf32_scope",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_public_simulation_h100_case",
+    "path": "benchmarks/run_public_simulation_h100_case.py",
+    "sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_public_simulation_h100_case",
+          "pssolver.applications.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "run_plane_beris_edwards",
+        "target": "pssolver.applications.plane_beris_edwards"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py",
+    "sha256": "acaecf9b570a4525f993de3d683a46252ce07b74112ba10ad56e457ddbc70381",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc5_g1_focused_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+    "sha256": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py",
+    "sha256": "478cfcc315939141f59bfb743a31a6a62f7d2e625a655a4755a1d0453090417e",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+    "path": "benchmarks/run_rc5_g1_paired_block_profile_matrix.py",
+    "sha256": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+          "benchmarks.run_rc5_g1_focused_profile_matrix",
+          "benchmarks.analyze_rc5_g1_focused_performance_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc5_g1_stage_plan",
+    "path": "benchmarks/run_rc5_g1_stage_plan.py",
+    "sha256": "97923baed48737246f68348be0b78fc4c869c6d1b53b726070f35a3f175563f7",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_stage_plan",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_stage_plan",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_stage_plan",
+          "benchmarks.analyze_rc5_g1_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc5_g1_timing_instrumentation",
+    "path": "benchmarks/run_rc5_g1_timing_instrumentation.py",
+    "sha256": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_timing_instrumentation",
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_timing_instrumentation",
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc5_g1_timing_instrumentation",
+          "benchmarks.analyze_rc5_g1_timing_instrumentation",
+          "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc6_profile_child",
+    "path": "benchmarks/run_rc6_profile_child.py",
+    "sha256": "e7967f5e7e6055e40de5124199924580cd8e83baa68509b12b16f9810bf26951",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc6_profile_child",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_profile_child",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_profile_child",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_rc6_single_h100_stage_plan",
+    "path": "benchmarks/run_rc6_single_h100_stage_plan.py",
+    "sha256": "28a4cb97fa5324d9f035596c63149e1352f348772eb18a717f6b23f55e4d6551",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_rc6_single_h100_stage_plan",
+          "benchmarks.analyze_rc6_single_h100",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+    "path": "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
+    "sha256": "697267a42521e5599799399d1556ef1073b083fcc77a48335bd7f66e704cb793",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+    "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
+    "sha256": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+    "path": "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+    "sha256": "0b8a1244cf0d07262540ce9ff70e2d7fd5419677d4bf905ee596f33ef7e6a744",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+          "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.run_v0_3_s09_numerical",
+    "path": "benchmarks/run_v0_3_s09_numerical.py",
+    "sha256": "3e2f95312b271e686ac42ed0c8c3f54f521f3dd5bf17685d8caf9b334c539b9c",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_numerical",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 40,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_numerical",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 41,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.run_v0_3_s09_numerical",
+          "benchmarks.profile_rc458_runtime_family",
+          "benchmarks.profile_plane_runtime_timestep",
+          "pssolver.workflows.plane_compiled_v2"
+        ],
+        "kind": "missing_module",
+        "line": 42,
+        "name": "build_plane_compiled_v2_runtime",
+        "target": "pssolver.workflows.plane_compiled_v2"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.v0_2_0_checkpoint_fixtures",
+    "path": "benchmarks/v0_2_0_checkpoint_fixtures.py",
+    "sha256": "8ac1e229a07c82a606c5e5c9bae2f15f6de4dba778f38c2876b2316183681bce",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 74,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 75,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": null,
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "benchmarks.verify_v0_3_s10_build_fingerprints",
+    "path": "benchmarks/verify_v0_3_s10_build_fingerprints.py",
+    "sha256": "670476ec175e894f93c7735a0b9325d792333a205fc30c6a2d9edcc7ef16591d",
+    "static": [
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 74,
+        "name": "LegacyPlaneRuntimeAdapter",
+        "target": "pssolver.runtime.plane_beris_edwards"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.runtime.plane_legacy"
+        ],
+        "kind": "missing_module",
+        "line": 75,
+        "name": "build_legacy_plane_runtime",
+        "target": "pssolver.runtime.plane_legacy"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "capture_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "load_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "restore_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      },
+      {
+        "chain": [
+          "benchmarks.verify_v0_3_s10_build_fingerprints",
+          "benchmarks.v0_2_0_checkpoint_fixtures",
+          "pssolver.workflows.plane_checkpoint"
+        ],
+        "kind": "missing_module",
+        "line": 92,
+        "name": "write_plane_checkpoint",
+        "target": "pssolver.workflows.plane_checkpoint"
+      }
+    ]
+  },
+  {
+    "actual_error": "ModuleNotFoundError: No module named 'pssolver.applications.plane_beris_edwards'",
+    "basis": "R-0095 F-F; R-0082 frozen caller precedent",
+    "disposition": "Frozen historical caller; S-30",
+    "module": "qualification.generate_s24_retired_fixtures",
+    "path": "qualification/generate_s24_retired_fixtures.py",
+    "sha256": "49060a6dbd3be140d7d90a366d26cb43e54bd00804517f47e045e0e9e369c7c7",
+    "static": [
+      {
+        "chain": [
+          "qualification.generate_s24_retired_fixtures",
+          "pssolver.applications.plane_beris_edwards"
+        ],
+        "kind": "missing_module",
+        "line": 19,
+        "name": "run_plane_beris_edwards",
+        "target": "pssolver.applications.plane_beris_edwards"
+      }
+    ]
+  }
+]

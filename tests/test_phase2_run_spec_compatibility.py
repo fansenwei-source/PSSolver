@@ -10,13 +10,13 @@ from __future__ import annotations
 
 import argparse
 import ast
-from dataclasses import FrozenInstanceError, MISSING, fields, replace
-from enum import Enum
 import hashlib
 import inspect
 import json
-from pathlib import Path
 import pickle
+from dataclasses import MISSING, FrozenInstanceError, fields, replace
+from enum import Enum
+from pathlib import Path
 
 import pytest
 
@@ -585,14 +585,14 @@ def test_dry_run_keeps_requested_and_effective_friction_distinct(
     zero_mode_policy,
     expected_effective_friction,
 ):
-    from pssolver.applications import plane_beris_edwards as application
+    from pssolver.runtime import legacy_entry as application
 
     def _unexpected_runtime_build(*args, **kwargs):
         raise AssertionError("dry-run must not construct a numerical runtime")
 
     monkeypatch.setattr(
         application,
-        "build_package_simulation_runtime",
+        "Engine",
         _unexpected_runtime_build,
     )
     output_dir = tmp_path / zero_mode_policy
@@ -606,7 +606,7 @@ def test_dry_run_keeps_requested_and_effective_friction_distinct(
         dry_run=True,
     )
 
-    assert application.run_plane_beris_edwards(spec, emit_metadata=True) is None
+    assert application.run_v04_plane_translation(spec, emit_metadata=True) is None
     metadata = json.loads(capsys.readouterr().out)
 
     assert metadata["configuration"] == spec.identity_metadata()
@@ -665,16 +665,10 @@ def test_alternate_boundary_request_changes_identity_but_not_runtime_globals():
         != default.runtime_identity_sha256()
     )
 
-    from pssolver.applications import plane_beris_edwards as application
-    from pssolver.runtime import plane_legacy
+    from pssolver.runtime import legacy_entry as application
 
     assert application.Q_BC == qualified_legacy["q"]
-    assert plane_legacy.Q_BOUNDARIES == qualified_legacy["q"]
     assert application.Q_BC != requested.to_legacy()["q"]
-    assert plane_legacy.Q_BOUNDARIES != requested.to_legacy()["q"]
-    assert "run_spec.boundaries" not in inspect.getsource(
-        plane_legacy.build_legacy_plane_runtime
-    )
 
 
 def test_factory_cli_and_direct_constructor_keep_current_validation_timing(

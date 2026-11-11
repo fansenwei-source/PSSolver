@@ -55,7 +55,7 @@ setup(
     entry_points={
         "console_scripts": [
             "pssolver-plane-beris-edwards="
-            "pssolver.applications.plane_beris_edwards:main",
+            "pssolver.cli.plane:main",
         ],
     },
     classifiers=[

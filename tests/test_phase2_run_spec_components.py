@@ -9,27 +9,22 @@ runtime.
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
+import pickle
 from dataclasses import (
-    FrozenInstanceError,
     MISSING,
+    FrozenInstanceError,
     fields,
     is_dataclass,
     replace,
 )
 from fractions import Fraction
-import hashlib
-import json
 from pathlib import Path
-import pickle
 
 import pytest
 
-import pssolver
-import pssolver.configuration as configuration_package
-import pssolver.models.active_nematics as active_nematics_package
-import pssolver.presets as presets_package
 from pssolver.configuration import (
-    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PLANE_FREE_SLIP_BOUNDARIES,
     PlaneFreeSlipBoundaryConditions,
     PlaneRuntimePath,
@@ -1009,58 +1004,5 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
 
 
 def test_components_remain_provisional_with_three_migrated_consumers():
-    provisional_names = {
-        "BerisEdwardsMaterialRequest",
-        "ExtrudedDefectGasInitialConditionSpec",
-        "ShendrukPlaneParameterRequest",
-        "PlaneTimeSteppingSpec",
-        "PlaneBerisEdwardsExecutionSpec",
-        "PlaneBerisEdwardsPhysicsSpec",
-        "PlaneBerisEdwardsRunComponents",
-        "PlaneWorkflowSpec",
-        "PlaneInvocationSpec",
-    }
-    for exports in (
-        pssolver.__all__,
-        configuration_package.__all__,
-        active_nematics_package.__all__,
-        presets_package.__all__,
-    ):
-        assert provisional_names.isdisjoint(exports)
-
-    import pssolver.configuration.plane_beris_edwards_components as components
-
-    assert components.PlaneBerisEdwardsPhysicsSpec is (
-        PlaneBerisEdwardsPhysicsSpec
-    )
-    assert components.PlaneBerisEdwardsRunComponents is (
-        PlaneBerisEdwardsRunComponents
-    )
-    assert "PlaneBerisEdwardsPhysicsSpec" in components.__all__
-    assert "PlaneBerisEdwardsRunComponents" in components.__all__
-    assert hasattr(components, "decompose_plane_beris_edwards_run_spec")
-    assert "decompose_plane_beris_edwards_run_spec" in components.__all__
-    assert "pssolver/models/active_nematics/specifications.py" in (
-        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
-    )
-    assert "pssolver/configuration/plane_beris_edwards_components.py" in (
-        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
-    )
-
-    facade_source = (
-        PROJECT_ROOT / "pssolver/configuration/plane_beris_edwards.py"
-    ).read_text(encoding="utf-8")
-    assert "from .plane_beris_edwards_components" not in facade_source
-    assert "from pssolver.models.active_nematics.specifications" not in (
-        facade_source
-    )
-
-    for relative in (
-        "pssolver/applications/plane_beris_edwards.py",
-        "pssolver/runtime/plane_legacy.py",
-        "pssolver/runtime/plane_beris_edwards.py",
-        "pssolver/workflows/plane_beris_edwards.py",
-    ):
-        runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
-        assert "plane_beris_edwards_components" in runtime_source
-        assert "active_nematics.specifications" not in runtime_source
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_phase2_run_spec_components.py::test_components_remain_provisional_with_three_migrated_consumers')

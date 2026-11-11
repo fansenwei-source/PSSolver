@@ -7,12 +7,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from pssolver.applications import plane_beris_edwards as plane_application
 from pssolver.configuration import (
     PlaneRuntimePath,
     create_plane_beris_edwards_run_spec,
 )
 from pssolver.errors import SimulationExecutionError, SimulationRestartError
+from pssolver.runtime import legacy_entry as plane_application
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,6 +65,7 @@ def test_plane_dry_run_validates_absolute_restart_save_window(
     tmp_path,
     monkeypatch,
 ):
+    monkeypatch.setattr("pssolver.io.checkpoint.read_checkpoint_json", lambda *_args, **_kwargs: {})
     spec = _plane_spec(
         tmp_path,
         restart_from=tmp_path / "checkpoint",
@@ -78,7 +79,7 @@ def test_plane_dry_run_validates_absolute_restart_save_window(
     )
 
     with pytest.raises(SimulationRestartError) as captured:
-        plane_application.run_plane_beris_edwards(spec)
+        plane_application.run_v04_plane_translation(spec)
     error = captured.value
     assert isinstance(error, SimulationExecutionError)
     assert isinstance(error, ValueError)
@@ -101,6 +102,7 @@ def test_plane_checkpoint_preflight_value_error_is_public_restart_error(
     tmp_path,
     monkeypatch,
 ):
+    monkeypatch.setattr("pssolver.io.checkpoint.read_checkpoint_json", lambda *_args, **_kwargs: {})
     spec = _plane_spec(
         tmp_path,
         restart_from=tmp_path / "checkpoint",
@@ -117,7 +119,7 @@ def test_plane_checkpoint_preflight_value_error_is_public_restart_error(
     )
 
     with pytest.raises(SimulationRestartError, match="checksum mismatch") as captured:
-        plane_application.run_plane_beris_edwards(spec)
+        plane_application.run_v04_plane_translation(spec)
 
     assert captured.value.details == {
         "legacy_exception_type": "ValueError",

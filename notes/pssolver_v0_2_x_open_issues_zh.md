@@ -413,3 +413,12 @@ V-64、V-65 已由 R-0064 独立复核为 verified，verified_by 均为 R-0064�
 
 零散提示、R4五文件保留理由、0.4已知限制见 `PSSolver_v0_4_0_s20_closeout_triage.json`。
 R-0065和A-0079前向勘误：1274项系统删除中1232项cache、28项restart、14项trajectories；42项为数据，非全为缓存。只记录，不访问或清理HPCC。
+
+## S-27 开工 / R-0090 U11：V-66
+
+V-66 登记为 low / open，目标 0.5 S-27。按 R-0090 §4，表达式路径通过两次
+`gradient_hat` 构造偶数阶导数，在 Nyquist 平面置零；生产配方使用 `q2`，两者约定不同。
+Claude 的独立数据为最大绝对差 0.189、相对差 1.0，Nyquist 平面外最大差 2.8e-17。
+这些数字引用 R-0090，不是本轮重跑。预设仍用生产配方，Control 和 S-26 PASS 不受影响。
+S-27 §9 已安排使用原生偶数阶符号；此处尚未修复或声称资格通过，不放宽任何判据。
+当前草稿共 71 项：open 1、verified 65、deferred 2、accepted 3，其余 0。

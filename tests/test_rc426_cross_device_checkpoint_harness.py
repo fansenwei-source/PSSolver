@@ -20,7 +20,6 @@ from benchmarks.run_rc426_cross_device_checkpoint import (
     _atomic_json,
     _run_channel,
     _run_functional,
-    _run_plane,
     matrix_plan,
 )
 
@@ -114,29 +113,6 @@ def test_atomic_json_refuses_overwrite(tmp_path):
     assert path.read_text(encoding="utf-8") == '{\n  "value": 1\n}\n'
 
 
-@pytest.mark.parametrize(
-    ("runtime_path", "executor"),
-    (
-        ("legacy_production", _run_plane),
-        ("compiled_v2", _run_plane),
-    ),
-)
-def test_plane_cell_protocol_executes_on_cpu(
-    tmp_path,
-    runtime_path,
-    executor,
-):
-    cell = MatrixCell(
-        1,
-        "CPU",
-        "plane_production",
-        runtime_path,
-        "cpu",
-        "cpu",
-    )
-    report = executor(cell, tmp_path / runtime_path)
-    assert report["passed"] is True
-    assert report["checkpoint"]["negative_integrity_gate"]["rejected"] is True
 
 
 @pytest.mark.parametrize(

@@ -8,12 +8,15 @@ tensor, write output, or choose a non-legacy production runtime.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 import math
+from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
 
 from pssolver.configuration.device_tokens import validate_execution_device
-
+from pssolver.core import (
+    BoundarySet as BoundarySet,
+)
 from pssolver.core import DomainSpec, NumericsConfig
 from pssolver.core.numerics import (
     DEALIAS_RULE_FRACTIONS,
@@ -58,10 +61,6 @@ from .plane_beris_edwards_schema_v1 import (
     PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER,
     PLANE_RUN_SPEC_SCHEMA_VERSION,
 )
-from collections.abc import Sequence
-from pssolver.core import (
-    BoundarySet as BoundarySet,
-)
 
 
 # Preserve not only the legacy nominal path but also the exact module-string
@@ -77,7 +76,6 @@ SpectralRefreshSpec.__module__ = __name__
 # application but does not determine the numerical implementation.
 PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/applications/__init__.py",
-    "pssolver/applications/plane_beris_edwards.py",
     "pssolver/solver.py",
     "pssolver/Field.py",
     "pssolver/PDEmodel.py",
@@ -104,12 +102,7 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/configuration/plane_beris_edwards_schema_v1.py",
     "pssolver/configuration/plane_beris_edwards.py",
     "pssolver/runtime/__init__.py",
-    "pssolver/runtime/plane_beris_edwards.py",
-    "pssolver/runtime/plane_legacy.py",
     "pssolver/workflows/__init__.py",
-    "pssolver/workflows/plane_checkpoint.py",
-    "pssolver/workflows/plane_observation.py",
-    "pssolver/workflows/plane_beris_edwards.py",
     "pssolver/core/__init__.py",
     "pssolver/core/boundary.py",
     "pssolver/core/domain.py",
@@ -130,6 +123,29 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/systems/__init__.py",
     "pssolver/systems/algebraic.py",
     "pssolver/systems/stokes.py",
+    "pssolver/configuration/legacy_plane.py",
+    "pssolver/linear_solvers/stokes/plane_free_slip_stateless.py",
+    "pssolver/cli/__init__.py",
+    "pssolver/cli/plane.py",
+    "pssolver/engine/engine.py",
+    "pssolver/engine/program.py",
+    "pssolver/engine/constraints.py",
+    "pssolver/engine/groups.py",
+    "pssolver/engine/terms.py",
+    "pssolver/planning/assemble.py",
+    "pssolver/planning/capabilities.py",
+    "pssolver/planning/engine_plan.py",
+    "pssolver/presets/beris_edwards.py",
+    "pssolver/models/active_nematics/engine_terms.py",
+    "pssolver/runtime/runner.py",
+    "pssolver/runtime/legacy_entry.py",
+    "pssolver/runtime/plane_observations.py",
+    "pssolver/api/runner.py",
+    "pssolver/configuration/application_registry.py",
+    "pssolver/configuration/package_construction.py",
+    "pssolver/runtime/package_construction.py",
+    "pssolver/runtime/simulation_construction.py",
+    "pssolver/experimental/boundary_pilots.py",
 )
 
 

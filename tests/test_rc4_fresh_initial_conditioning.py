@@ -2,22 +2,19 @@
 
 from __future__ import annotations
 
-from dataclasses import FrozenInstanceError, fields
 import hashlib
 import json
+from dataclasses import FrozenInstanceError
 from pathlib import Path
 
 import pytest
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 from pssolver.operators import (
-    FreshInitialConditioningPolicy,
     legacy_whole_slab_sine_conditioning,
     localized_quintic_wall_transition,
     strict_no_automatic_conditioning,
 )
-from pssolver.runtime.plane_beris_edwards import PlaneRuntimeBuildRequest
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,76 +69,10 @@ def test_policy_declarations_are_immutable_and_match_the_frozen_contract():
         strict.kind = "mutated"
 
 
-def test_runtime_request_defaults_to_strict_fresh_only_behavior():
-    by_name = {item.name: item for item in fields(PlaneRuntimeBuildRequest)}
-    policy = by_name["fresh_initial_conditioning"].default_factory()
-
-    assert isinstance(policy, FreshInitialConditioningPolicy)
-    assert policy == strict_no_automatic_conditioning()
-    assert by_name["apply_fresh_initial_conditioning"].default is True
 
 
-def test_restart_and_legacy_edges_make_conditioning_control_explicit():
-    application = (
-        ROOT / "pssolver/applications/plane_beris_edwards.py"
-    ).read_text(encoding="utf-8")
-    runtime_edge = (
-        ROOT / "pssolver/runtime/plane_beris_edwards.py"
-    ).read_text(encoding="utf-8")
-    legacy = (ROOT / "pssolver/runtime/plane_legacy.py").read_text(
-        encoding="utf-8"
-    )
-
-    assert "apply_fresh_initial_conditioning=not is_restart" in application
-    assert "request.apply_fresh_initial_conditioning" in runtime_edge
-    assert "apply_fresh_conditioning=apply_fresh_initial_conditioning" in legacy
 
 
 def test_rc434_record_binds_sources_scope_and_qualification_boundary():
-    record = _record()
-
-    assert record["classification"] == (
-        "PASS_RC4_3_4_EXPLICIT_FRESH_CONDITIONING_CPU_CANDIDATE"
-    )
-    assert record["implementation"]["default_policy"] == (
-        "strict_no_automatic_conditioning_v1"
-    )
-    assert record["implementation"]["localized_opt_in_policy"] == (
-        "localized_quintic_wall_transition_v1"
-    )
-    assert record["implementation"]["legacy_policy"] == (
-        "legacy_whole_slab_sine_v1"
-    )
-    assert record["restart_contract"] == {
-        "fresh_only": True,
-        "restored_state_reconditioned": False,
-        "part_of_restart_compatibility_digest": False,
-        "checkpoint_format_changed": False,
-        "forward_dynamics_identity_changed": False,
-    }
-    assert record["scope"]["public_lifting_restriction_changed"] is False
-    assert record["scope"]["production_default_changed"] is False
-    assert record["scope"]["PSSolver_Control_modified"] is False
-    assert record["scope"]["nematics3d_modified"] is False
-    assert record["authorization"]["h100_submission_authorized"] is False
-    assert record["authorization"]["push_authorized"] is False
-    assert record["eligibility"]["eligible_for_rc4_3_5_integration"] is True
-    assert record["eligibility"]["localized_policy_publicly_qualified"] is False
-
-    assert _sha256(CONTRACT_PATH) == record["baseline"][
-        "contract_record_sha256"
-    ]
-    superseded_by_rc435 = {
-        "pssolver/runtime/static_lifting.py",
-        "pssolver/runtime/plane_legacy.py",
-        "pssolver/runtime/plane_beris_edwards.py",
-        "tests/test_phase8_p844_lifting_workflow_restart.py",
-        "tests/test_rc4_fresh_initial_conditioning.py",
-    }
-    for relative, expected in record["source_sha256"].items():
-        if relative in superseded_by_rc435:
-            continue
-        assert _sha256(ROOT / relative) == _rc456_successor(
-            relative,
-            expected,
-        ), relative
+    from qualification.s27_forward import assert_forward_binding
+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_rc4_fresh_initial_conditioning.py::test_rc434_record_binds_sources_scope_and_qualification_boundary')

@@ -1,0 +1,832 @@
+{
+ "schema": "s27_r2_tables.v1",
+ "basis": "327a192ba879da0991110eca99f4b69b9a45c84e",
+ "retired_modules": [
+  "pssolver.applications.plane_beris_edwards",
+  "pssolver.engine.memberwise_transforms",
+  "pssolver.planning.plane_compiled_v2",
+  "pssolver.runtime.plane_application_bridge",
+  "pssolver.runtime.plane_beris_edwards",
+  "pssolver.runtime.plane_compiled_v2_binding",
+  "pssolver.runtime.plane_compiled_v2_step",
+  "pssolver.runtime.plane_legacy",
+  "pssolver.runtime.static_lifting",
+  "pssolver.workflows.plane_beris_edwards",
+  "pssolver.workflows.plane_checkpoint",
+  "pssolver.workflows.plane_compiled_v2",
+  "pssolver.workflows.plane_observation"
+ ],
+ "layers_extra": {
+  "cli": [
+   "cli"
+  ]
+ },
+ "edges": [
+  {
+   "source": "pssolver.cli.plane",
+   "destination": "pssolver.configuration",
+   "kind": "rehome",
+   "owners": [
+    "parse_args"
+   ],
+   "authority": "r2 §5.1 exact-move re-home"
+  },
+  {
+   "source": "pssolver.cli.plane",
+   "destination": "pssolver.configuration.plane_beris_edwards_components",
+   "kind": "reviewed",
+   "owners": [
+    "main"
+   ],
+   "authority": "r2 §3.6 main (F5)"
+  },
+  {
+   "source": "pssolver.cli.plane",
+   "destination": "pssolver.runtime.legacy_entry",
+   "kind": "reviewed",
+   "owners": [
+    "main"
+   ],
+   "authority": "r2 §3.6 main (F5)"
+  },
+  {
+   "source": "pssolver.cli.plane",
+   "destination": "pssolver.runtime.runner",
+   "kind": "reviewed",
+   "owners": [
+    "_print_workflow_summary"
+   ],
+   "authority": "r2 §3.6 _print_workflow_summary result type (G5)"
+  },
+  {
+   "source": "pssolver.configuration.legacy_plane",
+   "destination": "pssolver.io._checkpoint_artifacts",
+   "kind": "rehome",
+   "owners": [
+    "_write_tensor"
+   ],
+   "authority": "r2 §5.1 exact-move re-home"
+  },
+  {
+   "source": "pssolver.configuration.legacy_plane",
+   "destination": "pssolver.io.checkpoint",
+   "kind": "reviewed",
+   "owners": [
+    "PlaneCheckpointHeader",
+    "PlaneWorkflowCheckpoint",
+    "_load_tensor",
+    "_read_metadata",
+    "_sha256",
+    "_write_plane_checkpoint",
+    "load_plane_checkpoint",
+    "read_plane_checkpoint_header",
+    "upgrade_plane_checkpoint_directory_v1",
+    "upgrade_plane_checkpoint_directory_v2",
+    "validate_plane_restore"
+   ],
+   "authority": "r2 §3.2 carrier (exact) + validate_plane_restore (F2)"
+  },
+  {
+   "source": "pssolver.configuration.legacy_plane",
+   "destination": "pssolver.io.checkpoint_identity",
+   "kind": "rehome",
+   "owners": [
+    "PlaneCheckpointHeader",
+    "PlaneWorkflowCheckpoint",
+    "_legacy_plane_registry_key",
+    "_plane_backend_restart_identity",
+    "_plane_state_layout_identity",
+    "_validate_legacy_plane_upgrade_contract",
+    "_validate_plane_forward_identity_schema",
+    "build_plane_checkpoint_compatibility_identity",
+    "plane_forward_dynamics_identity",
+    "plane_run_spec_dynamics_identity",
+    "read_plane_checkpoint_header",
+    "upgrade_plane_checkpoint_directory_v1",
+    "upgrade_plane_checkpoint_v1"
+   ],
+   "authority": "r2 §5.1 exact-move re-home"
+  },
+  {
+   "source": "pssolver.configuration.legacy_plane",
+   "destination": "pssolver.planning.assemble",
+   "kind": "reviewed",
+   "owners": [
+    "translate_plane"
+   ],
+   "authority": "r2 §3.2 translator via assembler"
+  },
+  {
+   "source": "pssolver.runtime.legacy_entry",
+   "destination": "pssolver.engine.state",
+   "kind": "reviewed",
+   "owners": [
+    "restore_plane_state"
+   ],
+   "authority": "r2 §3.3 restore_plane_state (G1)"
+  },
+  {
+   "source": "pssolver.runtime.plane_observations",
+   "destination": "pssolver.engine.field_view",
+   "kind": "reviewed",
+   "owners": [
+    "capture_plane_diagnostic",
+    "capture_plane_observation"
+   ],
+   "authority": "r2 §3.4 captures take FieldView (C1/C4)"
+  },
+  {
+   "source": "pssolver.runtime.plane_observations",
+   "destination": "pssolver.errors",
+   "kind": "reviewed",
+   "owners": [
+    "PlaneCapture",
+    "PlaneDiagnostic",
+    "PlaneObservation"
+   ],
+   "authority": "r2 §3.4 observation errors (exact) + PlaneCapture.fail"
+  },
+  {
+   "source": "pssolver.runtime.plane_observations",
+   "destination": "pssolver.run_metadata",
+   "kind": "reviewed",
+   "owners": [
+    "PlaneCapture"
+   ],
+   "authority": "r2 §3.4 PlaneCapture run records (F4)"
+  }
+ ],
+ "units": {
+  "pssolver.cli": {},
+  "pssolver.cli.plane": {
+   "parse_args": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:parse_args",
+    "authority": "r2 §3 exact move"
+   },
+   "_print_workflow_summary": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F5; R-0093 G5"
+   },
+   "main": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F5; R-0093 G5"
+   }
+  },
+  "pssolver.configuration.legacy_plane": {
+   "PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "authority": "r2 §3.2 exact move"
+   },
+   "PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "authority": "r2 §3.2 exact move"
+   },
+   "PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "authority": "r2 §3.2 exact move"
+   },
+   "PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION",
+    "authority": "r2 §3.2 exact move"
+   },
+   "PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION",
+    "authority": "r2 §3.2 exact move"
+   },
+   "_PLANE_V2_REQUIRED_KEYS": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_PLANE_V2_REQUIRED_KEYS",
+    "authority": "r2 §3.2 exact move"
+   },
+   "_PLANE_V2_OPTIONAL_KEYS": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_PLANE_V2_OPTIONAL_KEYS",
+    "authority": "r2 §3.2 exact move"
+   },
+   "_PLANE_V3_REQUIRED_KEYS": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_PLANE_V3_REQUIRED_KEYS",
+    "authority": "r2 §3.2 exact move"
+   },
+   "_sha256": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_sha256",
+    "authority": "r2 §3 exact move"
+   },
+   "_require_sha256": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_require_sha256",
+    "authority": "r2 §3 exact move"
+   },
+   "_clone_tensors": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_clone_tensors",
+    "authority": "r2 §3 exact move"
+   },
+   "PlaneCheckpointHeader": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PlaneCheckpointHeader",
+    "authority": "r2 §3 exact move"
+   },
+   "PlaneWorkflowCheckpoint": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:PlaneWorkflowCheckpoint",
+    "authority": "r2 §3 exact move"
+   },
+   "_plane_run_spec_dynamics": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_plane_run_spec_dynamics",
+    "authority": "r2 §3 exact move"
+   },
+   "plane_forward_dynamics_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:plane_forward_dynamics_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "plane_run_spec_dynamics_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:plane_run_spec_dynamics_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "_plane_state_layout_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_plane_state_layout_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "_plane_backend_restart_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_plane_backend_restart_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "build_plane_checkpoint_compatibility_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:build_plane_checkpoint_compatibility_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "_validate_plane_checkpoint_embedded_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_validate_plane_checkpoint_embedded_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "_lifting_compatibility_identity": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_lifting_compatibility_identity",
+    "authority": "r2 §3 exact move"
+   },
+   "_validate_plane_forward_identity_schema": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_validate_plane_forward_identity_schema",
+    "authority": "r2 §3 exact move"
+   },
+   "_write_tensor": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_write_tensor",
+    "authority": "r2 §3 exact move"
+   },
+   "_write_plane_checkpoint": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_write_plane_checkpoint",
+    "authority": "r2 §3 exact move"
+   },
+   "write_plane_checkpoint": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:write_plane_checkpoint",
+    "authority": "r2 §3 exact move"
+   },
+   "_read_metadata": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_read_metadata",
+    "authority": "r2 §3 exact move"
+   },
+   "read_plane_checkpoint_header": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:read_plane_checkpoint_header",
+    "authority": "r2 §3 exact move"
+   },
+   "_load_tensor": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_load_tensor",
+    "authority": "r2 §3 exact move"
+   },
+   "load_plane_checkpoint": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:load_plane_checkpoint",
+    "authority": "r2 §3 exact move"
+   },
+   "_legacy_plane_registry_key": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_legacy_plane_registry_key",
+    "authority": "r2 §3 exact move"
+   },
+   "_validate_legacy_plane_upgrade_contract": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:_validate_legacy_plane_upgrade_contract",
+    "authority": "r2 §3 exact move"
+   },
+   "upgrade_plane_checkpoint_v1": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:upgrade_plane_checkpoint_v1",
+    "authority": "r2 §3 exact move"
+   },
+   "upgrade_plane_checkpoint_v2": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:upgrade_plane_checkpoint_v2",
+    "authority": "r2 §3 exact move"
+   },
+   "upgrade_plane_checkpoint_directory_v1": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:upgrade_plane_checkpoint_directory_v1",
+    "authority": "r2 §3 exact move"
+   },
+   "upgrade_plane_checkpoint_directory_v2": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_checkpoint.py:upgrade_plane_checkpoint_directory_v2",
+    "authority": "r2 §3 exact move"
+   },
+   "translate_plane": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: S-27 sections 3/6.2"
+   },
+   "plane_backend_restart": {
+    "kind": "new",
+    "authority": "r2 §3.3 backend_restart literal by run_spec.runtime_path (R-0091 F2, R-0093 G1)"
+   },
+   "validate_plane_restore": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F2b; R-0093 G1/G2"
+   },
+   "__all__": {
+    "kind": "new",
+    "authority": "r2 §3.2 module export list"
+   }
+  },
+  "pssolver.engine.groups": {
+   "_get_field_index": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F6; R-0093 G6"
+   },
+   "_normalize_field_key": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F6; R-0093 G6"
+   },
+   "_normalize_field_indices": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F6; R-0093 G6"
+   },
+   "_transform_group_indexer": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F6; R-0093 G6"
+   },
+   "select_group": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F6; R-0093 G6"
+   },
+   "store_group": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F6; R-0093 G6"
+   }
+  },
+  "pssolver.engine.members": {
+   "_progress": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_axis": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_map_state": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_diagnostics": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_join": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_remember_layouts": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "initial_state": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_member_state": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "_controls": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   },
+   "execute": {
+    "kind": "new",
+    "authority": "r2 §4.5 per-member whole-step programs (R-0094)"
+   }
+  },
+  "pssolver.linear_solvers.stokes.plane_free_slip_stateless": {
+   "solve_force_hats_stateless": {
+    "kind": "new",
+    "authority": "r2 §4.4 (stateless Plane Stokes)"
+   }
+  },
+  "pssolver.runtime.plane_observations": {
+   "VELOCITY_COMPONENTS": {
+    "kind": "new",
+    "authority": "r2 §3.4 local component tuple for the moved observation units"
+   },
+   "PlaneObservation": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:PlaneObservation",
+    "authority": "r2 §3 exact move"
+   },
+   "PlaneDiagnostic": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:PlaneDiagnostic",
+    "authority": "r2 §3 exact move"
+   },
+   "DIAGNOSTIC_DTYPE": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:DIAGNOSTIC_DTYPE",
+    "authority": "r2 §3 exact move"
+   },
+   "DIAGNOSTIC_HEADER": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:DIAGNOSTIC_HEADER",
+    "authority": "r2 §3 exact move"
+   },
+   "capture_plane_observation": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 C1-C6"
+   },
+   "_atomic_save": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:_atomic_save",
+    "authority": "r2 §3 exact move"
+   },
+   "write_plane_observation": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:write_plane_observation",
+    "authority": "r2 §3 exact move"
+   },
+   "capture_plane_diagnostic": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 C4/C7/C8"
+   },
+   "write_plane_diagnostics": {
+    "kind": "exact",
+    "source": "pssolver/workflows/plane_observation.py:write_plane_diagnostics",
+    "authority": "r2 §3 exact move"
+   },
+   "_projected_normal_force": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 C7/C8"
+   },
+   "_flow_diagnostics": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 C7/C8"
+   },
+   "PlaneCapture": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: S-27 section 5.2; R-0091 F4; R-0092 metadata"
+   }
+  }
+ },
+ "added_units": {
+  "pssolver.engine.constraints": {
+   "PlaneStokesConstraint": {
+    "kind": "new",
+    "authority": "r2 §4.4 Plane constraint adapter (S-27 §3.4)"
+   }
+  },
+  "pssolver.engine.program": {
+   "_constraint_physical": {
+    "kind": "new",
+    "authority": "r2 §4.2 group-wise constraint write-back"
+   },
+   "_evolved_transform": {
+    "kind": "new",
+    "authority": "r2 §4.2 group-wise evolved projection/inverse/refresh"
+   }
+  },
+  "pssolver.models.active_nematics.engine_terms": {
+   "plane_explicit_term": {
+    "kind": "new",
+    "authority": "r2 §4.1 capability factory (S-27 §3.4)"
+   },
+   "plane_stokes_term": {
+    "kind": "new",
+    "authority": "r2 §4.1 capability factory (S-27 §3.4)"
+   }
+  },
+  "pssolver.planning.assemble": {
+   "_field_basis": {
+    "kind": "new",
+    "authority": "r2 §4.1 plane_slab per-component bases (S-27 §3.1-3.2)"
+   },
+   "_validate_basis": {
+    "kind": "new",
+    "authority": "r2 §4.1 plane_slab basis validation (S-27 §3.1-3.2)"
+   }
+  },
+  "pssolver.runtime.legacy_entry": {
+   "DISTORTION_ODD_Z_BC": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:DISTORTION_ODD_Z_BC",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "IMPLEMENTATION_SOURCE_FILES": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:IMPLEMENTATION_SOURCE_FILES",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "PRESSURE_MODAL_BC": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:PRESSURE_MODAL_BC",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "Q_BC": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:Q_BC",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "U_NORMAL_BC": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:U_NORMAL_BC",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "U_TANGENTIAL_BC": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:U_TANGENTIAL_BC",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "_LEGACY_BOUNDARIES": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:_LEGACY_BOUNDARIES",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "_PROJECT_ROOT": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:_PROJECT_ROOT",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "_reject_plane_restart": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B R1: name-only rewrite of applications/plane_beris_edwards.py:_reject_restart (avoids the Periodic _reject_restart in the same module)"
+   },
+   "_restore_plane_progress": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F2b; R-0093 G1-G4"
+   },
+   "_run_v04_plane_translation_owned": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F4; R-0092; R-0093 G5; R-0095 source_runtime_path"
+   },
+   "file_sha256": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:file_sha256",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   },
+   "restore_plane_state": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F2b; R-0093 G1-G4"
+   },
+   "run_v04_plane_translation": {
+    "kind": "rewritten",
+    "authority": "r2 Appendix B: R-0091 F4; R-0092; R-0093 G5; R-0095 source_runtime_path"
+   },
+   "tensor_sha256": {
+    "kind": "exact",
+    "source": "pssolver/applications/plane_beris_edwards.py:tensor_sha256",
+    "authority": "r2 §3.3 exact move (R-0091 MOVABLE)"
+   }
+  }
+ },
+ "changed_paths": {
+  "ARCHITECTURE.md": "r2 §2 architecture map",
+  "MANIFEST.in": "r2 §6.3 packaging",
+  "Plane_beris_edwards_stokes.py": "r2 §3.6 root CLI shim import (Df12; R9)",
+  "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json": "r2 §6.3 successor 146 / issue registry (V-66)",
+  "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane_zh.md": "r2 §6.3 successor 146 / issue registry (V-66)",
+  "notes/pssolver_v0_2_x_open_issues.json": "r2 §6.3 successor 146 / issue registry (V-66)",
+  "notes/pssolver_v0_2_x_open_issues_zh.md": "r2 §6.3 successor 146 / issue registry (V-66)",
+  "pssolver/api/runner.py": "r2 §2 module table",
+  "pssolver/applications/__init__.py": "r2 §2 module table",
+  "pssolver/cli/__init__.py": "r2 §2 module table",
+  "pssolver/cli/plane.py": "r2 §2 module table",
+  "pssolver/configuration/application_registry.py": "r2 §2 module table",
+  "pssolver/configuration/legacy_plane.py": "r2 §2 module table",
+  "pssolver/configuration/package_construction.py": "r2 §2 module table",
+  "pssolver/configuration/plane_beris_edwards.py": "r2 §2 module table",
+  "pssolver/engine/constraints.py": "r2 §2 module table",
+  "pssolver/engine/engine.py": "r2 §2 module table",
+  "pssolver/engine/groups.py": "r2 §2 module table",
+  "pssolver/engine/members.py": "r2 §2 module table",
+  "pssolver/engine/program.py": "r2 §2 module table",
+  "pssolver/engine/terms.py": "r2 §2 module table",
+  "pssolver/experimental/boundary_pilots.py": "r2 §2 module table",
+  "pssolver/linear_solvers/stokes/plane_free_slip_stateless.py": "r2 §2 module table",
+  "pssolver/models/active_nematics/engine_terms.py": "r2 §2 module table",
+  "pssolver/planning/assemble.py": "r2 §2 module table",
+  "pssolver/planning/capabilities.py": "r2 §2 module table",
+  "pssolver/planning/engine_plan.py": "r2 §2 module table",
+  "pssolver/presets/beris_edwards.py": "r2 §2 module table",
+  "pssolver/runtime/__init__.py": "r2 §2 module table",
+  "pssolver/runtime/legacy_entry.py": "r2 §2 module table",
+  "pssolver/runtime/package_construction.py": "r2 §2 module table",
+  "pssolver/runtime/plane_observations.py": "r2 §2 module table",
+  "pssolver/runtime/runner.py": "r2 §2 module table",
+  "pssolver/runtime/simulation_construction.py": "r2 §2 module table",
+  "pssolver/workflows/__init__.py": "r2 §2 module table",
+  "setup.py": "r2 §6.3 packaging",
+  "tools/check.py": "r2 §7 engineering gate (exact-moves reader, assembled constants)",
+  "pssolver/applications/plane_beris_edwards.py": "r2 §6.1 deletion",
+  "pssolver/engine/memberwise_transforms.py": "r2 §6.1 deletion",
+  "pssolver/planning/plane_compiled_v2.py": "r2 §6.1 deletion",
+  "pssolver/runtime/plane_application_bridge.py": "r2 §6.1 deletion",
+  "pssolver/runtime/plane_beris_edwards.py": "r2 §6.1 deletion",
+  "pssolver/runtime/plane_compiled_v2_binding.py": "r2 §6.1 deletion",
+  "pssolver/runtime/plane_compiled_v2_step.py": "r2 §6.1 deletion",
+  "pssolver/runtime/plane_legacy.py": "r2 §6.1 deletion",
+  "pssolver/runtime/static_lifting.py": "r2 §6.1 deletion",
+  "pssolver/workflows/plane_beris_edwards.py": "r2 §6.1 deletion",
+  "pssolver/workflows/plane_checkpoint.py": "r2 §6.1 deletion",
+  "pssolver/workflows/plane_compiled_v2.py": "r2 §6.1 deletion",
+  "pssolver/workflows/plane_observation.py": "r2 §6.1 deletion"
+ },
+ "guard_files": [
+  "tests/v0_5_s24_registry_reference.py"
+ ],
+ "registry_files": [
+  "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+  "qualification/historical_s27_tests.json",
+  "qualification/s27_exact_moves.json",
+  "qualification/s27_expected_unimportable.json",
+  "qualification/s27_impact_targets.json",
+  "qualification/s27_metadata_classes.json",
+  "qualification/s27_r2_tables.json",
+  "qualification/s27_retired_modules.json",
+  "qualification/s27_statement_map.json",
+  "qualification/s27_test_disposition.json"
+ ],
+ "forbid": {
+  "io": [
+   "configuration",
+   "functional",
+   "api",
+   "applications",
+   "workflows",
+   "runtime",
+   "models",
+   "planning"
+  ],
+  "engine": [
+   "api",
+   "applications",
+   "workflows",
+   "configuration",
+   "functional",
+   "runtime",
+   "io"
+  ],
+  "planning": [
+   "engine",
+   "api",
+   "applications",
+   "workflows",
+   "configuration",
+   "functional",
+   "runtime",
+   "io",
+   "models"
+  ],
+  "models": [
+   "configuration",
+   "functional",
+   "runtime",
+   "io",
+   "api",
+   "applications",
+   "workflows"
+  ],
+  "configuration": [
+   "functional",
+   "api",
+   "applications",
+   "workflows",
+   "runtime"
+  ],
+  "runtime": [
+   "functional",
+   "api",
+   "applications",
+   "workflows"
+  ],
+  "functional": [
+   "api",
+   "applications",
+   "workflows",
+   "runtime"
+  ],
+  "linear_solvers": [
+   "configuration",
+   "runtime",
+   "workflows",
+   "applications",
+   "api",
+   "functional",
+   "engine",
+   "io",
+   "models"
+  ],
+  "cli": [
+   "functional",
+   "applications",
+   "workflows",
+   "experimental"
+  ]
+ },
+ "torch_free_modules": [
+  "pssolver.core.terms",
+  "pssolver.planning.assemble",
+  "pssolver.planning.capabilities",
+  "pssolver.planning.term_analysis",
+  "pssolver.presets.beris_edwards"
+ ],
+ "torch_free_deferred_imports": [
+  [
+   "pssolver.planning.assemble",
+   "pssolver.engine.engine"
+  ]
+ ],
+ "component_layers": [
+  "models",
+  "geometries",
+  "boundaries",
+  "integrators",
+  "engine",
+  "backends",
+  "operators",
+  "linear_solvers",
+  "runtime",
+  "io",
+  "functional",
+  "api",
+  "applications",
+  "workflows",
+  "configuration",
+  "experimental"
+ ],
+ "guard_files_reasons": {
+  "tests/v0_5_s24_registry_reference.py": "R9 closed old->new string mapping (R-0084 F001 pattern) for the Plane registry strings"
+ },
+ "own_file_patterns": [
+  "tests/test_v0_5_s27_*.py",
+  "tests/v0_5_s27_*.py",
+  "qualification/s27_*.py",
+  "qualification/historical_s27_*.py"
+ ],
+ "changed_path_classes": [
+  {
+   "pattern": "tests/*",
+   "reason": "r2 §6.2 test disposition (s27_test_disposition.json, historical_s27_tests.json, categories.toml)"
+  },
+  {
+   "pattern": "qualification/*",
+   "reason": "r2 §7 S-27 registries, tools and identity adapters"
+  }
+ ],
+ "frozen_files": [
+  "pssolver/models/active_nematics/beris_edwards.py",
+  "pssolver/models/active_nematics/q_tensor.py",
+  "pssolver/operators/projection.py",
+  "pssolver/linear_solvers/stokes/plane_free_slip.py",
+  "qualification/identity/runtime_case.py"
+ ],
+ "frozen_patterns": [
+  "tests/baselines/v0_4/*",
+  "tests/baselines/s25/*",
+  "tests/baselines/s26/*",
+  "tests/fixtures/*",
+  "benchmarks/*"
+ ],
+ "installed_paths": {
+  "gate": "qualification/s27_guard_crosscheck.py",
+  "tables": "qualification/s27_r2_tables.json"
+ },
+ "installation_removes": [
+  "qualification/s27_guard_authorities.json"
+ ],
+ "revision": "r2.2 (R-0099: import-safe, lint/format-clean gate; tables bind the gate bytes)",
+ "gate_sha256": "2b79e7ddda81dabc2167ce9b4e60f90ad429c6692c9c600a4ff4cdbac974a848"
+}
