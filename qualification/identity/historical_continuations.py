@@ -61,7 +61,7 @@ def replay(fixture: Path, work: Path) -> dict:
             elif name == "production_plane_legacy":
                 old.advance_plane(runtime)
             else:
-                runtime.advance(1)
+                old.advance_channel(runtime)
             records.append(capture(runtime))
         cases[name] = records
     assert before == file_manifest(fixture)

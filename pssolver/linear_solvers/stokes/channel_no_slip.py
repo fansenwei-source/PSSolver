@@ -1202,24 +1202,6 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         self.pressure_rel_tol = pressure_relative_tolerance
         self.pressure_max_iter = pressure_max_iterations
         self.pressure_fixed_iterations = pressure_fixed_iterations
-        self.pressure_guess = None
-        self._pressure_guess_operator_action = None
-        self._pressure_guess_operator_action_guess = None
-        self._pressure_guess_operator_action_guess_version = None
-        self._pressure_guess_operator_action_working_exponent = None
-        self._pressure_solve_sequence_id = 0
-        zero = _channel_pressure_zero_magnitude()
-        self._record_pressure_outcome(
-            rhs_norm=zero,
-            initial_residual=zero,
-            residual=zero,
-            relative_residual=None,
-            iterations=0,
-            termination_reason="not_run",
-            acceptable=False,
-            working_scale_binary_exponent=None,
-            solve_phase="not_run",
-        )
 
     def pressure_convergence_policy(self) -> dict[str, object]:
         """Return the explicit precedence of the PCG stopping controls."""
@@ -1258,129 +1240,9 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             return int(self.pressure_fixed_iterations)
         return int(self.pressure_max_iter)
 
-    def _clear_pressure_guess_operator_action(self) -> None:
-        self._pressure_guess_operator_action = None
-        self._pressure_guess_operator_action_guess = None
-        self._pressure_guess_operator_action_guess_version = None
-        self._pressure_guess_operator_action_working_exponent = None
-
-    def _store_pressure_guess(
-        self,
-        pressure_hat: torch.Tensor,
-        *,
-        operator_action: torch.Tensor | None = None,
-        working_exponent: int | None = None,
-    ) -> None:
-        """Store the warm start and an optional exact operator evaluation."""
-
-        pressure_guess = pressure_hat.detach()
-        self.pressure_guess = pressure_guess
-        self._clear_pressure_guess_operator_action()
-        if operator_action is None or working_exponent is None:
-            return
-        version = getattr(pressure_guess, "_version", None)
-        if version is None:
-            return
-        self._pressure_guess_operator_action = operator_action.detach()
-        self._pressure_guess_operator_action_guess = pressure_guess
-        self._pressure_guess_operator_action_guess_version = int(version)
-        self._pressure_guess_operator_action_working_exponent = int(working_exponent)
-
-    def _cached_pressure_operator_action(
-        self,
-        pressure_guess: torch.Tensor,
-        pressure_work: torch.Tensor,
-        working_exponent: int,
-    ) -> torch.Tensor | None:
-        """Return the exact cached ``A @ pressure_work`` when still valid."""
-
-        cached = self._pressure_guess_operator_action
-        version = getattr(pressure_guess, "_version", None)
-        valid = bool(
-            cached is not None
-            and self._pressure_guess_operator_action_guess is pressure_guess
-            and version is not None
-            and int(version) == self._pressure_guess_operator_action_guess_version
-            and cached.shape == pressure_work.shape
-            and cached.dtype == pressure_work.dtype
-            and cached.device == pressure_work.device
-            and self._pressure_guess_operator_action_working_exponent is not None
-        )
-        if not valid:
-            self._clear_pressure_guess_operator_action()
-            return None
-        exponent_delta = int(self._pressure_guess_operator_action_working_exponent) - int(
-            working_exponent
-        )
-        return self._project_pressure_gauge(
-            channel_pressure_scale_power_of_two(cached, exponent_delta)
-        )
-
     @property
     def pressure_inactive_mask(self) -> torch.Tensor:
         return self._pressure_inactive_mask
-
-    def _legacy_magnitude_value(
-        self,
-        magnitude: ChannelPressureMagnitude,
-    ) -> float:
-        if magnitude.float64_value is not None:
-            return float(magnitude.float64_value)
-        if float(magnitude.log2_value) < -1074.0:
-            return 0.0
-        return float(torch.finfo(torch.float64).max)
-
-    def _record_pressure_outcome(
-        self,
-        *,
-        rhs_norm: ChannelPressureMagnitude,
-        initial_residual: ChannelPressureMagnitude,
-        iterations: int,
-        residual: ChannelPressureMagnitude,
-        relative_residual: float | None,
-        termination_reason: str,
-        acceptable: bool,
-        working_scale_binary_exponent: int | None,
-        solve_phase: str = "production_primal",
-    ) -> None:
-        self.last_pressure_iterations = int(iterations)
-        self.last_pressure_residual = self._legacy_magnitude_value(residual)
-        self.last_pressure_relative_residual = (
-            None if relative_residual is None else float(relative_residual)
-        )
-        self._last_pressure_residual_magnitude = residual
-        self.last_pressure_termination_reason = termination_reason
-        self.last_pressure_acceptable = bool(acceptable)
-        self.last_pressure_working_scale_binary_exponent = working_scale_binary_exponent
-        self._last_pressure_rhs_norm = rhs_norm
-        self._last_pressure_initial_residual = initial_residual
-        self._last_pressure_achieved_residual = residual
-        self._last_pressure_solve_phase = solve_phase
-        self._last_pressure_diagnostics_cache = None
-
-    @property
-    def last_pressure_residual_magnitude(self) -> dict[str, object]:
-        """Return the latest scale-safe residual metadata on demand."""
-
-        return self._last_pressure_residual_magnitude.to_metadata()
-
-    @property
-    def last_pressure_diagnostics(self) -> dict[str, object]:
-        """Materialize the public diagnostics outside the pressure hot path."""
-
-        if self._last_pressure_diagnostics_cache is None:
-            self._last_pressure_diagnostics_cache = self._pressure_diagnostics_metadata(
-                rhs_norm=self._last_pressure_rhs_norm,
-                initial_residual=self._last_pressure_initial_residual,
-                achieved_residual=self._last_pressure_achieved_residual,
-                relative_residual=self.last_pressure_relative_residual,
-                iterations=self.last_pressure_iterations,
-                termination_reason=self.last_pressure_termination_reason,
-                acceptable=self.last_pressure_acceptable,
-                working_scale_binary_exponent=(self.last_pressure_working_scale_binary_exponent),
-                solve_phase=self._last_pressure_solve_phase,
-            )
-        return self._last_pressure_diagnostics_cache
 
     def _pressure_diagnostics_metadata(
         self,
@@ -1394,6 +1256,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         acceptable: bool,
         working_scale_binary_exponent: int | None,
         solve_phase: str,
+        solve_sequence_id: int,
     ) -> dict[str, object]:
         policy = self.pressure_convergence_policy()
         fixed_work = self.pressure_fixed_iterations is not None
@@ -1408,7 +1271,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         )
         return {
             "schema_version": 2,
-            "solve_sequence_id": self._pressure_solve_sequence_id,
+            "solve_sequence_id": solve_sequence_id,
             "source_primal_sequence_id": None,
             "solver_identity": ("persistent_warm_start_preconditioned_conjugate_gradient"),
             "operator_identity": "channel_pressure_schur_primal",
@@ -1440,32 +1303,6 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             "postcondition_satisfied": bool(acceptable),
             "acceptable": bool(acceptable),
         }
-
-    def _raise_pressure_failure(
-        self,
-        *,
-        rhs_norm: ChannelPressureMagnitude,
-        initial_residual: ChannelPressureMagnitude,
-        iterations: int,
-        residual: ChannelPressureMagnitude,
-        relative_residual: float | None,
-        termination_reason: str,
-        working_scale_binary_exponent: int | None,
-    ) -> None:
-        self._record_pressure_outcome(
-            rhs_norm=rhs_norm,
-            initial_residual=initial_residual,
-            iterations=iterations,
-            residual=residual,
-            relative_residual=relative_residual,
-            termination_reason=termination_reason,
-            acceptable=False,
-            working_scale_binary_exponent=(working_scale_binary_exponent),
-        )
-        raise ChannelPressureConvergenceError(
-            "production Channel pressure solve did not satisfy its contract",
-            details=self.last_pressure_diagnostics,
-        )
 
     def _apply_axis_matrix(self, tensor, matrix, axis):
         spectral_axis = tensor.ndim - 3 + axis
@@ -1662,11 +1499,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         )
         return self._project_pressure_gauge(result)
 
-    def _solve_pressure(self, rhs_hat):
-        return self.solve(rhs_hat, None, role=PCGRole.PRODUCTION)
-
     def solve(self, rhs, solver_state, *, role):
-        """Execute the role-preserving PCG; M1 retains caller-owned diagnostics."""
+        """Execute pressure PCG with a caller-owned production warm-start pair."""
         role = PCGRole(role)
         return self._solve_pcg(rhs, solver_state, role=role)
 
@@ -1691,8 +1525,35 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 solve_phase = solver_state["solve_phase"]
                 solve_sequence_id = solver_state["solve_sequence_id"]
                 source_primal_sequence_id = solver_state["source_primal_sequence_id"]
-        if production:
-            self._pressure_solve_sequence_id += 1
+        def production_report(outcome):
+            outcome = dict(outcome)
+            outcome["achieved_residual"] = outcome.pop("residual")
+            return self._pressure_diagnostics_metadata(
+                **outcome, solve_phase="production_primal", solve_sequence_id=1
+            )
+
+        def fail_production(**outcome):
+            raise ChannelPressureConvergenceError(
+                "production Channel pressure solve did not satisfy its contract",
+                details=production_report(dict(outcome, acceptable=False)),
+            )
+
+        def finish_production(pressure_hat, *, operator_action=None, working_exponent=None, **outcome):
+            pressure_guess = pressure_hat.detach()
+            if operator_action is not None:
+                operator_action = operator_action.detach()
+            return (
+                pressure_hat,
+                {
+                    "pressure_guess": pressure_guess,
+                    "pressure_guess_action": operator_action,
+                    "pressure_guess_action_exponent": (
+                        working_exponent if operator_action is not None else None
+                    ),
+                },
+                production_report(outcome),
+            )
+
         rhs_hat = self._project_pressure_gauge(rhs_hat)
         if production:
             try:
@@ -1742,7 +1603,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     )
             except ValueError as error:
                 unavailable = _channel_pressure_zero_magnitude()
-                self._record_pressure_outcome(
+                report = production_report(dict(
                     rhs_norm=unavailable,
                     initial_residual=unavailable,
                     iterations=0,
@@ -1751,10 +1612,10 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     termination_reason="nonfinite_input",
                     acceptable=False,
                     working_scale_binary_exponent=None,
-                )
+                ))
                 raise ChannelPressureConvergenceError(
                     "production Channel pressure input contains NaN or Inf",
-                    details=self.last_pressure_diagnostics,
+                    details=report,
                 ) from error
             zero = _channel_pressure_zero_magnitude()
         else:
@@ -1800,8 +1661,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         if rhs_magnitude.is_zero:
             if production:
                 pressure_hat = torch.zeros_like(rhs_hat)
-                self._store_pressure_guess(pressure_hat)
-                self._record_pressure_outcome(
+                return finish_production(
+                    pressure_hat,
                     rhs_norm=rhs_magnitude,
                     initial_residual=zero,
                     iterations=0,
@@ -1811,7 +1672,6 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     acceptable=True,
                     working_scale_binary_exponent=None,
                 )
-                return pressure_hat
             elif standalone:
                 diagnostics = make_diagnostics(
                     self,
@@ -1845,9 +1705,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 )
                 return (torch.zeros_like(rhs_hat), diagnostics)
         if production:
-            pressure_guess = self.pressure_guess
+            pressure_guess = solver_state["pressure_guess"]
             if pressure_guess is None or pressure_guess.shape != rhs_hat.shape:
-                self._clear_pressure_guess_operator_action()
                 pressure_work = torch.zeros_like(working_rhs)
                 pressure_operator_action = self._pressure_operator(pressure_work)
             else:
@@ -1857,8 +1716,20 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                         -int(working_exponent),
                     )
                 )
-                pressure_operator_action = self._cached_pressure_operator_action(
-                    pressure_guess, pressure_work, int(working_exponent)
+                cached = solver_state["pressure_guess_action"]
+                cached_exponent = solver_state.get("pressure_guess_action_exponent")
+                pressure_operator_action = (
+                    self._project_pressure_gauge(
+                        channel_pressure_scale_power_of_two(
+                            cached, cached_exponent - int(working_exponent)
+                        )
+                    )
+                    if cached is not None
+                    and type(cached_exponent) is int
+                    and cached.shape == pressure_work.shape
+                    and cached.dtype == pressure_work.dtype
+                    and cached.device == pressure_work.device
+                    else None
                 )
                 if pressure_operator_action is None:
                     pressure_operator_action = self._pressure_operator(pressure_work)
@@ -1944,7 +1815,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 else None
             )
             if not initial_state_finite:
-                self._raise_pressure_failure(
+                fail_production(
                     rhs_norm=rhs_magnitude,
                     initial_residual=rhs_magnitude,
                     iterations=0,
@@ -1963,12 +1834,10 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 pressure_hat = channel_pressure_scale_power_of_two(
                     pressure_work, int(working_exponent)
                 )
-                self._store_pressure_guess(
+                return finish_production(
                     pressure_hat,
                     operator_action=pressure_operator_action,
                     working_exponent=working_exponent,
-                )
-                self._record_pressure_outcome(
                     rhs_norm=rhs_magnitude,
                     initial_residual=initial_residual,
                     iterations=0,
@@ -1978,7 +1847,6 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     acceptable=True,
                     working_scale_binary_exponent=working_exponent,
                 )
-                return pressure_hat
         else:
             residual_work_magnitude = rhs_work_magnitude
             residual_magnitude = initial_residual
@@ -1990,12 +1858,10 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 pressure_hat = channel_pressure_scale_power_of_two(
                     pressure_work, int(working_exponent)
                 )
-                self._store_pressure_guess(
+                return finish_production(
                     pressure_hat,
                     operator_action=pressure_operator_action,
                     working_exponent=working_exponent,
-                )
-                self._record_pressure_outcome(
                     rhs_norm=rhs_magnitude,
                     initial_residual=initial_residual,
                     iterations=0,
@@ -2005,9 +1871,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     acceptable=True,
                     working_scale_binary_exponent=working_exponent,
                 )
-                return pressure_hat
             if not initial_pair_finite:
-                self._raise_pressure_failure(
+                fail_production(
                     rhs_norm=rhs_magnitude,
                     initial_residual=initial_residual,
                     iterations=0,
@@ -2017,7 +1882,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     working_scale_binary_exponent=working_exponent,
                 )
             if initial_breakdown:
-                self._raise_pressure_failure(
+                fail_production(
                     rhs_norm=rhs_magnitude,
                     initial_residual=initial_residual,
                     iterations=0,
@@ -2555,7 +2420,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     )
         if production:
             if not acceptable:
-                self._raise_pressure_failure(
+                fail_production(
                     rhs_norm=rhs_magnitude,
                     initial_residual=initial_residual,
                     iterations=iterations,
@@ -2566,7 +2431,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 )
             pressure_hat = channel_pressure_scale_power_of_two(pressure_work, int(working_exponent))
             if not bool(torch.isfinite(pressure_hat).all().item()):
-                self._raise_pressure_failure(
+                fail_production(
                     rhs_norm=rhs_magnitude,
                     initial_residual=initial_residual,
                     iterations=iterations,
@@ -2575,12 +2440,10 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     termination_reason="nonfinite_intermediate",
                     working_scale_binary_exponent=working_exponent,
                 )
-            self._store_pressure_guess(
+            return finish_production(
                 pressure_hat,
                 operator_action=accepted_pressure_operator_action,
                 working_exponent=working_exponent,
-            )
-            self._record_pressure_outcome(
                 rhs_norm=rhs_magnitude,
                 initial_residual=initial_residual,
                 iterations=iterations,
@@ -2590,7 +2453,6 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 acceptable=True,
                 working_scale_binary_exponent=working_exponent,
             )
-            return pressure_hat
         elif standalone:
             if not acceptable:
                 return context._fail_transpose_solve(
@@ -2668,7 +2530,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     )
             return (pressure_work, diagnostics)
 
-    def solve_force_hats(self, fx_hat, fy_hat, fz_hat):
+    def solve_force_hats(self, fx_hat, fy_hat, fz_hat, *, solver_state):
         """Solve the Channel saddle system for native force spectra."""
 
         force_hats = tuple(
@@ -2676,13 +2538,17 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         )
         free_velocity = [self._helmholtz_inverse(force_hat) for force_hat in force_hats]
         provisional_divergence = self.divergence_hat(*free_velocity)
-        pressure_hat = self._solve_pressure(self._project_pressure_gauge(-provisional_divergence))
+        rhs = self._project_pressure_gauge(-provisional_divergence)
+        pressure_hat, next_state, diagnostics = self.solve(
+            rhs, solver_state, role=PCGRole.PRODUCTION
+        )
         velocity_hat = [
             free_velocity[axis]
             - self._helmholtz_inverse(self._pressure_gradient(pressure_hat, axis))
             for axis in range(3)
         ]
-        return (*velocity_hat, pressure_hat)
+        values = (*velocity_hat, pressure_hat)
+        return values, next_state, diagnostics
 
 
 __all__ = [

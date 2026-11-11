@@ -6,14 +6,10 @@ import pickle
 
 import pytest
 import torch
-import pssolver.functional.channel_pressure_adjoint as pressure_adjoint_module
 
 from pssolver import ChannelPressureConvergenceError, SpectralSolver
 from pssolver.functional import (
-    ChannelImplicitPressureAdjoint,
-    ChannelPressureTransposeOperator,
     FunctionalConvergenceError,
-    unrolled_channel_pressure_solve_oracle,
 )
 from pssolver.linear_solvers.stokes import (
     ChannelNoSlipModalStokesSolver,
@@ -22,6 +18,9 @@ from pssolver.linear_solvers.stokes import (
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     channel_pressure_active_rms,
 )
+from tests._s28a_pressure import functional_pressure, production_pressure, transpose_pressure
+from tests.oracles import channel_pressure_unrolled as pressure_adjoint_module
+from tests.oracles.channel_pressure_unrolled import unrolled_channel_pressure_solve_oracle
 
 
 def _solver(
@@ -56,16 +55,14 @@ def _rhs(solver, shape, seed, *, dtype=torch.float32):
     generator = torch.Generator().manual_seed(seed)
     real = torch.randn((1, *shape), generator=generator, dtype=torch.float64)
     imag = torch.randn((1, *shape), generator=generator, dtype=torch.float64)
-    operator = ChannelPressureTransposeOperator(solver)
     complex_dtype = (
         torch.complex128 if dtype == torch.float64 else torch.complex64
     )
-    return operator._project_gauge(torch.complex(real, imag).to(complex_dtype))
+    return solver._project_pressure_gauge(torch.complex(real, imag).to(complex_dtype))
 
 
 def _represented_relative_residual(solver, rhs, pressure, action):
-    operator = ChannelPressureTransposeOperator(solver)
-    residual = operator._project_gauge(rhs - action(pressure))
+    residual = solver._project_pressure_gauge(rhs - action(pressure))
     residual_rms = channel_pressure_active_rms(
         residual,
         solver.pressure_inactive_mask,
@@ -89,15 +86,15 @@ def test_float32_fixed_work_saturates_before_roundoff_breakdown(
     solver = _solver(shape, fixed_iterations=fixed_iterations)
     rhs = _rhs(solver, shape, seed)
 
-    pressure = solver._solve_pressure(rhs)
+    pressure, _, report = production_pressure(solver, rhs)
 
     assert bool(torch.isfinite(pressure).all().item())
-    assert solver.last_pressure_termination_reason == (
+    assert report["termination_reason"] == (
         "fixed_work_roundoff_saturation"
     )
-    assert solver.last_pressure_acceptable is True
-    assert solver.last_pressure_iterations < fixed_iterations
-    assert solver.last_pressure_relative_residual <= (
+    assert report["acceptable"] is True
+    assert report["achieved_iteration_count"] < fixed_iterations
+    assert report["achieved_normalized_residual"] <= (
         channel_pressure_minimum_relative_tolerance(torch.float32)
     )
 
@@ -107,9 +104,8 @@ def test_fixed_work_roundoff_saturation_is_shared_by_functional_solves():
     solver = _solver(shape, fixed_iterations=50)
     rhs = _rhs(solver, shape, 9)
 
-    standalone = ChannelPressureTransposeOperator(solver)
-    transpose = standalone.solve_pressure_transpose(rhs)
-    implicit = ChannelImplicitPressureAdjoint(solver)
+    transpose, transpose_report = transpose_pressure(solver, rhs)
+    implicit = functional_pressure(solver)
     primal = implicit.solve(rhs)
     oracle = unrolled_channel_pressure_solve_oracle(
         rhs,
@@ -120,13 +116,13 @@ def test_fixed_work_roundoff_saturation_is_shared_by_functional_solves():
     assert bool(torch.isfinite(transpose).all().item())
     assert bool(torch.isfinite(primal).all().item())
     assert torch.equal(primal, oracle)
-    assert standalone.last_transpose_diagnostics.termination_reason == (
+    assert transpose_report.termination_reason == (
         "fixed_work_roundoff_saturation"
     )
     assert implicit.last_primal_diagnostics.termination_reason == (
         "fixed_work_roundoff_saturation"
     )
-    assert standalone.last_transpose_diagnostics.acceptable is True
+    assert transpose_report.acceptable is True
     assert implicit.last_primal_diagnostics.acceptable is True
 
 
@@ -143,7 +139,7 @@ def test_fixed_work_breakdown_above_precision_floor_still_fails_closed(
     )
 
     with pytest.raises(ChannelPressureConvergenceError) as captured:
-        solver._solve_pressure(rhs)
+        production_pressure(solver, rhs)
 
     assert captured.value.details["termination_reason"] == "operator_breakdown"
     assert captured.value.details["achieved_normalized_residual"] == 1.0
@@ -179,22 +175,20 @@ def test_excess_float32_fixed_work_never_accepts_a_diverged_return_state(
         length_scale=8.0,
     )
     rhs = _rhs(solver, shape, seed)
-    operators = ChannelPressureTransposeOperator(solver)
 
     try:
         if path == "production":
-            solver.pressure_guess = None
-            pressure = solver._solve_pressure(rhs.clone())
-            action = operators.apply_pressure_operator
-            acceptable = solver.last_pressure_acceptable
+            pressure, _, report = production_pressure(solver, rhs.clone())
+            action = solver._pressure_operator
+            acceptable = report["acceptable"]
         elif path == "functional_transpose":
-            pressure = operators.solve_pressure_transpose(rhs.clone())
-            action = operators.apply_pressure_operator_transpose
-            acceptable = operators.last_transpose_diagnostics.acceptable
+            pressure, transpose_report = transpose_pressure(solver, rhs.clone())
+            action = solver.apply_pressure_operator_transpose
+            acceptable = transpose_report.acceptable
         elif path == "implicit":
-            implicit = ChannelImplicitPressureAdjoint(solver)
+            implicit = functional_pressure(solver)
             pressure = implicit.solve(rhs.clone()).detach()
-            action = operators.apply_pressure_operator
+            action = solver._pressure_operator
             acceptable = implicit.last_primal_diagnostics.acceptable
         else:
             # The oracle remains publicly restricted to 512 modes.  Widen
@@ -211,7 +205,7 @@ def test_excess_float32_fixed_work_never_accepts_a_diverged_return_state(
                 solver,
                 iterations=fixed_iterations,
             ).detach()
-            action = operators.apply_pressure_operator
+            action = solver._pressure_operator
             acceptable = True
     except (ChannelPressureConvergenceError, FunctionalConvergenceError) as error:
         details = error.details
@@ -246,17 +240,17 @@ def test_fixed_work_completion_keeps_the_v29_roundoff_margin():
     )
     rhs = _rhs(solver, shape, 9, dtype=torch.float64)
 
-    pressure = solver._solve_pressure(rhs)
+    pressure, _, report = production_pressure(solver, rhs)
 
     represented = _represented_relative_residual(
         solver,
         rhs,
         pressure,
-        ChannelPressureTransposeOperator(solver).apply_pressure_operator,
+        solver._pressure_operator,
     )
     floor = channel_pressure_minimum_relative_tolerance(torch.float64)
-    assert solver.last_pressure_acceptable is True
-    assert solver.last_pressure_termination_reason == "fixed_work_completed"
+    assert report["acceptable"] is True
+    assert report["termination_reason"] == "fixed_work_completed"
     assert represented <= 2.0 * floor
 
 
@@ -270,18 +264,17 @@ def test_transpose_fixed_work_uses_the_minimum_floor_state():
         length_scale=8.0,
     )
     rhs = _rhs(solver, shape, 0)
-    operator = ChannelPressureTransposeOperator(solver)
 
-    pressure = operator.solve_pressure_transpose(rhs)
+    pressure, transpose_report = transpose_pressure(solver, rhs)
 
     represented = _represented_relative_residual(
         solver,
         rhs,
         pressure,
-        operator.apply_pressure_operator_transpose,
+        solver.apply_pressure_operator_transpose,
     )
     floor = channel_pressure_minimum_relative_tolerance(torch.float32)
-    assert operator.last_transpose_diagnostics.acceptable is True
+    assert transpose_report.acceptable is True
     assert represented <= floor
 
 
@@ -296,16 +289,16 @@ def test_production_fixed_work_uses_the_minimum_floor_state():
     )
     rhs = _rhs(solver, shape, 1)
 
-    pressure = solver._solve_pressure(rhs)
+    pressure, _, report = production_pressure(solver, rhs)
 
     represented = _represented_relative_residual(
         solver,
         rhs,
         pressure,
-        ChannelPressureTransposeOperator(solver).apply_pressure_operator,
+        solver._pressure_operator,
     )
     floor = channel_pressure_minimum_relative_tolerance(torch.float32)
-    assert solver.last_pressure_acceptable is True
+    assert report["acceptable"] is True
     assert represented <= floor
 
 

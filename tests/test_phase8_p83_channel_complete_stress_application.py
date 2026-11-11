@@ -20,7 +20,6 @@ from pssolver import (
     compile_simulation,
     run_simulation,
 )
-from pssolver.applications.channel_beris_edwards import load_channel_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     neumann_pressure_compatibility,
@@ -32,6 +31,7 @@ from pssolver.configuration.public_simulation_runner import (
 )
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.core import GridPlacement
+from pssolver.engine.constraints import ChannelStokesConstraint
 from pssolver.geometries import RectangularChannel
 from pssolver.io.checkpoint import (
     CheckpointError,
@@ -43,12 +43,6 @@ from pssolver.models.active_nematics import (
     CompleteStressBerisEdwards,
 )
 from pssolver.planning.construction import RuntimeConstructionKind
-from pssolver.runtime.channel_beris_edwards import (
-    BerisEdwardsChannelStokes,
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
-from pssolver.workflows.channel_beris_edwards import _load_checkpoint
 from tests._dynamic_flags import set_dynamic_flag
 
 
@@ -681,15 +675,15 @@ def test_channel_observation_sync_performs_one_static_solve_per_state(
     monkeypatch,
 ):
     calls = []
-    original_forward = BerisEdwardsChannelStokes.forward
+    original_forward = ChannelStokesConstraint.constrained_hats
 
-    def recording_forward(self, fields, params):
+    def recording_forward(self, *args, **kwargs):
         calls.append(self)
-        return original_forward(self, fields, params)
+        return original_forward(self, *args, **kwargs)
 
     monkeypatch.setattr(
-        BerisEdwardsChannelStokes,
-        "forward",
+        ChannelStokesConstraint,
+        "constrained_hats",
         recording_forward,
     )
     steps = 4
@@ -724,7 +718,8 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
         )
     )
     checkpoint = first.output_directory / "checkpoint_1"
-    tensor = checkpoint / "backend__pressure_guess.npy"
+    metadata = json.loads((checkpoint / "checkpoint.json").read_text())
+    tensor = checkpoint / metadata["tensor_files"]["solver.pressure_guess"]["file"]
     payload = bytearray(tensor.read_bytes())
     payload[-1] ^= 1
     tensor.write_bytes(payload)
@@ -741,11 +736,8 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
     assert isinstance(caught.value, CheckpointError)
     assert isinstance(caught.value, ValueError)
     assert not (tmp_path / "tamper_target").exists()
-    metadata = json.loads((checkpoint / "checkpoint.json").read_text())
-    assert metadata["backend_restart"]["state_keys"] == ["pressure_guess"]
-    assert metadata["backend_restart"]["reconstructed_state_keys"] == [
-        "q_gradient_cache"
-    ]
+    assert metadata["solver_keys"] == ["pressure_guess", "pressure_guess_action"]
+    assert "pressure_guess_action_exponent" in metadata["solver_scalars"]
 
 
 def test_channel_progress_tamper_is_rejected_before_target_mutation(tmp_path):
@@ -768,35 +760,8 @@ def test_channel_progress_tamper_is_rejected_before_target_mutation(tmp_path):
         encoding="utf-8",
     )
 
-    compiled = compile_simulation(
-        _simulation(tmp_path, output_name="progress_target", steps=1)
-    )
-    run_spec = compiled.application_request
-    initial_values, _, _ = load_channel_initial_q(run_spec)
-    adapter = build_channel_beris_edwards_runtime(
-        ChannelBerisEdwardsRuntimeBuildRequest(
-            run_spec=run_spec,
-            initial_values=initial_values,
-            device="cpu",
-        )
-    )
-    before_fields = {
-        name: value.detach().clone()
-        for name, value in adapter.fields.items()
-    }
-    before_pressure = adapter.capture_pressure_guess()
-    before_steps = adapter.completed_steps
-
-    with pytest.raises(ValueError, match="progress counters differ"):
-        _load_checkpoint(
-            checkpoint,
-            adapter,
-            run_spec=run_spec,
-        )
-
-    assert adapter.completed_steps == before_steps
-    assert all(
-        torch.equal(adapter.fields[name], value)
-        for name, value in before_fields.items()
-    )
-    assert torch.equal(adapter.capture_pressure_guess(), before_pressure)
+    with pytest.raises(ValueError, match="checkpoint progress is inconsistent"):
+        run_simulation(_simulation(
+            tmp_path, output_name="progress_target", steps=1, restart_from=checkpoint
+        ))
+    assert not (tmp_path / "progress_target").exists()

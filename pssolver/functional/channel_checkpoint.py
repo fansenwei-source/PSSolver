@@ -10,25 +10,28 @@ fabricates production algebraic state on export.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
 import torch
 
-from pssolver.core._canonical import canonical_json
-from pssolver.core._canonical import canonical_sha256
-
+from pssolver.configuration.legacy_channel import (
+    CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
+    CHECKPOINT_VERSION,
+)
+from pssolver.core._canonical import canonical_json, canonical_sha256
+from pssolver.io._checkpoint_artifacts import write_standard_tensor_record
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
     CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
     METADATA_SHA256_KEY,
     CheckpointDurabilityError,
     CheckpointExistsError,
-    checkpoint_file_sha256,
     CheckpointIOError,
     checkpoint_directory_transaction,
+    checkpoint_file_sha256,
     load_checkpoint_numpy,
     read_checkpoint_json,
     require_exact_checkpoint_keys,
@@ -47,13 +50,12 @@ from pssolver.io.checkpoint_identity import (
     SourceReleaseGeneration,
     resolve_legacy_identity_schema,
 )
-from pssolver.io._checkpoint_artifacts import write_standard_tensor_record
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
-from pssolver.runtime.channel_beris_edwards import (
-    CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
-)
-from pssolver.workflows.channel_beris_edwards import CHECKPOINT_VERSION
 
+from .checkpoint_identity import (
+    build_channel_functional_checkpoint_identity,
+    normalize_functional_checkpoint_identity,
+)
 from .contracts import (
     FUNCTIONAL_API_VERSION,
     FunctionalCheckpointCompatibility,
@@ -68,18 +70,13 @@ from .errors import (
     FunctionalCheckpointExistsError,
     FunctionalCheckpointIntegrityError,
     FunctionalCheckpointIOError,
-    FunctionalCheckpointNotFoundError,
     translate_functional_exception,
 )
-from .checkpoint_identity import (
-    build_channel_functional_checkpoint_identity,
-    normalize_functional_checkpoint_identity,
-)
+from .legacy_identity import legacy_runtime_identity_sha256
 from .versioning import (
     negotiate_functional_api_version,
     runtime_identity_sha256_for_api_version,
 )
-from .legacy_identity import legacy_runtime_identity_sha256
 
 
 CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3

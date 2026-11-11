@@ -17,9 +17,9 @@ import torch
 from scipy import fft
 
 from pssolver.backends.tensor_product import TensorProductTransformBackend
-from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator
 from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver, PeriodicModalStokesSolver
 from pssolver.linear_solvers.stokes.plane_free_slip import FreeSlipModalStokesSolver
+from tests._s28a_pressure import production_pressure
 from tests.mms.derive_primitives import expressions, numerical_functions
 from tests.mms.schur_reference import schur_blocks
 
@@ -168,7 +168,6 @@ def test_no_slip_schur_manufacture_and_transpose_dot_product():
         pressure_relative_tolerance=1e-13,
         pressure_max_iterations=300,
     )
-    transpose = ChannelPressureTransposeOperator(stokes)
     blocks = schur_blocks(shape, lengths)
     index = np.arange(np.prod(shape)).reshape(shape)
     exact = np.sin(index * 0.19) + 1j * np.cos(index * 0.23)
@@ -176,7 +175,7 @@ def test_no_slip_schur_manufacture_and_transpose_dot_product():
     rhs = np.einsum("kij,kj->ki", blocks, exact.reshape(shape[0], -1)).reshape(shape)
     expected = torch.tensor(exact[None])
     source = torch.tensor(rhs[None])
-    actual = stokes._solve_pressure(source)
+    actual, _, _ = production_pressure(stokes, source)
 
     def relative(x, y):
         return float(torch.linalg.vector_norm(x) / torch.linalg.vector_norm(y))
@@ -186,5 +185,5 @@ def test_no_slip_schur_manufacture_and_transpose_dot_product():
     other = torch.tensor((np.cos(index * 0.31) + 1j * np.sin(index * 0.17))[None])
     other[:, 0, 0, 0] = 0
     left = torch.sum(stokes._pressure_operator(expected).conj() * other)
-    right = torch.sum(expected.conj() * transpose.apply_pressure_operator_transpose(other))
+    right = torch.sum(expected.conj() * stokes.apply_pressure_operator_transpose(other))
     assert float(abs(left - right) / max(abs(left), abs(right))) < 2e-12

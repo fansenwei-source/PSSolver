@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import inspect
 
-from benchmarks import verify_v0_4_s18_r5_pcg_equivalence as equivalence
-import pssolver.functional.channel_pressure as channel_pressure
-import pssolver.functional.channel_pressure_adjoint as channel_pressure_adjoint
 import pssolver.linear_solvers.stokes as stokes_package
+from benchmarks import verify_v0_4_s18_r5_pcg_equivalence as equivalence
 from pssolver.linear_solvers.stokes import channel_no_slip
 from pssolver.linear_solvers.stokes._channel_pcg_control import (
     CHANNEL_PCG_FIXED_WORK_COMPLETED,
@@ -15,6 +13,7 @@ from pssolver.linear_solvers.stokes._channel_pcg_control import (
     CHANNEL_PCG_ITERATION_LIMIT,
     ChannelPCGControl,
 )
+from tests.oracles.channel_pressure_unrolled import unrolled_channel_pressure_solve_oracle
 
 
 def test_private_control_is_not_reexported_from_the_public_stokes_package():
@@ -25,16 +24,10 @@ def test_private_control_is_not_reexported_from_the_public_stokes_package():
 def test_all_four_paths_use_the_shared_control_without_old_floor_state():
     sources = {
         "production": inspect.getsource(
-            channel_no_slip.ChannelNoSlipModalStokesSolver._solve_pressure
-        ),
-        "functional_transpose": inspect.getsource(
-            channel_pressure.ChannelPressureTransposeOperator.solve_pressure_transpose
-        ),
-        "implicit": inspect.getsource(
-            channel_pressure_adjoint.ChannelImplicitPressureAdjoint._solve_no_grad
+            channel_no_slip.ChannelNoSlipModalStokesSolver._solve_pcg
         ),
         "oracle": inspect.getsource(
-            channel_pressure_adjoint.unrolled_channel_pressure_solve_oracle
+            unrolled_channel_pressure_solve_oracle
         ),
     }
     for source in sources.values():
@@ -43,8 +36,6 @@ def test_all_four_paths_use_the_shared_control_without_old_floor_state():
         assert "fixed_work_floor_iterations" not in source
         assert "fixed_work_floor_relative_residual" not in source
     assert "stop_at_iteration_limit(" in sources["production"]
-    assert "stop_at_iteration_limit(" in sources["functional_transpose"]
-    assert "stop_at_iteration_limit(" in sources["implicit"]
     assert "stop_for_failure(" in sources["oracle"]
 
 

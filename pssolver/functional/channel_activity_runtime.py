@@ -1,10 +1,4 @@
-"""Pure batch-one activity control for the complete-stress Channel runtime.
-
-P9.7.4 reuses the qualified production transforms, force model, projected
-Euler coefficients, and modal Stokes operators.  It deliberately bypasses the
-production pressure warm start and routes every pressure solve through the
-P9.7.3 implicit-adjoint node with a canonical zero initial guess.
-"""
+"""Functional 1.1 Channel activity on the Engine's zero-start pressure path."""
 
 from __future__ import annotations
 
@@ -12,24 +6,26 @@ from collections.abc import Mapping
 
 import torch
 
-from pssolver.applications.channel_beris_edwards import load_channel_initial_q
-from pssolver.configuration.public_simulation_runner import (
-    PUBLIC_CHANNEL_COMPLETE_APPLICATION,
-    compile_public_simulation,
-)
 from pssolver.configuration.execution_device import (
     configure_tf32_execution,
     scoped_tf32_execution,
 )
+from pssolver.configuration.legacy_channel import (
+    channel_forward_dynamics_identity,
+    load_channel_initial_q,
+    translate_channel,
+)
+from pssolver.configuration.public_simulation_runner import (
+    PUBLIC_CHANNEL_COMPLETE_APPLICATION,
+    compile_public_simulation,
+)
+from pssolver.engine.engine import Engine
+from pssolver.engine.state import State
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
 )
 from pssolver.models.active_nematics import CHANNEL_Q_BOUNDARY_CONDITIONS
-from pssolver.runtime.channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
 
 from .channel_activity import (
     CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
@@ -39,18 +35,22 @@ from .channel_activity import (
     channel_functional_pressure_identity,
 )
 from .channel_checkpoint import ChannelActivityCheckpointBridge
-from .channel_pressure_adjoint import ChannelImplicitPressureAdjoint
 from .contracts import (
     FUNCTIONAL_API_VERSION,
     FunctionalCapabilitySet,
     FunctionalControlFieldSpec,
     FunctionalControls,
-    FunctionalObservationSpec,
     FunctionalObservations,
+    FunctionalObservationSpec,
     FunctionalRuntimeConstructionRequest,
     FunctionalRuntimeIdentity,
     FunctionalState,
     FunctionalStateSpec,
+)
+from .errors import FunctionalConvergenceError
+from .pressure_metadata import (
+    CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
+    channel_pressure_solve_diagnostics,
 )
 
 
@@ -66,7 +66,8 @@ class ChannelActivityFunctionalRuntime:
         self,
         request: FunctionalRuntimeConstructionRequest,
         *,
-        adapter,
+        engine,
+        initial_state,
         snapshot_sha256: str,
         production_runtime_identity_sha256: str,
         production_backend_restart: Mapping[str, object],
@@ -89,9 +90,7 @@ class ChannelActivityFunctionalRuntime:
             raise ValueError("functional observation declaration is not canonical")
 
         self._request = request
-        self._adapter = adapter
-        self._solver = adapter.solver
-        self._projector = adapter.projector
+        self._engine = engine
         self._state_spec = state_spec
         self._control_specs = controls
         self._observation_specs = observations
@@ -101,22 +100,17 @@ class ChannelActivityFunctionalRuntime:
             request.simulation.numerics.precision.value,
         )
         self._tf32_device = device
-        self._flow_model = self._solver.model.static_model
-        self._pressure = ChannelImplicitPressureAdjoint(self._flow_model)
+        self._pressure = engine.constraint.functional_pressure_diagnostics(
+            make_diagnostics=channel_pressure_solve_diagnostics,
+            error=FunctionalConvergenceError,
+            schema_version=CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
+        )
         self._capabilities = channel_activity_functional_capabilities()
 
-        # The functional map owns no trajectory-dependent cache.  These are
-        # private objects built solely for this runtime; production defaults
-        # and independently constructed production adapters remain unchanged.
-        self._solver.model.nlmodel.q_gradient_cache = None
-        self._flow_model.q_gradient_cache = None
-        self._flow_model.pressure_guess = None
-
-        fields = self._solver.fields
-        dynamic = fields.dyn_count
+        dynamic = engine.evolved_count
         self._initial_state = (
-            fields.spatial[:dynamic].detach().clone(),
-            fields.spectral[:dynamic].detach().clone(),
+            initial_state.spatial[:dynamic].detach().clone(),
+            initial_state.spectral[:dynamic].detach().clone(),
         )
         identities = request.simulation.identity_metadata()
         execution_identity = dict(identities["execution"])
@@ -238,90 +232,37 @@ class ChannelActivityFunctionalRuntime:
         self._control_specs[0].validate(value)
         return value
 
-    def _bind_input_state(
-        self,
-        state: FunctionalState,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    def _engine_input(self, state, step_index):
         q_physical, q_spectral = state
-        fields = self._solver.fields
-        static_count = fields.stat_count
+        engine = self._engine
+        static_count = len(engine.components) - engine.evolved_count
         spatial_zeros = q_physical.new_zeros(
             (static_count, q_physical.shape[1], *q_physical.shape[2:])
         )
         spectral_zeros = q_spectral.new_zeros(
             (static_count, q_spectral.shape[1], *q_spectral.shape[2:])
         )
-        fields.spatial = torch.cat((q_physical, spatial_zeros), dim=0)
-        fields.spectral = torch.cat((q_spectral, spectral_zeros), dim=0)
-        return q_physical, q_spectral
+        return State(
+            torch.cat((q_spectral, spectral_zeros), dim=0),
+            torch.cat((q_physical, spatial_zeros), dim=0),
+            (),
+            engine.constraint.seed(None),
+            step_index,
+            (step_index, 0),
+            False,
+            pure_evolved=state,
+        )
 
-    def _solve_flow(
-        self,
-        activity: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        fields = self._solver.fields
-        force = self._flow_model.compute_nematic_force(fields, activity)
-        force_hat = self._projector.forward_transform(
-            force,
-            CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
+    def _prepare_observation(self, state, controls, step_index):
+        current = self._engine.prepare_constraints(
+            self._engine_input(state, step_index),
+            {"alpha": self._activity(controls)},
+            diagnostics=self._pressure,
         )
-        *velocity_hats, pressure_hat = self._pressure.solve_force_hats(
-            *force_hat
-        )
-        velocity_hat = torch.stack(tuple(velocity_hats))
-        velocity = self._projector.inverse_transform_full(
-            velocity_hat,
-            CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
-        )
-        pressure = self._projector.inverse_transform_full(
-            pressure_hat,
-            CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
-        )
-        return velocity, pressure, velocity_hat, pressure_hat
-
-    def _flow_and_rhs(
-        self,
-        state: FunctionalState,
-        activity: torch.Tensor,
-        *,
-        need_rhs: bool,
-    ) -> tuple[dict[str, torch.Tensor], torch.Tensor | None]:
-        q_physical, q_spectral = self._bind_input_state(state)
-        velocity, pressure, velocity_hat, pressure_hat = self._solve_flow(activity)
-        fields = self._solver.fields
-        static_physical = torch.cat((velocity, pressure.unsqueeze(0)), dim=0)
-        static_spectral = torch.cat(
-            (velocity_hat, pressure_hat.unsqueeze(0)),
-            dim=0,
-        )
-        fields.spatial = torch.cat((q_physical, static_physical), dim=0)
-        fields.spectral = torch.cat((q_spectral, static_spectral), dim=0)
-        observations = {
-            "Q": q_physical,
-            "velocity": velocity,
-            "pressure": pressure,
-        }
-        rhs = self._solver.model.nlmodel(fields, {}) if need_rhs else None
-        return observations, rhs
-
-    def _next_state(
-        self,
-        state: FunctionalState,
-        rhs: torch.Tensor,
-    ) -> FunctionalState:
-        integrator = self._solver.integrator
-        next_spectral = (
-            state[1] + integrator.dt * rhs
-        ) / integrator.denom
-        next_spectral = self._projector.project_real_spectrum(
-            next_spectral,
-            CHANNEL_Q_BOUNDARY_CONDITIONS,
-        )
-        next_physical = self._projector.inverse_transform(
-            next_spectral,
-            CHANNEL_Q_BOUNDARY_CONDITIONS,
-        )
-        return next_physical, next_spectral
+        observations = self._engine.observe(current)
+        observations["Q"] = state[0]
+        observations["pressure"] = observations["pressure"][0]
+        return current, observations
 
     def step(
         self,
@@ -337,10 +278,12 @@ class ChannelActivityFunctionalRuntime:
             self._validate_step_index(step_index)
             self._validate_state(state)
             activity = self._activity(controls)
-            _, rhs = self._flow_and_rhs(state, activity, need_rhs=True)
-            if rhs is None:  # pragma: no cover
-                raise AssertionError("functional RHS was not computed")
-            return self._next_state(state, rhs)
+            result = self._engine.step(
+                self._engine_input(state, step_index),
+                {"alpha": activity},
+                diagnostics=self._pressure,
+            )
+            return result.pure_evolved
 
     def observe(
         self,
@@ -355,11 +298,7 @@ class ChannelActivityFunctionalRuntime:
             self._validate_state(state)
             if controls is None:
                 return {"Q": state[0]}
-            observations, _ = self._flow_and_rhs(
-                state,
-                self._activity(controls),
-                need_rhs=False,
-            )
+            _, observations = self._prepare_observation(state, controls, 0)
             return observations
 
     def step_and_observe(
@@ -375,14 +314,11 @@ class ChannelActivityFunctionalRuntime:
         ):
             self._validate_step_index(step_index)
             self._validate_state(state)
-            observations, rhs = self._flow_and_rhs(
-                state,
-                self._activity(controls),
-                need_rhs=True,
+            current, observations = self._prepare_observation(state, controls, step_index)
+            result = self._engine.step(
+                current, {"alpha": controls[_ACTIVITY_NAME]}, diagnostics=self._pressure
             )
-            if rhs is None:  # pragma: no cover
-                raise AssertionError("functional RHS was not computed")
-            return self._next_state(state, rhs), observations
+            return result.pure_evolved, observations
 
 
 class ChannelActivityFunctionalRuntimeFactory:
@@ -402,21 +338,30 @@ class ChannelActivityFunctionalRuntimeFactory:
             raise ValueError("P9.7.4 requires the complete-stress Channel application")
         run_spec = compiled.run_spec
         initial_values, _, snapshot_sha256 = load_channel_initial_q(run_spec)
-        adapter = build_channel_beris_edwards_runtime(
-            ChannelBerisEdwardsRuntimeBuildRequest(
-                run_spec=run_spec,
-                initial_values=initial_values,
-                device=request.control_fields[0].tensor.device,
+        device = request.control_fields[0].tensor.device
+        dtype = getattr(torch, request.simulation.numerics.precision.value)
+        engine = Engine(
+            translate_channel(run_spec, flavour="functional_1_1"), device=device, dtype=dtype
+        )
+        with scoped_tf32_execution(
+            request.simulation.execution.options["tf32"], real_dtype=dtype, device=device
+        ):
+            initial_state = engine.initial_state(
+                {name: value.to(device=device) for name, value in initial_values.items()}
             )
-        )
-        production_backend_restart = adapter.backend_restart_metadata()
-        from pssolver.workflows.channel_beris_edwards import (
-            channel_forward_dynamics_identity,
-        )
+        production_backend_restart = {
+            "kind": "channel_complete_stress_pressure_pcg",
+            "state_keys": ["pressure_guess"],
+            "reconstructed_state_keys": (
+                [] if request.simulation.execution.options["disable_q_gradient_reuse"]
+                else ["q_gradient_cache"]
+            ),
+        }
 
         return ChannelActivityFunctionalRuntime(
             request,
-            adapter=adapter,
+            engine=engine,
+            initial_state=initial_state,
             snapshot_sha256=snapshot_sha256,
             production_runtime_identity_sha256=(
                 run_spec.runtime_identity_sha256()

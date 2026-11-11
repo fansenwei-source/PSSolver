@@ -3,37 +3,34 @@
 from __future__ import annotations
 
 import copy
-from dataclasses import replace
 import hashlib
 import json
-from pathlib import Path
 import pickle
+from dataclasses import replace
+from pathlib import Path
 
 import pytest
 import torch
 
-from pssolver import __version__ as PSSOLVER_PACKAGE_VERSION
-from pssolver import SpectralSolver
 import pssolver.functional as compatibility
 import pssolver.functional.api as stable
+from pssolver import SpectralSolver
+from pssolver import __version__ as PSSOLVER_PACKAGE_VERSION
 from pssolver.functional import (
-    ChannelImplicitPressureAdjoint,
-    ChannelPressureTransposeOperator,
-    FunctionalCheckpointCompatibility,
     FunctionalRuntimeIdentity,
     FunctionalStateSpec,
     FunctionalTensorSpec,
-)
-from pssolver.functional.versioning import (
-    runtime_identity_sha256_for_api_version,
 )
 from pssolver.functional.errors import translate_functional_exception
 from pssolver.functional.pressure_metadata import (
     channel_pressure_solve_diagnostics,
 )
+from pssolver.functional.versioning import (
+    runtime_identity_sha256_for_api_version,
+)
 from pssolver.io.checkpoint import (
-    CheckpointIOError,
     FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE,
+    CheckpointIOError,
     seal_checkpoint_metadata,
     write_functional_checkpoint_provenance,
 )
@@ -562,14 +559,15 @@ def test_pressure_metadata_distinguishes_cap_from_required_postcondition():
         pressure_max_iterations=100,
         pressure_fixed_iterations=2,
     )
-    operator = ChannelPressureTransposeOperator(solver)
-    implicit = ChannelImplicitPressureAdjoint(solver)
+    from tests._s28a_pressure import functional_pressure
+
+    implicit = functional_pressure(solver)
     generator = torch.Generator().manual_seed(20260930)
     rhs = torch.complex(
         torch.randn(solver.pressure_null_mask.shape, generator=generator),
         torch.randn(solver.pressure_null_mask.shape, generator=generator),
     ).to(torch.complex128)
-    rhs = operator._project_gauge(rhs)
+    rhs = solver._project_pressure_gauge(rhs)
 
     implicit.solve(rhs)
     metadata = implicit.pressure_solve_metadata()["primal"]

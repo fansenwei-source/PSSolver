@@ -25,7 +25,6 @@ def _map_state(state, function):
         spectral=function(state.spectral, "spectral"),
         spatial=function(state.spatial, "spatial"),
         history=tuple(function(value, f"history.{i}") for i, value in enumerate(state.history)),
-        solver={key: apply(value, f"solver.{key}") for key, value in state.solver.items()},
         pure_evolved=None
         if state.pure_evolved is None
         else tuple(
@@ -47,10 +46,33 @@ def _diagnostics(diagnostics, count):
     return diagnostics
 
 
+def _join_solver(states):
+    """Pack Channel solver tensors while preserving per-member cache validity."""
+    first = states[0]
+    assert all(tuple(state) == tuple(first) for state in states)
+    if not first:
+        return {}
+    guesses = [state["pressure_guess"] for state in states]
+    actions = [state["pressure_guess_action"] for state in states]
+    exponents = tuple(state["pressure_guess_action_exponent"] for state in states)
+    assert all((action is None) == (exp is None)
+               for action, exp in zip(actions, exponents, strict=True))
+    action_template = next((value for value in actions if value is not None), None)
+    return {
+        "pressure_guess": None if all(value is None for value in guesses) else torch.cat(guesses),
+        "pressure_guess_action": (
+            None if action_template is None else torch.cat([
+                torch.zeros_like(action_template) if value is None else value
+                for value in actions
+            ])
+        ),
+        "pressure_guess_action_exponent": exponents,
+    }
+
+
 def _join(engine, states):
     first = states[0]
     assert all(_progress(value) == _progress(first) for value in states)
-    assert all(tuple(value.solver) == tuple(first.solver) for value in states)
     flattened = []
     for state in states:
         values = {}
@@ -63,7 +85,9 @@ def _join(engine, states):
         assert axis >= 0 and value.shape[axis] == 1
         return torch.cat([values[name] for values in flattened], dim=axis)
 
-    return _map_state(first, concatenate)
+    return replace(
+        _map_state(first, concatenate), solver=_join_solver([state.solver for state in states])
+    )
 
 
 def _remember_layouts(engine, state):
@@ -79,6 +103,9 @@ def _remember_layouts(engine, state):
         return value
 
     _map_state(state, record)
+    for key, value in state.solver.items():
+        if isinstance(value, torch.Tensor):
+            record(value, f"solver.{key}")
 
 
 def initial_state(engine, evolved, *, diagnostics):
@@ -128,7 +155,20 @@ def _member_state(engine, state, index, *, buffer):
         )
         return target.copy_(selected)
 
-    return _map_state(state, copy)
+    result = _map_state(state, copy)
+    if not state.solver:
+        return result
+    exponent = state.solver["pressure_guess_action_exponent"][index]
+    guess = state.solver["pressure_guess"]
+    action = state.solver["pressure_guess_action"]
+    result.solver = {
+        "pressure_guess": None if guess is None else copy(guess, "solver.pressure_guess"),
+        "pressure_guess_action": (
+            None if exponent is None else copy(action, "solver.pressure_guess_action")
+        ),
+        "pressure_guess_action_exponent": exponent,
+    }
+    return result
 
 
 def _controls(engine, controls, index):
@@ -148,6 +188,7 @@ def _controls(engine, controls, index):
 def execute(engine, operation, state, controls, *, inplace, diagnostics):
     reports = _diagnostics(diagnostics, engine.batch)
     results = []
+    solver_results = []
     final_progress = None
     for index in range(engine.batch):
         member = _member_state(
@@ -164,6 +205,7 @@ def execute(engine, operation, state, controls, *, inplace, diagnostics):
             final_progress = _progress(result)
         assert _progress(result) == final_progress
         if inplace:
+            solver_results.append(result.solver)
             engine._member_buffer = result
             destination = {}
             _map_state(
@@ -180,5 +222,6 @@ def execute(engine, operation, state, controls, *, inplace, diagnostics):
             results.append(result)
     if not inplace:
         return _join(engine, results)
+    state.solver = _join_solver(solver_results)
     state.completed_steps, state.refresh_phase, state.constrained_current = final_progress
     return state

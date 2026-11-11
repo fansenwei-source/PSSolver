@@ -12,11 +12,13 @@ import pssolver.linear_solvers.stokes.channel_no_slip as channel_no_slip
 from pssolver import SpectralSolver
 from pssolver.functional import (
     CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
-    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
-    CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION,
-    ChannelImplicitPressureAdjoint,
-    ChannelPressureTransposeOperator,
     FunctionalConvergenceError,
+)
+from pssolver.functional.channel_activity import (
+    _PRESSURE_IMPLICIT_ADJOINT_VERSION as CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
+)
+from pssolver.functional.channel_activity import (
+    _PRESSURE_TRANSPOSE_PROTOCOL_VERSION as CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION,
 )
 from pssolver.linear_solvers.stokes import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
@@ -37,6 +39,7 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
     channel_pressure_scale_power_of_two,
     channel_pressure_working_vector,
 )
+from tests._s28a_pressure import functional_pressure, production_pressure, transpose_pressure
 
 
 SHAPE = (3, 2, 2)
@@ -101,19 +104,18 @@ def _pressure_rhs(spectral, pressure, seed=4430):
         CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     )
     exact = pressure._project_pressure_gauge(exact)
-    return ChannelPressureTransposeOperator(pressure).apply_pressure_operator(
+    return pressure._pressure_operator(
         exact
     )
 
 
 def _ordinary_unscaled_fixed_work(pressure, rhs, *, transpose):
-    operators = ChannelPressureTransposeOperator(pressure)
     action = (
-        operators.apply_pressure_operator_transpose
+        pressure.apply_pressure_operator_transpose
         if transpose
-        else operators.apply_pressure_operator
+        else pressure._pressure_operator
     )
-    project = operators._project_gauge
+    project = pressure._project_pressure_gauge
     value = torch.zeros_like(rhs)
     residual = project(rhs).clone()
     preconditioned = residual / pressure.schur_diag_safe
@@ -331,12 +333,10 @@ def test_breakdown_certificate_fast_path_matches_full_vector_gate_and_solution()
     fallback._pressure_operator_breakdown_certified = False
     fallback._pressure_preconditioner_breakdown_certified = False
 
-    actual = certified._solve_pressure(rhs)
-    expected = fallback._solve_pressure(rhs)
+    actual, _, certified_diagnostics = production_pressure(certified, rhs)
+    expected, _, fallback_diagnostics = production_pressure(fallback, rhs)
 
     assert torch.equal(actual, expected)
-    certified_diagnostics = certified.last_pressure_diagnostics
-    fallback_diagnostics = fallback.last_pressure_diagnostics
     for name in (
         "achieved_iteration_count",
         "termination_reason",
@@ -487,7 +487,7 @@ def test_float32_bound_fast_path_avoids_exact_direction_reduction(monkeypatch):
         CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     )
     exact = pressure._project_pressure_gauge(exact)
-    rhs = ChannelPressureTransposeOperator(pressure).apply_pressure_operator(exact)
+    rhs = pressure._pressure_operator(exact)
 
     assert pressure._pressure_operator_breakdown_certified is False
     assert pressure._pressure_preconditioner_breakdown_certified is True
@@ -504,7 +504,7 @@ def test_float32_bound_fast_path_avoids_exact_direction_reduction(monkeypatch):
         "_channel_pressure_operator_breakdown",
         counted_exact,
     )
-    actual = pressure._solve_pressure(rhs)
+    actual, _, report = production_pressure(pressure, rhs)
     assert exact_fallback_calls == 0
 
     monkeypatch.setattr(
@@ -512,10 +512,10 @@ def test_float32_bound_fast_path_avoids_exact_direction_reduction(monkeypatch):
         "_channel_pressure_initial_direction_rms_upper_bound",
         lambda *args, **kwargs: None,
     )
-    expected = reference._solve_pressure(rhs)
+    expected, _, expected_report = production_pressure(reference, rhs)
     assert exact_fallback_calls == reference.pressure_fixed_iterations
     assert torch.equal(actual, expected)
-    assert pressure.last_pressure_diagnostics == reference.last_pressure_diagnostics
+    assert report == expected_report
 
 
 def test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops():
@@ -525,21 +525,20 @@ def test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops():
     )
     rhs = _pressure_rhs(spectral, pressure)
 
-    pressure._solve_pressure(rhs)
-    assert pressure.last_pressure_iterations == 5
-    assert pressure.last_pressure_termination_reason == "fixed_work_completed"
+    _, _, report = production_pressure(pressure, rhs)
+    assert report["achieved_iteration_count"] == 5
+    assert report["termination_reason"] == "fixed_work_completed"
 
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     implicit.solve(rhs)
     assert implicit.last_primal_diagnostics.iterations == 5
     assert implicit.last_primal_diagnostics.termination_reason == (
         "fixed_work_completed"
     )
 
-    transpose = ChannelPressureTransposeOperator(pressure)
-    transpose.solve_pressure_transpose(rhs)
-    assert transpose.last_transpose_iterations == 5
-    assert transpose.last_transpose_diagnostics.termination_reason == (
+    _, transpose_report = transpose_pressure(pressure, rhs)
+    assert transpose_report.iterations == 5
+    assert transpose_report.termination_reason == (
         "fixed_work_completed"
     )
 
@@ -552,14 +551,15 @@ def test_tolerance_cap_fails_closed_and_preserves_production_warm_start():
     )
     rhs = _pressure_rhs(spectral, pressure)
     warm_start = torch.ones_like(rhs)
-    pressure.pressure_guess = warm_start
+    before = warm_start.detach().clone()
 
     with pytest.raises(ChannelPressureConvergenceError) as captured:
-        pressure._solve_pressure(rhs)
+        production_pressure(pressure, rhs, guess=warm_start)
 
-    assert pressure.pressure_guess is warm_start
+    assert torch.equal(warm_start, before)
+    assert not hasattr(pressure, "pressure_guess")
     diagnostics = captured.value.diagnostics
-    assert diagnostics == pressure.last_pressure_diagnostics
+    assert diagnostics == captured.value.details
     assert diagnostics["schema_version"] == 2
     assert diagnostics["termination_reason"] == (
         "iteration_limit_reached_without_postcondition"
@@ -570,13 +570,12 @@ def test_tolerance_cap_fails_closed_and_preserves_production_warm_start():
 def test_production_pressure_solution_is_power_of_two_scale_covariant():
     spectral, pressure = _solver(fixed_iterations=5)
     rhs = _pressure_rhs(spectral, pressure)
-    pressure.pressure_guess = None
-    reference = pressure._solve_pressure(rhs)
-    assert pressure.last_pressure_working_scale_binary_exponent == 0
+    reference, _, report = production_pressure(pressure, rhs)
+    assert report["working_scale_binary_exponent"] == 0
 
     for exponent in (-1000, 1000):
-        pressure.pressure_guess = None
-        actual = pressure._solve_pressure(
+        actual, _, _ = production_pressure(
+            pressure,
             channel_pressure_scale_power_of_two(rhs, exponent)
         )
         expected = channel_pressure_scale_power_of_two(reference, exponent)
@@ -591,13 +590,14 @@ def test_functional_failure_is_persisted_before_exception_and_zero_start():
     )
     rhs = _pressure_rhs(spectral, pressure)
     warm_start = torch.ones_like(rhs)
-    pressure.pressure_guess = warm_start
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    before = warm_start.detach().clone()
+    implicit = functional_pressure(pressure)
 
     with pytest.raises(FunctionalConvergenceError) as captured:
         implicit.solve(rhs)
 
-    assert pressure.pressure_guess is warm_start
+    assert torch.equal(warm_start, before)
+    assert not hasattr(pressure, "pressure_guess")
     assert captured.value.details == implicit.last_primal_diagnostics.to_metadata()
     assert captured.value.details["acceptable"] is False
     assert captured.value.details["solve_phase"] == "functional_primal"
@@ -616,11 +616,9 @@ def test_ordinary_fixed_work_path_remains_byte_identical_to_unscaled_order(
         transpose=transpose,
     )
     if transpose:
-        actual = ChannelPressureTransposeOperator(
-            pressure
-        ).solve_pressure_transpose(rhs)
+        actual, _ = transpose_pressure(pressure, rhs)
     else:
-        actual = ChannelImplicitPressureAdjoint(pressure).solve(rhs)
+        actual = functional_pressure(pressure).solve(rhs)
 
     assert torch.equal(actual, expected)
 
@@ -632,9 +630,10 @@ def test_functional_pressure_solution_is_power_of_two_scale_covariant(
     spectral, pressure = _solver(fixed_iterations=5)
     rhs = _pressure_rhs(spectral, pressure)
     if transpose:
-        solve = ChannelPressureTransposeOperator(pressure).solve_pressure_transpose
+        def solve(value):
+            return transpose_pressure(pressure, value)[0]
     else:
-        solve = ChannelImplicitPressureAdjoint(pressure).solve
+        solve = functional_pressure(pressure).solve
     reference = solve(rhs)
 
     for exponent in (-1000, 1000):
@@ -646,7 +645,7 @@ def test_functional_pressure_solution_is_power_of_two_scale_covariant(
 def test_schema_v2_phase_order_is_json_safe_and_invalidates_old_transpose():
     spectral, pressure = _solver(fixed_iterations=5)
     rhs = _pressure_rhs(spectral, pressure).requires_grad_(True)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     first = implicit.solve(rhs)
     torch.autograd.grad(first, rhs, grad_outputs=torch.ones_like(first))
     first_metadata = implicit.pressure_solve_metadata()
@@ -666,9 +665,8 @@ def test_schema_v2_phase_order_is_json_safe_and_invalidates_old_transpose():
 def test_production_and_functional_schema_v2_fields_have_identical_meanings():
     spectral, pressure = _solver(fixed_iterations=5)
     rhs = _pressure_rhs(spectral, pressure)
-    pressure._solve_pressure(rhs)
-    production = pressure.last_pressure_diagnostics
-    functional_solver = ChannelImplicitPressureAdjoint(pressure)
+    _, _, production = production_pressure(pressure, rhs)
+    functional_solver = functional_pressure(pressure)
     functional_solver.solve(rhs)
     functional = functional_solver.last_primal_diagnostics.to_metadata()
     required = {
@@ -731,7 +729,7 @@ def test_production_and_functional_schema_v2_fields_have_identical_meanings():
 def test_backward_from_an_older_primal_does_not_publish_a_stale_snapshot():
     spectral, pressure = _solver(fixed_iterations=5)
     rhs = _pressure_rhs(spectral, pressure).requires_grad_(True)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     stale = implicit.solve(rhs)
     implicit.solve(rhs.detach())
 

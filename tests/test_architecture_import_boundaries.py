@@ -304,7 +304,6 @@ REVIEWED_MODEL_TO_STOKES_IMPLEMENTATION_EDGES = {
 
 
 REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES = {
-    ImportEdge('pssolver.workflows.channel_beris_edwards', 'pssolver.core._canonical'),
     ImportEdge('pssolver.workflows.finite_q_anchoring', 'pssolver.core._canonical'),
 }
 
@@ -422,6 +421,16 @@ REVIEWED_S27_EDGES = {
     ImportEdge('pssolver.runtime.plane_observations', 'pssolver.engine.field_view'),
     ImportEdge('pssolver.runtime.plane_observations', 'pssolver.errors'),
     ImportEdge('pssolver.runtime.plane_observations', 'pssolver.run_metadata'),
+}
+
+# S-28a r1.2 exact exceptions. The qualification guard checks their owners.
+REVIEWED_S28A_EDGES = {
+    ImportEdge("pssolver.configuration.legacy_channel", "pssolver.io.checkpoint"),
+    ImportEdge("pssolver.configuration.legacy_channel", "pssolver.io.checkpoint_identity"),
+    ImportEdge("pssolver.configuration.legacy_channel", "pssolver.linear_solvers.stokes._pressure_policy"),
+    ImportEdge("pssolver.configuration.legacy_channel", "pssolver.planning.assemble"),
+    ImportEdge("pssolver.functional.channel_activity_runtime", "pssolver.engine.engine"),
+    ImportEdge("pssolver.functional.channel_activity_runtime", "pssolver.engine.state"),
 }
 
 
@@ -587,7 +596,9 @@ def test_configuration_has_only_reviewed_planning_composition_edges():
         if _layer(edge.source) == "configuration"
         and _layer(edge.destination) == "planning"
     }
-    assert observed == REVIEWED_CONFIGURATION_TO_PLANNING_EDGES
+    assert observed == REVIEWED_CONFIGURATION_TO_PLANNING_EDGES | {
+        ImportEdge("pssolver.configuration.legacy_channel", "pssolver.planning.assemble"),
+    }
 
 
 def test_models_have_only_reviewed_tensor_free_system_declaration_edges():
@@ -682,6 +693,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if edge in REVIEWED_S25_EDGES:
             continue
         if edge in REVIEWED_S27_EDGES:
+            continue
+        if edge in REVIEWED_S28A_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)

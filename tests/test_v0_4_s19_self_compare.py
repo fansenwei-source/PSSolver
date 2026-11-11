@@ -106,7 +106,14 @@ def test_pcg_device_adapter_does_not_modify_frozen_module_or_runtime():
 
 
 def test_pcg_transpose_import_uses_the_unchanged_definition_not_stable_api():
-    from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator
+    import subprocess
+
     source = inspect.getsource(harness._pcg)
     assert "from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator" in source
-    assert ChannelPressureTransposeOperator.__module__ == "pssolver.functional.channel_pressure"
+    target = next(node.module for node in ast.walk(ast.parse(source))
+                  if isinstance(node, ast.ImportFrom)
+                  and any(name.name == "ChannelPressureTransposeOperator" for name in node.names))
+    filename = target.replace(".", "/") + ".py"
+    historical = subprocess.check_output(["git", "show", "4b72093:" + filename], text=True)
+    assert any(isinstance(node, ast.ClassDef) and node.name == "ChannelPressureTransposeOperator"
+               for node in ast.parse(historical).body)

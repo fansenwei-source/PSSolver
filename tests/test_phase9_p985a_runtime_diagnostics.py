@@ -8,18 +8,16 @@ from pathlib import Path
 import pytest
 import torch
 
-from pssolver import SpectralSolver
 import pssolver.functional.api as stable
+from pssolver import SpectralSolver
 from pssolver.functional.channel_activity_runtime import (
     ChannelActivityFunctionalRuntime,
-)
-from pssolver.functional.channel_pressure_adjoint import (
-    ChannelImplicitPressureAdjoint,
 )
 from pssolver.functional.periodic_activity import (
     PeriodicActivityFunctionalRuntime,
 )
 from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
+from tests._s28a_pressure import functional_pressure
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,7 +54,7 @@ def _pressure_operator():
         pressure_max_iterations=100,
         pressure_fixed_iterations=2,
     )
-    return ChannelImplicitPressureAdjoint(solver)
+    return functional_pressure(solver)
 
 
 def test_concrete_runtimes_publish_one_json_diagnostic_shape():

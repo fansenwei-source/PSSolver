@@ -4,6 +4,8 @@ import hashlib
 import json
 import subprocess
 
+from tests.v0_3_s03_successor import read_registered_source, resolve_s03_successor
+
 
 def assert_forward_binding(root, nodeid):
     """Require the unchanged historical assertion and every new source binding."""
@@ -24,7 +26,9 @@ def assert_forward_binding(root, nodeid):
     bindings = record["historical_successor_sources"]
     assert relative in bindings
     for path, entry in bindings.items():
-        current = root / entry.get("current_path", path)
-        assert hashlib.sha256(current.read_bytes()).hexdigest() == entry["current_sha256"], path
+        current = entry.get("current_path", path)
+        expected = resolve_s03_successor(current, entry["current_sha256"])
+        assert hashlib.sha256(read_registered_source(current, root)).hexdigest() == expected, path
     for path, digest in record["introduced_sources"].items():
-        assert hashlib.sha256((root / path).read_bytes()).hexdigest() == digest, path
+        expected = resolve_s03_successor(path, digest)
+        assert hashlib.sha256(read_registered_source(path, root)).hexdigest() == expected, path

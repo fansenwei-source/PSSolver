@@ -8,10 +8,16 @@ import torch
 
 @dataclass(slots=True)
 class State:
+    """Execution state; replace solver entries together rather than mutating aliases.
+
+    Changing a Channel guess requires clearing its cached action and exponent
+    unless both replacements are known to match the new guess.
+    """
+
     spectral: torch.Tensor
     spatial: torch.Tensor
     history: tuple[torch.Tensor, ...]
-    solver: Mapping[str, torch.Tensor | None]
+    solver: Mapping[str, torch.Tensor | int | tuple[int | None, ...] | None]
     completed_steps: int
     refresh_phase: tuple[int, int]
     constrained_current: bool

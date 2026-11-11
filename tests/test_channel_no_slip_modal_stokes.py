@@ -13,6 +13,7 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
 )
+from tests._s28a_pressure import empty_pressure_state, production_pressure
 
 
 SHAPE = (7, 6, 5)
@@ -126,9 +127,8 @@ def test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge():
     stokes = _canonical(solver)
     force_hats = _force_hats(solver)
 
-    ux_hat, uy_hat, uz_hat, pressure_hat = stokes.solve_force_hats(
-        *force_hats
-    )
+    values, _, report = stokes.solve_force_hats(*force_hats, solver_state=empty_pressure_state())
+    ux_hat, uy_hat, uz_hat, pressure_hat = values
     velocity_hats = (ux_hat, uy_hat, uz_hat)
     pressure_gradient_hats = stokes.pressure_gradient_hats(pressure_hat)
 
@@ -152,7 +152,7 @@ def test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge():
         torch.linalg.vector_norm(divergence_hat.reshape(-1)) / velocity_norm
     ) < 2.0e-11
     assert bool((pressure_hat[:, 0, 0, 0] == 0).all().item())
-    assert stokes.last_pressure_relative_residual < 2.0e-12
+    assert report["achieved_normalized_residual"] < 2.0e-12
 
 
 def test_manufactured_schur_problem_recovers_the_zero_gauge_pressure():
@@ -171,7 +171,7 @@ def test_manufactured_schur_problem_recovers_the_zero_gauge_pressure():
     exact_pressure_hat = stokes._project_pressure_gauge(exact_pressure_hat)
     rhs_hat = stokes._pressure_operator(exact_pressure_hat)
 
-    actual_pressure_hat = stokes._solve_pressure(rhs_hat)
+    actual_pressure_hat, _, _ = production_pressure(stokes, rhs_hat)
 
     assert _relative_norm(
         stokes._pressure_operator(actual_pressure_hat) - rhs_hat,
@@ -192,12 +192,12 @@ def test_zero_force_has_exact_zero_solution_and_diagnostics():
         dtype=torch.complex128,
     )
 
-    solution = stokes.solve_force_hats(zero, zero, zero)
+    solution, _, report = stokes.solve_force_hats(zero, zero, zero, solver_state=empty_pressure_state())
 
     assert all(bool((value == 0).all().item()) for value in solution)
-    assert stokes.last_pressure_iterations == 0
-    assert stokes.last_pressure_residual == 0.0
-    assert stokes.last_pressure_relative_residual == 0.0
+    assert report["achieved_iteration_count"] == 0
+    assert report["achieved_absolute_residual"]["float64_value"] == 0.0
+    assert report["achieved_normalized_residual"] == 0.0
 
 
 def test_even_channel_removes_unresolved_periodic_nyquist_plane():
@@ -210,12 +210,12 @@ def test_even_channel_removes_unresolved_periodic_nyquist_plane():
     tangential_force = zero.clone()
     tangential_force[:, solver.shape[0] // 2, 0, 0] = 1.0
 
-    solution = stokes.solve_force_hats(zero, tangential_force, zero)
+    solution, _, report = stokes.solve_force_hats(zero, tangential_force, zero, solver_state=empty_pressure_state())
 
     assert all(bool((value == 0).all().item()) for value in solution)
-    assert stokes.last_pressure_iterations == 0
-    assert stokes.last_pressure_residual == 0.0
-    assert stokes.last_pressure_relative_residual == 0.0
+    assert report["achieved_iteration_count"] == 0
+    assert report["achieved_absolute_residual"]["float64_value"] == 0.0
+    assert report["achieved_normalized_residual"] == 0.0
 
 
 def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
@@ -226,9 +226,9 @@ def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
         pressure_fixed_iterations=4,
     )
 
-    stokes.solve_force_hats(*_force_hats(solver))
+    _, _, report = stokes.solve_force_hats(*_force_hats(solver), solver_state=empty_pressure_state())
 
-    assert stokes.last_pressure_iterations == 4
+    assert report["achieved_iteration_count"] == 4
     assert stokes.pressure_fixed_iterations == 4
     assert stokes.pressure_convergence_policy() == {
         "schema_version": 1,

@@ -2,14 +2,20 @@
 
 Usage:
   python3 -I -B s28a_guard.py design <baseline_tree 4b72093> <s28a_tables.json> <out.json>
-      [--simulate-install]
+      [--simulate-install] [--current=<tree>]
   python3 -I -B s28a_guard.py draft <baseline_tree 4b72093> <draft_tree> <s28a_tables.json> <out.json>
       [--simulate-install]
 
 design: before implementation, the tables are checked against the baseline facts (D1-D6): retired modules
 exist and are scheduled for deletion; every exact or mechanical move names an existing source unit with the
 recorded AST hash; moved sets are closed under module-level references; planned paths are consistent; every
-allowed edge obeys the S-22 layer rule; the criteria keep exactly the two section-9 exclusions.
+allowed edge obeys the S-22 layer rule; the criteria keep exactly the two section-9 exclusions; and (D7,
+R-0106) every direct import or literal reference to a retired module anywhere in the tree (package, tests,
+benchmarks, qualification, notes, scripts, tools, examples, root files) is covered by an authorized change; (D8,
+R-0107) the import closure of every exact or mechanical move, resolved to the defining modules, is covered in the
+target module by the layer table, a baseline reviewed edge or a registered edge with matching owners, and no moved
+unit carries a retired module name; (D9) every module-level edge the design plans for rewritten and new code is
+authorized and obeys the layer rule.
 draft: after implementation, the draft tree is checked against the baseline (G1-G5 and OWNERS, as the S-27
 r2.3 gate): new import edges, layers and the torch-free closure, retired names, changed paths and frozen
 files, and units (exact moves AST-identical, mechanical moves AST-identical after their declared
@@ -409,7 +415,231 @@ def design_criteria(tables):
     return out
 
 
-def run_design(base, tables, tables_path, gate_self, simulate_install):
+CLOSURE_SUFFIXES = (".py", ".json", ".toml", ".in", ".cfg", ".txt")
+
+
+def references_to_retired(root, retired):
+    """Relative path -> sorted 'import:line'/'literal:line' hits on the retired set (relative imports resolved)."""
+    needles = set(retired) | {r.replace(".", "/") + ".py" for r in retired}
+    rows = {}
+    for p in sorted(root.rglob("*")):
+        rel = p.relative_to(root).as_posix()
+        if (
+            not p.is_file()
+            or not rel.endswith(CLOSURE_SUFFIXES)
+            or rel.startswith("build/")
+            or ".egg-info" in rel
+            or not VCS_METADATA.isdisjoint(rel.split("/"))
+        ):
+            continue
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        hits = {
+            f"literal:{i}"
+            for i, line in enumerate(text.splitlines(), 1)
+            if any(n in line for n in needles)
+        }
+        if rel.endswith(".py"):
+            me = rel[:-3].replace("/", ".")
+            me = me[:-9] if me.endswith(".__init__") else me
+            try:
+                nodes = list(ast.walk(ast.parse(text)))
+            except SyntaxError:
+                nodes = []
+            for node in nodes:
+                names = []
+                if isinstance(node, ast.Import):
+                    names = [a.name for a in node.names]
+                elif isinstance(node, ast.ImportFrom):
+                    base = node.module or ""
+                    if node.level:
+                        parts = me.split(".") if rel.endswith("__init__.py") else me.split(".")[:-1]
+                        parts = parts[: len(parts) - (node.level - 1)] if node.level > 1 else parts
+                        base = ".".join(parts + ([node.module] if node.module else []))
+                    names = [base] + [f"{base}.{a.name}" for a in node.names]
+                if any(n in retired for n in names):
+                    hits.add(f"import:{node.lineno}")
+        if hits:
+            rows[rel] = sorted(hits)
+    return rows
+
+
+def design_deletion_closure(tables, tree, changed):
+    """D7: every reference to the retired set is covered by an authorized change or a frozen/historical rule."""
+    retired = tables["retired_modules"]
+    retired_files = {m.replace(".", "/") + ".py" for m in retired}
+    frozen = set(tables["frozen_files"])
+    out = []
+    for rel, hits in references_to_retired(tree, retired).items():
+        planned = changed.get(rel, "")
+        if rel in retired_files and planned.startswith("delete"):
+            continue
+        if rel.startswith("pssolver/"):
+            if not planned.startswith(("modify", "delete")):
+                out.append(dict(kind="package_reference_not_authorized", path=rel, hits=hits))
+            continue
+        if planned.startswith(("modify", "delete")):
+            continue
+        if any(fnmatch.fnmatch(rel, c["pattern"]) for c in tables["changed_path_classes"]):
+            continue
+        if rel in frozen or any(fnmatch.fnmatch(rel, pat) for pat in tables["frozen_patterns"]):
+            continue
+        if (
+            rel.startswith("notes/")
+            and rel.endswith(".json")
+            and all(h.startswith("literal") for h in hits)
+        ):
+            continue
+        out.append(dict(kind="reference_not_authorized", path=rel, hits=hits))
+    return out
+
+
+def module_bindings(root, rel):
+    """Module-level name -> ('def', module) | ('from', module, name) | ('module', module) for one source file."""
+    mod = rel[:-3].replace("/", ".")
+    mod = mod[:-9] if mod.endswith(".__init__") else mod
+    tree = ast.parse((root / rel).read_text())
+    out = {}
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                out[(a.asname or a.name).split(".")[0]] = (
+                    "module",
+                    a.name if a.asname else a.name.split(".")[0],
+                )
+        elif isinstance(node, ast.ImportFrom):
+            base = node.module or ""
+            if node.level:
+                parts = mod.split(".") if rel.endswith("__init__.py") else mod.split(".")[:-1]
+                parts = parts[: len(parts) - (node.level - 1)] if node.level > 1 else parts
+                base = ".".join(parts + ([node.module] if node.module else []))
+            for a in node.names:
+                out[a.asname or a.name] = ("from", base, a.name)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            out[node.name] = ("def", mod)
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            for t in node.targets if isinstance(node, ast.Assign) else [node.target]:
+                if isinstance(t, ast.Name):
+                    out[t.id] = ("def", mod)
+    return out
+
+
+def defining_module(root, mods, module, name, depth=0):
+    """Follow re-exports to the module that defines `name` (or the submodule it names)."""
+    if f"{module}.{name}" in mods:
+        return f"{module}.{name}"
+    if module not in mods or depth > 8:
+        return module if module.startswith("pssolver") else None
+    rel = mods[module].relative_to(root).as_posix()
+    binding = module_bindings(root, rel).get(name)
+    if binding is None or binding[0] == "def":
+        return module
+    if binding[0] == "module":
+        return binding[1] if binding[1].startswith("pssolver") else None
+    return defining_module(root, mods, binding[1], binding[2], depth + 1)
+
+
+def edge_authorized(tables, base, src, dst, owners, allowed_layers, reviewed):
+    """Return None when the edge is authorized, else a violation kind."""
+    forbid = {k: set(v) for k, v in tables["forbid"].items()}
+    if layer(dst) in forbid.get(layer(src), set()):
+        return "edge_forbidden_by_layer_rule"
+    if layer(src) == layer(dst) or layer(dst) in allowed_layers.get(layer(src), frozenset()):
+        return None
+    if (src, dst) in reviewed:
+        return None
+    for row in tables["allowed_edges"]:
+        if (row["source"], row["destination"]) == (src, dst):
+            pinned = row.get("owners")
+            if pinned is not None and not set(owners) <= set(pinned):
+                return "edge_owner_not_registered"
+            return None
+    return "edge_not_authorized"
+
+
+def design_move_imports(tables, base):
+    """D8: the import closure of moved units, in their target modules, is authorized."""
+    out = []
+    mods = modmap(base)
+    retired = set(tables["retired_modules"])
+    needles = retired | {r.replace(".", "/") + ".py" for r in retired}
+    base_layers, reviewed = ratchet(base)
+    allowed_layers = dict(base_layers)
+    for k, v in tables["layers_extra"].items():
+        allowed_layers[k] = frozenset(v)
+    required = {}
+    for _, m in all_moves(tables):
+        path, name = m["source"].split(":")
+        node = find_unit(base, m["source"])
+        if node is None:
+            continue
+        if any(n in ast.unparse(node) for n in needles):
+            out.append(dict(kind="moved_unit_carries_retired_name", unit=m["source"]))
+        target = m["target"][:-3].replace("/", ".")
+        target = target[:-9] if target.endswith(".__init__") else target
+        if "." in name:
+            node = substituted(node, m["substitutions"]) or node
+        bindings = module_bindings(base, path)
+        target_rel = m["target"]
+        target_defs = (
+            set(units_of_source((base / target_rel).read_text()))
+            if (base / target_rel).is_file()
+            else set()
+        )
+        moved_here = {
+            x["unit"].split(".")[0] for _, x in all_moves(tables) if x["target"] == target_rel
+        }
+        for ref in sorted(
+            {n.id for n in ast.walk(node) if isinstance(n, ast.Name)} & set(bindings)
+        ):
+            kind = bindings[ref]
+            if kind[0] == "def" or ref in moved_here or ref in target_defs:
+                continue
+            dst = (
+                defining_module(base, mods, kind[1], kind[2])
+                if kind[0] == "from"
+                else (kind[1] if kind[1].startswith("pssolver") else None)
+            )
+            if dst is None or dst == target:
+                continue
+            if dst in retired:
+                out.append(
+                    dict(
+                        kind="moved_unit_needs_retired_module",
+                        unit=m["source"],
+                        module=dst,
+                        name=ref,
+                    )
+                )
+                continue
+            required.setdefault((target, dst), set()).add(m["unit"].split(".")[0])
+    for (src, dst), owners in sorted(required.items()):
+        verdict = edge_authorized(tables, base, src, dst, owners, allowed_layers, reviewed)
+        if verdict:
+            out.append(dict(kind=verdict, edge=f"{src} -> {dst}", owners=sorted(owners)))
+    return out, {f"{s} -> {d}": sorted(o) for (s, d), o in sorted(required.items())}
+
+
+def design_planned_edges(tables, base):
+    """D9: module-level edges planned for rewritten and new code are authorized."""
+    out = []
+    base_layers, reviewed = ratchet(base)
+    allowed_layers = dict(base_layers)
+    for k, v in tables["layers_extra"].items():
+        allowed_layers[k] = frozenset(v)
+    mods = set(modmap(base)) | set(tables["new_modules"])
+    retired = set(tables["retired_modules"])
+    for row in tables.get("planned_edges", []):
+        src, dst = row["source"], row["destination"]
+        if src not in mods or dst not in mods or dst in retired:
+            out.append(dict(kind="planned_edge_endpoint_invalid", edge=f"{src} -> {dst}"))
+            continue
+        verdict = edge_authorized(tables, base, src, dst, [], allowed_layers, reviewed)
+        if verdict:
+            out.append(dict(kind=verdict, edge=f"{src} -> {dst}"))
+    return out
+
+
+def run_design(base, tables, tables_path, gate_self, simulate_install, current=None):
     overlay, install_issues = installation_view(
         base, tables, tables_path, gate_self, simulate_install
     )
@@ -421,10 +651,17 @@ def run_design(base, tables, tables_path, gate_self, simulate_install):
         "D4_paths": design_paths(tables, base, changed),
         "D5_edges_layers": design_edges(tables, base),
         "D6_criteria_install": design_criteria(tables) + install_issues,
+        "D7_deletion_closure": design_deletion_closure(tables, base, changed)
+        + (design_deletion_closure(tables, current, changed) if current is not None else []),
     }
+    report["D8_move_imports"], required_edges = design_move_imports(tables, base)
+    report["D9_planned_edges"] = design_planned_edges(tables, base)
     files = tree_files(base, overlay if simulate_install else None)
     report["view"] = dict(
-        installation_view="simulated" if simulate_install else "as found", files=len(files)
+        installation_view="simulated" if simulate_install else "as found",
+        files=len(files),
+        current=str(current) if current is not None else None,
+        move_import_edges=required_edges,
     )
     report["summary"] = {k: len(v) for k, v in report.items() if isinstance(v, list)}
     return report
@@ -447,7 +684,16 @@ def draft_units(tables, base, draft, base_mods, draft_mods, touched):
             out.append(dict(kind="test_move_missing", unit=target_ref(m)))
     registry_path = draft / tables["unit_registry"]
     registry = json.loads(registry_path.read_text()) if registry_path.is_file() else {}
-    listed = {(m["target"], m["unit"].split(".")[0]) for _, m in all_moves(tables)}
+    # a class that receives moved methods is not itself registered by those moves (R-0105)
+    listed = {(m["target"], m["unit"]) for _, m in all_moves(tables) if "." not in m["unit"]}
+    for mod, units in tables.get("required_units_modified", {}).items():
+        if mod == "authority":
+            continue
+        actual = units_of_source(draft_mods[mod].read_text()) if mod in draft_mods else {}
+        for u in units:
+            if u not in actual:
+                out.append(dict(kind="required_unit_missing", module=mod, unit=u))
+            listed.add((mod.replace(".", "/") + ".py", u))
     for mod, row in tables["new_modules"].items():
         rel = mod.replace(".", "/") + ".py"
         if mod not in draft_mods:
@@ -514,6 +760,9 @@ def run_draft(base, draft, tables, tables_path, gate_self, simulate_install):
     }
     for mod, row in tables["new_modules"].items():
         known |= {(mod, u) for u in row["required_units"]}
+    for mod, units in tables.get("required_units_modified", {}).items():
+        if mod != "authority":
+            known |= {(mod, u) for u in units}
     for mod, rows_ in registry.items():
         known |= {(mod, u) for u in rows_}
     report["OWNERS_unauthorized"] = [
@@ -614,10 +863,18 @@ def main(argv=None):
     argv = sys.argv[1:] if argv is None else list(argv)
     simulate = "--simulate-install" in argv
     args = [a for a in argv if not a.startswith("--")]
+    current = next((a.split("=", 1)[1] for a in argv if a.startswith("--current=")), None)
     if len(args) == 4 and args[0] == "design":
         base, tables_path, out = Path(args[1]), Path(args[2]), Path(args[3])
         tables = json.loads(tables_path.read_text())
-        report = run_design(base, tables, tables_path, Path(__file__).resolve(), simulate)
+        report = run_design(
+            base,
+            tables,
+            tables_path,
+            Path(__file__).resolve(),
+            simulate,
+            Path(current) if current else None,
+        )
     elif len(args) == 5 and args[0] == "draft":
         base, draft, tables_path, out = (Path(a) for a in args[1:])
         tables = json.loads(tables_path.read_text())

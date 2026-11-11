@@ -155,8 +155,6 @@ expected = {
         "channel_activity",
         "channel_activity_runtime",
         "channel_checkpoint",
-        "channel_pressure",
-        "channel_pressure_adjoint",
         "checkpoint_identity",
         "contracts",
         "errors",
@@ -174,17 +172,13 @@ expected = {
         "tensor_divergence",
     ],
     "pssolver.runtime": [
-        "channel_beris_edwards",
+        "channel_observations",
         "finite_q_anchoring",
-        "package_construction",
         "plane_observations",
         "robin_scalar",
-        "simulation_construction",
         "state_validation",
     ],
     "pssolver.workflows": [
-        "channel_beris_edwards",
-        "channel_checkpoint_observation",
         "finite_q_anchoring",
     ],
 }

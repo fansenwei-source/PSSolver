@@ -3,15 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
 import pssolver
 from pssolver import compile_simulation, run_simulation
-from pssolver.applications import (
-    channel_beris_edwards as channel_application,
-)
+from pssolver.configuration import legacy_channel as channel_application
 from pssolver.configuration import legacy_periodic as periodic_application
 from pssolver.functional import (
     FunctionalCheckpointError,
@@ -24,9 +21,9 @@ from pssolver.io.checkpoint import (
     CheckpointIOError,
     CheckpointNotFoundError,
 )
+from pssolver.runtime import legacy_entry as channel_workflow
 from pssolver.runtime import legacy_entry as periodic_workflow
 from pssolver.runtime import legacy_entry as plane_application
-from pssolver.workflows import channel_beris_edwards as channel_workflow
 from tests.test_phase8_p82_periodic_application import (
     _simulation as periodic_simulation,
 )
@@ -141,7 +138,8 @@ def test_snapshot_hash_io_failure_retains_os_error_compatibility(
     def reject(_path):
         raise PermissionError("snapshot became unreadable")
 
-    monkeypatch.setattr(module, "_sha256", reject)
+    hash_name = "_snapshot_sha256" if module is channel_application else "_sha256"
+    monkeypatch.setattr(module, hash_name, reject)
     with pytest.raises(pssolver.SimulationInputIOError) as caught:
         loader(compiled.application_request)
 
@@ -206,7 +204,7 @@ def test_plane_application_preflight_preserves_checkpoint_integrity_error(
     ("module", "workflow_type"),
     (
         (periodic_workflow, periodic_workflow.restore_periodic_state),
-        (channel_workflow, channel_workflow.ChannelBerisEdwardsWorkflow),
+        (channel_workflow, channel_workflow.restore_channel_state),
     ),
 )
 def test_complete_stress_workflow_restore_preserves_checkpoint_error(
@@ -216,7 +214,7 @@ def test_complete_stress_workflow_restore_preserves_checkpoint_error(
     workflow_type,
 ):
     sentinel = CheckpointIntegrityError("corrupt complete-stress checkpoint")
-    if module is periodic_workflow:
+    if workflow_type is periodic_workflow.restore_periodic_state:
         from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 
         spec, handle = production_handle(periodic_simulation(tmp_path))
@@ -225,13 +223,20 @@ def test_complete_stress_workflow_restore_preserves_checkpoint_error(
 
         patch_name = "validate_periodic_restore"
     else:
-        workflow = object.__new__(workflow_type)
-        workflow.options = {"restart_from": tmp_path / "checkpoint"}
-        workflow.adapter = SimpleNamespace(completed_steps=0)
-        workflow.run_spec = object()
-        workflow.output_directory = tmp_path / "output"
-        invoke = workflow.run
-        patch_name = "_load_checkpoint"
+        import torch
+
+        from pssolver.engine.engine import Engine
+
+        compiled = compile_simulation(channel_simulation(tmp_path))
+        spec = compiled.application_request
+        engine = Engine(channel_application.translate_channel(spec), device="cpu", dtype=torch.float64)
+        initial, _, _ = channel_application.load_channel_initial_q(spec)
+        state = engine.initial_state(initial)
+
+        def invoke():
+            return workflow_type(engine, state, tmp_path / "checkpoint", run_spec=spec)
+
+        patch_name = "load_v04_channel_checkpoint"
 
     def reject(*_args, **_kwargs):
         raise sentinel

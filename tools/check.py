@@ -167,7 +167,8 @@ def lint_counts(executable: str, relative: str, source: bytes) -> Counter:
 
 def unit_span(source: str, name: str) -> tuple[int, int]:
     units = [node for node in ast.parse(source).body if getattr(node, "name", None) == name
-             or isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == name for t in node.targets)]
+             or isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == name for t in node.targets)
+             or isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) and node.target.id == name]
     if len(units) != 1:
         raise ValueError(f"missing or ambiguous exact unit: {name}")
     node = units[0]
@@ -191,8 +192,17 @@ def exact_assemblies() -> dict[str, list[dict]]:
     if (manifest["source_commit"] != previous["source_commit"]
             or identities({"exact_moves": inherited}) != identities(previous)):
         raise ValueError("S-27 exact moves changed an inherited source, unit or frozen hash")
+    channel = json.loads((ROOT / "qualification/s28a_tables.json").read_text())
+    baseline = channel["basis"]
     result = {}
-    for entry in manifest["exact_moves"]:
+    entries = list(manifest["exact_moves"])
+    for move in channel["exact_moves"]:
+        source, unit = move["source"].split(":", 1)
+        entries.append(dict(
+            source=source, unit=unit, target=move["target"], source_commit=baseline,
+            source_ast_sha256=move["source_ast_sha256"],
+        ))
+    for entry in entries:
         original = subprocess.check_output(
             ["git", "show", entry.get("source_commit", manifest["source_commit"]) + ":" + entry["source"]], cwd=ROOT
         ).decode()
@@ -201,10 +211,21 @@ def exact_assemblies() -> dict[str, list[dict]]:
         start, end = unit_span(current, entry["unit"])
         before = "".join(original.splitlines(keepends=True)[old_start - 1 : old_end])
         after = "".join(current.splitlines(keepends=True)[start - 1 : end])
+        if "target_lines" in entry:
+            baseline_target = subprocess.check_output(
+                ["git", "show", baseline + ":" + entry["target"]], cwd=ROOT, text=True
+            )
+            if list(unit_span(baseline_target, entry["unit"])) != entry["target_lines"]:
+                raise ValueError(f"altered historical exact span: {entry['target']}::{entry['unit']}")
+            digest_matches = hashlib.sha256(before.encode()).hexdigest() == entry["sha256"]
+        else:
+            tree = ast.parse(before).body[0]
+            digest_matches = (
+                hashlib.sha256(ast.dump(tree).encode()).hexdigest() == entry["source_ast_sha256"]
+            )
         if (
-            [start, end] != entry["target_lines"]
-            or before != after
-            or hashlib.sha256(before.encode()).hexdigest() != entry["sha256"]
+            before != after
+            or not digest_matches
         ):
             raise ValueError(f"altered exact move: {entry['target']}::{entry['unit']}")
         result.setdefault(entry["target"], []).append(

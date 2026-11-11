@@ -19,12 +19,14 @@ from pssolver import (
     TorchSpectralExecution,
     compile_simulation,
 )
-from pssolver.applications.channel_beris_edwards import load_channel_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     neumann_pressure_compatibility,
     neumann_q,
     no_slip_velocity,
+)
+from pssolver.configuration.legacy_channel import (
+    build_channel_checkpoint_compatibility_identity,
 )
 from pssolver.functional import (
     FunctionalCheckpointCompatibilityError,
@@ -38,14 +40,12 @@ from pssolver.io.checkpoint import (
     write_functional_checkpoint_provenance,
 )
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.runtime.channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
-from pssolver.workflows.channel_beris_edwards import (
-    _load_checkpoint,
-    build_channel_checkpoint_compatibility_identity,
+from tests.v0_5_s28a_channel_v04_checkpoint import (
+    build_channel_production_fixture,
     write_channel_beris_edwards_checkpoint,
+)
+from tests.v0_5_s28a_channel_v04_checkpoint import (
+    restore_channel_checkpoint as _load_checkpoint,
 )
 
 
@@ -133,14 +133,7 @@ def _simulation(
 
 def _production(simulation: Simulation):
     compiled = compile_simulation(simulation)
-    values, _, _ = load_channel_initial_q(compiled.application_request)
-    adapter = build_channel_beris_edwards_runtime(
-        ChannelBerisEdwardsRuntimeBuildRequest(
-            run_spec=compiled.application_request,
-            initial_values=values,
-            device="cpu",
-        )
-    )
+    adapter = build_channel_production_fixture(compiled.application_request)
     return compiled, adapter
 
 
@@ -296,7 +289,7 @@ def test_v4_identities_bind_pressure_policy_without_layout_version_changes(
     assert production.backend_restart.version == "channel.production.backend.v1"
     production_payload = production.forward_dynamics.to_metadata()["payload"]
     assert production_payload["pressure_solver_policy"] == (
-        adapter.solver.model.static_model.pressure_convergence_policy()
+        adapter.engine.constraint.term.pressure_solver.pressure_convergence_policy()
     )
     assert production_payload["pressure_convergence_schema_version"] == 2
 
@@ -349,7 +342,9 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
 
     _, target = _production(simulation)
     before_fields = {
-        name: value.clone() for name, value in target.fields.items()
+        f"{name}{suffix}": target.fields[f"{name}{suffix}"].clone()
+        for name in target.engine.components
+        for suffix in ("", ".hat")
     }
     before_guess = target.capture_pressure_guess().clone()
     before_steps = target.completed_steps
@@ -358,7 +353,7 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
         raise AssertionError("tensor payload opened before identity rejection")
 
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards._validated_array",
+        "pssolver.configuration.legacy_channel._validated_array",
         forbidden,
     )
     with pytest.raises(ValueError, match="identity does not match target"):

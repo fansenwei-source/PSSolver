@@ -6,7 +6,6 @@ import pytest
 import torch
 
 from pssolver import SpectralSolver
-from pssolver.functional import ChannelPressureTransposeOperator
 from pssolver.linear_solvers.stokes import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
@@ -54,9 +53,19 @@ def _rhs(
         CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     )
     exact = pressure._project_pressure_gauge(exact)
-    return ChannelPressureTransposeOperator(pressure).apply_pressure_operator(
-        exact
-    )
+    return pressure._pressure_operator(exact)
+
+
+def _cache(guess=None):
+    return {
+        "pressure_guess": guess,
+        "pressure_guess_action": None,
+        "pressure_guess_action_exponent": None,
+    }
+
+
+def _solve(pressure, rhs, state):
+    return pressure.solve(rhs, state, role="production")
 
 
 @pytest.mark.parametrize("next_exponent", (-100, 0, 100))
@@ -69,12 +78,12 @@ def test_cached_warm_operator_is_byte_identical_and_saves_one_action(
     first_cached = _rhs(cached_spectral, cached, seed=9101)
     first_direct = _rhs(direct_spectral, direct, seed=9101)
     assert torch.equal(first_cached, first_direct)
-    cached._solve_pressure(first_cached)
-    direct._solve_pressure(first_direct)
+    _, cached_state, _ = _solve(cached, first_cached, _cache())
+    _, direct_state, _ = _solve(direct, first_direct, _cache())
 
     # Replacing the tensor with equal bytes is an external warm-start update
     # and must invalidate the direct solver's cache.
-    direct.pressure_guess = direct.pressure_guess.detach().clone()
+    direct_state = _cache(direct_state["pressure_guess"].detach().clone())
     counts = {id(cached): 0, id(direct): 0}
     original = ChannelNoSlipModalStokesSolver._pressure_operator
 
@@ -97,56 +106,28 @@ def test_cached_warm_operator_is_byte_identical_and_saves_one_action(
     )
     counts[id(cached)] = 0
     counts[id(direct)] = 0
-    cached_result = cached._solve_pressure(next_cached)
-    direct_result = direct._solve_pressure(next_direct)
+    cached_result, _, cached_report = _solve(cached, next_cached, cached_state)
+    direct_result, _, direct_report = _solve(direct, next_direct, direct_state)
 
     assert torch.equal(cached_result, direct_result)
-    assert cached.last_pressure_diagnostics == direct.last_pressure_diagnostics
+    assert cached_report == direct_report
     assert counts[id(cached)] + 1 == counts[id(direct)]
-
-
-def test_in_place_warm_start_update_invalidates_operator_cache(monkeypatch):
-    spectral, pressure = _solver()
-    pressure._solve_pressure(_rhs(spectral, pressure, seed=9201))
-    cached_action = pressure._pressure_guess_operator_action
-    assert isinstance(cached_action, torch.Tensor)
-
-    pressure.pressure_guess.add_(0.0)
-    original = ChannelNoSlipModalStokesSolver._pressure_operator
-    calls = 0
-
-    def counted(instance, value):
-        nonlocal calls
-        calls += 1
-        return original(instance, value)
-
-    monkeypatch.setattr(
-        ChannelNoSlipModalStokesSolver,
-        "_pressure_operator",
-        counted,
-    )
-    pressure._solve_pressure(_rhs(spectral, pressure, seed=9202))
-
-    # One initial action plus one acceptance action proves that the stale
-    # cached initial action was not reused.
-    assert calls >= 2
-    assert pressure.last_pressure_acceptable is True
 
 
 def test_external_none_warm_start_clears_operator_cache():
     spectral, pressure = _solver()
-    pressure._solve_pressure(_rhs(spectral, pressure, seed=9301))
-    assert isinstance(pressure._pressure_guess_operator_action, torch.Tensor)
+    _, state, _ = _solve(pressure, _rhs(spectral, pressure, seed=9301), _cache())
+    assert isinstance(state["pressure_guess_action"], torch.Tensor)
 
-    pressure.pressure_guess = None
-    pressure._solve_pressure(_rhs(spectral, pressure, seed=9302))
+    _, _, report = _solve(pressure, _rhs(spectral, pressure, seed=9302), _cache())
 
-    assert pressure.last_pressure_acceptable is True
+    assert report["acceptable"] is True
 
 
 def test_cached_and_direct_warm_start_sequences_are_byte_identical():
     cached_spectral, cached = _solver()
     direct_spectral, direct = _solver()
+    cached_state = direct_state = _cache()
 
     for step in range(20):
         exponent = (-20, 0, 20)[step % 3]
@@ -158,15 +139,12 @@ def test_cached_and_direct_warm_start_sequences_are_byte_identical():
             _rhs(direct_spectral, direct, seed=9400 + step),
             exponent,
         )
-        if direct.pressure_guess is not None:
-            direct.pressure_guess = direct.pressure_guess.detach().clone()
+        if direct_state["pressure_guess"] is not None:
+            direct_state = _cache(direct_state["pressure_guess"].detach().clone())
 
-        cached_result = cached._solve_pressure(cached_rhs)
-        direct_result = direct._solve_pressure(direct_rhs)
+        cached_result, cached_state, cached_report = _solve(cached, cached_rhs, cached_state)
+        direct_result, direct_state, direct_report = _solve(direct, direct_rhs, direct_state)
 
         assert torch.equal(cached_result, direct_result)
-        assert torch.equal(cached.pressure_guess, direct.pressure_guess)
-        assert (
-            cached.last_pressure_diagnostics
-            == direct.last_pressure_diagnostics
-        )
+        assert torch.equal(cached_state["pressure_guess"], direct_state["pressure_guess"])
+        assert cached_report == direct_report

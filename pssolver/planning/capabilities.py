@@ -16,6 +16,14 @@ class Capability:
 
 CAPABILITIES = (
     Capability(
+        "constraint", ("stokes", "periodic×no_slip^2"),
+        "pssolver.engine.constraints:channel_stokes_term", "custom_transpose",
+    ),
+    Capability(
+        "explicit", ("beris_edwards_q", "periodic^1/neumann^2"),
+        "pssolver.engine.constraints:channel_explicit_term", None,
+    ),
+    Capability(
         "constraint", ("stokes", "periodic^2×free_slip"),
         "pssolver.models.active_nematics.engine_terms:plane_stokes_term", "autograd",
     ),

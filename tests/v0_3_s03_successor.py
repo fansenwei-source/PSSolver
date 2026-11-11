@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import re
+import subprocess
+from hashlib import sha256
+from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,4 +43,23 @@ def resolve_s03_successor(relative: str, historical: str) -> str:
     return resolved
 
 
-__all__ = ["resolve_s03_successor"]
+def read_registered_source(relative: str, root: Path = ROOT) -> bytes:
+    """Read a live source or verify the precise Git bytes of a registered retirement."""
+    path = root / relative
+    if path.is_file():
+        return path.read_bytes()
+    for record_path in reversed(_records()):
+        record = json.loads(record_path.read_text(encoding="utf-8"))
+        retired = record.get("retired_sources", {}).get(relative)
+        if retired is None:
+            continue
+        contents = subprocess.check_output(
+            ["git", "show", f"{retired['source_commit']}:{relative}"], cwd=root,
+        )
+        if sha256(contents).hexdigest() != retired["sha256"]:
+            raise ValueError(f"Retired source hash does not match: {relative}")
+        return contents
+    raise FileNotFoundError(path)
+
+
+__all__ = ["read_registered_source", "resolve_s03_successor"]

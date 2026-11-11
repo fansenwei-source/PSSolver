@@ -14,14 +14,9 @@ from .simulation import SimulationSpec
 from .simulation_binding import bind_simulation_runtime
 
 
-_PACKAGE_FACTORY = (
-    "pssolver.runtime.package_construction.build_package_simulation_runtime"
-)
+_PACKAGE_FACTORY = "pssolver.runtime.legacy_entry.run_v04_translation"
 _IMPLEMENTATION_BUILDERS = {
-    RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS: (
-        "pssolver.runtime.channel_beris_edwards."
-        "build_channel_beris_edwards_runtime"
-    ),
+    RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS: "pssolver.engine.engine.Engine",
     RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS: (
         "pssolver.engine.engine.Engine"
     ),

@@ -34,11 +34,16 @@ def _constraint_physical(engine, hats):
     if engine.plan.geometry.kind == "periodic_box":
         return engine.projector.inverse_transform(hats, engine.boundaries)
     physical = None
+    inverse = (
+        engine.projector.inverse_transform_full
+        if engine.plan.geometry.kind == "rectangular_channel"
+        else engine.projector.inverse_transform
+    )
     for indices, bc, _indexing in engine.transform_groups:
         if indices[0] < engine.evolved_count:
             continue
         relative = [index - engine.evolved_count for index in indices]
-        value = engine.projector.inverse_transform(
+        value = inverse(
             select_group(hats, relative, engine.component_indices,
                          len(engine.components), "contiguous_slice"), bc
         )
@@ -58,7 +63,15 @@ def prepare(engine, state, view, controls, *, out=None, diagnostics=None):
             return replace(state, constrained_current=True)
         # Reuse the one reviewed State publication below; no tensor work.
         return _mark_constraints_current(out)
-    hats = engine._constraint_hats(view, controls, diagnostics=diagnostics)
+    channel = engine.plan.geometry.kind == "rectangular_channel"
+    if channel:
+        channel_report = {} if diagnostics is None else diagnostics
+        hats, solver = engine._constraint_hats(
+            view, controls, solver_state=state.solver, diagnostics=channel_report
+        )
+    else:
+        hats = engine._constraint_hats(view, controls, diagnostics=diagnostics)
+        solver = state.solver
     evolved = engine.evolved_count
     if out is None:
         q_physical, q_spectral = (
@@ -66,7 +79,17 @@ def prepare(engine, state, view, controls, *, out=None, diagnostics=None):
             if state.pure_evolved is not None
             else (state.spatial[:evolved], state.spectral[:evolved])
         )
-        physical = _constraint_physical(engine, hats)
+        if isinstance(hats, tuple):
+            # Keep the functional velocity and pressure on independent graph
+            # paths, as in the legacy functional step.
+            velocity_hat, pressure_hat = hats
+            inverse = engine.projector.inverse_transform_full
+            velocity = inverse(velocity_hat, engine.component_boundaries[evolved])
+            pressure = inverse(pressure_hat, engine.component_boundaries[-1])
+            physical = torch.cat((velocity, pressure.unsqueeze(0)), dim=0)
+            hats = torch.cat((velocity_hat, pressure_hat.unsqueeze(0)), dim=0)
+        else:
+            physical = _constraint_physical(engine, hats)
         spatial = torch.cat((q_physical, physical), dim=0)
         spectral = torch.cat((q_spectral, hats), dim=0)
         result = replace(
@@ -75,6 +98,7 @@ def prepare(engine, state, view, controls, *, out=None, diagnostics=None):
             spatial=spatial,
             pure_evolved=(q_physical, q_spectral),
             constraint_physical=physical,
+            solver=solver,
             constrained_current=True,
         )
     else:
@@ -84,16 +108,22 @@ def prepare(engine, state, view, controls, *, out=None, diagnostics=None):
             physical = engine.projector.inverse_transform(spectral[evolved:], engine.boundaries)
             out.spatial[evolved:].copy_(physical)
         else:
+            inverse = (
+                engine.projector.inverse_transform_full if channel
+                else engine.projector.inverse_transform
+            )
             for indices, bc, _indexing in engine.transform_groups:
                 if indices[0] < evolved:
                     continue
-                physical = engine.projector.inverse_transform(
+                physical = inverse(
                     select_group(spectral, indices, engine.component_indices,
                                  len(engine.components), "contiguous_slice"), bc
                 )
                 store_group(out.spatial, indices, physical, engine.component_indices,
                             len(engine.components), "contiguous_slice")
         _mark_constraints_current(out)
+        if channel:
+            out.solver = solver
         result = out
     view._bind(result.spatial, result.spectral)
     engine.constraint.term.after_static_fields_updated(view)

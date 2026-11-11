@@ -14,7 +14,7 @@ from pssolver.planning.capabilities import CAPABILITIES, lookup
 from pssolver.planning.engine_plan import Plan
 
 from . import members, program
-from .constraints import PeriodicStokesConstraint, PlaneStokesConstraint
+from .constraints import ChannelStokesConstraint, PeriodicStokesConstraint, PlaneStokesConstraint
 from .field_view import FieldView
 from .groups import _transform_group_indexer
 from .imex import SemiImplicitEuler
@@ -65,11 +65,14 @@ class Engine:
             self._member_layouts = {}
             return
         if (
-            plan.geometry.kind not in {"periodic_box", "plane_slab"}
+            plan.geometry.kind not in {"periodic_box", "plane_slab", "rectangular_channel"}
             or len(plan.constraints) > 1
             or plan.integrator.scheme != "semi_implicit_euler"
             or plan.integrator.history_length != 0
-            or (plan.geometry.kind == "periodic_box" and plan.integrator.refresh_interval is not None)
+            or (
+                plan.geometry.kind in {"periodic_box", "rectangular_channel"}
+                and plan.integrator.refresh_interval is not None
+            )
             or plan.boundary_data
         ):
             raise ValueError("engine supports only registered Periodic Euler plans")
@@ -87,10 +90,13 @@ class Engine:
         self._beris_edwards = (
             [item.key for item in linear_capabilities] == [("beris_edwards", "any")]
             and [item.key for item in explicit_capabilities] in [
-                [("beris_edwards_q", "periodic^3")], [("beris_edwards_q", "periodic^2×neumann")]
+                [("beris_edwards_q", "periodic^3")],
+                [("beris_edwards_q", "periodic^2×neumann")],
+                [("beris_edwards_q", "periodic^1/neumann^2")],
             ]
             and [item.key for item in constraint_capabilities] in [
-                [("stokes", "periodic^3")], [("stokes", "periodic^2×free_slip")]
+                [("stokes", "periodic^3")], [("stokes", "periodic^2×free_slip")],
+                [("stokes", "periodic×no_slip^2")],
             ]
         )
         self.plan = plan
@@ -158,17 +164,21 @@ class Engine:
         if self._beris_edwards:
             self.explicit = _resolve(explicit_capabilities[0])(self.projector, plan.explicit[0])
             factory = _resolve(constraint_capabilities[0])
-            if plan.geometry.kind == "plane_slab":
+            if plan.geometry.kind == "rectangular_channel":
+                term = factory(host, self.projector, plan.constraints[0], self.explicit)
+                self.constraint = ChannelStokesConstraint(term, warm_start=plan.constraints[0].warm_start)
+            elif plan.geometry.kind == "plane_slab":
                 term = factory(host, self.projector, plan.constraints[0], self.explicit,
                                boundaries=dict(zip(self.components, self.component_boundaries, strict=True)))
                 constraint_type = PlaneStokesConstraint
             else:
                 term = factory(host, self.projector, plan.constraints[0], self.explicit)
                 constraint_type = PeriodicStokesConstraint
-            self.constraint = constraint_type(
-                term,
-                pressure_diagnostics=plan.constraints[0].pressure_diagnostics,
-            )
+            if plan.geometry.kind != "rectangular_channel":
+                self.constraint = constraint_type(
+                    term,
+                    pressure_diagnostics=plan.constraints[0].pressure_diagnostics,
+                )
         else:
             if plan.constraints or any(item.kernel not in local for item in plan.explicit):
                 raise ValueError("package explicit/constraint terms require their complete registered composition")
@@ -229,7 +239,11 @@ class Engine:
             return self.explicit
         return lambda view, controls: self.explicit(view, controls, completed_steps=completed_steps)
 
-    def _constraint_hats(self, view, controls, *, diagnostics):
+    def _constraint_hats(self, view, controls, *, diagnostics, solver_state=None):
+        if self.plan.geometry.kind == "rectangular_channel":
+            return self.constraint.constrained_hats(
+                view, controls["alpha"], solver_state, diagnostics=diagnostics
+            )
         return self.constraint.constrained_hats(view, controls["alpha"], diagnostics=diagnostics)
 
     def _materialize_transform_caches(self):
@@ -238,12 +252,18 @@ class Engine:
         bc = self.boundaries
         physical = torch.zeros(self.shape, dtype=self.dtype, device=self.device)
         spectral = backend.forward(physical, bc)
+        if self.plan.geometry.kind == "rectangular_channel":
+            # Channel FFTs preserve the backend's spatial-axis permutation.
+            # In the singleton packed state, both leading axes are outer.
+            self._channel_spectral_strides = (
+                spectral.numel(), spectral.shape[0] * spectral.stride(0), *spectral.stride()
+            )
         for axis in range(len(self.shape)):
             backend.gradient_hat(spectral, bc, axis)
         self.projector.forward_transform(physical, bc)
         self.projector.inverse_transform(spectral, bc)
         self.projector.project_real_spectrum_(spectral, bc)
-        if self.plan.geometry.kind == "plane_slab":
+        if self.plan.geometry.kind in {"plane_slab", "rectangular_channel"}:
             for _, group_bc, _ in self.transform_groups:
                 if group_bc == bc:
                     continue
@@ -259,6 +279,16 @@ class Engine:
         if cache is not None:
             cache.clear()
 
+    def _restore_channel_state_layout(self, state):
+        """Restore the singleton program's packed layout before rebuilding Q gradients."""
+        strides = self._channel_spectral_strides
+        spectral = torch.empty_strided(
+            state.spectral.shape, strides, device=self.device, dtype=state.spectral.dtype
+        )
+        spectral.copy_(state.spectral)
+        state.spectral = spectral
+        self.constraint.term.rebuild_q_gradient_cache(self.field_view(state))
+
     @property
     def default_controls(self):
         """Return the existing immutable default-control mapping without copying."""
@@ -268,6 +298,11 @@ class Engine:
         return dict(self._default_controls) | ({} if controls is None else dict(controls))
 
     def field_view(self, state):
+        if self.plan.geometry.kind == "rectangular_channel":
+            cache = self.explicit.q_gradient_cache
+            owner = None if cache is None else cache._owner
+            if owner is not None and owner.spatial is state.spatial and owner.spectral is state.spectral:
+                return owner
         return FieldView(
             state.spatial,
             state.spectral,
@@ -318,8 +353,13 @@ class Engine:
                 alpha = self._default_controls.get("alpha")
                 if alpha is None:
                     alpha = torch.zeros(self.shape, device=self.device, dtype=self.dtype)
-                self.constraint.constrained_hats(self.field_view(state), alpha, diagnostics=diagnostics)
-                state.solver = self.constraint.seed(state)
+                if self.plan.geometry.kind == "rectangular_channel":
+                    _, state.solver = self.constraint.constrained_hats(
+                        self.field_view(state), alpha, self.constraint.seed(state), diagnostics=diagnostics
+                    )
+                else:
+                    self.constraint.constrained_hats(self.field_view(state), alpha, diagnostics=diagnostics)
+                    state.solver = self.constraint.seed(state)
             program._evolved_transform(
                 self, spectral[: self.evolved_count], "project_real_spectrum_", inplace=True,
             )
@@ -334,9 +374,11 @@ class Engine:
         if self.batch > 1:
             return members.execute(self, operation, state, controls,
                                    inplace=inplace, diagnostics=diagnostics)
-        self._clear_cache()
+        channel = self.plan.geometry.kind == "rectangular_channel"
+        if not channel or not state.constrained_current:
+            self._clear_cache()
         try:
-            return operation(
+            result = operation(
                 self,
                 state,
                 self.field_view(state),
@@ -344,8 +386,12 @@ class Engine:
                 out=state if inplace else None,
                 diagnostics=diagnostics,
             )
-        finally:
+        except BaseException:
             self._clear_cache()
+            raise
+        if not channel or operation is not program.prepare:
+            self._clear_cache()
+        return result
 
     def prepare_constraints(self, state, controls=None, *, diagnostics=None):
         return self._execute(

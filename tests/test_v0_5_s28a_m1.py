@@ -11,13 +11,22 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = '4b720938896af6cae0719569e95be471b33e0935'
+FIRST_STAGE = '80ef5e658db86436fdcc8dbbb95db6a150195397'
 NUM = 'pssolver/linear_solvers/stokes/channel_no_slip.py'
-TRANS = 'pssolver/functional/channel_pressure.py'
-IMPL = 'pssolver/functional/channel_pressure_adjoint.py'
+RETIREMENTS = json.loads((ROOT / 'qualification/s28a_tables.json').read_text())['retired_modules']
 
 
-def _source(path):
-    return subprocess.check_output(['git', 'show', BASE + ':' + path], cwd=ROOT, text=True)
+def _retired_path(stem):
+    module = next(value for value in RETIREMENTS if value.rsplit('.', 1)[-1] == stem)
+    return module.replace('.', '/') + '.py'
+
+
+TRANS = _retired_path('channel_pressure')
+IMPL = _retired_path('channel_pressure_adjoint')
+
+
+def _source(path, commit=BASE):
+    return subprocess.check_output(['git', 'show', commit + ':' + path], cwd=ROOT, text=True)
 
 
 def _method(text, cls, name):
@@ -66,7 +75,7 @@ def test_role_specialization_preserves_every_baseline_statement(role):
         source = source.replace(before, after)
     expected = ast.parse(source).body[0].body
     expected = [n for n in expected if not (isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant) and isinstance(n.value.value, str))]
-    combined = _method((ROOT / NUM).read_text(), 'ChannelNoSlipModalStokesSolver', '_solve_pcg')
+    combined = _method(_source(NUM, FIRST_STAGE), 'ChannelNoSlipModalStokesSolver', '_solve_pcg')
     # The first three statements only select Python role/context values; no tensors.
     assert ast.unparse(combined.body[0]) == 'production = role is PCGRole.PRODUCTION'
     assert ast.unparse(combined.body[1]) == 'standalone = False'
@@ -78,17 +87,27 @@ def test_role_specialization_preserves_every_baseline_statement(role):
 def test_m1_has_one_pcg_loop_and_no_old_loop_copies():
     merged = _method((ROOT / NUM).read_text(), 'ChannelNoSlipModalStokesSolver', '_solve_pcg')
     assert sum(isinstance(n, ast.While) for n in ast.walk(merged)) == 1
-    for path, cls, name in [(NUM, 'ChannelNoSlipModalStokesSolver', '_solve_pressure'),
-                            (TRANS, 'ChannelPressureTransposeOperator', 'solve_pressure_transpose'),
-                            (IMPL, 'ChannelImplicitPressureAdjoint', '_solve_no_grad')]:
-        wrapper = _method((ROOT / path).read_text(), cls, name)
-        assert not any(isinstance(n, (ast.For, ast.While)) for n in ast.walk(wrapper))
+    assert not (ROOT / TRANS).exists()
+    assert not (ROOT / IMPL).exists()
+    with pytest.raises(StopIteration):
+        _method((ROOT / NUM).read_text(), 'ChannelNoSlipModalStokesSolver', '_solve_pressure')
 
 
 def test_m1_oracle_stays_independent_and_ast_unchanged():
     old = _method_or_function(_source(IMPL), 'unrolled_channel_pressure_solve_oracle')
-    new = _method_or_function((ROOT / IMPL).read_text(), 'unrolled_channel_pressure_solve_oracle')
+    new = _method_or_function(_source(IMPL, FIRST_STAGE), 'unrolled_channel_pressure_solve_oracle')
     assert ast.dump(new) == ast.dump(old)
+    relocated = _method_or_function(
+        (ROOT / 'tests/oracles/channel_pressure_unrolled.py').read_text(),
+        'unrolled_channel_pressure_solve_oracle',
+    )
+    assert sum(isinstance(node, ast.For) for node in ast.walk(old)) == sum(
+        isinstance(node, ast.For) for node in ast.walk(relocated)
+    )
+    assert not any(
+        isinstance(node, ast.Attribute) and node.attr in {'solve', 'solve_transpose', '_solve_pcg'}
+        for node in ast.walk(relocated)
+    )
 
 
 def _method_or_function(text, name):

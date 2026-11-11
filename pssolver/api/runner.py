@@ -197,11 +197,9 @@ def _run_channel_beris_edwards_application(
     progress: Iterable[int] | None,
     emit_metadata: bool,
 ) -> tuple[object | None, str | Path | None]:
-    from pssolver.applications.channel_beris_edwards import (
-        run_channel_beris_edwards,
-    )
+    from pssolver.runtime.legacy_entry import run_v04_translation
 
-    result = run_channel_beris_edwards(
+    result = run_v04_translation(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
@@ -236,10 +234,7 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
         "channel_complete_stress_beris_edwards": (
             _PublicApplicationRunnerRegistration(
                 "channel_complete_stress_beris_edwards",
-                (
-                    "pssolver.applications.channel_beris_edwards."
-                    "run_channel_beris_edwards"
-                ),
+                "pssolver.runtime.legacy_entry.run_v04_translation",
                 _run_channel_beris_edwards_application,
             )
         ),

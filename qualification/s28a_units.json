@@ -1,0 +1,484 @@
+{
+  "pssolver.api.runner": {
+    "_PUBLIC_APPLICATION_RUNNERS": {
+      "after_ast_sha256": "8219b97f6dbaae839d1a10061d92d2c193bd38f4e15b55db98b0a2675764d6ac",
+      "authority": "modify: design \u00a73.1 wiring strings",
+      "before_ast_sha256": "6e7d41aa6c173d32f777055b95e7d969e162155912c7ba082e6d81db94ed15d6"
+    },
+    "_run_channel_beris_edwards_application": {
+      "after_ast_sha256": "ad598e4635658ea696febd85a2316d87d3b595c0a55cca297e8b37e02e8490c2",
+      "authority": "modify: design \u00a73.1 wiring strings",
+      "before_ast_sha256": "aec3d173b056a1d7ab8f87748db27a400a89363534e4788b3c8fc6d3d1e84aca"
+    }
+  },
+  "pssolver.configuration.application_registry": {
+    "_CHANNEL_COMPLETE": {
+      "after_ast_sha256": "8d335a50e4c938608c5f974df3c7243de8d255a97530ce8f0662058317f21cfb",
+      "authority": "modify: design \u00a73.1 wiring strings",
+      "before_ast_sha256": "7e3fe56921059246b74dcc9345033b388df2da9b986b319f052f62ba23c1561c"
+    }
+  },
+  "pssolver.configuration.legacy_channel": {
+    "CHANNEL_COMPLETE_STRESS_RUNTIME_PATH": {
+      "after_ast_sha256": "9b4d9338a26418fb36cfe79e3b2ed1e2daa6cf3a413e993c78fe735461db7f46",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "CHECKPOINT_VERSION": {
+      "after_ast_sha256": "2789d98fd7739c3d09d1e7aac9ea2efc35fc3c6b68d0371d58a421d1f86e60ec",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "ChannelBerisEdwardsCheckpointHeader": {
+      "after_ast_sha256": "4e149f2d8d936a22f9a4ad959122104b2d808c851bb71bf9611f8c3432bf2ae0",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "ChannelBerisEdwardsRunSpec": {
+      "after_ast_sha256": "58ab1f360665859008570639b3675099818e25a3f795eb8ab8892675ee164f65",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "LEGACY_CHECKPOINT_VERSION": {
+      "after_ast_sha256": "cc1dbd5c63d27556f2cb5cdcca30fd448c0149c483d2a5ccba19547d90901a47",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "LEGACY_CHECKPOINT_VERSION_V1": {
+      "after_ast_sha256": "973d0535d59111b1be0db50b6a0ecac711018048b4e993b1c7b952b7132b8321",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_EXECUTION_KEYS": {
+      "after_ast_sha256": "c7850d9e4aaabe0f56374e3c8cf9c2fa78f833d349486094c9f0224a2b3caa2b",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_STATE_COMPONENTS": {
+      "after_ast_sha256": "1e5b6872190d0043d10321762c146a29af472d9df78dc43264712c3e9fa507d9",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_SUPPORTED_CHECKPOINT_VERSIONS": {
+      "after_ast_sha256": "7654ac2d2a4b530ee3e0451513a90dfb4755a3a6bcd9b70da5694bd64b913901",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_WORKFLOW_KEYS": {
+      "after_ast_sha256": "de946807489f3c571c15e17993d13404c111a28f6f39cc42b968bc26a26ff74b",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_channel_backend_restart_identity": {
+      "after_ast_sha256": "e70b39cc58adb1e048e12f7d1813cc9de064d67ec6893911fb194bb52e28513d",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_channel_run_spec_dynamics": {
+      "after_ast_sha256": "44a3982b79882c22154271fa5de6d13b9d6a45409c8fa8df24703d1fb39eee4f",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_channel_state_layout_identity": {
+      "after_ast_sha256": "5f386b613fc0bfc5a76bacca1152ade9bf3e4b352f98deaa5dc53ebd880585a5",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_channel_state_layout_identity_from_metadata": {
+      "after_ast_sha256": "65a41c3e972a3d6e494c56f7410d034f9737d808e37a4a92e5b07ffaeec884e7",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_exact_keys": {
+      "after_ast_sha256": "7ac77b80cd505f26ca0f206b3a55a51d36b8a4bed87692c5b527631e53e44e15",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_legacy_channel_format_for_generation": {
+      "after_ast_sha256": "63d88d889dde1368b9b1ad8669d0330eb82638cdadf0ff23f84f1a76ee94e2a9",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_load_checkpoint": {
+      "after_ast_sha256": "99573d7d9a4ebfca9f65d90291093651b49302117e66ffa03a15e7105362ab7e",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_read_channel_checkpoint_metadata": {
+      "after_ast_sha256": "d836ff7e73cfd10e6fb3f63d453b7ece94f5dec0691786690047eea39d4e7075",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_reject_input": {
+      "after_ast_sha256": "ced4a96a97bd2633822be2ddfd0ce28ca5ab32d114c38262f0c02c1912e54690",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_sha256": {
+      "after_ast_sha256": "55234d6af4cdb8b3bdf5f96730156a66bf53202cd4a6fd34f0f7d3b9a5979362",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_snapshot_sha256": {
+      "after_ast_sha256": "868abc9b5b2fea047a427efad4724fdb869e9b4a7b4ede5b829cabf7c86be88b",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_validate_legacy_channel_upgrade_contract": {
+      "after_ast_sha256": "0ad05a6b1375a126bb6859f4ad328a109b144aa05ddd93149987acb8e48e62ce",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_validated_array": {
+      "after_ast_sha256": "3ee8b8e18e547507fea5f19b06e9e9cefa980a0cecf569537b91b44208bc9ad8",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "_validated_progress": {
+      "after_ast_sha256": "d389dfd015c4f0c035262cc4cc31119ca334875b68a25e2fed2a4fdcd2d4742d",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "build_channel_checkpoint_compatibility_identity": {
+      "after_ast_sha256": "437b9ecbb3871c16e3720939e94e0e21b617d1af14648fdff176b2a313390598",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "channel_forward_dynamics_identity": {
+      "after_ast_sha256": "9932fa6de8cf6729c86f683e9f9e4135a0217480c872aab793f29f28762e53b9",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "compile_channel_beris_edwards_public_simulation": {
+      "after_ast_sha256": "4caaf4e8c1929bfbeff058bc8cde153f7caf54c8936cd92a02571df0ffbc4641",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "load_channel_initial_q": {
+      "after_ast_sha256": "83ddd14ab671103493d5db3d761c8087a93fc604265160a53f08f1d969a1d552",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "read_channel_beris_edwards_checkpoint_header": {
+      "after_ast_sha256": "ff6629012c1898b16b333447d80ffb38c4c91b5623a411f167ed6152fa63cb87",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "read_channel_beris_edwards_checkpoint_progress": {
+      "after_ast_sha256": "5ee04cf5320c345eb562b16ef7b48b97683263a5fa385c230738a8f81b919dd9",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "translate_channel": {
+      "after_ast_sha256": "20927f2c20e3eec39d35c3e4fbe912d54a3f3c0cd7db993e055dad682864a297",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    },
+    "upgrade_channel_beris_edwards_checkpoint_directory": {
+      "after_ast_sha256": "d78d3f93886863a21830dd4093a9699a89df13544d9146caf1dd1590e05a3b14",
+      "authority": "add: design \u00a73.2 Channel translator + carrier",
+      "before_ast_sha256": null
+    }
+  },
+  "pssolver.configuration.package_construction": {
+    "_IMPLEMENTATION_BUILDERS": {
+      "after_ast_sha256": "f4582b71368272dd6e904cf016cedbcf4684d80922a5a5c7a20910d7877253cd",
+      "authority": "modify: R-0106: _IMPLEMENTATION_BUILDERS[CHANNEL_COMPLETE_STRESS] = 'pssolver.engine.engine.Engine' and _PACKAGE_FACTORY = 'pssolver.runtime.legacy_entry.run_v04_translation' (single literals)",
+      "before_ast_sha256": "55a1e1775e9abf8a489dc7f3f00dbd474da92ed16cadae4c54a5023363e39596"
+    },
+    "_PACKAGE_FACTORY": {
+      "after_ast_sha256": "9237563043500233ea5fa18a44576fcca72ed9e67e39755c67d871a3bc5067d7",
+      "authority": "modify: R-0106: _IMPLEMENTATION_BUILDERS[CHANNEL_COMPLETE_STRESS] = 'pssolver.engine.engine.Engine' and _PACKAGE_FACTORY = 'pssolver.runtime.legacy_entry.run_v04_translation' (single literals)",
+      "before_ast_sha256": "ac09c07e7e3bb90d4a2558f0929079366e0a28ba3406b10ad1b9430dfd5f7c20"
+    }
+  },
+  "pssolver.configuration.plane_beris_edwards": {
+    "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES": {
+      "after_ast_sha256": "d0748602adcc8f0d36a084e98e60a799f720b8bbc78a5d92cc63f68ff8566b88",
+      "authority": "modify: R-0106: drop the two retired runtime construction modules from the implementation file list",
+      "before_ast_sha256": "9403394a522fb7ad6eef5efbedf0b4cfd4b24ac68e4585fc73dac8c851d1eb43"
+    }
+  },
+  "pssolver.engine.constraints": {
+    "ChannelStokesConstraint": {
+      "after_ast_sha256": "9fc18af937f096b6790dd827e26dffe93e218e65868830d5cd218b319997b7a1",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": null
+    },
+    "SolverState": {
+      "after_ast_sha256": "c013009ebc73d67ee86a71bebe9841746e54d4a08d4f9585114cd7ca252c0100",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": "6b9786f4c3570a09f27f7c677c8bd9d6a48aa8a086971b9af6bc3a43f025540e"
+    },
+    "_ChannelNematicForce": {
+      "after_ast_sha256": "ece52df1aa904e10ed5ffbd6dff1588515eafbbb86804b38999f3906ea8115ec",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": null
+    },
+    "_FunctionalPressureRun": {
+      "after_ast_sha256": "257c12f562be5efc948ddb27d3ad0056d7b3ca8e85ddc629f24d107852d539d7",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": null
+    },
+    "_ImplicitPressureSolve": {
+      "after_ast_sha256": "973ed88cb5cf77c068fe776a66578728c0f8689d2abf865c0a9ef69fb045e027",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": null
+    },
+    "channel_explicit_term": {
+      "after_ast_sha256": "45ce7466bab082245605bef708ac430c71fd06cedfc7f52e7d65da600d88a383",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": null
+    },
+    "channel_stokes_term": {
+      "after_ast_sha256": "adcc1ddf0c3fea5081eb4f302e32c05cfd26433319634363a9120aed50471cb6",
+      "authority": "modify: design \u00a72.3 ChannelStokesConstraint, custom VJP",
+      "before_ast_sha256": null
+    }
+  },
+  "pssolver.engine.engine": {
+    "Engine": {
+      "after_ast_sha256": "78348147ce389a316cb157b491f49ea3f00d2db051ace462780b2cfc17b27705",
+      "authority": "modify: design \u00a72.3 Channel constraint wiring, P1 seeding",
+      "before_ast_sha256": "5529dd03ba64081c6408eff8f8224e89730d739a55f1e60a97032da3924ace3a"
+    }
+  },
+  "pssolver.engine.members": {
+    "_join": {
+      "after_ast_sha256": "048c6352fd367addbec71cc7f7c8916301e1bf8bf36471e0576f921e93b50255",
+      "authority": "modify: design \u00a72.3 per-member solver state for batch > 1",
+      "before_ast_sha256": "d2d66bc57841410bac58f0508fb2ed5378d8d2be521e8a76e3fde7a78fbe7cfd"
+    },
+    "_join_solver": {
+      "after_ast_sha256": "f374ef7e38fda06191addd2f067c95fc9b234f843dde76e9b829aa076bacfc01",
+      "authority": "modify: design \u00a72.3 per-member solver state for batch > 1",
+      "before_ast_sha256": null
+    },
+    "_map_state": {
+      "after_ast_sha256": "4fcd1329d33dc87c4f5051da88b1aa4c8d5705d35a0ee02c7119eb278af9a124",
+      "authority": "modify: design \u00a72.3 per-member solver state for batch > 1",
+      "before_ast_sha256": "2230ce1f98dc36eb83578f06e92df106965fb82507538b0380d902d5533280d5"
+    },
+    "_member_state": {
+      "after_ast_sha256": "b6d759cedb0b30ba6c130a48bb83f9c3bf6ec2ca3f54418f2332c9be265666b8",
+      "authority": "modify: design \u00a72.3 per-member solver state for batch > 1",
+      "before_ast_sha256": "aad269354b028fd9bdf940fce55efd0351ee2694e8ba644e939396ec9a8787f7"
+    },
+    "_remember_layouts": {
+      "after_ast_sha256": "ac2ca9036a761792d16149f39a96ac9b1bdecfe04cab7c872abba54bdd181996",
+      "authority": "modify: design \u00a72.3 per-member solver state for batch > 1",
+      "before_ast_sha256": "6c55e002c6110eddd77d2dca0ec4d1b8745c1b75b6c5a2664a3c264d28186da6"
+    },
+    "execute": {
+      "after_ast_sha256": "4a658910ec41ef2b777d46ad0daa1be6aa3c2e947fe35aaed8c4d85e741b4df5",
+      "authority": "modify: design \u00a72.3 per-member solver state for batch > 1",
+      "before_ast_sha256": "093ec3015505a637b995aeb9ed5a8a86ab9f56c91d7956ecf0efd6959800b721"
+    }
+  },
+  "pssolver.engine.program": {
+    "_constraint_physical": {
+      "after_ast_sha256": "537a062fc7a93e0b8639825091419725c817ff1e5f59638d4176f44699f16ab3",
+      "authority": "modify: design \u00a72.3 solver state threading",
+      "before_ast_sha256": "5c0f9ee8b2f40e4d6b915af4bdd1a958fb9ad4d9c2f47df992de56ad8bc706fb"
+    },
+    "prepare": {
+      "after_ast_sha256": "ef3e583a968445c52680e07f247a0fa14381d8e80bf586b100868ef9089f90d9",
+      "authority": "modify: design \u00a72.3 solver state threading",
+      "before_ast_sha256": "cdc5ffa2a546da18269933c612126498cad9e501310ebe300480c8f79aaf3a81"
+    }
+  },
+  "pssolver.engine.state": {
+    "State": {
+      "after_ast_sha256": "443d927ccc6b73ffc310bdc4d27a7550ff9a3f9cd50c25251f916077f4b0d276",
+      "authority": "modify: design \u00a72.3 explicit pressure-guess pair in State.solver",
+      "before_ast_sha256": "09119151b9f5b3dfbed3a3abbccff46bc9babd1dcd73220d57584c7ee69d3b7f"
+    }
+  },
+  "pssolver.functional": {
+    "_IMPLICIT_SUBMODULE_NAMES": {
+      "after_ast_sha256": "d9376647d45cc56cfc63481d0b4ac3d04cbc95fa4faf0f5f400e840dd78d8b76",
+      "authority": "modify: design \u00a74 facade rows of deleted modules removed (S-22 \u00a73.8)",
+      "before_ast_sha256": "779a57a6d0a2c3a40ad7021ad04668a9691f2ebd4abc7c14a5cace6554b66aaa"
+    }
+  },
+  "pssolver.functional.channel_activity": {
+    "_PRESSURE_IMPLICIT_ADJOINT_VERSION": {
+      "after_ast_sha256": "bf0042cd34ab9c46b2152ce2f74d3d9e0ddaa2b9afd940f6b4e79948f25dad05",
+      "authority": "modify: design \u00a74 1.1 request validation imports from legacy_channel",
+      "before_ast_sha256": null
+    },
+    "_PRESSURE_TRANSPOSE_PROTOCOL_VERSION": {
+      "after_ast_sha256": "d0de88f39ce3f8378cecd4589629c735e546d834919f1c80d4c148c444caddbd",
+      "authority": "modify: design \u00a74 1.1 request validation imports from legacy_channel",
+      "before_ast_sha256": null
+    },
+    "channel_functional_pressure_identity": {
+      "after_ast_sha256": "52b58108543ddadb0a23582a77d3b4b51f07e3c3ef61413f8d42bb20716e116c",
+      "authority": "modify: design \u00a74 1.1 request validation imports from legacy_channel",
+      "before_ast_sha256": "5580f467a0388048489f9813157b12968be1e3c98bea29a58cd1c2ae02c2bb31"
+    }
+  },
+  "pssolver.functional.channel_activity_runtime": {
+    "ChannelActivityFunctionalRuntime": {
+      "after_ast_sha256": "194806123b3433fd605a55f573682ad58358d3ff8158a9e40bb068d841552369",
+      "authority": "modify: design \u00a74 1.1 Channel runtime on the Engine pure step",
+      "before_ast_sha256": "cc2f344c3842420887ecce5a6062aebe09a0ebae992cdd1e8cce57bd4c0cc27e"
+    },
+    "ChannelActivityFunctionalRuntimeFactory": {
+      "after_ast_sha256": "96ba879af4a5d6c0d3a30a8f4f1cdfd421c5d64006b10dcefd2ce30889401a3e",
+      "authority": "modify: design \u00a74 1.1 Channel runtime on the Engine pure step",
+      "before_ast_sha256": "f2a706af1ed258d6888596e0e5af7f421c2685559b3744d2392d27301fdfd524"
+    }
+  },
+  "pssolver.io.engine_state": {
+    "_PRESSURE_EXPONENT": {
+      "after_ast_sha256": "20a130ffb0b099cfdb09cd0cca25f725099a7f7349c5665cbc8b0939cd65ead8",
+      "authority": "modify: design \u00a72.6 solver state in engine_state",
+      "before_ast_sha256": null
+    },
+    "read": {
+      "after_ast_sha256": "2b33e463cc676b90416f55a7029339d228b16fd7beec96a726c0817fa865726a",
+      "authority": "modify: design \u00a72.6 solver state in engine_state",
+      "before_ast_sha256": "a38169e46172508cc070b5a31aeb7595be36ad41992e97ab84ee6d9099434cd8"
+    },
+    "read_header": {
+      "after_ast_sha256": "37ab85f6abf595483b2fdb2564640356a2fbbb24e84d06e743bdd1a329af9a27",
+      "authority": "modify: design \u00a72.6 solver state in engine_state",
+      "before_ast_sha256": "e719314bec8cc0d5cc68e19b7b9cb8dd593700bd24bfdca248efab8f7c78469f"
+    },
+    "write": {
+      "after_ast_sha256": "fd9fee3dd61a8d4ac85a8dcb4d6f0328bf62c6e948a00e9af0fde9c8504a2a64",
+      "authority": "modify: design \u00a72.6 solver state in engine_state",
+      "before_ast_sha256": "fc50aa9084416ae93f847d83b2be3e53123c03b7a8236b25897935c473a2509c"
+    }
+  },
+  "pssolver.linear_solvers.stokes.channel_no_slip": {
+    "ChannelNoSlipModalStokesSolver": {
+      "after_ast_sha256": "fba3d7f96377052e1f2386184335df84307156457170e8d8ac8811a547f0365d",
+      "authority": "modify: design \u00a72.2 merged Schur PCG: solve/solve_transpose with explicit role policies",
+      "before_ast_sha256": "792f921e2b5eada3fb44ef7a7f15207d7ee6e4b726fc8e304b107074b47390dd"
+    },
+    "PCGRole": {
+      "after_ast_sha256": "673e74823adf9df6cbb498463cf15228cbb1f8612a13f643d77571e2384a086a",
+      "authority": "modify: design \u00a72.2 merged Schur PCG: solve/solve_transpose with explicit role policies",
+      "before_ast_sha256": null
+    }
+  },
+  "pssolver.models.active_nematics.fields": {
+    "CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS": {
+      "after_ast_sha256": "2ee5ea837997740213f7b1514219f2fa76761c04b3fac10b6ea3722d75654044",
+      "authority": "modify: R-0106: receives the two Channel boundary constants (exact moves)",
+      "before_ast_sha256": null
+    },
+    "CHANNEL_Q_BOUNDARY_CONDITIONS": {
+      "after_ast_sha256": "827edf176b295db58e1ff0312c8a6dc6f14233297f5a71b96a797f43c49dc3c0",
+      "authority": "modify: R-0106: receives the two Channel boundary constants (exact moves)",
+      "before_ast_sha256": null
+    }
+  },
+  "pssolver.planning.assemble": {
+    "ExecutionInput": {
+      "after_ast_sha256": "0317da2ae8d48ffc1730a38dec333e7e0d57f950eb08d48cc5f4f63755323d54",
+      "authority": "modify: design \u00a72.4 channel geometry and constraint",
+      "before_ast_sha256": "0943818ed4bfc5d2f37b5efc980b82aa8a60d9a6c60b15fbadf9149efeb1dd60"
+    },
+    "_boundaries": {
+      "after_ast_sha256": "bce45f2e3179874185f87c0478b040c8e611ad80755e501dff44f64b4aed6fbb",
+      "authority": "modify: design \u00a72.4 channel geometry and constraint",
+      "before_ast_sha256": "ad6a3af2840b187cfddd5e19b5a803ef0f8442b7fb686a1bc2512b61fc07f59d"
+    },
+    "_validate_basis": {
+      "after_ast_sha256": "2ba067ed264e82cb93d1782c8bfb6cef5840892cae7e2e646725aeb023fd885a",
+      "authority": "modify: design \u00a72.4 channel geometry and constraint",
+      "before_ast_sha256": "6fb039c80216b6db91fdfe0debdbd22f08dc1b25a188e096692574d4358e9934"
+    },
+    "assemble": {
+      "after_ast_sha256": "5703c4e9c24cb8b03da3774178c44b5d6042e90ccdeb797bd7f246e6eeae1670",
+      "authority": "modify: design \u00a72.4 channel geometry and constraint",
+      "before_ast_sha256": "401338035fe5dafb8d1a688da41636b4e91d836c73ac4fe198fb14a706393d19"
+    }
+  },
+  "pssolver.planning.capabilities": {
+    "CAPABILITIES": {
+      "after_ast_sha256": "6c1f8cb18fec4f80842b38adc0782fd93de1d5559982c9244b2977986f904234",
+      "authority": "modify: design \u00a72.4 capability row for stokes on periodic x no_slip^2",
+      "before_ast_sha256": "1bb9d3e6d68c8b6ca267a892c86ccd0b677ef68acc08d03d1d395ccb9259c3c3"
+    }
+  },
+  "pssolver.runtime": {
+    "_IMPLICIT_SUBMODULE_NAMES": {
+      "after_ast_sha256": "d9a03a35a5328712bff70268c69bfe58ef22e06bf1e10b42636ce0d129183e4f",
+      "authority": "modify: design \u00a73.1 re-exports",
+      "before_ast_sha256": "1f661659219ace082f2476a504bcf54480508ee9947bae013b73bccf6bebbeb6"
+    }
+  },
+  "pssolver.runtime.channel_observations": {
+    "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE": {
+      "after_ast_sha256": "5475ce75c4102b7e956b8520e7263096af640a60c327759833029be150b33cfa",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER": {
+      "after_ast_sha256": "36f84ee2e02dc45238e2f48b501adea4dc4547a4ba4eb824c8a455c716dcabc9",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "ChannelBerisEdwardsDiagnostic": {
+      "after_ast_sha256": "0083d9e734a40c39660b932c3dbbb41cb497e1e6cd3f5cbd3f36f777baa0a5eb",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "ChannelBerisEdwardsObservation": {
+      "after_ast_sha256": "997953035534c74121128fb515cc263f4b3250acfee9d1e157601721e6ceda1f",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "ChannelCapture": {
+      "after_ast_sha256": "05aeb507a3c1e55a270dcd3355f3be2941e3333716bb81bc678a3d9306aafdb4",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "capture_channel_diagnostic": {
+      "after_ast_sha256": "c5cebc45c83b99c151cbf1b0a6f3284645a2c091527d13346893e09a0df61de8",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "capture_channel_observation": {
+      "after_ast_sha256": "d422cf162345f9a6113b39afa2d26b097122134921d735ab87bdd5e81cc645c9",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    },
+    "capture_synchronized_pressure_guess": {
+      "after_ast_sha256": "330c9178d52c4b7f9f00dc9841bfb37ad8677e8c1d5b0b824feb8b1fcc28efd1",
+      "authority": "add: design \u00a73.3 Channel observations and capture",
+      "before_ast_sha256": null
+    }
+  },
+  "pssolver.runtime.legacy_entry": {
+    "_ChannelCheckpointDestination": {
+      "after_ast_sha256": "4a4b17e960baefcf3bf24cc8bb332918151f9927f1186a7342254aa0557cf4c0",
+      "authority": "modify: design \u00a73.1 Channel branch to Engine/Runner",
+      "before_ast_sha256": null
+    },
+    "_channel_restart_error": {
+      "after_ast_sha256": "bdb716ba3ad8a502e5cae2c27ebf22283998ff13e1b21bb5046cf1c962a9f555",
+      "authority": "modify: design \u00a73.1 Channel branch to Engine/Runner",
+      "before_ast_sha256": null
+    },
+    "_run_v04_channel_translation": {
+      "after_ast_sha256": "67f90745040ae1917f091ea4e79b9930023a3afe2be9ee020c8704a0c89308db",
+      "authority": "modify: design \u00a73.1 Channel branch to Engine/Runner",
+      "before_ast_sha256": null
+    },
+    "restore_channel_state": {
+      "after_ast_sha256": "a3ecae5b2eecd264cad6ea5b1a6bdc026474facb29f5e40517e216cd4d86ca71",
+      "authority": "modify: design \u00a73.1 Channel branch to Engine/Runner",
+      "before_ast_sha256": null
+    },
+    "run_v04_translation": {
+      "after_ast_sha256": "65bcb8e6aea4656e48c61e4ab4350de78c9ed529ef30300af3245953a2a92f4c",
+      "authority": "modify: design \u00a73.1 Channel branch to Engine/Runner",
+      "before_ast_sha256": "2b3c920219e796f87860bf4d22b04a37bab83e63059b79667877b324ef773ce8"
+    }
+  }
+}

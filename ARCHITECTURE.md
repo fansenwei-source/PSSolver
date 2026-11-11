@@ -54,6 +54,12 @@ distributed. The shared pressure-policy declaration lives privately alongside
 the canonical Stokes solver. State/workspace, the old assembler and private
 lifting wiring remain for their explicitly scheduled later steps.
 
+S-28a routes the complete-stress Channel declaration through
+`configuration.legacy_channel` into `assemble()`, the shared Engine and Runner.
+The old Channel-specific application, workflow and runtime are retired. Its
+functional 1.1 step uses the same Engine with zero-start pressure and a custom
+transpose VJP; the legacy declaration and checkpoint identities still apply.
+
 ```
 public       pssolver (top-level exports), api/     Simulation, run_simulation, results
 components   models/ presets/ geometries/ boundaries/ integrators/
@@ -135,7 +141,10 @@ Hot-loop rules:
 - spectral and spatial fields, with layout `(field, batch, *grid)`;
 - integrator history;
 - constraint-solver state (for example a warm-start guess and its operator
-  action);
+  action). Channel keeps that action in its original working scale, with a
+  Python integer exponent per member. Replacing a guess must replace the
+  matching action and exponent or clear both; the Engine never updates the
+  solver tensors in place;
 - the step counter, refresh phase and `constrained_current` flag.
 
 Everything that influences the next step is in `State`; diagnostics are not.

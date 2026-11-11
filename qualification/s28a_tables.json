@@ -11,13 +11,14 @@
   "pssolver.configuration.public_channel_beris_edwards_compiler",
   "pssolver.models.active_nematics.channel_stokes",
   "pssolver.functional.channel_pressure",
-  "pssolver.functional.channel_pressure_adjoint"
+  "pssolver.functional.channel_pressure_adjoint",
+  "pssolver.runtime.package_construction",
+  "pssolver.runtime.simulation_construction"
  ],
  "new_modules": {
   "pssolver.configuration.legacy_channel": {
    "required_units": [
-    "translate_channel",
-    "restore_channel_state"
+    "translate_channel"
    ],
    "authority": "design §3.2"
   },
@@ -230,16 +231,16 @@
   {
    "unit": "CHANNEL_Q_BOUNDARY_CONDITIONS",
    "source": "pssolver/models/active_nematics/channel_stokes.py:CHANNEL_Q_BOUNDARY_CONDITIONS",
-   "target": "pssolver/configuration/legacy_channel.py",
+   "target": "pssolver/models/active_nematics/fields.py",
    "source_ast_sha256": "827edf176b295db58e1ff0312c8a6dc6f14233297f5a71b96a797f43c49dc3c0",
-   "authority": "design §3.2 Channel boundary constants used by the translator"
+   "authority": "R-0106: tensor-free Channel basis declarations stay in the models layer (public names of pssolver.models.active_nematics unchanged)"
   },
   {
    "unit": "CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS",
    "source": "pssolver/models/active_nematics/channel_stokes.py:CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS",
-   "target": "pssolver/configuration/legacy_channel.py",
+   "target": "pssolver/models/active_nematics/fields.py",
    "source_ast_sha256": "2ee5ea837997740213f7b1514219f2fa76761c04b3fac10b6ea3722d75654044",
-   "authority": "design §3.2 Channel boundary constants used by the translator"
+   "authority": "R-0106: tensor-free Channel basis declarations stay in the models layer (public names of pssolver.models.active_nematics unchanged)"
   },
   {
    "unit": "ChannelBerisEdwardsObservation",
@@ -440,6 +441,10 @@
   "ARCHITECTURE.md": "modify: design §6 architecture map",
   "MANIFEST.in": "modify: design §6 packaging",
   "tools/check.py": "modify: design §6 engineering gate (exact-moves reader)",
+  "pssolver/configuration/package_construction.py": "modify: R-0106: _IMPLEMENTATION_BUILDERS[CHANNEL_COMPLETE_STRESS] = 'pssolver.engine.engine.Engine' and _PACKAGE_FACTORY = 'pssolver.runtime.legacy_entry.run_v04_translation' (single literals)",
+  "pssolver/configuration/plane_beris_edwards.py": "modify: R-0106: drop the two retired runtime construction modules from the implementation file list",
+  "pssolver/models/active_nematics/__init__.py": "modify: R-0106: import the two Channel boundary constants from .fields (names and __all__ unchanged)",
+  "pssolver/models/active_nematics/fields.py": "modify: R-0106: receives the two Channel boundary constants (exact moves)",
   "pssolver/configuration/legacy_channel.py": "add: design §3.2 Channel translator + carrier",
   "pssolver/runtime/channel_observations.py": "add: design §3.3 Channel observations and capture",
   "pssolver/applications/channel_beris_edwards.py": "delete: design §5 S-28a deletion",
@@ -450,7 +455,9 @@
   "pssolver/configuration/public_channel_beris_edwards_compiler.py": "delete: design §5 S-28a deletion",
   "pssolver/models/active_nematics/channel_stokes.py": "delete: design §5 S-28a deletion",
   "pssolver/functional/channel_pressure.py": "delete: design §5 S-28a deletion",
-  "pssolver/functional/channel_pressure_adjoint.py": "delete: design §5 S-28a deletion"
+  "pssolver/functional/channel_pressure_adjoint.py": "delete: design §5 S-28a deletion",
+  "pssolver/runtime/package_construction.py": "delete: design §5 S-28a deletion",
+  "pssolver/runtime/simulation_construction.py": "delete: design §5 S-28a deletion"
  },
  "changed_path_classes": [
   {
@@ -487,6 +494,119 @@
   "tests/baselines/s26/*",
   "tests/fixtures/*",
   "benchmarks/*"
+ ],
+ "required_units_modified": {
+  "pssolver.runtime.legacy_entry": [
+   "restore_channel_state"
+  ],
+  "authority": "R-0107: restore beside restore_plane_state (runtime layer; no configuration -> engine edge)"
+ },
+ "planned_edges": [
+  {
+   "source": "pssolver.runtime.legacy_entry",
+   "destination": "pssolver.configuration.legacy_channel",
+   "authority": "design §3.1 Channel branch"
+  },
+  {
+   "source": "pssolver.runtime.legacy_entry",
+   "destination": "pssolver.runtime.channel_observations",
+   "authority": "design §3.1 ChannelCapture"
+  },
+  {
+   "source": "pssolver.runtime.legacy_entry",
+   "destination": "pssolver.engine.engine",
+   "authority": "design §3.1 Engine (reviewed pair)"
+  },
+  {
+   "source": "pssolver.runtime.legacy_entry",
+   "destination": "pssolver.engine.state",
+   "authority": "R-0107 restore_channel_state (reviewed pair)"
+  },
+  {
+   "source": "pssolver.runtime.legacy_entry",
+   "destination": "pssolver.engine.progress",
+   "authority": "R-0107 restore progress (reviewed pair)"
+  },
+  {
+   "source": "pssolver.engine.engine",
+   "destination": "pssolver.engine.constraints",
+   "authority": "design §2.3"
+  },
+  {
+   "source": "pssolver.engine.constraints",
+   "destination": "pssolver.linear_solvers.stokes.channel_no_slip",
+   "authority": "design §2.3 ChannelStokesConstraint"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.planning.assemble",
+   "authority": "design §3.2 translator"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.planning.engine_plan",
+   "authority": "R-0107 translation product"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.io.checkpoint",
+   "authority": "design §3.2 carrier"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.io.engine_state",
+   "authority": "R-0107 restart preflight"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.presets.beris_edwards",
+   "authority": "design §3.2 translator preset"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.models.active_nematics.fields",
+   "authority": "R-0106 constants"
+  },
+  {
+   "source": "pssolver.runtime.channel_observations",
+   "destination": "pssolver.engine.field_view",
+   "authority": "design §3.3"
+  },
+  {
+   "source": "pssolver.runtime.channel_observations",
+   "destination": "pssolver.run_metadata",
+   "authority": "design §3.3"
+  },
+  {
+   "source": "pssolver.runtime.channel_observations",
+   "destination": "pssolver.errors",
+   "authority": "design §3.3"
+  },
+  {
+   "source": "pssolver.functional.channel_activity_runtime",
+   "destination": "pssolver.configuration.legacy_channel",
+   "authority": "design §4 translator"
+  },
+  {
+   "source": "pssolver.functional.channel_activity_runtime",
+   "destination": "pssolver.engine.engine",
+   "authority": "design §4 Engine pure step"
+  },
+  {
+   "source": "pssolver.functional.channel_activity_runtime",
+   "destination": "pssolver.engine.state",
+   "authority": "design §4 Engine state"
+  },
+  {
+   "source": "pssolver.workflows",
+   "destination": "pssolver.configuration.legacy_channel",
+   "authority": "design §3.2 checkpoint re-exports"
+  },
+  {
+   "source": "pssolver.models.active_nematics",
+   "destination": "pssolver.models.active_nematics.fields",
+   "authority": "R-0106 constants re-export"
+  }
  ],
  "forbid": {
   "io": [
@@ -591,6 +711,51 @@
    "source": "pssolver.runtime.channel_observations",
    "destination": "pssolver.errors",
    "authority": "design §3.3 observation errors"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.io.checkpoint_identity",
+   "owners": [
+    "ChannelBerisEdwardsCheckpointHeader",
+    "_channel_backend_restart_identity",
+    "_channel_state_layout_identity",
+    "_channel_state_layout_identity_from_metadata",
+    "_legacy_channel_format_for_generation",
+    "_validate_legacy_channel_upgrade_contract",
+    "build_channel_checkpoint_compatibility_identity",
+    "channel_forward_dynamics_identity",
+    "read_channel_beris_edwards_checkpoint_header",
+    "upgrade_channel_beris_edwards_checkpoint_directory"
+   ],
+   "authority": "R-0107: import closure of the exact-moved checkpoint carrier and identity functions (definition module; same pair reviewed for legacy_periodic and legacy_plane)"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.linear_solvers.stokes._pressure_policy",
+   "owners": [
+    "channel_forward_dynamics_identity"
+   ],
+   "authority": "R-0107: channel_pressure_policy_metadata is defined only in _pressure_policy; the exact-moved identity function calls it"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.planning.engine_plan",
+   "authority": "R-0107 planned: Channel translation product (as legacy_periodic -> planning.engine_plan, reviewed)"
+  },
+  {
+   "source": "pssolver.configuration.legacy_channel",
+   "destination": "pssolver.io.engine_state",
+   "authority": "R-0107 planned: Channel restart preflight (as legacy_periodic -> io.engine_state, reviewed)"
+  },
+  {
+   "source": "pssolver.functional.channel_activity_runtime",
+   "destination": "pssolver.engine.engine",
+   "authority": "R-0107 planned: 1.1 Channel runtime on the Engine (as functional.periodic_activity, reviewed)"
+  },
+  {
+   "source": "pssolver.functional.channel_activity_runtime",
+   "destination": "pssolver.engine.state",
+   "authority": "R-0107 planned: 1.1 Channel runtime state (as functional.periodic_activity, reviewed)"
   }
  ],
  "torch_free_modules": [
@@ -737,6 +902,6 @@
   "tables": "qualification/s28a_tables.json"
  },
  "installation_removes": [],
- "revision": "s28a r1.0 (T-0022)",
- "gate_sha256": "2f80a130ef29f6b752093803163aaf45346c32a060ccfe1c2756d55460f36679"
+ "revision": "s28a r1.2 (R-0107: move import closure edges; planned edges; restore_channel_state in legacy_entry)",
+ "gate_sha256": "0827966299cde9004d935dded34efa54a7f0a2d5cca8614384046726a0bbec4f"
 }

@@ -27,7 +27,6 @@ from pssolver import (
     TorchSpectralExecution,
     compile_simulation,
 )
-from pssolver.applications.channel_beris_edwards import load_channel_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -36,6 +35,7 @@ from pssolver.boundaries import (
     no_slip_velocity,
 )
 from pssolver.configuration import create_plane_beris_edwards_run_spec
+from pssolver.configuration.legacy_channel import load_channel_initial_q, translate_channel
 from pssolver.configuration.legacy_periodic import translate_periodic
 from pssolver.configuration.legacy_plane import load_plane_checkpoint as load_plane_checkpoint
 from pssolver.configuration.legacy_plane import translate_plane
@@ -57,18 +57,15 @@ from pssolver.models.active_nematics import (
     VELOCITY_COMPONENTS,
     CompleteStressBerisEdwards,
 )
-from pssolver.runtime.channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
-from pssolver.runtime.legacy_entry import restore_periodic_state, restore_plane_state
-from pssolver.workflows.channel_beris_edwards import (
-    _load_checkpoint,
+from pssolver.runtime.legacy_entry import (
+    restore_channel_state,
+    restore_periodic_state,
+    restore_plane_state,
 )
 
 
-# Explicit re-export used by historical_continuations.
-load_channel_complete_stress_checkpoint = _load_checkpoint
+def load_channel_complete_stress_checkpoint(directory, handle, *, run_spec):
+    return restore_channel_state(handle.engine, handle.state, directory, run_spec=run_spec)
 
 CONTINUATION_TOLERANCE_EPS_MULTIPLIER = 8.0
 
@@ -344,14 +341,12 @@ def build_channel_complete_stress(root: Path):
     compiled = compile_simulation(channel_simulation(root))
     run_spec = compiled.application_request
     initial, _, _ = load_channel_initial_q(run_spec)
-    adapter = build_channel_beris_edwards_runtime(
-        ChannelBerisEdwardsRuntimeBuildRequest(
-            run_spec=run_spec,
-            initial_values=initial,
-            device="cpu",
-        )
-    )
-    return run_spec, adapter
+    engine = Engine(translate_channel(run_spec), device="cpu", dtype=torch.float64)
+    return run_spec, _PlaneFixtureState(engine, engine.initial_state(initial))
+
+
+def advance_channel(handle):
+    handle.engine.step_(handle.state)
 
 
 @dataclass
@@ -414,8 +409,8 @@ def _field_records(adapter, components: tuple[str, ...]) -> dict[str, object]:
         records[name] = _tensor_record(adapter.fields[name])
         records[f"{name}.hat"] = _tensor_record(adapter.fields[f"{name}.hat"])
     records["completed_steps"] = adapter.completed_steps
-    records["integrator_step_count"] = int(adapter.solver.integrator.step_count)
-    records["integrator_refresh_count"] = int(adapter.solver.integrator.refresh_count)
+    records["integrator_step_count"] = int(adapter.state.refresh_phase[0])
+    records["integrator_refresh_count"] = int(adapter.state.refresh_phase[1])
     return records
 
 
@@ -443,7 +438,7 @@ def channel_complete_continuation_records(adapter) -> dict[str, object]:
         adapter,
         (*tuple(Q_COMPONENTS), *tuple(VELOCITY_COMPONENTS), "p"),
     )
-    records["pressure_guess"] = _tensor_record(adapter.capture_pressure_guess())
+    records["pressure_guess"] = _tensor_record(adapter.state.solver["pressure_guess"])
     return records
 
 

@@ -2,6 +2,22 @@
 
 from importlib import import_module as _import_module
 
+from pssolver.configuration.legacy_channel import (
+    CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_CHECKPOINT_VERSION,
+)
+from pssolver.configuration.legacy_channel import (
+    LEGACY_CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION,
+)
+from pssolver.configuration.legacy_channel import (
+    LEGACY_CHECKPOINT_VERSION_V1 as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION_V1,
+)
+from pssolver.configuration.legacy_channel import (
+    ChannelBerisEdwardsCheckpointHeader,
+    build_channel_checkpoint_compatibility_identity,
+    channel_forward_dynamics_identity,
+    read_channel_beris_edwards_checkpoint_header,
+    upgrade_channel_beris_edwards_checkpoint_directory,
+)
 from pssolver.configuration.legacy_periodic import (
     build_periodic_checkpoint_compatibility_identity,
     periodic_forward_dynamics_identity,
@@ -50,23 +66,6 @@ from pssolver.runtime.plane_observations import (
     capture_plane_observation,
     write_plane_diagnostics,
     write_plane_observation,
-)
-
-from .channel_beris_edwards import (
-    CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_CHECKPOINT_VERSION,
-)
-from .channel_beris_edwards import (
-    LEGACY_CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION,
-)
-from .channel_beris_edwards import (
-    LEGACY_CHECKPOINT_VERSION_V1 as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION_V1,
-)
-from .channel_beris_edwards import (
-    ChannelBerisEdwardsCheckpointHeader,
-    build_channel_checkpoint_compatibility_identity,
-    channel_forward_dynamics_identity,
-    read_channel_beris_edwards_checkpoint_header,
-    upgrade_channel_beris_edwards_checkpoint_directory,
 )
 
 

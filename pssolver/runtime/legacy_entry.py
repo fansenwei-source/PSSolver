@@ -8,6 +8,7 @@ import json
 import platform
 from collections.abc import Iterable
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import torch
@@ -25,6 +26,15 @@ from pssolver.configuration.execution_device import (
     execution_device_normalization,
     resolve_execution_device,
     scoped_tf32_execution,
+)
+from pssolver.configuration.legacy_channel import (
+    ChannelBerisEdwardsRunSpec,
+    load_channel_initial_q,
+    read_channel_beris_edwards_checkpoint_progress,
+    translate_channel,
+)
+from pssolver.configuration.legacy_channel import (
+    _load_checkpoint as load_v04_channel_checkpoint,
 )
 from pssolver.configuration.legacy_periodic import (
     PeriodicBerisEdwardsRunSpec,
@@ -59,7 +69,7 @@ from pssolver.engine.progress import (
 from pssolver.engine.state import State
 from pssolver.errors import SimulationRestartError
 from pssolver.io import engine_state
-from pssolver.io.checkpoint import CheckpointError
+from pssolver.io.checkpoint import CheckpointError, read_checkpoint_json
 from pssolver.io.legacy.periodic_workflow import load_periodic_checkpoint
 from pssolver.models.active_nematics import (
     BerisEdwardsPointwiseKernels,
@@ -71,6 +81,7 @@ from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.operators.projection import DEALIAS_RULE_FRACTIONS
 from pssolver.planning import TransformKind
 
+from .channel_observations import ChannelCapture
 from .observations import PeriodicCapture
 from .plane_observations import PlaneCapture
 from .runner import Runner, RunResult, RunSchedule
@@ -293,6 +304,11 @@ def run_v04_translation(
 ):
     """Execute one periodic run inside a dynamically scoped TF32 policy."""
 
+    if isinstance(run_spec, ChannelBerisEdwardsRunSpec):
+        return _run_v04_channel_translation(
+            run_spec, progress=progress, emit_metadata=emit_metadata,
+            public_compilation_metadata=public_compilation_metadata,
+        )
     if not isinstance(run_spec, PeriodicBerisEdwardsRunSpec):
         raise TypeError("run_spec must be PeriodicBerisEdwardsRunSpec")
     spec = run_spec.simulation
@@ -323,6 +339,199 @@ def run_v04_translation(
             tf32_metadata=tf32_metadata,
             public_compilation_metadata=public_compilation_metadata,
         )
+
+
+def _channel_restart_error(message, *, reason, step=0, details=None):
+    return SimulationRestartError(
+        message, application_family="channel_complete_stress_beris_edwards",
+        stage="restart_validation", step=step, details={"reason": reason, **(details or {})},
+    )
+
+
+class _ChannelCheckpointDestination:
+    """View of an Engine State for the unchanged format-3 checkpoint reader."""
+
+    def __init__(self, engine, state):
+        self.engine = engine
+        self.state = state
+        self.fields = engine.field_view(state)
+        self.solver = SimpleNamespace(
+            integrator=SimpleNamespace(spectral_refresh_interval=engine.plan.integrator.refresh_interval)
+        )
+
+    def capture_pressure_guess(self):
+        return self.state.solver["pressure_guess"]
+
+    def restore_pressure_guess(self, value):
+        target = self.fields["p.hat"]
+        if not isinstance(value, torch.Tensor):
+            raise TypeError("pressure_guess must be a tensor")
+        if value.shape != target.shape or value.dtype != target.dtype:
+            raise ValueError("pressure_guess does not match the Channel runtime")
+        if not bool(torch.isfinite(value).all().item()):
+            raise ValueError("pressure_guess must be finite")
+        self.state.solver = {
+            "pressure_guess": value.detach().clone(),
+            "pressure_guess_action": None,
+            "pressure_guess_action_exponent": None,
+        }
+
+    def backend_restart_metadata(self):
+        cache = self.engine.explicit.q_gradient_cache
+        return {
+            "kind": "channel_complete_stress_pressure_pcg",
+            "state_keys": ["pressure_guess"],
+            "reconstructed_state_keys": ["q_gradient_cache"] if cache is not None else [],
+        }
+
+    def restore_progress(
+        self, *, completed_steps, spectral_refresh_interval, integrator_step_count, integrator_refresh_count
+    ):
+        expected = _refresh_counters_from_completed_steps(
+            completed_steps, self.engine.plan.integrator.refresh_interval
+        )
+        if (
+            spectral_refresh_interval != self.engine.plan.integrator.refresh_interval
+            or (integrator_step_count, integrator_refresh_count) != expected
+        ):
+            raise ValueError("restored Channel refresh counters differ")
+        self.state.completed_steps = completed_steps
+        self.state.refresh_phase = expected
+        self.state.constrained_current = True
+
+    def restore_derived_state(self):
+        return self.engine.constraint.term.rebuild_q_gradient_cache(self.fields)
+
+
+def restore_channel_state(engine, state, checkpoint, *, run_spec):
+    """Restore stored Q, velocity, pressure and guess without a new solve."""
+    if not isinstance(engine, Engine) or engine.plan.geometry.kind != "rectangular_channel":
+        raise TypeError("Channel restore requires a Channel Engine")
+    if not isinstance(state, State):
+        raise TypeError("Channel restore requires an Engine State")
+    return load_v04_channel_checkpoint(
+        checkpoint, _ChannelCheckpointDestination(engine, state), run_spec=run_spec
+    )
+
+
+def _run_v04_channel_translation(
+    run_spec, *, progress=None, emit_metadata=False, public_compilation_metadata=None,
+):
+    spec = run_spec.simulation
+    device_name = spec.execution.options["device"]
+    metadata = {
+        "schema_version": 1,
+        "application": "channel_complete_stress_beris_edwards",
+        "configuration": spec.to_metadata(),
+        "configuration_sha256": spec.canonical_sha256(),
+        "runtime_identity_sha256": run_spec.runtime_identity_sha256(),
+        "runtime_selection": {
+            "requested": run_spec.runtime_path, "effective": run_spec.runtime_path,
+            "fallback_allowed": False, "fallback_used": False,
+        },
+        "normalization": execution_device_normalization(device_name),
+        "pressure_gauge": "zero_mean",
+        "velocity_nullspace": "absent_due_to_two_bounded_no_slip_axes",
+    }
+    if public_compilation_metadata is not None:
+        metadata["public_compilation"] = dict(public_compilation_metadata)
+    dtype = getattr(torch, spec.numerics.precision.value)
+    tf32 = spec.execution.options["tf32"]
+    if emit_metadata:
+        print(json.dumps(metadata, indent=2, sort_keys=True))
+    if run_spec.dry_run:
+        configure_tf32_execution(tf32, real_dtype=dtype, device=device_name)
+        return None
+    device = resolve_execution_device(device_name)
+    with scoped_tf32_execution(tf32, real_dtype=dtype, device=device) as tf32_metadata:
+        metadata["precision"] = {
+            "real_dtype": spec.numerics.precision.value,
+            "spectral_dtype": "complex64" if dtype == torch.float32 else "complex128",
+            **tf32_metadata,
+        }
+        options = spec.workflow.options
+        restart = options["restart_from"]
+        plan = translate_channel(run_spec)
+        start = 0
+        new_checkpoint = False
+        restart_header = None
+        if restart is not None:
+            try:
+                header = read_checkpoint_json(
+                    Path(restart) / "checkpoint.json", operation="complete_stress_channel_checkpoint_import"
+                )
+                new_checkpoint = header.get("format_kind") == "engine_state"
+                if new_checkpoint:
+                    restart_header = engine_state.read_header(
+                        restart, plan_identity_sha256=plan.identity_sha256, dtype=dtype, batch=1
+                    )
+                    start = restart_header["completed_steps"]
+                else:
+                    start = read_channel_beris_edwards_checkpoint_progress(restart)
+            except CheckpointError:
+                raise
+            except (OSError, TypeError, ValueError) as exc:
+                raise _channel_restart_error(
+                    str(exc) or "Channel checkpoint preflight failed",
+                    reason="checkpoint_preflight_failed",
+                    details={"legacy_exception_type": type(exc).__name__},
+                ) from exc
+            if options["save_start_step"] > start + spec.workflow.steps:
+                raise _channel_restart_error(
+                    "save_start_step must not exceed the absolute final step",
+                    reason="save_start_step_after_final_step", step=start,
+                    details={"save_start_step": options["save_start_step"],
+                             "absolute_final_step": start + spec.workflow.steps},
+                )
+        initial, path, sha = load_channel_initial_q(run_spec)
+        metadata["initial_condition"] = {
+            "source": str(path), "sha256": sha, "logical_mode": spec.initial_condition.parameters["mode"]
+        }
+        output = run_spec.output_dir.expanduser().resolve()
+        if output.exists() and any(output.iterdir()):
+            raise FileExistsError(f"refusing nonempty Channel output: {output}")
+        engine = Engine(plan, device=device, dtype=dtype)
+        diagnostics = {}
+        if new_checkpoint:
+            state = engine_state.read(
+                restart, plan_identity_sha256=plan.identity_sha256, dtype=dtype, batch=1, device=device
+            )
+            diagnostics.update(
+                restart_header["run_provenance"].get("channel_constraint_diagnostics", {})
+            )
+            engine._restore_channel_state_layout(state)
+        else:
+            state = engine.initial_state(
+                {name: value.to(device=device) for name, value in initial.items()}, diagnostics=diagnostics
+            )
+            if restart is not None:
+                start = restore_channel_state(engine, state, restart, run_spec=run_spec)
+        metadata["runtime_construction"] = {
+            "plan_identity_sha256": plan.identity_sha256,
+            "engine": "pssolver.engine.engine.Engine",
+        }
+        metadata["runtime"] = {
+            "requested": run_spec.runtime_path, "effective": run_spec.runtime_path,
+            "adapter": "Engine", "fallback_used": False, "pressure_gauge": "zero_mean",
+            "velocity_nullspace": "absent_due_to_two_bounded_no_slip_axes",
+            "pressure_warm_start": True, "pressure_diagnostics_schema_version": 2,
+            "pressure_solver_policy": engine.constraint.term.pressure_solver.pressure_convergence_policy(),
+        }
+        runner = Runner(
+            engine,
+            schedule=RunSchedule(
+                spec.workflow.steps, options["save_interval"], options["save_start_step"],
+                options["diagnostics"], options["diagnostic_interval"], options["checkpoint_interval"],
+            ),
+            output_directory=output,
+            capture=ChannelCapture(
+                engine.projector, hydrodynamics=options["save_hydrodynamics"],
+                checkpoint_diagnostics=lambda: dict(runner.constraint_diagnostics),
+            ),
+            metadata=metadata,
+        )
+        runner.constraint_diagnostics.update(diagnostics)
+        return runner.run(state, start_step=start, progress=progress)
 
 
 def _reject_plane_restart(

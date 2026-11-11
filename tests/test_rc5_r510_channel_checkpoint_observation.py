@@ -25,7 +25,7 @@ from pssolver.boundaries import (
 )
 from pssolver.geometries import RectangularChannel
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.workflows.channel_checkpoint_observation import (
+from pssolver.runtime.channel_observations import (
     capture_synchronized_pressure_guess,
 )
 

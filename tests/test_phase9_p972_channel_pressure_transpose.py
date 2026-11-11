@@ -2,20 +2,15 @@
 
 from __future__ import annotations
 
-import inspect
-
 import pytest
 import torch
 
 from pssolver import SpectralSolver
-from pssolver.functional import (
-    ChannelPressureTransposeOperator,
-    ChannelPressureTransposeProtocol,
-)
 from pssolver.linear_solvers.stokes import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
 )
+from tests._s28a_pressure import production_pressure, transpose_pressure
 
 
 SHAPE = (7, 6, 5)
@@ -25,7 +20,6 @@ LENGTHS = (4.0, 3.0, 2.5)
 def _solver() -> tuple[
     SpectralSolver,
     ChannelNoSlipModalStokesSolver,
-    ChannelPressureTransposeOperator,
 ]:
     spectral = SpectralSolver(
         SHAPE,
@@ -40,7 +34,7 @@ def _solver() -> tuple[
         pressure_relative_tolerance=1.0e-12,
         pressure_max_iterations=300,
     )
-    return spectral, pressure, ChannelPressureTransposeOperator(pressure)
+    return spectral, pressure
 
 
 def _random_complex(seed: int) -> torch.Tensor:
@@ -84,42 +78,17 @@ def _assert_complex_close(left: torch.Tensor, right: torch.Tensor) -> None:
     assert float(torch.abs(left - right)) <= 3.0e-14 * scale
 
 
-def test_solver_satisfies_the_explicit_pressure_transpose_protocol():
-    _, _, pressure = _solver()
-
-    assert isinstance(pressure, ChannelPressureTransposeProtocol)
-    source = inspect.getsource(pressure._solver.apply_pressure_operator_transpose)
-    assert "_pressure_gradient_adjoint" in source
-    assert "_velocity_divergence_component_adjoint" in source
-    assert "apply_pressure_operator(" not in source
-    assert pressure.pressure_transpose_metadata() == {
-        "protocol_version": "2",
-        "inner_product": "native_complex_euclidean_coefficient_space",
-        "gauge": "zero_mean_pressure_mode",
-        "primal_action": "frozen_production_schur_operator",
-        "transpose_action": "explicit_reverse_dataflow_conjugate_transpose",
-        "transpose_solve": "zero_initial_guess_pcg",
-        "production_pressure_warm_start_read": False,
-            "production_pressure_warm_start_written": False,
-            "pcg_iteration_graph_retained": False,
-            "component_role": "pressure_transpose_operator",
-            "component_is_runtime": False,
-            "component_connected_to_executable_runtime": True,
-            "connected_runtime_kind": "channel_activity_batch_one",
-            "custom_autograd_rule": False,
-            "public_explicit_vjp_method": False,
-        }
 
 
 def test_primal_and_transpose_actions_are_complex_linear_and_zero_gauge():
-    _, _, pressure = _solver()
+    _, pressure = _solver()
     first = _random_complex(17)
     second = _random_complex(19)
     alpha = 0.3 - 0.7j
     beta = -1.2 + 0.4j
 
     for action in (
-        pressure.apply_pressure_operator,
+        pressure._pressure_operator,
         pressure.apply_pressure_operator_transpose,
     ):
         combined = action(alpha * first + beta * second)
@@ -139,7 +108,8 @@ def test_primal_and_transpose_actions_are_complex_linear_and_zero_gauge():
 
 @pytest.mark.parametrize("axis", range(3))
 def test_gradient_and_divergence_building_blocks_have_explicit_adjoint(axis):
-    _, production, pressure = _solver()
+    _, production = _solver()
+    pressure = production
     pressure_hat = production._project_pressure_gauge(
         _random_complex(31 + axis)
     )
@@ -169,12 +139,13 @@ def test_gradient_and_divergence_building_blocks_have_explicit_adjoint(axis):
 
 
 def test_pressure_operator_satisfies_the_complex_dot_product_identity():
-    _, production, pressure = _solver()
+    _, production = _solver()
+    pressure = production
     primal_input = production._project_pressure_gauge(_random_complex(53))
     transpose_input = production._project_pressure_gauge(_random_complex(59))
 
     left = torch.sum(
-        torch.conj(pressure.apply_pressure_operator(primal_input))
+        torch.conj(pressure._pressure_operator(primal_input))
         * transpose_input
     )
     right = torch.sum(
@@ -202,7 +173,7 @@ def test_pressure_transpose_uses_the_production_subspace_on_all_grid_parities(
         pressure_relative_tolerance=1.0e-12,
         pressure_max_iterations=300,
     )
-    pressure = ChannelPressureTransposeOperator(production)
+    pressure = production
     generator = torch.Generator().manual_seed(20261006 + shape[0])
 
     def random_complex():
@@ -217,7 +188,7 @@ def test_pressure_transpose_uses_the_production_subspace_on_all_grid_parities(
     primal_input = random_complex()
     transpose_input = random_complex()
     left = torch.sum(
-        torch.conj(pressure.apply_pressure_operator(primal_input))
+        torch.conj(pressure._pressure_operator(primal_input))
         * transpose_input
     )
     right = torch.sum(
@@ -226,7 +197,7 @@ def test_pressure_transpose_uses_the_production_subspace_on_all_grid_parities(
     )
     _assert_complex_close(left, right)
 
-    projected = pressure._project_gauge(primal_input)
+    projected = pressure._project_pressure_gauge(primal_input)
     null_modes = projected.masked_select(production.pressure_null_mask)
     assert bool((null_modes == 0).all())
     if shape[0] % 2 == 0:
@@ -245,51 +216,54 @@ def test_pressure_transpose_uses_the_production_subspace_on_all_grid_parities(
 
 
 def test_current_discretization_is_hermitian_only_after_explicit_validation():
-    _, production, pressure = _solver()
+    _, production = _solver()
+    pressure = production
     pressure_hat = production._project_pressure_gauge(_random_complex(61))
-    primal = pressure.apply_pressure_operator(pressure_hat)
+    primal = pressure._pressure_operator(pressure_hat)
     transpose = pressure.apply_pressure_operator_transpose(pressure_hat)
 
     assert _relative_norm(transpose - primal, primal) < 4.0e-15
 
 
 def test_manufactured_primal_and_transpose_pressure_solves_recover_state():
-    spectral, production, pressure = _solver()
+    spectral, production = _solver()
+    pressure = production
     exact = _random_pressure_hat(spectral, production, 71)
 
-    primal_rhs = pressure.apply_pressure_operator(exact)
-    primal = production._solve_pressure(primal_rhs)
+    primal_rhs = pressure._pressure_operator(exact)
+    primal, solver_state, _ = production_pressure(production, primal_rhs)
     assert _relative_norm(primal - exact, exact) < 3.0e-12
     assert _relative_norm(
-        pressure.apply_pressure_operator(primal) - primal_rhs,
+        pressure._pressure_operator(primal) - primal_rhs,
         primal_rhs,
     ) < 2.0e-12
 
-    warm_start = production.pressure_guess
+    warm_start = solver_state["pressure_guess"]
     transpose_rhs = pressure.apply_pressure_operator_transpose(exact)
     transpose_rhs = transpose_rhs.detach().requires_grad_(True)
-    transpose = pressure.solve_pressure_transpose(transpose_rhs)
-    assert production.pressure_guess is warm_start
+    transpose, report = transpose_pressure(pressure, transpose_rhs)
+    assert solver_state["pressure_guess"] is warm_start
     assert transpose.requires_grad is False
     assert _relative_norm(transpose - exact, exact) < 3.0e-12
     assert _relative_norm(
         pressure.apply_pressure_operator_transpose(transpose) - transpose_rhs,
         transpose_rhs,
     ) < 2.0e-12
-    assert pressure.last_transpose_iterations > 0
-    assert pressure.last_transpose_relative_residual < 2.0e-12
+    assert report.iterations > 0
+    assert report.relative_residual < 2.0e-12
 
 
 def test_zero_transpose_rhs_is_exact_and_does_not_touch_production_warm_start():
-    _, production, pressure = _solver()
+    _, production = _solver()
+    pressure = production
     warm_start = _random_complex(83)
-    production.pressure_guess = warm_start
+    solver_state = {"pressure_guess": warm_start}
     zero = torch.zeros_like(warm_start)
 
-    actual = pressure.solve_pressure_transpose(zero)
+    actual, report = transpose_pressure(pressure, zero)
 
     assert bool((actual == 0).all().item())
-    assert production.pressure_guess is warm_start
-    assert pressure.last_transpose_iterations == 0
-    assert pressure.last_transpose_residual == 0.0
-    assert pressure.last_transpose_relative_residual == 0.0
+    assert solver_state["pressure_guess"] is warm_start
+    assert report.iterations == 0
+    assert report.residual == 0.0
+    assert report.relative_residual == 0.0

@@ -87,6 +87,8 @@ class ExecutionInput:
     q_gradient_reuse: bool = False
     constraint_diagnostics: bool = False
     options: Mapping[str, object] = field(default_factory=dict)
+    constraint_warm_start: str | None = None
+    channel_pressure_options: Mapping[str, object] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,7 +152,7 @@ def _input(value, fields):
 
 def _boundaries(problem):
     geometry = problem.geometry
-    if geometry.kind not in {"periodic_box", "plane_slab"}:
+    if geometry.kind not in {"periodic_box", "plane_slab", "rectangular_channel"}:
         _reject(
             "geometry_not_migrated",
             "geometry awaits migration",
@@ -176,7 +178,11 @@ def _boundaries(problem):
             values = (tuple(boundaries),)
         for value in values:
             _validate_basis(value, geometry.kind)
-    return ("periodic",) * 3 if geometry.kind == "periodic_box" else ("periodic", "periodic", "bounded")
+    return {
+        "periodic_box": ("periodic",) * 3,
+        "plane_slab": ("periodic", "periodic", "bounded"),
+        "rectangular_channel": ("periodic", "bounded", "bounded"),
+    }[geometry.kind]
 
 
 def _validate_basis(boundaries, geometry_kind):
@@ -200,6 +206,11 @@ def _validate_basis(boundaries, geometry_kind):
             ("periodic", "periodic", "neumann"), ("periodic", "periodic", "dirichlet")
         }:
             _reject("incompatible_boundaries", "plane_slab requires a homogeneous mixed basis")
+        if geometry_kind == "rectangular_channel" and (
+            len(boundaries) != 3 or boundaries[0] != "periodic"
+            or any(value not in {"dirichlet", "neumann"} for value in boundaries[1:])
+        ):
+            _reject("incompatible_boundaries", "Channel requires one periodic axis and two wall axes")
 
 
 def _field_basis(problem, name):
@@ -243,6 +254,11 @@ def assemble(problem):
         _reject("refresh_not_supported", "refresh_interval must be positive or None")
     fields = model.fields
     execution = problem.execution
+    channel = problem.geometry.kind == "rectangular_channel"
+    if channel and problem.integrator.refresh_interval is not None:
+        _reject("refresh_not_supported", "Channel refresh must remain disabled", source="P2")
+    if not channel and (execution.constraint_warm_start is not None or execution.channel_pressure_options):
+        _reject("unused_or_missing_execution_option", "Channel pressure options require a Channel")
     linear, explicit, constraints, kernels = [], [], [], {}
     consumed = Counter()
     supports_reuse = False
@@ -325,23 +341,46 @@ def assemble(problem):
                                 ("periodic", "periodic", "neumann"),
                                 ("periodic", "periodic", "dirichlet")) and pressure == ("periodic", "periodic", "neumann"):
                     sig = "periodic^2×free_slip"
+            if channel and term.kind == "stokes":
+                wall_neumann = ("periodic", "neumann", "neumann")
+                wall_dirichlet = ("periodic", "dirichlet", "dirichlet")
+                if (
+                    inputs == ("Q",) and outputs == ("velocity", "pressure")
+                    and _field_basis(problem, "Q") == wall_neumann
+                    and _field_basis(problem, "velocity") == (wall_dirichlet,) * 3
+                    and _field_basis(problem, "pressure") == wall_neumann
+                ):
+                    sig = "periodic×no_slip^2"
             capability = lookup("constraint", (term.kind, sig))
             if capability is None:
                 _reject("missing_constraint_solver", "no constraint solver for this basis")
+            arguments = _arguments(term, execution, consumed)
+            warm_start = "stateless"
+            if sig == "periodic×no_slip^2":
+                warm_start = execution.constraint_warm_start or "previous"
+                if warm_start not in {"previous", "zero"}:
+                    _reject("unused_or_missing_execution_option", "invalid Channel warm-start policy")
+                if set(execution.channel_pressure_options) - {
+                    "pressure_relative_tolerance", "pressure_max_iterations", "pressure_fixed_iterations",
+                }:
+                    _reject("unused_or_missing_execution_option", "unknown Channel pressure option")
+                arguments.update(execution.channel_pressure_options)
             constraints.append(
                 ConstraintPlan(
                     (term.kind, sig),
                     capability.implementation,
                     inputs,
                     outputs,
-                    _arguments(term, execution, consumed),
-                    "stateless",
+                    arguments,
+                    warm_start,
                     capability.adjoint_mode,
                     execution.constraint_diagnostics,
                 )
             )
         else:
             _reject("invalid_linear_expression", "unknown model term")
+    if channel and not any(value.key == ("stokes", "periodic×no_slip^2") for value in constraints):
+        _reject("missing_constraint_solver", "Channel requires the registered no-slip Stokes term")
     if set(consumed) != set(execution.options) or (
         execution.q_gradient_reuse and not supports_reuse
     ):

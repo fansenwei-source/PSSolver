@@ -1,0 +1,1541 @@
+{
+  "basis": "4b720938896af6cae0719569e95be471b33e0935",
+  "frozen_lazy_callers": [
+    {
+      "authority": "R-0105 \u00a74",
+      "chain": [
+        {
+          "line": 198,
+          "module": "pssolver.functional.channel_pressure_adjoint",
+          "name": null
+        }
+      ],
+      "path": "benchmarks/verify_v0_4_s18_r5_pcg_equivalence.py",
+      "replacement": "qualification/s28a_pcg_equivalence.py",
+      "sha256": "bfb38c6c49eed0bbdbdd281200cd791979ab18b0ffb934eff2495e07a130c30e"
+    }
+  ],
+  "modules": {
+    "benchmarks.analyze_rc437_lifting_h100": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc437_lifting_h100.py",
+      "sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 22,
+          "name": "PackageRuntimeConstructionInput",
+          "target": "pssolver.runtime.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 22,
+          "name": "build_package_simulation_runtime",
+          "target": "pssolver.runtime.package_construction"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc437_lifting_h100_recovery": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc437_lifting_h100_recovery.py",
+      "sha256": "56340ecb934a5ed68506b13ab88b6544b8e3a431dd0d2ba522b30dd0179897dd",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 22,
+          "name": "PackageRuntimeConstructionInput",
+          "target": "pssolver.runtime.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 22,
+          "name": "build_package_simulation_runtime",
+          "target": "pssolver.runtime.package_construction"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc458_reserved_memory_recovery": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc458_reserved_memory_recovery.py",
+      "sha256": "3d732f5972589fbad3198cb7bc3baf4c93a7a848889a67624a5746e8a2701087",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc458_tf32_h100": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc458_tf32_h100.py",
+      "sha256": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc458_transform_counter_recovery": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc458_transform_counter_recovery.py",
+      "sha256": "1e096655363c3824b03911c340964cffd92c52c3393b1d5fd0cbe75af856a319",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_cumulative_closure": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc5_g1_cumulative_closure.py",
+      "sha256": "6eb46b0471ebe2a3f27f0c3d448bc966eee8c1ff2da5648aff6311ac9827fa51",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_focused_performance_h100": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+      "sha256": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_h100": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc5_g1_h100.py",
+      "sha256": "6e0453958165ed7239602fefdc7f4c0f23cbdd11efdd1419d14b6b3a8498e994",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_measurement_window_h100": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc5_g1_measurement_window_h100.py",
+      "sha256": "22d9c21bbc44782fbcf88b3cca1d9762299c7404e08c4b4bc847f3a1151510bc",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_timing_instrumentation": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc5_g1_timing_instrumentation.py",
+      "sha256": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc6_single_h100": {
+      "actual": null,
+      "path": "benchmarks/analyze_rc6_single_h100.py",
+      "sha256": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.assemble_rc5_g1_auxiliary": {
+      "actual": null,
+      "path": "benchmarks/assemble_rc5_g1_auxiliary.py",
+      "sha256": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.assemble_rc6_h100_auxiliary": {
+      "actual": null,
+      "path": "benchmarks/assemble_rc6_h100_auxiliary.py",
+      "sha256": "62b24f4d2870c001d3477f30026a5b293e4c495addc02e524cb586c82ddec973",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.build_rc6_single_h100_stage_plan": {
+      "actual": null,
+      "path": "benchmarks/build_rc6_single_h100_stage_plan.py",
+      "sha256": "1732c639efcf36bf3d46b759e4eaef9c189f6ecdcaedddb2d8b380600dbce2e3",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.diagnose_channel_pressure_contract": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'ChannelImplicitPressureAdjoint' from 'pssolver.functional' (<ROOT>/pssolver/functional/__init__.py)"
+      },
+      "path": "benchmarks/diagnose_channel_pressure_contract.py",
+      "sha256": "de2e050ea2ed07380763ff1d458c9de1c0afd6a2c55088e2a1bab3f200253635",
+      "static": []
+    },
+    "benchmarks.diagnose_rc451_cross_runtime_residuals": {
+      "actual": null,
+      "path": "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+      "sha256": "c214e485f459d31296dc58fd9531cbb444636c7f4cf701d5e15405a3f0141d3c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.workflows.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 64,
+          "name": "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE",
+          "target": "pssolver.workflows.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.workflows.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 64,
+          "name": "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER",
+          "target": "pssolver.workflows.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.diagnose_rc4_lifting_correctness": {
+      "actual": null,
+      "path": "benchmarks/diagnose_rc4_lifting_correctness.py",
+      "sha256": "4e50626e4009090d82cfb489cc21da0e876b162dffc19b84546d8c91cf352339",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_rc4_lifting_correctness",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 66,
+          "name": "PackageRuntimeConstructionInput",
+          "target": "pssolver.runtime.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc4_lifting_correctness",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 66,
+          "name": "build_package_simulation_runtime",
+          "target": "pssolver.runtime.package_construction"
+        }
+      ]
+    },
+    "benchmarks.diagnose_rc5_g1_timing_instrumentation": {
+      "actual": null,
+      "path": "benchmarks/diagnose_rc5_g1_timing_instrumentation.py",
+      "sha256": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.profile_rc458_runtime_family": {
+      "actual": null,
+      "path": "benchmarks/profile_rc458_runtime_family.py",
+      "sha256": "b0d4b3d3efab3248eee3328c7f1eaa31d3bfcf30d365a58ae9186404c6670e04",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.profile_rc5_g1_runtime_family": {
+      "actual": null,
+      "path": "benchmarks/profile_rc5_g1_runtime_family.py",
+      "sha256": "040b04fe92456f083e038a4b9fe593a64f5587759dc799a0bf5c4a286ab38b2c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.profile_v0_3_s09_ap_cache_diagnostic": {
+      "actual": null,
+      "path": "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
+      "sha256": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.qualify_plane_static_lifting": {
+      "actual": null,
+      "path": "benchmarks/qualify_plane_static_lifting.py",
+      "sha256": "7c463932a7f4cc1f9eef4d1c337b3bf6c1b20e6743f7389d2fe07448b27d534a",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_plane_static_lifting",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "PackageRuntimeConstructionInput",
+          "target": "pssolver.runtime.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_plane_static_lifting",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "build_package_simulation_runtime",
+          "target": "pssolver.runtime.package_construction"
+        }
+      ]
+    },
+    "benchmarks.qualify_rc437_lifting_cuda": {
+      "actual": null,
+      "path": "benchmarks/qualify_rc437_lifting_cuda.py",
+      "sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 22,
+          "name": "PackageRuntimeConstructionInput",
+          "target": "pssolver.runtime.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.runtime.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 22,
+          "name": "build_package_simulation_runtime",
+          "target": "pssolver.runtime.package_construction"
+        }
+      ]
+    },
+    "benchmarks.qualify_rc458_tf32_scope": {
+      "actual": null,
+      "path": "benchmarks/qualify_rc458_tf32_scope.py",
+      "sha256": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix": {
+      "actual": null,
+      "path": "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py",
+      "sha256": "acaecf9b570a4525f993de3d683a46252ce07b74112ba10ad56e457ddbc70381",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_focused_profile_matrix": {
+      "actual": null,
+      "path": "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+      "sha256": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_measurement_window_profile_matrix": {
+      "actual": null,
+      "path": "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py",
+      "sha256": "478cfcc315939141f59bfb743a31a6a62f7d2e625a655a4755a1d0453090417e",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_paired_block_profile_matrix": {
+      "actual": null,
+      "path": "benchmarks/run_rc5_g1_paired_block_profile_matrix.py",
+      "sha256": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_stage_plan": {
+      "actual": null,
+      "path": "benchmarks/run_rc5_g1_stage_plan.py",
+      "sha256": "97923baed48737246f68348be0b78fc4c869c6d1b53b726070f35a3f175563f7",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_timing_instrumentation": {
+      "actual": null,
+      "path": "benchmarks/run_rc5_g1_timing_instrumentation.py",
+      "sha256": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc6_profile_child": {
+      "actual": null,
+      "path": "benchmarks/run_rc6_profile_child.py",
+      "sha256": "e7967f5e7e6055e40de5124199924580cd8e83baa68509b12b16f9810bf26951",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_rc6_single_h100_stage_plan": {
+      "actual": null,
+      "path": "benchmarks/run_rc6_single_h100_stage_plan.py",
+      "sha256": "28a4cb97fa5324d9f035596c63149e1352f348772eb18a717f6b23f55e4d6551",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe": {
+      "actual": null,
+      "path": "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
+      "sha256": "697267a42521e5599799399d1556ef1073b083fcc77a48335bd7f66e704cb793",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child": {
+      "actual": null,
+      "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
+      "sha256": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot": {
+      "actual": null,
+      "path": "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+      "sha256": "0b8a1244cf0d07262540ce9ff70e2d7fd5419677d4bf905ee596f33ef7e6a744",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_numerical": {
+      "actual": null,
+      "path": "benchmarks/run_v0_3_s09_numerical.py",
+      "sha256": "3e2f95312b271e686ac42ed0c8c3f54f521f3dd5bf17685d8caf9b334c539b9c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 53,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 87,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.v0_2_0_checkpoint_fixtures": {
+      "actual": null,
+      "path": "benchmarks/v0_2_0_checkpoint_fixtures.py",
+      "sha256": "8ac1e229a07c82a606c5e5c9bae2f15f6de4dba778f38c2876b2316183681bce",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 35,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 66,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 66,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.workflows.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "_load_checkpoint",
+          "target": "pssolver.workflows.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.workflows.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "write_channel_beris_edwards_checkpoint",
+          "target": "pssolver.workflows.channel_beris_edwards"
+        }
+      ]
+    },
+    "benchmarks.verify_v0_3_s10_build_fingerprints": {
+      "actual": null,
+      "path": "benchmarks/verify_v0_3_s10_build_fingerprints.py",
+      "sha256": "670476ec175e894f93c7735a0b9325d792333a205fc30c6a2d9edcc7ef16591d",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.applications.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 35,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.applications.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 66,
+          "name": "ChannelBerisEdwardsRuntimeBuildRequest",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.runtime.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 66,
+          "name": "build_channel_beris_edwards_runtime",
+          "target": "pssolver.runtime.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.workflows.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "_load_checkpoint",
+          "target": "pssolver.workflows.channel_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.workflows.channel_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "write_channel_beris_edwards_checkpoint",
+          "target": "pssolver.workflows.channel_beris_edwards"
+        }
+      ]
+    }
+  },
+  "schema": 1
+}

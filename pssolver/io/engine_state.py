@@ -1,4 +1,4 @@
-"""Sealed tensor-only engine checkpoints; plan interpretation stays with the caller."""
+"""Sealed engine checkpoints; plan interpretation stays with the caller."""
 
 from __future__ import annotations
 
@@ -27,6 +27,7 @@ from .checkpoint import (
 
 
 _OP = "engine_state_import"
+_PRESSURE_EXPONENT = "pressure_guess_action_exponent"
 _KEYS = frozenset(
     {
         "format_kind",
@@ -74,7 +75,11 @@ def read_header(directory, *, plan_identity_sha256, dtype, batch):
         raise _compatibility_error("unsupported engine state checkpoint format")
     verify_checkpoint_metadata(metadata, required=True, operation=_OP)
     require_exact_checkpoint_keys(
-        metadata, required=_KEYS, description="engine state", operation=_OP
+        metadata,
+        required=_KEYS,
+        optional={"solver_scalars"},
+        description="engine state",
+        operation=_OP,
     )
     if (
         metadata["plan_identity_sha256"] != plan_identity_sha256
@@ -122,6 +127,31 @@ def read_header(directory, *, plan_identity_sha256, dtype, batch):
     files = metadata["tensor_files"]
     if not isinstance(files, dict) or set(files) != expected:
         raise _compatibility_error("engine checkpoint tensor keys are invalid")
+    if "solver_scalars" in metadata:
+        scalars = metadata["solver_scalars"]
+        if not solver_keys or not isinstance(scalars, dict) or not scalars.keys() <= {
+            _PRESSURE_EXPONENT
+        }:
+            raise _compatibility_error("engine checkpoint solver scalars are invalid")
+        if _PRESSURE_EXPONENT in scalars:
+            exponent = scalars[_PRESSURE_EXPONENT]
+            if batch == 1:
+                valid = exponent is None or type(exponent) is int
+                has_action = exponent is not None
+            else:
+                valid = (
+                    isinstance(exponent, list)
+                    and len(exponent) == batch
+                    and all(value is None or type(value) is int for value in exponent)
+                )
+                has_action = valid and any(value is not None for value in exponent)
+            if (
+                not valid
+                or not {"pressure_guess", "pressure_guess_action"} <= set(solver_keys)
+                or has_action != (files["solver.pressure_guess_action"] is not None)
+                or (has_action and files["solver.pressure_guess"] is None)
+            ):
+                raise _compatibility_error("engine checkpoint pressure cache exponent is invalid")
     for name, record in files.items():
         if record is None and name.startswith("solver."):
             continue
@@ -142,7 +172,13 @@ def write(
         raise ValueError("engine plan metadata and identity differ")
     tensors = {"spectral": state.spectral, "spatial": state.spatial}
     tensors.update((f"history_{index}", value) for index, value in enumerate(state.history))
-    tensors.update((f"solver.{key}", value) for key, value in state.solver.items())
+    solver_tensors = {key: value for key, value in state.solver.items() if key != _PRESSURE_EXPONENT}
+    solver_scalars = (
+        {_PRESSURE_EXPONENT: state.solver[_PRESSURE_EXPONENT]}
+        if _PRESSURE_EXPONENT in state.solver
+        else {}
+    )
+    tensors.update((f"solver.{key}", value) for key, value in solver_tensors.items())
     with checkpoint_directory_transaction(directory, operation="engine_state_export") as (
         tmp,
         target,
@@ -173,9 +209,10 @@ def write(
                 "refresh_phase": list(state.refresh_phase),
                 "constrained_current": state.constrained_current,
                 "history_length": len(state.history),
-                "solver_keys": list(state.solver),
+                "solver_keys": list(solver_tensors),
                 "tensor_files": files,
                 "run_provenance": run_provenance,
+                **({"solver_scalars": solver_scalars} if state.solver else {}),
             }
         )
         (tmp / "checkpoint.json").write_text(
@@ -209,11 +246,20 @@ def read(directory, *, plan_identity_sha256, dtype, batch, device):
         ):
             raise CheckpointIntegrityError(f"engine tensor {name} record mismatch", operation=_OP)
         tensors[name] = torch.from_numpy(np.array(array, copy=True)).to(device=device)
+    solver = {key: tensors[f"solver.{key}"] for key in metadata["solver_keys"]}
+    if "pressure_guess_action" in solver:
+        exponent = metadata.get("solver_scalars", {}).get(_PRESSURE_EXPONENT)
+        if exponent is None:
+            solver["pressure_guess_action"] = None
+        solver[_PRESSURE_EXPONENT] = (
+            tuple(exponent) if isinstance(exponent, list) else
+            ((None,) * batch if batch > 1 else exponent)
+        )
     return State(
         tensors["spectral"],
         tensors["spatial"],
         tuple(tensors[f"history_{index}"] for index in range(metadata["history_length"])),
-        {key: tensors[f"solver.{key}"] for key in metadata["solver_keys"]},
+        solver,
         metadata["completed_steps"],
         tuple(metadata["refresh_phase"]),
         metadata["constrained_current"],

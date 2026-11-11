@@ -7,8 +7,6 @@ functional factory.
 
 from __future__ import annotations
 
-import torch
-
 from pssolver.configuration.execution_device import (
     resolve_allocated_execution_device,
 )
@@ -17,6 +15,9 @@ from pssolver.configuration.public_simulation_runner import (
     compile_public_simulation,
 )
 from pssolver.configuration.simulation import SimulationSpec
+from pssolver.linear_solvers.stokes._pressure_policy import (
+    channel_pressure_policy_metadata,
+)
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
@@ -36,14 +37,7 @@ from .contracts import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
-from .channel_pressure import CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
-from .channel_pressure_adjoint import (
-    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
-)
 from .pressure_metadata import CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
-from pssolver.linear_solvers.stokes._pressure_policy import (
-    channel_pressure_policy_metadata,
-)
 
 
 CHANNEL_ACTIVITY_FUNCTIONAL_KIND = "channel_activity_batch_one"
@@ -52,6 +46,8 @@ CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT = (
 )
 CHANNEL_FUNCTIONAL_PRESSURE_WARM_START = "disabled_in_functional_path"
 _ACTIVITY_NAME = "activity"
+_PRESSURE_TRANSPOSE_PROTOCOL_VERSION = "2"
+_PRESSURE_IMPLICIT_ADJOINT_VERSION = "2"
 
 
 def channel_activity_functional_capabilities() -> FunctionalCapabilitySet:
@@ -102,9 +98,9 @@ def channel_functional_pressure_identity(
         "production_warm_start_written": False,
         "transpose_action": "explicit_reverse_dataflow_conjugate_transpose",
         "pressure_transpose_protocol": (
-            CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
+            _PRESSURE_TRANSPOSE_PROTOCOL_VERSION
         ),
-        "implicit_adjoint": CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
+        "implicit_adjoint": _PRESSURE_IMPLICIT_ADJOINT_VERSION,
         "gradient": CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
     }
 

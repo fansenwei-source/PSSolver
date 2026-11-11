@@ -20,14 +20,12 @@ from pssolver.engine.progress import (
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
 from pssolver.integrators.state_backed import (
-    StateBackedProjectedIntegratorMixin,
     _integrator_completed_steps,
     _restore_integrator_progress,
 )
 from pssolver.integrators.step_program import (
     ProjectedSemiImplicitEulerStepProgram,
 )
-from pssolver.runtime.channel_beris_edwards import _ChannelProjectedEuler
 from qualification.s25_source_paths import source_path
 from tests.v0_3_s03_successor import resolve_s03_successor
 
@@ -162,20 +160,11 @@ def test_projected_programs_delegate_to_the_same_exact_order_executor():
 
 
 def test_projected_runtimes_inherit_one_inverse_and_refresh_implementation():
-    concrete = (
-        _ChannelProjectedEuler,
-    )
-    for integrator_type in concrete:
-        assert "_inverse_dynamic_spectra" not in integrator_type.__dict__
-        assert "_refresh_dynamic_spectra" not in integrator_type.__dict__
-        assert (
-            integrator_type._inverse_dynamic_spectra
-            is StateBackedProjectedIntegratorMixin._inverse_dynamic_spectra
-        )
-        assert (
-            integrator_type._refresh_dynamic_spectra
-            is StateBackedProjectedIntegratorMixin._refresh_dynamic_spectra
-        )
+    from pssolver.engine import program
+
+    source = inspect.getsource(program.advance)
+    assert "_evolved_transform(" in source
+    assert "_refresh_due_after_next_step(" in source
 
 
 def test_control_facing_functional_paths_remain_byte_identical_to_parent():

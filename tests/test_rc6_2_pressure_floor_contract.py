@@ -27,7 +27,6 @@ from pssolver.configuration.public_simulation_runner import (
     PublicCompilationRejectionCode,
     PublicSimulationCompilationError,
 )
-from pssolver.functional import ChannelPressureTransposeOperator
 from pssolver.geometries import RectangularChannel
 from pssolver.linear_solvers.stokes import (
     ChannelNoSlipModalStokesSolver,
@@ -38,6 +37,7 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
     channel_pressure_active_rms,
 )
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
+from tests._s28a_pressure import production_pressure
 
 
 @pytest.mark.parametrize(
@@ -80,7 +80,6 @@ def test_supported_floor_bounds_recomputed_same_dtype_residual(dtype, shape):
         pressure_max_iterations=2000,
         pressure_fixed_iterations=None,
     )
-    operator = ChannelPressureTransposeOperator(solver)
     complex_dtype = (
         torch.complex64 if dtype is torch.float32 else torch.complex128
     )
@@ -88,12 +87,11 @@ def test_supported_floor_bounds_recomputed_same_dtype_residual(dtype, shape):
         generator = torch.Generator().manual_seed(seed)
         real = torch.randn((1, *shape), generator=generator, dtype=dtype)
         imag = torch.randn((1, *shape), generator=generator, dtype=dtype)
-        rhs = operator._project_gauge(torch.complex(real, imag).to(complex_dtype))
-        solver.pressure_guess = None
+        rhs = solver._project_pressure_gauge(torch.complex(real, imag).to(complex_dtype))
 
-        pressure = solver._solve_pressure(rhs.clone())
-        residual = operator._project_gauge(
-            rhs - operator.apply_pressure_operator(pressure)
+        pressure, _, report = production_pressure(solver, rhs.clone())
+        residual = solver._project_pressure_gauge(
+            rhs - solver._pressure_operator(pressure)
         )
         recomputed = (
             channel_pressure_active_rms(
@@ -106,10 +104,10 @@ def test_supported_floor_bounds_recomputed_same_dtype_residual(dtype, shape):
             ).float64_value
         )
 
-        assert solver.last_pressure_termination_reason == (
+        assert report["termination_reason"] == (
             "relative_tolerance_met"
         )
-        assert solver.last_pressure_relative_residual <= floor
+        assert report["achieved_normalized_residual"] <= floor
         assert recomputed <= floor
 
 

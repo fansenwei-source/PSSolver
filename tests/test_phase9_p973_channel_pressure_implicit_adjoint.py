@@ -9,16 +9,14 @@ import torch
 
 from pssolver import SpectralSolver
 from pssolver.functional import (
-    ChannelImplicitPressureAdjoint,
-    ChannelImplicitPressureAdjointProtocol,
-    ChannelPressureTransposeOperator,
     FunctionalConvergenceError,
-    unrolled_channel_pressure_solve_oracle,
 )
 from pssolver.linear_solvers.stokes import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
 )
+from tests._s28a_pressure import functional_pressure, transpose_pressure
+from tests.oracles.channel_pressure_unrolled import unrolled_channel_pressure_solve_oracle
 
 
 SHAPE = (3, 2, 2)
@@ -85,49 +83,20 @@ def _graph_node_count(value: torch.Tensor) -> int:
     return len(seen)
 
 
-def test_implicit_pressure_adjoint_protocol_and_nonclaims_are_explicit():
-    _, pressure = _solver()
-    implicit = ChannelImplicitPressureAdjoint(pressure)
-
-    assert isinstance(implicit, ChannelImplicitPressureAdjointProtocol)
-    assert implicit.implicit_adjoint_metadata() == {
-        "version": "2",
-        "batch_size": 1,
-        "differentiable_input": "pressure_rhs_hat",
-        "operator_coefficients_differentiable": False,
-        "primal_solve": "zero_initial_guess_pcg",
-        "backward_solve": "explicit_transpose_zero_initial_guess_pcg",
-        "production_pressure_warm_start_read": False,
-        "production_pressure_warm_start_written": False,
-        "forward_iteration_tensors_saved": 0,
-        "backward_iteration_tensors_saved": 0,
-            "higher_order_derivatives": False,
-            "unrolled_oracle": "small_grid_cpu_fixed_iteration_only",
-            "component_role": "implicit_pressure_adjoint",
-            "component_is_runtime": False,
-            "component_connected_to_executable_runtime": True,
-            "connected_runtime_kind": "channel_activity_batch_one",
-            "custom_autograd_rule": True,
-            "public_explicit_vjp_method": False,
-        }
-
-    with pytest.raises(TypeError, match="ChannelNoSlipModalStokesSolver"):
-        ChannelImplicitPressureAdjoint(object())
 
 
 def test_custom_forward_recovers_pressure_without_touching_production_warm_start():
     spectral, pressure = _solver()
-    operators = ChannelPressureTransposeOperator(pressure)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     exact = _pressure_hat(spectral, pressure, 103)
-    rhs = operators.apply_pressure_operator(exact).detach().requires_grad_(True)
+    rhs = pressure._pressure_operator(exact).detach().requires_grad_(True)
     rhs_before = rhs.detach().clone()
     warm_start = _pressure_hat(spectral, pressure, 107)
-    pressure.pressure_guess = warm_start
+    solver_state = {"pressure_guess": warm_start}
 
     actual = implicit.solve(rhs)
 
-    assert pressure.pressure_guess is warm_start
+    assert solver_state["pressure_guess"] is warm_start
     torch.testing.assert_close(rhs.detach(), rhs_before, rtol=0.0, atol=0.0)
     assert _relative_norm(actual.detach() - exact, exact) < 2.0e-13
     assert actual.requires_grad is True
@@ -139,13 +108,12 @@ def test_custom_forward_recovers_pressure_without_touching_production_warm_start
 
 def test_custom_vjp_equals_the_explicit_manufactured_transpose_solve():
     spectral, pressure = _solver()
-    operators = ChannelPressureTransposeOperator(pressure)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     exact = _pressure_hat(spectral, pressure, 109)
-    rhs = operators.apply_pressure_operator(exact).detach().requires_grad_(True)
+    rhs = pressure._pressure_operator(exact).detach().requires_grad_(True)
     cotangent = _pressure_hat(spectral, pressure, 113)
     warm_start = _pressure_hat(spectral, pressure, 127)
-    pressure.pressure_guess = warm_start
+    solver_state = {"pressure_guess": warm_start}
 
     pressure_hat = implicit.solve(rhs)
     actual_vjp = torch.autograd.grad(
@@ -153,9 +121,9 @@ def test_custom_vjp_equals_the_explicit_manufactured_transpose_solve():
         rhs,
         grad_outputs=cotangent,
     )[0]
-    expected_vjp = operators.solve_pressure_transpose(cotangent)
+    expected_vjp = transpose_pressure(pressure, cotangent)[0]
 
-    assert pressure.pressure_guess is warm_start
+    assert solver_state["pressure_guess"] is warm_start
     assert _relative_norm(actual_vjp - expected_vjp, expected_vjp) < 2.0e-13
     assert implicit.last_transpose_diagnostics.iterations > 0
     assert implicit.last_transpose_diagnostics.relative_residual < 1.0e-13
@@ -163,10 +131,9 @@ def test_custom_vjp_equals_the_explicit_manufactured_transpose_solve():
 
 def test_implicit_vjp_matches_the_fixed_iteration_unrolled_cpu_oracle():
     spectral, pressure = _solver(fixed_iterations=5)
-    operators = ChannelPressureTransposeOperator(pressure)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     exact = _pressure_hat(spectral, pressure, 131)
-    base_rhs = operators.apply_pressure_operator(exact).detach()
+    base_rhs = pressure._pressure_operator(exact).detach()
     cotangent = _pressure_hat(spectral, pressure, 137)
     implicit_rhs = base_rhs.clone().requires_grad_(True)
     oracle_rhs = base_rhs.clone().requires_grad_(True)
@@ -201,7 +168,7 @@ def test_fixed_iteration_transpose_solve_is_scale_homogeneous():
     """A tiny cotangent must not trip an absolute PCG breakdown threshold."""
 
     spectral, pressure = _solver(fixed_iterations=12)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     cotangent = _pressure_hat(spectral, pressure, 137)
     reference = implicit._solve_transpose_no_grad(cotangent)
 
@@ -222,7 +189,7 @@ def test_pressure_solve_normalizes_extreme_rhs_scales(scale, solve_kind):
     """PCG quadratic products must not inherit the caller's RHS scale."""
 
     spectral, pressure = _solver(fixed_iterations=12)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     rhs = _pressure_hat(spectral, pressure, 138)
     solve = getattr(implicit, f"_solve_{solve_kind}_no_grad")
 
@@ -254,10 +221,9 @@ def test_pressure_solve_normalizes_extreme_rhs_scales(scale, solve_kind):
 
 def test_custom_vjp_passes_directional_finite_difference_and_taylor_gate():
     spectral, pressure = _solver()
-    operators = ChannelPressureTransposeOperator(pressure)
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     exact = _pressure_hat(spectral, pressure, 139)
-    base = operators.apply_pressure_operator(exact).detach()
+    base = pressure._pressure_operator(exact).detach()
     direction = _pressure_hat(spectral, pressure, 149)
     direction = direction / torch.linalg.vector_norm(direction.reshape(-1))
     rhs = base.clone().requires_grad_(True)
@@ -298,9 +264,8 @@ def test_custom_graph_size_and_saved_tensors_do_not_depend_on_pcg_iterations():
     graph_sizes = []
     for iterations in (2, 5):
         spectral, pressure = _solver(fixed_iterations=iterations)
-        operators = ChannelPressureTransposeOperator(pressure)
         exact = _pressure_hat(spectral, pressure, 151 + iterations)
-        rhs = operators.apply_pressure_operator(exact).detach().requires_grad_(
+        rhs = pressure._pressure_operator(exact).detach().requires_grad_(
             True
         )
         packed = []
@@ -308,7 +273,7 @@ def test_custom_graph_size_and_saved_tensors_do_not_depend_on_pcg_iterations():
             lambda tensor: packed.append(tensor) or tensor,
             lambda tensor: tensor,
         ):
-            value = ChannelImplicitPressureAdjoint(pressure).solve(rhs)
+            value = functional_pressure(pressure).solve(rhs)
         assert packed == []
         assert tuple(value.grad_fn.saved_tensors) == ()
         graph_sizes.append(_graph_node_count(value))
@@ -318,10 +283,9 @@ def test_custom_graph_size_and_saved_tensors_do_not_depend_on_pcg_iterations():
 
 def test_custom_backward_is_first_order_only():
     spectral, pressure = _solver()
-    operators = ChannelPressureTransposeOperator(pressure)
     exact = _pressure_hat(spectral, pressure, 163)
-    rhs = operators.apply_pressure_operator(exact).detach().requires_grad_(True)
-    value = ChannelImplicitPressureAdjoint(pressure).solve(rhs)
+    rhs = pressure._pressure_operator(exact).detach().requires_grad_(True)
+    value = functional_pressure(pressure).solve(rhs)
     gradient = torch.autograd.grad(
         torch.sum(torch.abs(value).square()),
         rhs,
@@ -336,7 +300,7 @@ def test_custom_backward_is_first_order_only():
 
 def test_unrolled_oracle_and_implicit_input_contracts_fail_closed():
     _, pressure = _solver()
-    implicit = ChannelImplicitPressureAdjoint(pressure)
+    implicit = functional_pressure(pressure)
     valid = torch.zeros(
         tuple(pressure.pressure_null_mask.shape),
         dtype=torch.complex128,

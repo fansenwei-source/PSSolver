@@ -13,6 +13,8 @@ from importlib import import_module as _import_module
 
 from pssolver.core._compatibility import (
     facade_dir as _facade_dir,
+)
+from pssolver.core._compatibility import (
     resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
 )
 
@@ -87,38 +89,6 @@ _COMPATIBILITY_EXPORTS.update(
         "channel_activity_functional_request": (
             "pssolver.functional.channel_activity",
             "channel_activity_functional_request",
-        ),
-        "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION": (
-            "pssolver.functional.channel_pressure",
-            "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
-        ),
-        "ChannelPressureTransposeOperator": (
-            "pssolver.functional.channel_pressure",
-            "ChannelPressureTransposeOperator",
-        ),
-        "ChannelPressureTransposeProtocol": (
-            "pssolver.functional.channel_pressure",
-            "ChannelPressureTransposeProtocol",
-        ),
-        "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION": (
-            "pssolver.functional.channel_pressure_adjoint",
-            "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
-        ),
-        "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES": (
-            "pssolver.functional.channel_pressure_adjoint",
-            "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
-        ),
-        "ChannelImplicitPressureAdjoint": (
-            "pssolver.functional.channel_pressure_adjoint",
-            "ChannelImplicitPressureAdjoint",
-        ),
-        "ChannelImplicitPressureAdjointProtocol": (
-            "pssolver.functional.channel_pressure_adjoint",
-            "ChannelImplicitPressureAdjointProtocol",
-        ),
-        "unrolled_channel_pressure_solve_oracle": (
-            "pssolver.functional.channel_pressure_adjoint",
-            "unrolled_channel_pressure_solve_oracle",
         ),
         "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY": (
             "pssolver.functional.channel_activity_runtime",
@@ -252,8 +222,6 @@ _IMPLICIT_SUBMODULE_NAMES = frozenset(
         "channel_activity",
         "channel_activity_runtime",
         "channel_checkpoint",
-        "channel_pressure",
-        "channel_pressure_adjoint",
         "checkpoint_identity",
         "contracts",
         "errors",
@@ -297,9 +265,6 @@ __all__ = [
     "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
     "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
     "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
-    "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
-    "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
-    "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
     "CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION",
     "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY",
     "CHANNEL_ACTIVITY_RUNTIME_STAGE",
@@ -309,8 +274,6 @@ __all__ = [
     "upgrade_channel_functional_checkpoint_directory",
     "ChannelActivityFunctionalRuntime",
     "ChannelActivityFunctionalRuntimeFactory",
-    "ChannelImplicitPressureAdjoint",
-    "ChannelImplicitPressureAdjointProtocol",
     "ChannelPressureSolveDiagnostics",
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
@@ -345,8 +308,6 @@ __all__ = [
     "FunctionalValueError",
     "FunctionalVersionError",
     "FunctionalAPIVersionSelection",
-    "ChannelPressureTransposeOperator",
-    "ChannelPressureTransposeProtocol",
     "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
     "PeriodicActivityCheckpointBridge",
     "build_periodic_functional_checkpoint_identity",
@@ -370,7 +331,6 @@ __all__ = [
     "periodic_activity_functional_request",
     "validate_periodic_activity_gradients",
     "validate_periodic_production_consistency",
-    "unrolled_channel_pressure_solve_oracle",
     "FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS",
     "FUNCTIONAL_COMPATIBILITY_POLICY_VERSION",
     "FUNCTIONAL_CONSTRUCTION_API_VERSIONS",

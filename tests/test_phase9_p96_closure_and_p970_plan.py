@@ -10,7 +10,7 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
 )
-from pssolver.models.active_nematics.channel_stokes import (
+from pssolver.models.active_nematics.fields import (
     CHANNEL_Q_BOUNDARY_CONDITIONS,
 )
 

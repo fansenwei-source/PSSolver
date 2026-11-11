@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 from pathlib import Path
 
 import numpy as np
@@ -18,7 +17,6 @@ from pssolver import (
     TimeStepping,
     TorchSpectralExecution,
 )
-from pssolver.applications.channel_beris_edwards import load_channel_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     neumann_pressure_compatibility,
@@ -27,7 +25,6 @@ from pssolver.boundaries import (
 )
 from pssolver.configuration.public_simulation_runner import (
     PublicSimulationCompilationError,
-    compile_public_simulation,
 )
 from pssolver.functional import (
     CHANNEL_ACTIVITY_RUNTIME_STAGE,
@@ -38,15 +35,7 @@ from pssolver.functional import (
     channel_activity_functional_request,
 )
 from pssolver.geometries import RectangularChannel
-from pssolver.io.checkpoint import seal_checkpoint_metadata
-from pssolver.models.active_nematics import Q_COMPONENTS, CompleteStressBerisEdwards
-from pssolver.runtime.channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
-from pssolver.workflows.channel_beris_edwards import (
-    write_channel_beris_edwards_checkpoint,
-)
+from pssolver.models.active_nematics import CompleteStressBerisEdwards
 from tests._dynamic_flags import set_dynamic_flag
 
 
@@ -171,25 +160,8 @@ def _channel_full_complex_violation(spectral):
     return (spectral - reflected.conj()).abs().max()
 
 
-def _production_adapter(simulation):
-    compiled = compile_public_simulation(simulation.specification)
-    values, _, _ = load_channel_initial_q(compiled.run_spec)
-    adapter = build_channel_beris_edwards_runtime(
-        ChannelBerisEdwardsRuntimeBuildRequest(
-            run_spec=compiled.run_spec,
-            initial_values=values,
-            device="cpu",
-        )
-    )
-    return compiled.run_spec, adapter
 
 
-def _adapter_state(adapter):
-    fields = adapter.fields
-    return (
-        torch.stack(tuple(fields[name] for name in Q_COMPONENTS)),
-        torch.stack(tuple(fields[f"{name}.hat"] for name in Q_COMPONENTS)),
-    )
 
 
 def test_p974_constructs_executable_pure_channel_runtime(tmp_path):
@@ -220,7 +192,7 @@ def test_p974_constructs_executable_pure_channel_runtime(tmp_path):
     assert identity["stage"] == CHANNEL_ACTIVITY_RUNTIME_STAGE
     assert identity["pressure_solver"]["initial_guess"] == "zero_every_call"
     assert identity["pressure_solver"]["production_warm_start_read"] is False
-    assert runtime._flow_model.pressure_guess is None
+    assert runtime._engine.constraint.warm_start == "zero"
 
 
 def test_p974_step_is_input_pure_and_replay_is_bitwise(tmp_path):
@@ -249,11 +221,11 @@ def test_p974_step_is_input_pure_and_replay_is_bitwise(tmp_path):
         torch.equal(first_observations[name], fresh_observations[name])
         for name in first_observations
     )
-    assert runtime._flow_model.pressure_guess is None
+    assert runtime._engine.constraint.warm_start == "zero"
     assert runtime._pressure.last_primal_diagnostics.iterations == 12
     assert np.isfinite(runtime._pressure.last_primal_diagnostics.residual)
-    assert runtime._solver.model.nlmodel.q_gradient_cache is None
-    assert runtime._flow_model.q_gradient_cache is None
+    assert runtime._engine.explicit.q_gradient_cache is None
+    assert runtime._engine.constraint.term.q_gradient_cache is None
 
 
 def test_p974_functional_execution_restores_caller_tf32_state(
@@ -325,27 +297,10 @@ def test_p974_activity_and_state_have_finite_first_order_gradients(tmp_path):
     assert torch.count_nonzero(gradients[-1]) > 0
 
 
-def test_p974_matches_production_first_step_under_zero_pressure_start(tmp_path):
-    simulation, _, runtime = _runtime(tmp_path)
-    run_spec, production = _production_adapter(simulation)
-    del run_spec
-    state = runtime.initial_state()
-    controls = _control(runtime)
-
-    production.solver.model.parameters["alpha"] = controls["activity"]
-    production.solver.model.static_model.pressure_guess = None
-    production.synchronize_for_observation()
-    observations = runtime.observe(state, controls)
-    assert torch.equal(observations["velocity"], production.fields.spatial[5:8])
-    assert torch.equal(observations["pressure"], production.fields.spatial[8])
-
-    expected = runtime.step(state, controls, 0)
-    production.advance(1)
-    _assert_state_equal(expected, _adapter_state(production))
 
 
 def test_p974_checkpoint_round_trip_and_production_import(tmp_path):
-    simulation, _, runtime = _runtime(tmp_path)
+    _, _, runtime = _runtime(tmp_path)
     assert isinstance(runtime.checkpoint_bridge, ChannelActivityCheckpointBridge)
     state = runtime.step(runtime.initial_state(), _control(runtime), 0)
     before = tuple(value.clone() for value in state)
@@ -369,19 +324,6 @@ def test_p974_checkpoint_round_trip_and_production_import(tmp_path):
     )
     assert "checkpoint_compatibility_identity" in metadata["functional_bridge"]
 
-    run_spec, production = _production_adapter(simulation)
-    production.synchronize_for_observation()
-    production_directory = tmp_path / "production_checkpoint"
-    write_channel_beris_edwards_checkpoint(
-        production_directory,
-        production,
-        run_spec=run_spec,
-    )
-    imported_production = runtime.checkpoint_bridge.import_checkpoint(
-        production_directory
-    )
-    _assert_state_equal(imported_production.state, _adapter_state(production))
-    assert imported_production.source_format == "channel_production_v3"
 
 
 def test_p974_checkpoint_rejects_identity_checksum_and_existing_target(
@@ -449,46 +391,6 @@ def test_p974_functional_completed_step_tamper_is_rejected_before_loading(
         runtime.checkpoint_bridge.import_checkpoint(target)
 
 
-@pytest.mark.parametrize(
-    ("mutation", "message"),
-    (
-        ("format_version", "unsupported complete-stress Channel checkpoint"),
-        ("completed_steps", "progress counters differ"),
-        ("backend_files", "backend manifest is incomplete"),
-    ),
-)
-def test_p974_production_import_applies_the_complete_checkpoint_contract(
-    tmp_path,
-    mutation,
-    message,
-):
-    simulation, _, runtime = _runtime(tmp_path)
-    run_spec, production = _production_adapter(simulation)
-    source = tmp_path / "strict_production_source"
-    write_channel_beris_edwards_checkpoint(
-        source,
-        production,
-        run_spec=run_spec,
-    )
-    target = tmp_path / f"strict_production_{mutation}"
-    shutil.copytree(source, target)
-    metadata_path = target / "checkpoint.json"
-    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    if mutation == "format_version":
-        metadata["format_version"] = 99
-    elif mutation == "completed_steps":
-        metadata["completed_steps"] = 7
-    else:
-        del metadata["backend_files"]
-    metadata.pop("metadata_sha256")
-    metadata = seal_checkpoint_metadata(metadata)
-    metadata_path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-    with pytest.raises(ValueError, match=message):
-        runtime.checkpoint_bridge.import_checkpoint(target)
 
 
 def test_p974_rejects_invalid_control_and_terminal_observation_is_q_only(
@@ -551,7 +453,7 @@ def test_pressure_objective_gradient_handles_even_grid_nyquist_cotangents(
     relative_error_limit,
 ):
     _, _, runtime = _runtime(tmp_path)
-    runtime._flow_model.pressure_fixed_iterations = fixed_iterations
+    runtime._engine.constraint.term.pressure_solver.pressure_fixed_iterations = fixed_iterations
     initial_state = runtime.initial_state()
     control = _control(runtime, requires_grad=True)["activity"]
 

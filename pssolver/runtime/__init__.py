@@ -13,12 +13,6 @@ from pssolver.core._compatibility import (
     resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
 )
 
-from .channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeAdapter,
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
-
 
 _PILOT_EXPORTS = {
     name: ("pssolver.experimental.boundary_pilots", name)
@@ -35,7 +29,7 @@ _PILOT_EXPORTS = {
         )
 }
 
-_IMPLICIT_SUBMODULE_NAMES = frozenset({"finite_q_anchoring", "robin_scalar"})
+_IMPLICIT_SUBMODULE_NAMES = frozenset({"channel_observations", "finite_q_anchoring", "robin_scalar"})
 
 
 def __getattr__(name: str) -> object:
@@ -57,9 +51,6 @@ def __dir__() -> list[str]:
 
 
 __all__ = [
-    "ChannelBerisEdwardsRuntimeAdapter",
-    "ChannelBerisEdwardsRuntimeBuildRequest",
-    "build_channel_beris_edwards_runtime",
     "PlaneRobinOperatorCache",
     "PlaneRobinOperatorCacheKey",
     "PlaneRobinScalarCheckpoint",

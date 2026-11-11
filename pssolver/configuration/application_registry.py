@@ -104,13 +104,12 @@ _PERIODIC = ApplicationRegistration(
 _CHANNEL_COMPLETE = ApplicationRegistration(
     "complete_stress_beris_edwards", "rectangular_channel",
     "channel_complete_stress_beris_edwards",
-    "pssolver.configuration.public_channel_beris_edwards_compiler."
-    "compile_channel_beris_edwards_public_simulation",
+    "pssolver.configuration.legacy_channel.compile_channel_beris_edwards_public_simulation",
     True, "channel_complete", ("periodic", "bounded", "bounded"),
     _COMPLETE_CAPABILITIES, ("channel_complete_stress",),
-    "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeBuildRequest",
-    "pssolver.runtime.channel_beris_edwards.build_channel_beris_edwards_runtime",
-    "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeAdapterProtocol",
+    "pssolver.configuration.legacy_channel.ChannelBerisEdwardsRunSpec",
+    "pssolver.engine.engine.Engine",
+    "pssolver.engine.engine.Engine",
     False, "complete-stress Channel construction requires ChannelBerisEdwardsRuntimeBuildRequest",
 )
 

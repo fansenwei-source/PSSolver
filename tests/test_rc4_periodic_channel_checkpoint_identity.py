@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import hashlib
 import json
-from pathlib import Path
 import stat
+from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -21,14 +21,23 @@ from pssolver import (
     TorchSpectralExecution,
     compile_simulation,
 )
-from pssolver.applications.channel_beris_edwards import load_channel_initial_q
-from pssolver.configuration.legacy_periodic import load_periodic_initial_q
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
     neumann_pressure_compatibility,
     neumann_q,
     no_slip_velocity,
+)
+from pssolver.configuration.legacy_channel import (
+    CHECKPOINT_VERSION as CHANNEL_CHECKPOINT_VERSION,
+)
+from pssolver.configuration.legacy_channel import (
+    read_channel_beris_edwards_checkpoint_header,
+    upgrade_channel_beris_edwards_checkpoint_directory,
+)
+from pssolver.configuration.legacy_periodic import (
+    load_periodic_initial_q,
+    upgrade_periodic_checkpoint_directory,
 )
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PeriodicBox, RectangularChannel
@@ -38,24 +47,7 @@ from pssolver.io.checkpoint import (
     seal_checkpoint_metadata,
 )
 from pssolver.io.checkpoint_identity import SourceReleaseGeneration
-from pssolver.models.active_nematics import (
-    CompleteStressBerisEdwards,
-    Q_COMPONENTS,
-    VELOCITY_COMPONENTS,
-)
-from pssolver.runtime.channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
-)
-from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 from pssolver.io.legacy import periodic_workflow as periodic_module
-from pssolver.workflows.channel_beris_edwards import (
-    CHECKPOINT_VERSION as CHANNEL_CHECKPOINT_VERSION,
-    _load_checkpoint as load_channel_checkpoint,
-    read_channel_beris_edwards_checkpoint_header,
-    upgrade_channel_beris_edwards_checkpoint_directory,
-    write_channel_beris_edwards_checkpoint,
-)
 from pssolver.io.legacy.periodic_workflow import (
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_V1,
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
@@ -63,12 +55,22 @@ from pssolver.io.legacy.periodic_workflow import (
     load_periodic_checkpoint,
     write_periodic_checkpoint,
 )
+from pssolver.models.active_nematics import (
+    Q_COMPONENTS,
+    VELOCITY_COMPONENTS,
+    CompleteStressBerisEdwards,
+)
 from tests.v0_5_s25_periodic_v04_checkpoint import (
     capture_periodic_checkpoint,
+    production_handle,
     restore_periodic_checkpoint,
 )
-from pssolver.configuration.legacy_periodic import (
-    upgrade_periodic_checkpoint_directory,
+from tests.v0_5_s28a_channel_v04_checkpoint import (
+    build_channel_production_fixture,
+    write_channel_beris_edwards_checkpoint,
+)
+from tests.v0_5_s28a_channel_v04_checkpoint import (
+    restore_channel_checkpoint as load_channel_checkpoint,
 )
 
 
@@ -224,14 +226,7 @@ def _channel_simulation(tmp_path: Path, nx: int, *, device="cpu"):
 def _channel_runtime(simulation):
     compiled = compile_simulation(simulation)
     run_spec = compiled.application_request
-    initial, _, _ = load_channel_initial_q(run_spec)
-    adapter = build_channel_beris_edwards_runtime(
-        ChannelBerisEdwardsRuntimeBuildRequest(
-            run_spec=run_spec,
-            initial_values=initial,
-            device="cpu",
-        )
-    )
+    adapter = build_channel_production_fixture(run_spec)
     return run_spec, adapter
 
 
@@ -326,7 +321,7 @@ def test_channel_v3_rejects_unregistered_manifest_keys_before_payload_load(
         ),
     )
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards.np.load",
+        "pssolver.configuration.legacy_channel.np.load",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
@@ -509,7 +504,7 @@ def test_m10_rc1_even_channel_rejects_before_tensor_load(tmp_path, monkeypatch):
     write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
     _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC1)
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards.np.load",
+        "pssolver.configuration.legacy_channel.np.load",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
@@ -533,7 +528,7 @@ def test_m11_rc1_odd_channel_rejects_exact_upgrade_before_tensor_load(
     _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC1)
     before = _tree_sha256(directory)
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards.np.load",
+        "pssolver.configuration.legacy_channel.np.load",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
@@ -622,7 +617,7 @@ def test_c2_17_failed_read_only_channel_upgrade_leaves_no_staging(
     modes = _set_tree_read_only(directory)
     target = tmp_path / "upgrade_must_fail"
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards.seal_checkpoint_metadata",
+        "pssolver.configuration.legacy_channel.seal_checkpoint_metadata",
         lambda _metadata: (_ for _ in ()).throw(
             RuntimeError("injected migration metadata failure")
         ),
@@ -667,7 +662,7 @@ def test_unknown_periodic_and_channel_versions_reject_before_tensor_load(
         path.write_text(json.dumps(metadata), encoding="utf-8")
     monkeypatch.setattr(periodic_module, "_load_tensor", lambda *_a: pytest.fail())
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards.np.load",
+        "pssolver.configuration.legacy_channel.np.load",
         lambda *_a: pytest.fail(),
     )
 
@@ -704,7 +699,7 @@ def test_current_identity_digest_tamper_rejects_before_tensor_load(
         path.write_text(json.dumps(metadata), encoding="utf-8")
     monkeypatch.setattr(periodic_module, "_load_tensor", lambda *_a: pytest.fail())
     monkeypatch.setattr(
-        "pssolver.workflows.channel_beris_edwards.np.load",
+        "pssolver.configuration.legacy_channel.np.load",
         lambda *_a: pytest.fail(),
     )
 

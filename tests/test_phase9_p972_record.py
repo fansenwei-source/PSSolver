@@ -51,9 +51,9 @@ def test_p972_api_is_provisional_and_control_ownership_does_not_move():
     record = _record()
 
     assert record["scope"]["protocol_version"] == "1"
-    assert functional.CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION == "2"
-    assert hasattr(functional, "ChannelPressureTransposeOperator")
-    assert hasattr(functional, "ChannelPressureTransposeProtocol")
+    assert not hasattr(functional, "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION")
+    assert not hasattr(functional, "ChannelPressureTransposeOperator")
+    assert not hasattr(functional, "ChannelPressureTransposeProtocol")
     assert not hasattr(pssolver, "ChannelPressureTransposeOperator")
     assert record["ownership"] == {
         "repository_changed": "PSSolver_only",

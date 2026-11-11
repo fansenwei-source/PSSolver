@@ -9,6 +9,7 @@ import pytest
 from benchmarks import run_rc6_contract_smokes as smoke
 from pssolver import SpectralSolver
 from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
+from tests._s28a_pressure import production_pressure
 
 
 def test_rc6_smoke_uses_the_authoritative_public_termination_labels():
@@ -46,9 +47,9 @@ def test_cpu_fixed_work_reaches_the_exact_label_and_iteration_count(dtype_name):
         torch.randn((1, *shape), generator=generator, dtype=dtype),
         torch.randn((1, *shape), generator=generator, dtype=dtype),
     ).to(complex_dtype)
-    pressure = solver._solve_pressure(rhs)
-    assert solver.last_pressure_termination_reason == (
+    pressure, _, report = production_pressure(solver, rhs)
+    assert report["termination_reason"] == (
         smoke.FIXED_WORK_TERMINATION_REASON
     )
-    assert solver.last_pressure_iterations == 4
+    assert report["achieved_iteration_count"] == 4
     assert bool(torch.isfinite(pressure).all().item()) is True
