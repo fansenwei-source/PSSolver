@@ -120,6 +120,12 @@ def test_registered_exact_unit_bytes_and_lines_are_enforced(tmp_path, monkeypatc
     )
     base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True).strip()
     (tmp_path / "new.py").write_text(source)
+    subprocess.run(["git", "add", "new.py"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "-c", "user.name=Ratchet Test", "-c", "user.email=test@example.invalid",
+         "commit", "-qm", "install exact target"], cwd=tmp_path, check=True
+    )
+    basis = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True).strip()
     (tmp_path / "qualification").mkdir()
     row = dict(source="old.py", target="new.py", unit="old", target_lines=[1, 2],
                sha256=hashlib.sha256(source.encode()).hexdigest())
@@ -133,7 +139,7 @@ def test_registered_exact_unit_bytes_and_lines_are_enforced(tmp_path, monkeypatc
         json.dumps(dict(source_commit=base, exact_moves=[row]))
     )
     (tmp_path / "qualification/s28a_tables.json").write_text(
-        json.dumps(dict(basis=base, exact_moves=[]))
+        json.dumps(dict(basis=basis, exact_moves=[]))
     )
     assert check.exact_assemblies()["new.py"][0]["unit"] == "old"
     (tmp_path / "new.py").write_text(source.replace("return  1", "return 1"))

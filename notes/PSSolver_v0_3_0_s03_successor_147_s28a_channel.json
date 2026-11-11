@@ -7,7 +7,8 @@
     "R-0108",
     "R-0109",
     "R-0110",
-    "R-0111"
+    "R-0111",
+    "R-0112"
   ],
   "decisions": [
     "D-0045",
@@ -145,10 +146,11 @@
     },
     "pssolver/runtime/__init__.py": {
       "accepted_predecessor_sha256": [
+        "4449187e5ead4e45010e6080c964e881773bdd35281b0f3c0c4eade78d5c3dc3",
         "87d2b45e4f9d558c1499ebf751c9c0e34258c43a0b579870fcefe396b68b7eb5",
         "cec1ad2bf09cf9ea9d5a20095ad3113ef41114a4003cb716d67c9e638a554122"
       ],
-      "current_sha256": "4449187e5ead4e45010e6080c964e881773bdd35281b0f3c0c4eade78d5c3dc3",
+      "current_sha256": "bd60651528f1706d159c6f505491a8fa3c4124c48b348833f08fcb633568c43d",
       "historical_sha256": "cec1ad2bf09cf9ea9d5a20095ad3113ef41114a4003cb716d67c9e638a554122",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
@@ -236,9 +238,10 @@
     },
     "qualification/s28a_units.json": {
       "accepted_predecessor_sha256": [
-        "7635fc524b7058edd3b57c42a31e99031388f97d7a437ae91ab319e86d2273ef"
+        "7635fc524b7058edd3b57c42a31e99031388f97d7a437ae91ab319e86d2273ef",
+        "7d6d6f43a0ea1b29966d49e4f98040eb55437ad5499a13c9c76fed64b44c2c42"
       ],
-      "current_sha256": "7d6d6f43a0ea1b29966d49e4f98040eb55437ad5499a13c9c76fed64b44c2c42",
+      "current_sha256": "3c627fa9a00354c5f0f699dc5da6aa9160353705880e1eb253c46e2fff3babf6",
       "historical_sha256": "7635fc524b7058edd3b57c42a31e99031388f97d7a437ae91ab319e86d2273ef",
       "reason": "Exact forward binding from a preceding S-28a candidate."
     },
@@ -486,7 +489,11 @@
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },
     "tests/test_v0_5_s25_engineering.py": {
-      "current_sha256": "9c9c3b99f106cc4b26f4e9b46dafcb97d20026dabd4eb9909dcfd59d23b7aaba",
+      "accepted_predecessor_sha256": [
+        "1baa64a952243d224c15f649490811c7e6b720ceec1ad7ffd4c2215e73824df8",
+        "9c9c3b99f106cc4b26f4e9b46dafcb97d20026dabd4eb9909dcfd59d23b7aaba"
+      ],
+      "current_sha256": "8f0a2dab1f94010945b097a972f3628b03e8f0ba7d87b9a831473240cc709260",
       "historical_sha256": "1baa64a952243d224c15f649490811c7e6b720ceec1ad7ffd4c2215e73824df8",
       "reason": "S-28a migration, test disposition or reviewed authority install."
     },

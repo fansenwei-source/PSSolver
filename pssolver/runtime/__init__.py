@@ -30,7 +30,13 @@ _PILOT_EXPORTS = {
 }
 
 _IMPLICIT_SUBMODULE_NAMES = frozenset(
-    {"channel_observations", "finite_q_anchoring", "plane_observations", "robin_scalar"}
+    {
+        "channel_observations",
+        "finite_q_anchoring",
+        "plane_observations",
+        "robin_scalar",
+        "state_validation",
+    }
 )
 
 
