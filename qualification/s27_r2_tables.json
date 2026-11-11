@@ -827,6 +827,6 @@
  "installation_removes": [
   "qualification/s27_guard_authorities.json"
  ],
- "revision": "r2.2 (R-0099: import-safe, lint/format-clean gate; tables bind the gate bytes)",
- "gate_sha256": "2b79e7ddda81dabc2167ce9b4e60f90ad429c6692c9c600a4ff4cdbac974a848"
+ "revision": "r2.3 (R-0100: version-control metadata is not part of the checked tree)",
+ "gate_sha256": "bd624b7d40c93ad7c4fef29bdfdca9b5451bc105c875b6c3167cc6a9de0f1a42"
 }

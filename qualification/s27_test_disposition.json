@@ -5881,15 +5881,15 @@
       "unit": "test_unknown_checkpoint_version_rejects_without_tensor_load"
     },
     {
-      "chains_ref": "080b307b6ebca763fa27439bed272e825f3ca043eb85d07ea6b97fa0c6065221",
+      "chains_ref": "79a4366cbb100c5f67c6db9c6486598cff98d3e6b0a88ad9edb0f13526a9d3c4",
       "historical_node": null,
       "path": "tests/test_rc4_plane_checkpoint_identity_record.py",
-      "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
-      "rule": "R1",
+      "reason": "R-0100 F-C: retired implementation sources resolve through successor 146 retired_sources; the exact successor chain still applies.",
+      "rule": "R2",
       "unit": "test_rc422_record_binds_plan_parent_and_implementation_files"
     },
     {
-      "chains_ref": "85b253a77417eaeb6d96684e1801d08da7b50fd784b7cb96db85baf15a0dc5aa",
+      "chains_ref": "243de8255749c77b5d12e81e7032aab74dafdd531c3b3b16dbe387cf39aef40c",
       "historical_node": null,
       "path": "tests/test_rc4_plane_checkpoint_identity_record.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -5897,7 +5897,7 @@
       "unit": "test_rc422_record_closes_exactly_m01_through_m06"
     },
     {
-      "chains_ref": "281c04233676d5ed5e8359a182f86d43d7aae7d22b9a365edc3cff76aa4d5a8b",
+      "chains_ref": "7efbe155a3ba8d619a261e373a84052950f1cb8e918c29433b843c7dd668a771",
       "historical_node": null,
       "path": "tests/test_rc4_plane_checkpoint_identity_record.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -5905,7 +5905,7 @@
       "unit": "test_rc422_record_freezes_v2_and_legacy_upgrade_contracts"
     },
     {
-      "chains_ref": "1eda9fd5072f80cd732692d70969df805457d5e46d995be515ca6e8b1591873f",
+      "chains_ref": "ce7133dd7c43250064257da81f1026bb106563c211fd97d191a410ddaa0c8aa2",
       "historical_node": null,
       "path": "tests/test_rc4_plane_checkpoint_identity_record.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -8209,7 +8209,7 @@
       "unit": "test_successor_72_corrects_completion_forward_without_overclaiming_r8"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -8217,7 +8217,7 @@
       "unit": "test_control_first_functional_and_planar_boundaries_are_unchanged"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -8225,7 +8225,7 @@
       "unit": "test_explicit_boundary_pilot_namespace_is_warning_free_and_fail_closed"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -8233,7 +8233,7 @@
       "unit": "test_functional_facade_preserves_raw_builder_compatibility"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -8241,15 +8241,15 @@
       "unit": "test_old_pilot_facades_warn_and_resolve_to_the_explicit_namespace"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
-      "reason": "Reviewed Plane successor import/fixture/reference mapping; exact unit diff attached.",
+      "reason": "R-0100 F-D: expected runtime submodules include plane_observations, preserving the reviewed re-export path.",
       "rule": "R4",
       "unit": "test_plain_package_import_preserves_v030_submodule_attributes_without_warning"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -8257,7 +8257,7 @@
       "unit": "test_released_finite_q_reader_keeps_its_defining_module_identity"
     },
     {
-      "chains_ref": "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81",
+      "chains_ref": "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c",
       "historical_node": null,
       "path": "tests/test_v0_4_s17_r3_r6_implementation.py",
       "reason": "Unchanged assertion or new S-27 coverage; full transitive and record-reader chain retained.",
@@ -9729,7 +9729,7 @@
       "unit": "test_g6_normalization_keeps_original_result_or_error"
     }
   ],
-  "authority": "R-0081 R1-R9; S-27 r2.2; R-0099",
+  "authority": "R-0081 R1-R9; S-27 r2.3; R-0100",
   "chain_catalog": {
     "0012abc064ae6c656bbe38e65a0975541cf67037c4cac9fcd5ec7a5811d73103": {
       "baseline": [
@@ -11184,264 +11184,6 @@
           "tests.test_v0_4_s18_r2_r4_r5_r1_design_proposal::test_r2_freezes_released_formats_and_restart_behavior",
           "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json",
           "record_string:/scope_classification_v2/R2/batch_change/11/path:pssolver.workflows.plane_checkpoint"
-        ]
-      ]
-    },
-    "080b307b6ebca763fa27439bed272e825f3ca043eb85d07ea6b97fa0c6065221": {
-      "baseline": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
-          "record_string:/source_sha256/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
-          "record_string:/regression_tests/@tests/test_phase5_compiled_workflow_adapter.py:tests.test_phase5_compiled_workflow_adapter"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/historical_successor_sources/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/regression_tests/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ]
-      ],
-      "candidate": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
-          "record_string:/source_sha256/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
-          "record_string:/regression_tests/@tests/test_phase5_compiled_workflow_adapter.py:tests.test_phase5_compiled_workflow_adapter"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/historical_successor_sources/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/regression_tests/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
-          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
         ]
       ]
     },
@@ -14841,39 +14583,6 @@
         ]
       ]
     },
-    "1cea9e797e005d2dd53792147887e844ace1abf4abf520ee544a5c08a5005f81": {
-      "baseline": [
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.runtime.plane_application_bridge:147"
-        ],
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.runtime.plane_beris_edwards:147"
-        ],
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.runtime.plane_legacy:147"
-        ],
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.runtime.static_lifting:147"
-        ],
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.workflows.plane_beris_edwards:147"
-        ],
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.workflows.plane_checkpoint:147"
-        ],
-        [
-          "tests.test_v0_4_s17_r3_r6_implementation",
-          "embedded:pssolver.workflows.plane_observation:147"
-        ]
-      ],
-      "candidate": []
-    },
     "1d2a090609d7289af129e3a63ca88a2f7a36f60b2cf6b20e1142ec7740e7566d": {
       "baseline": [
         [
@@ -15421,94 +15130,6 @@
           "tests.test_rc4_lifting_capability_contract::test_rc432_fresh_conditioning_is_explicit_local_and_fresh_only",
           "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
           "record_string:/reviewed_source_sha256/@pssolver/runtime/static_lifting.py:pssolver.runtime.static_lifting"
-        ]
-      ]
-    },
-    "1eda9fd5072f80cd732692d70969df805457d5e46d995be515ca6e8b1591873f": {
-      "baseline": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ]
-      ],
-      "candidate": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
         ]
       ]
     },
@@ -16204,6 +15825,94 @@
           "tests.test_phase9_p95_plan::test_p95_plan_preserves_its_six_historical_cuda_only_login_node_tests",
           "notes/architecture_v0_2/phase_9_p95_h100_qualification_plan.json",
           "record_string:/login_cpu_cuda_deselects/3:tests.test_phase8_p845_h100_qualification"
+        ]
+      ]
+    },
+    "243de8255749c77b5d12e81e7032aab74dafdd531c3b3b16dbe387cf39aef40c": {
+      "baseline": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:52"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ]
+      ],
+      "candidate": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:56"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
         ]
       ]
     },
@@ -16927,94 +16636,6 @@
           "tests.test_rc4_lifting_checkpoint_integration_record::test_rc435_versions_fresh_provenance_without_dynamics_bump",
           "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
           "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ]
-      ]
-    },
-    "281c04233676d5ed5e8359a182f86d43d7aae7d22b9a365edc3cff76aa4d5a8b": {
-      "baseline": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ]
-      ],
-      "candidate": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
         ]
       ]
     },
@@ -46955,6 +46576,524 @@
         ]
       ]
     },
+    "79a4366cbb100c5f67c6db9c6486598cff98d3e6b0a88ad9edb0f13526a9d3c4": {
+      "baseline": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:52"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+          "record_string:/source_sha256/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+          "record_string:/regression_tests/@tests/test_phase5_compiled_workflow_adapter.py:tests.test_phase5_compiled_workflow_adapter"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/historical_successor_sources/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/regression_tests/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ]
+      ],
+      "candidate": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:56"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+          "record_string:/source_sha256/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+          "record_string:/regression_tests/@tests/test_phase5_compiled_workflow_adapter.py:tests.test_phase5_compiled_workflow_adapter"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/historical_successor_sources/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/regression_tests/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_rc4_lifting_h100_qualification.py:tests.test_rc4_lifting_h100_qualification"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_profile_plane_runtime_timestep.py:tests.test_profile_plane_runtime_timestep"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase8_p845_h100_qualification.py:tests.test_phase8_p845_h100_qualification"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase7_p775_package_construction.py:tests.test_phase7_p775_package_construction"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase7_p774_runtime_construction_binding.py:tests.test_phase7_p774_runtime_construction_binding"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase5_local_closure.py:tests.test_phase5_local_closure"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase5_compiled_workflow_adapter.py:tests.test_phase5_compiled_workflow_adapter"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase5_compiled_step.py:tests.test_phase5_compiled_step"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase5_compiled_declarations.py:tests.test_phase5_compiled_declarations"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase5_compiled_binding.py:tests.test_phase5_compiled_binding"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase2_plane_workflow_migration.py:tests.test_phase2_plane_workflow_migration"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_phase2_plane_runtime_selector_migration.py:tests.test_phase2_plane_runtime_selector_migration"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_diagnose_rc4_lifting_correctness.py:tests.test_diagnose_rc4_lifting_correctness"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@tests/test_diagnose_plane_static_lifting_recovery.py:tests.test_diagnose_plane_static_lifting_recovery"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/runtime/static_lifting.py:pssolver.runtime.static_lifting"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/runtime/plane_legacy.py:pssolver.runtime.plane_legacy"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/runtime/plane_compiled_v2_step.py:pssolver.runtime.plane_compiled_v2_step"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/runtime/plane_compiled_v2_binding.py:pssolver.runtime.plane_compiled_v2_binding"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/runtime/plane_beris_edwards.py:pssolver.runtime.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/runtime/plane_application_bridge.py:pssolver.runtime.plane_application_bridge"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/planning/plane_compiled_v2.py:pssolver.planning.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/engine/memberwise_transforms.py:pssolver.engine.memberwise_transforms"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/retired_sources/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/introduced_sources/@pssolver/runtime/plane_observations.py:pssolver.runtime.plane_observations"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/introduced_sources/@pssolver/engine/members.py:pssolver.engine.members"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/introduced_sources/@pssolver/engine/groups.py:pssolver.engine.groups"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/introduced_sources/@pssolver/configuration/legacy_plane.py:pssolver.configuration.legacy_plane"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@tests/test_phase3_legacy_connection.py:tests.test_phase3_legacy_connection"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/pssolver/workflows/plane_observation.py/current_path:pssolver.runtime.plane_observations"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_observation.py:pssolver.workflows.plane_observation"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/pssolver/workflows/plane_checkpoint.py/current_path:pssolver.configuration.legacy_plane"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/pssolver/workflows/periodic_beris_edwards.py/current_path:pssolver.runtime.runner"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/runtime/runner.py:pssolver.runtime.runner"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/runtime/legacy_entry.py:pssolver.runtime.legacy_entry"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/presets/beris_edwards.py:pssolver.presets.beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/planning/engine_plan.py:pssolver.planning.engine_plan"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/planning/capabilities.py:pssolver.planning.capabilities"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/planning/assemble.py:pssolver.planning.assemble"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/engine/terms.py:pssolver.engine.terms"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/engine/program.py:pssolver.engine.program"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/pssolver/engine/memberwise_transforms.py/current_path:pssolver.engine.members"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/engine/memberwise_transforms.py:pssolver.engine.memberwise_transforms"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/engine/engine.py:pssolver.engine.engine"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/configuration/plane_beris_edwards.py:pssolver.configuration.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/pssolver/applications/plane_beris_edwards.py/current_path:pssolver.runtime.legacy_entry"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_binds_plan_parent_and_implementation_files",
+          "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json",
+          "record_string:/historical_successor_sources/pssolver/applications/periodic_beris_edwards.py/current_path:pssolver.runtime.legacy_entry"
+        ]
+      ]
+    },
     "7a707bc3559ef32685724aa33e74b0288ba949b2911ad01926c0d985fc61b637": {
       "baseline": [
         [
@@ -47438,6 +47577,94 @@
           "tests.test_rc4_cross_runtime_robustness_plan::test_rc450_orders_analysis_contract_four_cohorts_and_two_qualifications",
           "notes/PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json",
           "record_string:/reviewed_source_sha256/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ]
+      ]
+    },
+    "7efbe155a3ba8d619a261e373a84052950f1cb8e918c29433b843c7dd668a771": {
+      "baseline": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:52"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ]
+      ],
+      "candidate": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:56"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_freezes_v2_and_legacy_upgrade_contracts",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
         ]
       ]
     },
@@ -48629,94 +48856,6 @@
       ],
       "candidate": []
     },
-    "85b253a77417eaeb6d96684e1801d08da7b50fd784b7cb96db85baf15a0dc5aa": {
-      "baseline": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ]
-      ],
-      "candidate": [
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.applications.plane_beris_edwards:52"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_beris_edwards:53"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.runtime.plane_legacy:54"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record",
-          "embedded:pssolver.workflows.plane_checkpoint:55"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
-        ],
-        [
-          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_record_closes_exactly_m01_through_m06",
-          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
-          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
-        ]
-      ]
-    },
     "85f51c680f8cb14dd59c99caeb4cd91aecbe58a2071495b6736e55e05c49b0a4": {
       "baseline": [
         [
@@ -49204,6 +49343,52 @@
           "tests.test_v0_4_s18_r0056_import::test_successor_102_binds_r0056_and_forward_sources",
           "notes/PSSolver_v0_3_0_s03_successor_102_r0056_import.json",
           "record_string:/unchanged_r4_batch_change_dispositions/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ]
+      ]
+    },
+    "89bf7dfec2a3637c1a9764c4dad511777fcd53e808a3183feb190d0dfde4931c": {
+      "baseline": [
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.runtime.plane_application_bridge:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.runtime.plane_beris_edwards:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.runtime.plane_legacy:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.runtime.static_lifting:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.workflows.plane_beris_edwards:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.workflows.plane_checkpoint:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.workflows.plane_observation:147"
+        ]
+      ],
+      "candidate": [
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.runtime.observations:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.runtime.plane_observations:147"
+        ],
+        [
+          "tests.test_v0_4_s17_r3_r6_implementation",
+          "embedded:pssolver.workflows.plane_observation:147"
         ]
       ]
     },
@@ -73458,6 +73643,94 @@
         ]
       ],
       "candidate": []
+    },
+    "ce7133dd7c43250064257da81f1026bb106563c211fd97d191a410ddaa0c8aa2": {
+      "baseline": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:52"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ]
+      ],
+      "candidate": [
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.applications.plane_beris_edwards:53"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_beris_edwards:54"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.runtime.plane_legacy:55"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record",
+          "embedded:pssolver.workflows.plane_checkpoint:56"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/historical_successor_sources/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/applications/plane_beris_edwards.py:pssolver.applications.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_compiled_v2.py:pssolver.workflows.plane_compiled_v2"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_beris_edwards.py:pssolver.workflows.plane_beris_edwards"
+        ],
+        [
+          "tests.test_rc4_plane_checkpoint_identity_record::test_rc422_scope_and_next_authorization_remain_narrow",
+          "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json",
+          "record_string:/implementation_files/@pssolver/workflows/plane_checkpoint.py:pssolver.workflows.plane_checkpoint"
+        ]
+      ]
     },
     "cf3e65b56a326884d0f0f702b11fe24a9940abfc0797543e34077fce4217ce6a": {
       "baseline": [
@@ -108250,6 +108523,7 @@
     "tests/test_rc4_plane_checkpoint_identity.py::test_m02_fresh_initializer_and_conditioning_are_not_restart_identity": "--- 327a192/tests/test_rc4_plane_checkpoint_identity.py\n+++ candidate/tests/test_rc4_plane_checkpoint_identity.py\n@@ -6,20 +6,8 @@\n     target_spec = _spec(tmp_path, \"target\", seed=91)\n     source = _runtime(source_spec)\n     target = _runtime(target_spec)\n-    source.advance(1)\n+    source.engine.step_(source.state)\n     checkpoint = capture_plane_checkpoint(source, run_spec=source_spec)\n-    source_lifting = _synthetic_lifting(\"a\" * 64, \"source_initializer\")\n-    target_lifting = _synthetic_lifting(\"a\" * 64, \"target_initializer\")\n-    checkpoint = _checkpoint_with_lifting(\n-        checkpoint,\n-        source_spec,\n-        source_lifting,\n-    )\n-    monkeypatch.setattr(\n-        checkpoint_module,\n-        \"plane_lifting_restart_metadata\",\n-        lambda _adapter: target_lifting,\n-    )\n \n     assert restore_plane_checkpoint(\n         target,\n",
     "tests/test_rc4_plane_checkpoint_identity.py::test_m03_prescribed_lift_change_rejects_before_target_mutation": "--- 327a192/tests/test_rc4_plane_checkpoint_identity.py\n+++ candidate/tests/test_rc4_plane_checkpoint_identity.py\n@@ -5,21 +5,14 @@\n     spec = _spec(tmp_path, \"run\")\n     source = _runtime(spec)\n     target = _runtime(spec)\n-    source.advance(1)\n+    source.engine.step_(source.state)\n     checkpoint = capture_plane_checkpoint(source, run_spec=spec)\n     checkpoint = _checkpoint_with_lifting(\n         checkpoint,\n         spec,\n         _synthetic_lifting(\"a\" * 64, \"same_initializer\"),\n     )\n-    monkeypatch.setattr(\n-        checkpoint_module,\n-        \"plane_lifting_restart_metadata\",\n-        lambda _adapter: _synthetic_lifting(\n-            \"b\" * 64,\n-            \"same_initializer\",\n-        ),\n-    )\n+\n     before = _state(target)\n \n     with pytest.raises(ValueError, match=\"static lifting identity\"):\n",
     "tests/test_rc4_plane_checkpoint_identity.py::test_m06_odd_grid_legacy_checkpoint_upgrades_without_source_mutation": "--- 327a192/tests/test_rc4_plane_checkpoint_identity.py\n+++ candidate/tests/test_rc4_plane_checkpoint_identity.py\n@@ -5,7 +5,8 @@\n     spec = _spec(tmp_path, generation.value, nx=7, ny=7)\n     source_runtime = _runtime(spec)\n     target_runtime = _runtime(spec)\n-    source_runtime.advance(2)\n+    for _ in range(2):\n+        source_runtime.engine.step_(source_runtime.state)\n     legacy = _legacy_checkpoint(source_runtime, spec)\n     source = _write_legacy_checkpoint(\n         tmp_path / f\"legacy_{generation.value}\",\n",
+    "tests/test_rc4_plane_checkpoint_identity_record.py::test_rc422_record_binds_plan_parent_and_implementation_files": "--- 327a192/tests/test_rc4_plane_checkpoint_identity_record.py\n+++ candidate/tests/test_rc4_plane_checkpoint_identity_record.py\n@@ -24,7 +24,12 @@\n     for relative, expected in record[\"implementation_files\"].items():\n         if relative in superseded_by_later_rc43_slices:\n             continue\n-        actual = _sha256(relative)\n+        if (ROOT / relative).exists():\n+            actual = _sha256(relative)\n+        else:  # retired by S-27: the chain must end at the recorded 327a192 bytes\n+            actual = json.loads(S27_SUCCESSOR.read_text(encoding=\"utf-8\"))[\n+                \"retired_sources\"\n+            ][relative][\"sha256\"]\n         if actual == expected:\n             continue\n         resolved = expected\n",
     "tests/test_rc4_plane_nyquist_qualification_plan.py::test_rc412_plan_lists_every_current_cuda_only_login_node_test": "--- 327a192/tests/test_rc4_plane_nyquist_qualification_plan.py\n+++ candidate/tests/test_rc4_plane_nyquist_qualification_plan.py\n@@ -13,4 +13,5 @@\n                     discovered.add(f\"tests/{path.name}::{name}\")\n                     break\n \n-    assert discovered == frozen+    assert 'tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity' in frozen\n+    assert discovered == (frozen - {'tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity'})",
     "tests/test_rc5_r512_compiled_simulation_integrity.py::test_run_rejects_replaced_compilation_components_before_dispatch": "--- 327a192/tests/test_rc5_r512_compiled_simulation_integrity.py\n+++ candidate/tests/test_rc5_r512_compiled_simulation_integrity.py\n@@ -7,17 +7,17 @@\n     alternate = compile_simulation(_simulation(tmp_path / \"alternate\"))\n     tampered = replace(original, **{field: getattr(alternate, field)})\n     invoked = False\n-    fake = ModuleType(\"pssolver.applications.plane_beris_edwards\")\n+    fake = ModuleType(\"pssolver.runtime.legacy_entry\")\n \n     def forbidden_dispatch(*_args, **_kwargs):\n         nonlocal invoked\n         invoked = True\n         raise AssertionError(\"tampered compilation reached application dispatch\")\n \n-    fake.run_plane_beris_edwards = forbidden_dispatch\n+    fake.run_v04_plane_translation = forbidden_dispatch\n     monkeypatch.setitem(\n         sys.modules,\n-        \"pssolver.applications.plane_beris_edwards\",\n+        \"pssolver.runtime.legacy_entry\",\n         fake,\n     )\n \n",
     "tests/test_rc5_r513_optional_hygiene.py::test_plane_checkpoint_preflight_value_error_is_public_restart_error": "--- 327a192/tests/test_rc5_r513_optional_hygiene.py\n+++ candidate/tests/test_rc5_r513_optional_hygiene.py\n@@ -2,6 +2,7 @@\n     tmp_path,\n     monkeypatch,\n ):\n+    monkeypatch.setattr(\"pssolver.io.checkpoint.read_checkpoint_json\", lambda *_args, **_kwargs: {})\n     spec = _plane_spec(\n         tmp_path,\n         restart_from=tmp_path / \"checkpoint\",\n@@ -18,7 +19,7 @@\n     )\n \n     with pytest.raises(SimulationRestartError, match=\"checksum mismatch\") as captured:\n-        plane_application.run_plane_beris_edwards(spec)\n+        plane_application.run_v04_plane_translation(spec)\n \n     assert captured.value.details == {\n         \"legacy_exception_type\": \"ValueError\",\n",
@@ -108261,7 +108535,7 @@
     "tests/test_rc6_rc64_channel_failure_contract.py::test_plane_execution_error_finalizes_running_metadata": "--- 327a192/tests/test_rc6_rc64_channel_failure_contract.py\n+++ candidate/tests/test_rc6_rc64_channel_failure_contract.py\n@@ -6,15 +6,16 @@\n         step=0,\n         details={\"finite\": False},\n     )\n-    workflow = PlaneBerisEdwardsWorkflow(\n+    workflow = Runner(\n         _FailingPlaneAdapter(error),\n-        _plane_spec(tmp_path),\n-        tmp_path,\n-        {\"initial_condition\": {}, \"numerics\": {}},\n+        schedule=RunSchedule(1, 1, 0, True, 1, None),\n+        output_directory=tmp_path,\n+        capture=PlaneCapture(True, \"legacy_production\", 2.0 / 3.0, 0.0),\n+        metadata={\"initial_condition\": {}, \"numerics\": {}, \"workflow\": {}},\n     )\n \n     with pytest.raises(SimulationStateError) as captured:\n-        workflow.run()\n+        workflow.run(SimpleNamespace(completed_steps=0), start_step=0)\n \n     assert captured.value is error\n     metadata = json.loads((tmp_path / \"metadata.json\").read_text())\n",
     "tests/test_v0_3_s03_exception_compatibility.py::test_plane_application_preflight_preserves_checkpoint_integrity_error": "--- 327a192/tests/test_v0_3_s03_exception_compatibility.py\n+++ candidate/tests/test_v0_3_s03_exception_compatibility.py\n@@ -13,8 +13,9 @@\n         raise sentinel\n \n     monkeypatch.setattr(plane_application, \"read_plane_checkpoint_header\", reject)\n+    monkeypatch.setattr(\"pssolver.io.checkpoint.read_checkpoint_json\", lambda *_args, **_kwargs: {})\n     with pytest.raises(CheckpointIntegrityError) as caught:\n-        plane_application.run_plane_beris_edwards(spec)\n+        plane_application.run_v04_plane_translation(spec)\n \n     assert caught.value is sentinel\n     assert isinstance(caught.value, CheckpointError)\n",
     "tests/test_v0_3_s05_checkpoint_metadata_integrity.py::test_current_formats_are_sealed_and_tamper_before_payload_load": "--- 327a192/tests/test_v0_3_s05_checkpoint_metadata_integrity.py\n+++ candidate/tests/test_v0_3_s05_checkpoint_metadata_integrity.py\n@@ -12,7 +12,7 @@\n \n     if kind == \"plane\":\n         monkeypatch.setattr(\n-            \"pssolver.workflows.plane_checkpoint._load_tensor\",\n+            \"pssolver.configuration.legacy_plane._load_tensor\",\n             lambda *_args, **_kwargs: pytest.fail(\"payload load started\"),\n         )\n     elif kind == \"channel\":\n",
-    "tests/test_v0_4_s17_r3_r6_implementation.py::test_plain_package_import_preserves_v030_submodule_attributes_without_warning": "--- 327a192/tests/test_v0_4_s17_r3_r6_implementation.py\n+++ candidate/tests/test_v0_4_s17_r3_r6_implementation.py\n@@ -33,21 +33,14 @@\n         \"channel_beris_edwards\",\n         \"finite_q_anchoring\",\n         \"package_construction\",\n-        \"plane_application_bridge\",\n-        \"plane_beris_edwards\",\n-        \"plane_legacy\",\n         \"robin_scalar\",\n         \"simulation_construction\",\n         \"state_validation\",\n-        \"static_lifting\",\n     ],\n     \"pssolver.workflows\": [\n         \"channel_beris_edwards\",\n         \"channel_checkpoint_observation\",\n         \"finite_q_anchoring\",\n-        \"plane_beris_edwards\",\n-        \"plane_checkpoint\",\n-        \"plane_observation\",\n     ],\n }\n observed = {}\n",
+    "tests/test_v0_4_s17_r3_r6_implementation.py::test_plain_package_import_preserves_v030_submodule_attributes_without_warning": "--- 327a192/tests/test_v0_4_s17_r3_r6_implementation.py\n+++ candidate/tests/test_v0_4_s17_r3_r6_implementation.py\n@@ -33,21 +33,15 @@\n         \"channel_beris_edwards\",\n         \"finite_q_anchoring\",\n         \"package_construction\",\n-        \"plane_application_bridge\",\n-        \"plane_beris_edwards\",\n-        \"plane_legacy\",\n+        \"plane_observations\",\n         \"robin_scalar\",\n         \"simulation_construction\",\n         \"state_validation\",\n-        \"static_lifting\",\n     ],\n     \"pssolver.workflows\": [\n         \"channel_beris_edwards\",\n         \"channel_checkpoint_observation\",\n         \"finite_q_anchoring\",\n-        \"plane_beris_edwards\",\n-        \"plane_checkpoint\",\n-        \"plane_observation\",\n     ],\n }\n observed = {}\n",
     "tests/test_v0_4_s18_r2_checkpoint_artifacts.py::test_r2_writers_delegate_to_one_private_owner": "--- 327a192/tests/test_v0_4_s18_r2_checkpoint_artifacts.py\n+++ candidate/tests/test_v0_4_s18_r2_checkpoint_artifacts.py\n@@ -1,26 +1,3 @@\n def test_r2_writers_delegate_to_one_private_owner() -> None:\n-    expected = {\n-        \"pssolver/experimental/modal_block_checkpoint.py\": (\"write_reference_tensor_record\"),\n-        \"pssolver/functional/channel_checkpoint.py\": (\"write_standard_tensor_record\"),\n-        \"pssolver/integrators/reference_checkpoint.py\": (\"write_reference_tensor_record\"),\n-        \"pssolver/workflows/finite_q_anchoring.py\": (\"write_sized_tensor_record\"),\n-        \"pssolver/io/legacy/periodic_workflow.py\": (\"write_standard_tensor_record\"),\n-        \"pssolver/workflows/plane_checkpoint.py\": (\"write_standard_tensor_record\"),\n-    }\n-    for relative, helper in expected.items():\n-        source = (ROOT / relative).read_text(encoding=\"utf-8\")\n-        tree = ast.parse(source)\n-        imports = {\n-            alias.name\n-            for node in ast.walk(tree)\n-            if isinstance(node, ast.ImportFrom)\n-            and node.module == \"pssolver.io._checkpoint_artifacts\"\n-            for alias in node.names\n-        }\n-        assert helper in imports or any(\n-            alias.asname == helper\n-            for node in ast.walk(tree)\n-            if isinstance(node, ast.ImportFrom)\n-            and node.module == \"pssolver.io._checkpoint_artifacts\"\n-            for alias in node.names\n-        )+    from qualification.s27_forward import assert_forward_binding\n+    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_v0_4_s18_r2_checkpoint_artifacts.py::test_r2_writers_delegate_to_one_private_owner')",
     "tests/test_v0_4_s18_r4_shared_step_progress.py::test_projected_programs_delegate_to_the_same_exact_order_executor": "--- 327a192/tests/test_v0_4_s18_r4_shared_step_progress.py\n+++ candidate/tests/test_v0_4_s18_r4_shared_step_progress.py\n@@ -1,9 +1,7 @@\n def test_projected_programs_delegate_to_the_same_exact_order_executor():\n     generic = inspect.getsource(ProjectedSemiImplicitEulerStepProgram.step)\n-    compiled = inspect.getsource(PlaneCompiledEulerStepProgram.step)\n     assert \"_execute_projected_euler_step(\" in generic\n-    assert \"_execute_projected_euler_step(\" in compiled\n-    for source in (generic, compiled):\n+    for source in (generic,):\n         assert \".add_(\" not in source\n         assert \".div_(\" not in source\n         assert \"commit_step(\" not in source",
     "tests/test_v0_4_s18_r4_shared_step_progress.py::test_projected_runtimes_inherit_one_inverse_and_refresh_implementation": "--- 327a192/tests/test_v0_4_s18_r4_shared_step_progress.py\n+++ candidate/tests/test_v0_4_s18_r4_shared_step_progress.py\n@@ -1,6 +1,5 @@\n def test_projected_runtimes_inherit_one_inverse_and_refresh_implementation():\n     concrete = (\n-        DealiasedSemiImplicitEulerIntegrator,\n         _ChannelProjectedEuler,\n     )\n     for integrator_type in concrete:\n",

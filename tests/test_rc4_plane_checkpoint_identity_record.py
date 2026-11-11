@@ -22,6 +22,7 @@ RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+S27_SUCCESSOR = ROOT / "notes/PSSolver_v0_3_0_s03_successor_146_s27_plane.json"
 
 
 def _record() -> dict[str, object]:
@@ -58,7 +59,12 @@ def test_rc422_record_binds_plan_parent_and_implementation_files():
     for relative, expected in record["implementation_files"].items():
         if relative in superseded_by_later_rc43_slices:
             continue
-        actual = _sha256(relative)
+        if (ROOT / relative).exists():
+            actual = _sha256(relative)
+        else:  # retired by S-27: the chain must end at the recorded 327a192 bytes
+            actual = json.loads(S27_SUCCESSOR.read_text(encoding="utf-8"))[
+                "retired_sources"
+            ][relative]["sha256"]
         if actual == expected:
             continue
         resolved = expected

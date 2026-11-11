@@ -14,6 +14,9 @@ Import-safe (r2.2, R-0099): importing this module only defines functions; the co
 read in main() under the __main__ guard.  modmap() and edges() stay pure AST functions that need
 only `ast`.
 
+Version-control metadata (r2.3, R-0100): any path with a component in VCS_METADATA (.git, .hg,
+.svn) is not part of the checked tree, so a real clone and an exported source tree compare alike.
+
 The r2 tables (design S-27 r2, appendix A) are the only authority.  Five guards plus owner
 authorization:
   G1 import edges   every new pssolver->pssolver edge is (i) inside the baseline
@@ -52,6 +55,7 @@ import sys
 from pathlib import Path
 
 
+VCS_METADATA = frozenset({".git", ".hg", ".svn"})
 USAGE = (
     "usage: s27_guard_crosscheck.py <baseline_tree> <draft_tree> <s27_r2_tables.json> <out.json>"
     " [--simulate-install]"
@@ -94,7 +98,13 @@ def tree_files(root, removed, overlay):
     out = {}
     for p in sorted(root.rglob("*")):
         rel = p.relative_to(root).as_posix()
-        if not p.is_file() or rel.startswith("build/") or ".egg-info" in rel or rel in removed:
+        if (
+            not p.is_file()
+            or rel.startswith("build/")
+            or ".egg-info" in rel
+            or rel in removed
+            or not VCS_METADATA.isdisjoint(rel.split("/"))
+        ):
             continue
         out[rel] = p.read_bytes()
     if overlay:

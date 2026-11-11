@@ -177,6 +177,7 @@ expected = {
         "channel_beris_edwards",
         "finite_q_anchoring",
         "package_construction",
+        "plane_observations",
         "robin_scalar",
         "simulation_construction",
         "state_validation",

@@ -151,7 +151,14 @@ class Runner:
                     plan_identity_sha256=self.engine.plan.identity_sha256,
                     plan_metadata=self.engine.plan.to_metadata(),
                     refresh_interval=self.engine.plan.integrator.refresh_interval,
-                    run_provenance=self.capture.checkpoint_provenance(self.metadata),
+                    run_provenance=(
+                        self.capture.checkpoint_provenance(self.metadata)
+                        if hasattr(self.capture, "checkpoint_provenance")
+                        else {
+                            "legacy_configuration_sha256": self.metadata["configuration_sha256"],
+                            "legacy_runtime_identity_sha256": self.metadata["runtime_identity_sha256"],
+                        }
+                    ),
                 )
                 self.checkpoints.append(state.completed_steps)
         if executed != steps:
@@ -180,10 +187,12 @@ class Runner:
                 header=self.capture.diagnostic_header,
             )
         elapsed = time.time() - started
+        finalize = getattr(self.capture, "finalize_metadata", None)
+        completion = dict(status="complete", completed_steps=final_step, elapsed_seconds=elapsed)
+        if finalize is None:
+            completion.update(saved_steps=self.saved, checkpoint_steps=self.checkpoints)
         self.metadata.update(
-            status="complete",
-            completed_steps=final_step,
-            elapsed_seconds=elapsed,
+            **completion,
             diagnostics=diagnostics_metadata_envelope(
                 application_family=self.capture.application_family,
                 runtime_path=self.capture.runtime_path,
@@ -192,9 +201,8 @@ class Runner:
                 dtype=self.capture.diagnostic_dtype,
             ),
         )
-        self.capture.finalize_metadata(
-            self.metadata, state=state, saved=self.saved, checkpoints=self.checkpoints,
-        )
+        if finalize is not None:
+            finalize(self.metadata, state=state, saved=self.saved, checkpoints=self.checkpoints)
         (self.output_directory / "metadata.json").write_text(
             json.dumps(self.metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
