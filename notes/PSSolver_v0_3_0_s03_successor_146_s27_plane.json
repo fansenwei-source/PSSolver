@@ -10,14 +10,15 @@
     "R-0096",
     "R-0097",
     "R-0098",
-    "R-0099"
+    "R-0099",
+    "R-0100"
   ],
   "decisions": [
     "D-0058",
     "D-0063",
     "D-0064"
   ],
-  "design": "S-27_plane_migration_r2.md; R-0099 r2.2 import-safe gate correction",
+  "design": "S-27_plane_migration_r2.md; R-0100 r2.3 import-safe gate correction",
   "git_identity": {
     "implementation_parent": "327a192ba879da0991110eca99f4b69b9a45c84e"
   },
@@ -26,43 +27,43 @@
     "ARCHITECTURE.md": {
       "current_sha256": "a14434f0efd64a45148d37723871023fcfa9dacf7eede53edc08b5ba276804ac",
       "historical_sha256": "a42c05bdaeb85b631f73d6452656499a54aab475b18efeabec2bf266b1f09a66",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "MANIFEST.in": {
       "current_sha256": "6199ee3a406f90ec90aaab4101e138f444bb090088930912cff5b807e5ce5f27",
       "historical_sha256": "13e5665c4ca5bdf716d1d916abdab9c499471875ba64bf2b9ff3b59865f67678",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "Plane_beris_edwards_stokes.py": {
       "current_sha256": "99f38f639ba1d3b23a40a7647570b5efeeb83d407a3f55eb120e1e967ee2914f",
       "historical_sha256": "943b84fa6c59c4bf8b97f15c3f5c250fd4a44f3fd6d7dfab8c671f4845e7b946",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "notes/pssolver_v0_2_x_open_issues.json": {
       "current_sha256": "581b0d11c3972b46ef6bbbc3941ff5f6bec64577cf2d962b04d8f34722b5e3cf",
       "historical_sha256": "c061ff0b8859fdb25a1c5e9fd08f3585abc0075eb6aa1679dcaac45e40407403",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "notes/pssolver_v0_2_x_open_issues_zh.md": {
       "current_sha256": "09bd71217b5324f489cc8009cc9c1468feb77da089f72e15d4115baa0cf94af0",
       "historical_sha256": "2d64489708504f333ef130085024c4ebb6f44d185c4f5dd2a806a044cf22439c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/api/runner.py": {
       "current_sha256": "f6331a91d1f77104bc2a2e57b4816f27384a1f15fdf31bae1918f72057615da1",
       "historical_sha256": "5049240e75ce196eb533a5b26a93179d7753a2da2d04aee3af9cf2a03b64dd67",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/applications/__init__.py": {
       "current_sha256": "2c6babfabe92085225a89443e048ebb566ae29b14e5f875ad18dd1e62334cc02",
       "historical_sha256": "ddc7e3abb3a05469f5f254d26b2d496310385865aac9348bf0eb4f8a0fcf160c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/applications/periodic_beris_edwards.py": {
       "current_path": "pssolver/runtime/legacy_entry.py",
       "current_sha256": "cb8d473923bc836c41cbcbce0ea8f60385ceae5cdd1ab52566fabc06a32c37d7",
       "historical_sha256": "191d44d9358fb7f480e0b6dd9b3d3eac69818f031c8f89414c91f60c6872f0f3",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/applications/plane_beris_edwards.py": {
       "current_path": "pssolver/runtime/legacy_entry.py",
@@ -73,27 +74,27 @@
     "pssolver/configuration/application_registry.py": {
       "current_sha256": "e9128279bb3a917a0e99f7df27b09666e5e3502503c0b40840a23696d21da28c",
       "historical_sha256": "2580bd614af64e55f0b4dd5493715867041ed498cb79ab00f22080f1790e8290",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/configuration/package_construction.py": {
       "current_sha256": "66caeebd3d467426ee0f895d1f861881691179193d2ae0792e1ef1c3d4b5d8d8",
       "historical_sha256": "599251c14fe575d3ea89e366f2db54a905491aed518b439866175390be10bbeb",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/configuration/plane_beris_edwards.py": {
       "current_sha256": "d69a71402dfa23f94b6dbe02b0456089529b93018dfee91a03eb82e4437a1085",
       "historical_sha256": "a7441a74361f25c312e996538e81ca29c72c4e38b3c70e7ca86bcdf77ca10972",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/engine/constraints.py": {
       "current_sha256": "24311d7aba1cb1483969d2471a065162a0dd4003f45d63f3d7c6cfdddffd404e",
       "historical_sha256": "9cfdf601448d91e57664335cda21fded5862b01c7e40fe0cbca3e3e5c1210434",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/engine/engine.py": {
       "current_sha256": "53e1a239628d3433cabbd6f7713afa85f2e13dcd5825e5b08a60c4ee89a716e3",
       "historical_sha256": "d63d964127759fe33b0b5bd4108d93e0fd9ee70a4cc3c30c2d8f88156f080552",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/engine/memberwise_transforms.py": {
       "current_path": "pssolver/engine/members.py",
@@ -104,84 +105,84 @@
     "pssolver/engine/program.py": {
       "current_sha256": "9b2a016004a785e8b0f71ae3398931640799c495ba8242a6d4ddc7c9147205b6",
       "historical_sha256": "6ded9335792c2ff6b8a770909e030ee2a40a4a22c98bfdb273c2428ae43f128e",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/engine/terms.py": {
       "current_sha256": "4ef4ed3744400f094d3a4df1f9081010213828264abed6d111e348537f2d5689",
       "historical_sha256": "68ef6566567e60066b725672e4263b3739efbf87caa26a97809f9ce316e917b5",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/experimental/boundary_pilots.py": {
       "current_sha256": "73411a0f0236e55af706123d36bab04d8a7f2cec2a55e474568660f8ce0a099f",
       "historical_sha256": "6950a61365cd90146a2cf8946495e34249c10b95981d0bc3260810dfd8dded3b",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/models/active_nematics/engine_terms.py": {
       "current_sha256": "1b03fbfa21606612962dda3cd751fe87c99a269bd52dc1db24fecbf5b58dcb7c",
       "historical_sha256": "d9e17257327c25fafde4990e14360110d6346f33329402f84a64d98f04c896b1",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/planning/assemble.py": {
       "current_sha256": "490c913811a438734ae0406c69ea828aaca5081df5bba08953bb91d5b28d0934",
       "historical_sha256": "b98a7e455348a65e666fb0a2581d6864cde3bc2748ec88d18817ad7953068efb",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/planning/capabilities.py": {
       "current_sha256": "92d38ae5dbd84fe873a3c90efe5ba15cce3f0f1b9c21c0634006aca41e255a4f",
       "historical_sha256": "cb8974f3f4ac5295769ae8012f03534f23a0c2c8cccd696421def12168084397",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/planning/engine_plan.py": {
       "current_sha256": "2a5b9ba95cfcda86b92bd43f7b940df080d032b9dbf599503cd2693bcc37bf48",
       "historical_sha256": "52831ffbbe1198be9f78bea3a4eb4f6f7dd6171c71cd5bd8979a2afa6560e40c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/presets/beris_edwards.py": {
       "current_sha256": "9d85d133766e1cc45362b149d440b052884e7c71d24ceb37de624949eeb17c4c",
       "historical_sha256": "767ca6095af13be4a8fa2773ae38914817bb2083bee79477cf2901b6fa30522b",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/runtime/__init__.py": {
       "current_sha256": "cec1ad2bf09cf9ea9d5a20095ad3113ef41114a4003cb716d67c9e638a554122",
       "historical_sha256": "3a59110c55c36bc9f00c07f7a7d42ff39fd2e9f57fbb2f7773a427d09af3902f",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/runtime/legacy_entry.py": {
       "current_sha256": "cb8d473923bc836c41cbcbce0ea8f60385ceae5cdd1ab52566fabc06a32c37d7",
       "historical_sha256": "191d44d9358fb7f480e0b6dd9b3d3eac69818f031c8f89414c91f60c6872f0f3",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/runtime/package_construction.py": {
       "current_sha256": "92dbae3c07d6e6029ff222b0257d0be3cc6db0206b72aad91e6e351176925d20",
       "historical_sha256": "ae603ecf269d2c252b1c3f030834fc40e4113b9a4142e71d9d59814512610ea5",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/runtime/periodic_beris_edwards.py": {
       "current_path": "pssolver/models/active_nematics/engine_terms.py",
       "current_sha256": "1b03fbfa21606612962dda3cd751fe87c99a269bd52dc1db24fecbf5b58dcb7c",
       "historical_sha256": "d9e17257327c25fafde4990e14360110d6346f33329402f84a64d98f04c896b1",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/runtime/runner.py": {
-      "current_sha256": "f8b1e809610f328bdf33302c14c024298ac85e17a5b6ded7e56e44aa6591e069",
+      "current_sha256": "c9a3ce1c15855864a01afbeff86b96f705b867774d6b688d46315300194f5da6",
       "historical_sha256": "e2b5f6bada1ebe1c62af4ec36081e5c2cebbdbf774b2f08ebd3053bcecd6d214",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/runtime/simulation_construction.py": {
       "current_sha256": "1c707009f5f12481a6a0e1a5fdfa5134a3b48731e348f5bc884b2515a1f457d2",
       "historical_sha256": "993ba0e4e8ea5503304cddaf5dc428b17034fbe71cb1f1079750e4fcf6ab7a60",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/workflows/__init__.py": {
       "current_sha256": "c74561264c7f20f340e5fd2faa343874c9a75ef29a2a27206047059b7f7edcff",
       "historical_sha256": "8046c0142af9fc5c215bb3662e5537ab7d14eb4236bf48b2572edba0e621876f",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/workflows/periodic_beris_edwards.py": {
       "current_path": "pssolver/runtime/runner.py",
-      "current_sha256": "f8b1e809610f328bdf33302c14c024298ac85e17a5b6ded7e56e44aa6591e069",
+      "current_sha256": "c9a3ce1c15855864a01afbeff86b96f705b867774d6b688d46315300194f5da6",
       "historical_sha256": "e2b5f6bada1ebe1c62af4ec36081e5c2cebbdbf774b2f08ebd3053bcecd6d214",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "pssolver/workflows/plane_checkpoint.py": {
       "current_path": "pssolver/configuration/legacy_plane.py",
@@ -198,302 +199,307 @@
     "qualification/identity/historical_continuations.py": {
       "current_sha256": "e60de3898664709ec8e8b97a3fe34c41c53457f64c7134df58d054eec94fac8e",
       "historical_sha256": "98dbccdb1b612410684be0f545e8665570709f28a9a818db706db9f85e5b5cef",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "qualification/identity/retained_v020_fixtures.py": {
       "current_sha256": "f92ecac13366791c99ab4a32ccad4cd180f46d5732495cd3d00f02dc6adf9893",
       "historical_sha256": "d2613d2ae465e1c248cfb5eee50da5a5d724a61184416e18042b042dd4e8ac56",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "qualification/identity/runtime_case_v2.py": {
       "current_sha256": "afe61765cad8e799c40ed37bc84ade75ba88e3463aadd57c052a9ba8855adca5",
       "historical_sha256": "3f395a734af47dd2d82bfc898ad6904ed7b909824c980e93a9633c6dd0e62471",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "setup.py": {
       "current_sha256": "5e0e2cbec17397dee581d4a46bed3956b56bc553cca570c84313f111e7165075",
       "historical_sha256": "976f214f625932588cae7599e37abf82bd229d4171dbecc1bd59fe2a6bef5a03",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/categories.toml": {
       "current_sha256": "0c740ec7743e0b02dd4a4abfe8b8aef7d2547b78bcfb4f4d6a97d81e7b6100d7",
       "historical_sha256": "46ca5aab0b28de54a6cf5c600cef964ffa7dfd2f1ed4ddabe982126170a2c11f",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_architecture_import_boundaries.py": {
       "current_sha256": "e4e453da0a888c039b9d8ce8b9a3e148bf41aac211a3efa348e59f898df2edcf",
       "historical_sha256": "afc5f3220db7111dba1fd33c5b03e09af339d6e596418b828ca552484af52b6c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_architecture_stage_s.py": {
       "current_sha256": "51b5424fa74d5eed5071f0fc70bcb73053a3e5dc0dcb14516de10a40e5f95481",
       "historical_sha256": "64ac5f8aaf9f5118497674b58b3e2401504254b15794356ac18425ce81911cc1",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_fig4_numerics_cli.py": {
       "current_sha256": "710a96cd43c34c81e06e588c865f7ce3a8ab7e35d77d6bb8a5e348f13e77f3a1",
       "historical_sha256": "b5cc465ceb4a061f62cfa85c3d373911320b1a10bfa2f0a1963fd010c2c9a16a",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_plane_application_migration.py": {
       "current_sha256": "7127f2f6e959746c0f3eed0ed491c4c74316fa946e8aff1e40c2573089355671",
       "historical_sha256": "4dee8862346b5999dea351835fa329c61558fd31e5872ff5d69aa7880f3fa4f1",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_plane_legacy_runtime_migration.py": {
       "current_sha256": "84c30c25afced21f0e727dc9b8a77dcf2a89e61de25c5210fbf4b1699d1c97c7",
       "historical_sha256": "aa50f8eaf6dc7eec4fc2e826cc006dd1f9fcc9d1167482d47cc3056e7c5b5ca6",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_provenance_closure.py": {
       "current_sha256": "db06e8280ef502b283f9914f204714d4c12a1015f958374ce32c4eb3bd7a99bf",
       "historical_sha256": "8b0b136fb6086e5497ed4469f20ab8121c0d1e58050f3bbf6df8033ec2d55e57",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_run_spec_compatibility.py": {
       "current_sha256": "517dece1648ba9707be36ab9cfb855ec164b9108eb2ff6a15c1620478900283c",
       "historical_sha256": "b4c2bd6d9adeabda8723cda41a3f39ffabcfda00c0de4ea18f6e81c6bf5d5cb7",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_run_spec_components.py": {
       "current_sha256": "8e20149f764907e0d535db3a2062ba9a6c09c1c529f8dd18496ed52d5ec55147",
       "historical_sha256": "44c1ef6ec7bc718409fd45005146cbddef4d3d0c7c4e166e4a3b1303870f5e39",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_run_spec_decomposition.py": {
       "current_sha256": "663a79d92de92bdacac94f0636f0c9d44bbc2f6c1b7aacebb7a060527c6e7c87",
       "historical_sha256": "34ef0141af9c6ee9f73f083aff0337f62c18048168b1929666cc79877030d8b5",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase2_schema_v1_serializer_compatibility.py": {
       "current_sha256": "9aff2a5ebb3608161610aa9d65b21403a3a47a043175d8c76943d7ce4503b3a9",
       "historical_sha256": "6672d89497212403c5ecd0adee3fa4a726da6a220e3b5945b8bd945c96880f36",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase3_legacy_connection.py": {
       "current_sha256": "e6aaccd3be0cd5b9741dfc1683f00b95c13f714f05e594abf7da94fc131a57ce",
       "historical_sha256": "499b3ecbe2f4330550c9ad7806cdd39552dd805fc23f9610f60524c83481cd0f",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase3_runtime_state.py": {
       "current_sha256": "c5e90e4d3c5784b4851d8895294826334b5e56131e2abbf65dbdc8bcfee4f256",
       "historical_sha256": "285dc010fbb23ec374266b404fecbf237ff38086a0692455134e3f355c040ed6",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase5_compiled_application_connection.py": {
       "current_sha256": "508ccf002e986c30d27aaec8758a20d0e008e208c4b9b92f6182fe50a08a0996",
       "historical_sha256": "1876b4187550bf89d3fde11ad3e8fcd5d9c7a1acd13b813273b5b9abd80d7495",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase7_p7710_public_runner_result.py": {
       "current_sha256": "859f5849026fe675aa853181b17544c913de67eb956bb3c3e3a8e5a531f76c0e",
       "historical_sha256": "4ef19ca5ce8ec555a1573283ec10ebc8a1e4e07f60f201944f8dfc5a3a4aeb72",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase7_p7711_public_entry_equivalence.py": {
       "current_sha256": "f24bc86ca30f9edddbc3476b775a13da64a9a9f37681002aeca08d0791f5ef02",
       "historical_sha256": "27cf8c701561287c0c9bcb179b9a0777841b94431163f4a16fb7905754f1542c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase7_p776_production_connection.py": {
       "current_sha256": "cff77ce0d1835497fd8e24fba2f5bd16dfc114b75611aead0cec69278e7f473a",
       "historical_sha256": "72470d4c2c7233e2e30c7b24089b3b83faef5db7c1f57ae128e13e60fe4dd56a",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase7_p779_public_runner_connection.py": {
       "current_sha256": "be034361f641ac0c3dfba76c43b013cd25fdd066906ab8b0a4704e829a5bda4a",
       "historical_sha256": "9a5114b93e32c7d9dcf3a274b76f4b6f456e6a651355bd471271df929e1df951",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase8_p842_plane_static_lifting.py": {
       "current_sha256": "3c69ccfda932f3774b3ab699afc84a1cf654600e74b592f1fcb8e8a27e06c5c9",
       "historical_sha256": "685dca44ca52ba177947afa0d84290c55338adfa42e35c412acde71a5797c38b",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase8_p844_lifting_workflow_restart.py": {
       "current_sha256": "f8223193d5bb5b9da5f445e5adc0c5ebe017c8cf1662f39d6e3652387504ca37",
       "historical_sha256": "8447cf565c44b7e8774beee261f2bce8bc86d3b757521268109ef6165a973726",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_phase9_p95_plan.py": {
       "current_sha256": "44d5607c7b99ed1c9efd08919ac96a5cb35bcaf9bb51342bdc07b6c4461cb3be",
       "historical_sha256": "eb584d9c2c5d1612f1e20fb75bb57343b217cc43a0a007c4fabdebda5d897ce8",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc426_cross_device_checkpoint_harness.py": {
       "current_sha256": "b600903bf311f59ad151f86f01232305d2b2421f8b576940611ff9848770aab1",
       "historical_sha256": "23fdd016c1538b5eeb7c615557e570ddeb18dc98c5199338cb1360ccc3961dd6",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_checkpoint_identity_primitives.py": {
       "current_sha256": "58715945a701a112a358eaca0deae1c05e93b77173c8b6f0c8736bf956d033d8",
       "historical_sha256": "e4a601a657ca8aee1dd214d347650c4bb144e7739d5ea41e12517e1689e33855",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_cross_device_checkpoint_plan.py": {
       "current_sha256": "e1934418f14b21acdefb5f6f68a29818becba859a10dd41a9b5d8ee62ca8fb3a",
       "historical_sha256": "fe41cc2b47e8ea5518d33c94388a5bb1c15bb4d37cbbdc2fc781ca8988923aca",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_fresh_initial_conditioning.py": {
       "current_sha256": "1e60bcbec1a278ec76d31a695364e54d2e541794903dbcc586ff5191baa93846",
       "historical_sha256": "badd4ffc5cc257a4b1a84aa9dfb522d98f12e7e43587f34ef104a7ae2d42b322",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_lifting_checkpoint_integration_record.py": {
       "current_sha256": "8ecec60e08121584c522e46d6a25cd7dff9335c70195d7ee02b2eeee90eb8d18",
       "historical_sha256": "bc34ed7b7b20bad9c2311e3f624ee59ff2b5dec304dfe06d8b7d601f58763385",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_lifting_installed_wheel.py": {
       "current_sha256": "e92ee4ad44ee5255b5e4c70282a94b7f343093b7f6aa552241a997a6e316f643",
       "historical_sha256": "0bcaf180e73e9f35e255ef11c4870c691457af56aabceb6a212f7a322fda0d4f",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_plane_checkpoint_identity.py": {
       "current_sha256": "2aef847dfe561281af9d9335b5c8ebe1cd2b1eda0b22d62237325c36ee80b8c2",
       "historical_sha256": "2478eb3c099473950a23a9f1eef9f95cc1771ac23f3a7f28cd9fcde4c5e77157",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
+    },
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {
+      "current_sha256": "a248d7569805c2d1d43c51d30d1cd9256304cc332c483e66535243d178ce0624",
+      "historical_sha256": "87ba133df94f7f3239609cb1b484b63edac21b5ab4ef1a9e2536b329d05c0e44",
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc4_plane_nyquist_qualification_plan.py": {
       "current_sha256": "63c0e36974246407934bf15163265dc85c881b7a8ad885ce655374c2277713bd",
       "historical_sha256": "29dd3c53947e650c5a0a4c4ade5741f32321b01de5a8568c5b2b18909f0b0e4d",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc5_r512_compiled_simulation_integrity.py": {
       "current_sha256": "71162a09df9812a8199e7fd0367e2e14e33a9567f006d3a5de2134277d413a98",
       "historical_sha256": "8c1a26b965819abd13a50945f8d90633ca8137bc74f68f7b13da8017a2150196",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc5_r513_optional_hygiene.py": {
       "current_sha256": "94a92d77d0e6197002b38940322d90448cd3b695cc38f72d91e7c43e72196cfe",
       "historical_sha256": "4d2fe65c727a820c3e35222584a6b5436ed3a5be7f6bf0e7152fdf511a475cd3",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc5_r54_packaging_surface.py": {
       "current_sha256": "1e030c27ae144242be1e9165793fe4b9d553e2e9898c1e8265cb91b405042d99",
       "historical_sha256": "89417d5cca7c5a0b331bd30a7c8a434dae1d1b325ce985627a2a6111aab5037e",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc5_r57_device_normalization.py": {
       "current_sha256": "f349ca1f98eae22f21505da90af281db6110f91a68229b0f8cc262dc428bcf0d",
       "historical_sha256": "139c03e84d3d473e2ccbd407554a17464abaf23644df11bda063bd617e9da5d0",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc5_r59_pressure_postcondition_record.py": {
       "current_sha256": "5506176dcc65ec083f82ed5d15a90b9dd654c547d78d631a3e986dfc5290f760",
       "historical_sha256": "d0165e4f356e5b7c8c20bd5e1a499ec1d394a42732867ea0fb74c45818196a2d",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc6_1_plane_diagnostic_error_record.py": {
       "current_sha256": "95344e8481be13f486c2404f0f4c7a343865554ed3229a9e47e2d960449b08b9",
       "historical_sha256": "d46dfa4f95559d5f3e2864c37932bd6efe2aa970e329b65a3a990403b780804d",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_rc6_rc64_channel_failure_contract.py": {
       "current_sha256": "de2f89d8e9e1268d8b0463a332d3b64b7717044614ade134ed0ffa19c5b57b43",
       "historical_sha256": "f6a8e41462bee40d2b81af7a1c25228db4d67b579f6edf9e34aa76a06dbbfb78",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_transform_facade_contract.py": {
       "current_sha256": "a21a6ed649151c116e19f77ea54d1f9fb10d9e03f14291763c62e692141d2756",
       "historical_sha256": "ec405648c4e284b42c973236d183680ef112a9c168b151d52159045991c53552",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_2_x_open_issues.py": {
       "current_sha256": "c854a9727a9a8091696a3e6ec15b5578a55579969ef5702081dddeb21df0ffba",
       "historical_sha256": "84af6be7f0da7b3768d3a0c7a26e939c79710c5be19a691be72942cbb6347211",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_3_s03_exception_compatibility.py": {
       "current_sha256": "79535d33c9edb56115ddbba08ab89c82d0de4572d344ab15f183ddedb7e53950",
       "historical_sha256": "412e974be93d476b0153703e6c6119d0d17e7d6a815b21f12580efffe1127b2c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_3_s05_checkpoint_metadata_integrity.py": {
       "current_sha256": "35907ff722ed7c3a9b564caac5ddf9e09ac57ec8bd00cfaa737a101b03a9acf5",
       "historical_sha256": "03222981e467d70ae474435f0de8375a18f9e10a5aca386db0755a778f97a133",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_3_s08_historical_cpu_coverage.py": {
       "current_sha256": "46cb2d9d17c3dad08312334627cd0fa3e7cea53fe4f5f5b25f77138903376d28",
       "historical_sha256": "bdf1516599c8f7a6c4c717bf9f442b9b497b55cbb34b24ab3b84e7cc1f8f1aa5",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_4_s17_r3_r6_implementation.py": {
-      "current_sha256": "bd700e409a67801d17d94808f1d2acd09605f45b2236361bf04a2584617925bc",
+      "current_sha256": "d035a3bf037d63ca86857e4435a88abefbbe76e8dda1436e1f83517f9807e04e",
       "historical_sha256": "99e5f01b533836ab6a4983adabfd87af85c5aa1245d1be21faef6f6e338cfbd9",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_4_s18_r2_checkpoint_artifacts.py": {
       "current_sha256": "8d626f055a2aa2aafd5e8fd1ab6917189b9af86bfb53493b7e51f4c7b69dd3c4",
       "historical_sha256": "2341d867bf8ca55528bf7f44cce720cf08b3889a20f7f4d3a00a837026c8b250",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_4_s18_r4_shared_step_progress.py": {
       "current_sha256": "44d3abc75601b77e021a89096b4a1f27d0dc5bfcb94a477b8399c62fae12b77e",
       "historical_sha256": "3d23dfccc05d3ac93738981e72a981e843a578f3fa936d013221826e6f69585d",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_engineering.py": {
       "current_sha256": "9a27b0bafca3c29516e5b6a4474fe530780e3b74bf5193c8b0d73017c8fb1ce1",
       "historical_sha256": "84ba266a19201bc8fd89ead99b5a8cec08a47cd0f251a9d259c1de3341406d3c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s23_baselines.py": {
       "current_sha256": "84e7b73bdcea1c93e6f3e41e086c26eb5f68d54f12f9de9b998971a2fa746784",
       "historical_sha256": "88f3121da30b25643b94476bfa6e719d98682b44e0853121b351a98c0fce792a",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s24_retirement.py": {
       "current_sha256": "5726ebe9a1161bdd3a2a33ff8d5e956219245a4919aec10ea6eda20f4c0d839e",
       "historical_sha256": "dec93d3429e8ed2940261f21947887c41f8bf8dfc63c3335403d5bee12001b33",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s24_rework.py": {
       "current_sha256": "eed5e0e9b161db4e834b1959cc7eb4cf70d85eda590d3ec31b0ca289f9ce3824",
       "historical_sha256": "8e6e3e7ccac5df88c25c62f4f4bfad7df317768f0e75c6ae598416224b7d3ca5",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s24_successor.py": {
       "current_sha256": "f8c6682397548fe125cfedfaf8e57d487f4186e31a95f4f516bb27d40cfcffa5",
       "historical_sha256": "ef7657a7263fe0fb4e9a8cd6727d5c55708043f31ae8b43f26643fb07613ee87",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s25_batch.py": {
       "current_sha256": "7fccb315207b2c3a358ae5c660b5a95e25460d92f9bee2e3228bd91cdb6b6454",
       "historical_sha256": "a6929dcb3c04631286663a976aa517b0bfe085048947741c8589b3d5201f83d2",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s25_engineering.py": {
       "current_sha256": "1baa64a952243d224c15f649490811c7e6b720ceec1ad7ffd4c2215e73824df8",
       "historical_sha256": "f6a4d51ef54f4fbff40ef6b4ab1e3cf2cf2a4c18dadeca35ad0a0a30ff59de2c",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s25_stokes_extraction.py": {
       "current_sha256": "b1000f08220ef9a0ffd428f914024b1eb78447189572f0fedb7cc7fecbed3a8e",
       "historical_sha256": "ff5c1f497a36f4d4e3ea100ae31848f092726de002f23cd628031f0446dc9d05",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s26_assembly.py": {
       "current_sha256": "91414588f52aeceb0d45bbe11673da43325fd25632b08b6e3185b84fb86cafe9",
       "historical_sha256": "09fb1fca905cd7aaf90865c5112b27c8da33f1014fe630a1f3d78a70bb4ea65d",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/test_v0_5_s26_rework.py": {
       "current_sha256": "0157e2aef75ccf95116a165ebc2365e3c819512df19b062ef5a9d959b7c4643b",
       "historical_sha256": "ab0bbcd09ab5be4e568425cf211781e5223dcc1ab295277960daad924167db7a",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tests/v0_5_s24_registry_reference.py": {
       "current_sha256": "344b305d8efb48d8f82aa4212e5eb971c76fde76311d9fa314f3653567929d80",
       "historical_sha256": "091ee90a3fb626ba181ce2999dc00501c5da7fc41c8e9243765b8d4d014fc785",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     },
     "tools/check.py": {
       "current_sha256": "2469a2f420fea32468b1d4f8d457387d6b37a0de01222730a59184388346d231",
       "historical_sha256": "9efc2fce2fc617609c29fe5e83d8838d187f294024a560e37c9bfc7b067559e6",
-      "reason": "S-27 r2.2 forward binding; qualification pending."
+      "reason": "S-27 r2.3 forward binding; qualification pending."
     }
   },
   "introduced_sources": {
@@ -510,7 +516,7 @@
     "qualification/s27_exact_moves.json": "9920b3cfc053274015a8f398b0605920528e64fc0dd6007152d3a2c223a17f3e",
     "qualification/s27_expected_unimportable.json": "a30f852742dba7825d37a184c03e5e4694367441c181776c25806ed5e5fcb726",
     "qualification/s27_forward.py": "5af4256f92c58904f2f3d8fc4d77776b42826feb188e68a858799c90adb9312f",
-    "qualification/s27_guard_crosscheck.py": "2b79e7ddda81dabc2167ce9b4e60f90ad429c6692c9c600a4ff4cdbac974a848",
+    "qualification/s27_guard_crosscheck.py": "bd624b7d40c93ad7c4fef29bdfdca9b5451bc105c875b6c3167cc6a9de0f1a42",
     "qualification/s27_impact.py": "ed170e790e61f0b8be293f086edc8a202fc347eb7c2f94facc8402008530fbec",
     "qualification/s27_impact_targets.json": "3a3b1ba14f1e949f117f24b264952161f8bd2358badf2c6827dac5d527ebe8f8",
     "qualification/s27_import_delta.py": "334a3f573c10600b7c598daac34c72e60b1f19db0921e493a7252e1133a0e37e",
@@ -519,7 +525,7 @@
     "qualification/s27_metadata_classes.py": "7e02126d3c9446a81908b8ccd887a193fc5543b2a06b33bf8577559ff1e66462",
     "qualification/s27_move_check_source.py": "edaa639d6966da3e46490f44c7f09155f036de2e24148ffebb179da7965dcb09",
     "qualification/s27_r2_support.py": "697da85f09079904eb8a691155b187f3bb769a4a73b572cb9b9e447466514ee6",
-    "qualification/s27_r2_tables.json": "c72394409b450b56859f560c33781ce1a1412fddad1a9383fe96ac9076b6d1a9",
+    "qualification/s27_r2_tables.json": "726177bf5c9d7061e3d751aea9ade0ab293db5074ac38a40c155be3fcdc16da3",
     "qualification/s27_records.py": "214df27f0b427268e71930e1f488f91c722be88c05f637bd57c19eaab41b0128",
     "qualification/s27_reexports.py": "122565d76ad92b5fcb1a0d8fa5ab196ae2fd61e80bf41bbc95bbca1302aa1aa6",
     "qualification/s27_retired_modules.json": "c758edf16cc821a37d683265b56d4b55d49d923cc85796da4860ef31709433a6",
@@ -527,7 +533,7 @@
     "qualification/s27_statement_map.json": "ee4c204ac9793df27193e569b36f1bc165d31fbf41bc7146868e2eb31529f518",
     "qualification/s27_statement_map.py": "2b051f079f4883e85c8050bce42321761c6f321e13e844f1775ef10231a4c043",
     "qualification/s27_test_classify.py": "63bcd8e62d3149ee5a0cba35e6991a8d3b2e799fe1d973eea65846edd938904b",
-    "qualification/s27_test_disposition.json": "de4211bdc8e8c766b63122783b244859aecbd35298ed6decc97ece5eed0a7cd9",
+    "qualification/s27_test_disposition.json": "af3fb2bf860a0505ddc26fabd70b4bcff256a6c31646364dea70193a224f8953",
     "tests/baselines/s27/plane_comparison.json": "a644db962d37cc59ea17ebc8b7d5c83837f9cc3326c17a0dd91d43ab48f2d832",
     "tests/test_v0_5_s27_engine.py": "29c896cede960317dd3bfbde2823fe3e8929ac04bef4bdf995bc55d2c15ec579",
     "tests/test_v0_5_s27_historical_tests.py": "e78d8a4e8f1103b58a2cc5024e2ab251c4652f2ff38169351d5e2ae4667373b8",
