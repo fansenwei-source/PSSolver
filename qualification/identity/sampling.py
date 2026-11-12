@@ -60,9 +60,11 @@ def restart_contract(continuous: list[dict], resumed: list[dict], start: int) ->
 
 def trace(scene: dict, root: Path, *, case_factory=None) -> dict:
     """Record one continuous run and resumptions with identical event schedules."""
-    from qualification.identity.runtime_case import RuntimeCase
+    if case_factory is None:
+        from qualification.identity.runtime_case import RuntimeCase
 
-    factory = RuntimeCase if case_factory is None else case_factory
+        case_factory = RuntimeCase
+    factory = case_factory
     case = factory(scene, root)
     identity = case.identity()
     rows = [sample(case, root, step) for step in range(scene["steps"] + 1)]

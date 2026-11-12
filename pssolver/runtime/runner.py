@@ -195,7 +195,7 @@ class Runner:
             **completion,
             diagnostics=diagnostics_metadata_envelope(
                 application_family=self.capture.application_family,
-                runtime_path=self.capture.runtime_path,
+                runtime_path="engine",
                 enabled=self.schedule.diagnostics,
                 steps=[value.step for value in self.diagnostics],
                 dtype=self.capture.diagnostic_dtype,

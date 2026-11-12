@@ -5,6 +5,8 @@ from setuptools.command.build_py import build_py
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+
+
 class PSSolverBuildPy(build_py):
     """Keep repository-only qualification helpers out of built wheels."""
 
@@ -39,6 +41,8 @@ setup(
     # Only the supported library namespace belongs in the distribution.
     # Repository-local qualification helpers under ``benchmarks/`` are not a
     # public import surface and must not shadow a consumer's own package.
+    # The 1.1 compatibility declarations are installed under functional;
+    # they are not exported through the public 0.5 package root.
     packages=find_packages(
         include=["pssolver", "pssolver.*"],
         exclude=["pssolver.control", "pssolver.control.*"],

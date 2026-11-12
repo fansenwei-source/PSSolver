@@ -77,7 +77,16 @@ def test_exact_moves_preserve_every_frozen_source_unit_and_hash():
         row for rows in check.exact_assemblies().values() for row in rows
         if "target_lines" in row
     ]
-    assert len(assembled_through_s27) == len(latest["exact_moves"])
+    table = json.loads((ROOT / "qualification/s28b_tables.json").read_text())
+    routes, deleted = check.s28b_routes(table)
+    expected = []
+    for row in latest["exact_moves"]:
+        route = routes.get((row["target"], row["unit"]))
+        if route is None and row["target"] in deleted or route and route[0] == "replaced":
+            continue
+        expected.append((row["target"], row["unit"]))
+    assert len(latest["exact_moves"]) - len(expected) == 12
+    assert sorted((row["target"], row["unit"]) for row in assembled_through_s27) == sorted(expected)
     assert latest["exact_moves"][:len(new["exact_moves"])] == new["exact_moves"]
 
 

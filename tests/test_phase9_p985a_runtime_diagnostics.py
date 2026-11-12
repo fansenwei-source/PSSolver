@@ -9,7 +9,7 @@ import pytest
 import torch
 
 import pssolver.functional.api as stable
-from pssolver import SpectralSolver
+from pssolver.backends.tensor_product import TensorProductTransformBackend
 from pssolver.functional.channel_activity_runtime import (
     ChannelActivityFunctionalRuntime,
 )
@@ -40,14 +40,14 @@ class _DiagnosticsDelegate:
 
 
 def _pressure_operator():
-    spectral = SpectralSolver(
+    spectral = TensorProductTransformBackend(
         (3, 2, 2),
-        L=(3.0, 2.0, 2.0),
+        lengths=(3.0, 2.0, 2.0),
         device="cpu",
         dtype=torch.float64,
     )
     solver = ChannelNoSlipModalStokesSolver(
-        spectral.transform_backend,
+        spectral,
         friction=0.2,
         viscosity=0.73,
         pressure_relative_tolerance=1.0e-30,

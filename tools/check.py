@@ -175,8 +175,48 @@ def unit_span(source: str, name: str) -> tuple[int, int]:
     return min([node.lineno, *(d.lineno for d in getattr(node, "decorator_list", []))]), node.end_lineno
 
 
+def git_text(commit: str, path: str) -> str:
+    return subprocess.check_output(["git", "show", commit + ":" + path], cwd=ROOT).decode()
+
+
+def unit_text(source: str, name: str) -> tuple[int, int, str]:
+    start, end = unit_span(source, name)
+    return start, end, "".join(source.splitlines(keepends=True)[start - 1 : end])
+
+
+def s28b_routes(tables: dict) -> tuple[dict, set]:
+    """Where S-28b sends a historical exact unit: a move, retirement with its file, or a rewrite."""
+    moved = {}
+    for kind in ("exact_moves", "mechanical_moves"):
+        for move in tables[kind]:
+            if not move.get("copy"):
+                path, unit = move["source"].split(":", 1)
+                moved[(path, unit)] = (kind, move)
+    deleted = {path for path, why in tables["changed_paths"].items() if why.startswith("delete")}
+    for row in tables["replaced_exact_units"]:
+        moved[(row["path"], row["unit"])] = ("replaced", row)
+    return moved, deleted
+
+
+def substitute(original: str, span: str, move: dict) -> tuple[str, str]:
+    """Apply a mechanical move's source substitutions to one unit span (each must occur once)."""
+    text = span
+    for old, new in move["source_substitutions"]:
+        if text.count(old) != 1:
+            raise ValueError(f"mechanical substitution not applicable: {move['source']}")
+        text = text.replace(old, new)
+    if hashlib.sha256(text.encode()).hexdigest() != move["target_text_sha256"]:
+        raise ValueError(f"mechanical move text differs from the table: {move['source']}")
+    return original.replace(span, text, 1), text
+
+
 def exact_assemblies() -> dict[str, list[dict]]:
-    """Validate every registered span against its reachable, byte-identical source."""
+    """Validate every registered span against its reachable, byte-identical source.
+
+    S-28b (R-0121): a historical target that S-28b moves is checked in the accepted basis and
+    at its S-28b target; one that S-28b deletes with its file is checked in the basis only.
+    S-28b's own exact moves are checked against the basis. Anything else missing still fails.
+    """
     first = json.loads((ROOT / "qualification/s25_exact_moves.json").read_text())
     previous = json.loads((ROOT / "qualification/s26_exact_moves.json").read_text())
     manifest = json.loads((ROOT / "qualification/s27_exact_moves.json").read_text())
@@ -194,6 +234,8 @@ def exact_assemblies() -> dict[str, list[dict]]:
         raise ValueError("S-27 exact moves changed an inherited source, unit or frozen hash")
     channel = json.loads((ROOT / "qualification/s28a_tables.json").read_text())
     baseline = channel["basis"]
+    s28b = json.loads((ROOT / "qualification/s28b_tables.json").read_text())
+    moved, deleted = s28b_routes(s28b)
     result = {}
     entries = list(manifest["exact_moves"])
     for move in channel["exact_moves"]:
@@ -203,23 +245,37 @@ def exact_assemblies() -> dict[str, list[dict]]:
             source_ast_sha256=move["source_ast_sha256"],
         ))
     for entry in entries:
-        original = subprocess.check_output(
-            ["git", "show", entry.get("source_commit", manifest["source_commit"]) + ":" + entry["source"]], cwd=ROOT
-        ).decode()
-        current = (ROOT / entry["target"]).read_text()
-        old_start, old_end = unit_span(original, entry["unit"])
-        start, end = unit_span(current, entry["unit"])
-        before = "".join(original.splitlines(keepends=True)[old_start - 1 : old_end])
-        after = "".join(current.splitlines(keepends=True)[start - 1 : end])
+        original = git_text(entry.get("source_commit", manifest["source_commit"]), entry["source"])
+        old_start, old_end, before = unit_text(original, entry["unit"])
+        historical = before
+        route = moved.get((entry["target"], entry["unit"]))
+        if route is not None or entry["target"] in deleted:
+            if unit_text(git_text(s28b["basis"], entry["target"]), entry["unit"])[2] != before:
+                raise ValueError(f"altered exact move: {entry['target']}::{entry['unit']}")
+            if route is None or route[0] == "replaced":
+                # Retired with its file, or replaced by a design rewrite listed in the table.
+                entry = dict(entry, current_target=None)
+            else:
+                entry = dict(entry, current_target=route[1]["target"])
+                if route[0] == "mechanical_moves":
+                    original, before = substitute(original, before, route[1])
+                    old_start, old_end, _ = unit_text(original, entry["unit"])
+        else:
+            entry = dict(entry, current_target=entry["target"])
+        if entry["current_target"] is None:
+            current, start, end, after = None, None, None, before
+        else:
+            current = (ROOT / entry["current_target"]).read_text()
+            start, end, after = unit_text(current, entry["unit"])
         if "target_lines" in entry:
             baseline_target = subprocess.check_output(
                 ["git", "show", baseline + ":" + entry["target"]], cwd=ROOT, text=True
             )
             if list(unit_span(baseline_target, entry["unit"])) != entry["target_lines"]:
                 raise ValueError(f"altered historical exact span: {entry['target']}::{entry['unit']}")
-            digest_matches = hashlib.sha256(before.encode()).hexdigest() == entry["sha256"]
+            digest_matches = hashlib.sha256(historical.encode()).hexdigest() == entry["sha256"]
         else:
-            tree = ast.parse(before).body[0]
+            tree = ast.parse(historical).body[0]
             digest_matches = (
                 hashlib.sha256(ast.dump(tree).encode()).hexdigest() == entry["source_ast_sha256"]
             )
@@ -228,11 +284,35 @@ def exact_assemblies() -> dict[str, list[dict]]:
             or not digest_matches
         ):
             raise ValueError(f"altered exact move: {entry['target']}::{entry['unit']}")
-        result.setdefault(entry["target"], []).append(
-            dict(
-                entry, start=start, end=end, original=original, old_start=old_start, old_end=old_end
+        if current is not None:
+            result.setdefault(entry["current_target"], []).append(
+                dict(
+                    entry, start=start, end=end, original=original, old_start=old_start,
+                    old_end=old_end
+                )
             )
-        )
+    placed = {(path, row["unit"]) for path, rows in result.items() for row in rows}
+    for move in s28b["exact_moves"] + s28b["mechanical_moves"]:
+        path, unit = move["source"].split(":", 1)
+        original = git_text(s28b["basis"], path)
+        old_start, old_end, before = unit_text(original, unit)
+        node = ast.parse(before).body[0]
+        if hashlib.sha256(ast.dump(node).encode()).hexdigest() != move["source_ast_sha256"]:
+            raise ValueError(f"altered S-28b source unit: {move['source']}")
+        if "source_substitutions" in move:
+            original, before = substitute(original, before, move)
+            old_start, old_end, _ = unit_text(original, unit)
+        start, end, after = unit_text((ROOT / move["target"]).read_text(), unit)
+        if after != before:
+            raise ValueError(f"altered exact move: {move['target']}::{unit}")
+        if (move["target"], unit) not in placed:
+            result.setdefault(move["target"], []).append(
+                dict(
+                    source=path, unit=unit, target=move["target"], current_target=move["target"],
+                    start=start, end=end, original=original, old_start=old_start,
+                    old_end=old_end
+                )
+            )
     for path, entries in result.items():
         ordered = sorted(entries, key=lambda row: row["start"])
         if any(a["end"] >= b["start"] for a, b in zip(ordered, ordered[1:], strict=False)):
@@ -345,11 +425,35 @@ def lint_ratchet(
     return bool(passed)
 
 
+def module_path(name: str, commit: str | None = None) -> str:
+    stem = name.replace(".", "/")
+    if commit is None:
+        return stem + "/__init__.py" if (ROOT / stem / "__init__.py").is_file() else stem + ".py"
+    listed = subprocess.check_output(["git", "ls-tree", "--name-only", commit, stem + "/__init__.py"],
+                                     cwd=ROOT, text=True)
+    return stem + "/__init__.py" if listed.strip() else stem + ".py"
+
+
+def s28b_module_renames() -> dict[str, str]:
+    """New path -> basis path for every S-28b whole-module move (table `renames`)."""
+    tables = json.loads((ROOT / "qualification/s28b_tables.json").read_text())
+    return {
+        module_path(new): module_path(old, tables["basis"])
+        for old, new in tables["renames"].items()
+        if (ROOT / module_path(new)).is_file()
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", default=BASE)
     args = parser.parse_args()
     changed, new, renames = changed_files(args.base)
+    for target, source in s28b_module_renames().items():
+        # r2 §7.1: the lint baseline of an S-28b whole-module move follows the rename.
+        if target in new:
+            new.remove(target)
+            renames[target] = source
     ruff = os.environ.get("RUFF", "ruff")
     mypy = os.environ.get("MYPY", "mypy")
     assemblies = exact_assemblies()

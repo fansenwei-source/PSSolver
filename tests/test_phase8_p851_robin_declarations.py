@@ -13,27 +13,12 @@ import pytest
 
 import pssolver
 import pssolver.boundaries as public_boundaries
-from pssolver.boundaries import (
-    HomogeneousBoundaryPolicy,
-    RobinFaceLaw,
-    StaticRobinBoundaryPolicy,
-    assign_boundaries,
-    robin,
-)
-from pssolver.configuration.simulation_lowering import (
-    LoweringRejectionCode,
-    SimulationLoweringError,
-    lower_simulation_spec,
-)
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
+from pssolver.boundaries import HomogeneousBoundaryPolicy, RobinFaceLaw, StaticRobinBoundaryPolicy, robin
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.functional.legacy_declarations.simulation_lowering import LoweringRejectionCode, SimulationLoweringError, lower_simulation_spec
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
 from pssolver.core.boundary import (
     BoundaryCondition,
     BoundaryKind,
@@ -47,12 +32,8 @@ from pssolver.core.boundary import (
 from pssolver.core.domain import DomainSpec
 from pssolver.core.fields import FieldRole
 from pssolver.geometries import PlaneSlab
-from pssolver.systems.algebraic import AlgebraicSystemSpec
-from pssolver.systems.equations import (
-    EquationFieldSpec,
-    EquationSystemSpec,
-    EquationTermSpec,
-)
+from pssolver.functional.legacy_declarations.systems_algebraic import AlgebraicSystemSpec
+from pssolver.functional.legacy_declarations.systems_equations import EquationFieldSpec, EquationSystemSpec, EquationTermSpec
 
 
 ROOT = Path(__file__).resolve().parents[1]

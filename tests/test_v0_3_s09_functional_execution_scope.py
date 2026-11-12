@@ -8,9 +8,7 @@ import pytest
 import torch
 
 import pssolver.functional.api as stable
-from pssolver.configuration.execution_device import (
-    snapshot_tf32_execution_state,
-)
+from pssolver.engine.execution_device import snapshot_tf32_execution_state
 from tests.test_phase9_p92_periodic_functional_runtime import (
     _control as periodic_control,
     _simulation as periodic_simulation,

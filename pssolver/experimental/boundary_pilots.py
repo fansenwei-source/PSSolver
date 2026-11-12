@@ -2,9 +2,7 @@
 
 These objects are not qualified through the public :class:`Simulation` API.
 Lifting execution remains closed until B8/S2-07 is resolved and independently
-qualified.  The original module paths remain available during the v0.4
-deprecation window and as read-only compatibility owners for released
-checkpoints.
+qualified. Released pilot checkpoints still have their read-only readers.
 """
 
 from __future__ import annotations
@@ -14,13 +12,34 @@ from pssolver.boundaries import (
     StaticRobinBoundaryPolicy,
     robin,
 )
-from pssolver.configuration.finite_q_anchoring import (
+from pssolver.experimental.finite_q_anchoring_declarations import (
     PlaneFiniteQAnchoringLoweringPlan,
     apply_plane_finite_q_anchoring_pilot,
     lower_plane_finite_q_anchoring_pilot,
 )
-from pssolver.configuration.lifting import build_plane_static_lifting_plan
-from pssolver.configuration.robin import (
+from pssolver.experimental.finite_q_anchoring_runtime import (
+    FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
+    FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION,
+    PlaneFiniteQAnchoringCheckpoint,
+    PlaneFiniteQAnchoringRuntime,
+)
+from pssolver.experimental.finite_q_anchoring_workflow import (
+    FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION,
+    PlaneFiniteQAnchoringWorkflow,
+    PlaneFiniteQAnchoringWorkflowResult,
+    load_finite_q_anchoring_checkpoint,
+    upgrade_finite_q_anchoring_checkpoint_directory,
+    write_finite_q_anchoring_checkpoint,
+)
+from pssolver.experimental.robin_scalar_runtime import (
+    PlaneRobinOperatorCache,
+    PlaneRobinOperatorCacheKey,
+    PlaneRobinScalarCheckpoint,
+    PlaneRobinScalarRuntime,
+)
+from pssolver.functional.legacy_declarations.lifting import build_plane_static_lifting_plan
+from pssolver.functional.legacy_declarations.robin import (
     RobinImpedanceSupportError,
     lower_plane_robin_component_pilot,
     lower_plane_robin_scalar_pilot,
@@ -65,27 +84,6 @@ from pssolver.planning.robin import (
     PlaneRobinScalarLoweringPlan,
     build_cell_centered_robin_eigenbasis_plan,
     validate_dimensionless_robin_impedance,
-)
-from pssolver.runtime.finite_q_anchoring import (
-    FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
-    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
-    FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION,
-    PlaneFiniteQAnchoringCheckpoint,
-    PlaneFiniteQAnchoringRuntime,
-)
-from pssolver.runtime.robin_scalar import (
-    PlaneRobinOperatorCache,
-    PlaneRobinOperatorCacheKey,
-    PlaneRobinScalarCheckpoint,
-    PlaneRobinScalarRuntime,
-)
-from pssolver.workflows.finite_q_anchoring import (
-    FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION,
-    PlaneFiniteQAnchoringWorkflow,
-    PlaneFiniteQAnchoringWorkflowResult,
-    load_finite_q_anchoring_checkpoint,
-    upgrade_finite_q_anchoring_checkpoint_directory,
-    write_finite_q_anchoring_checkpoint,
 )
 
 

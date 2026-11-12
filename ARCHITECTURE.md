@@ -64,7 +64,7 @@ transpose VJP; the legacy declaration and checkpoint identities still apply.
 public       pssolver (top-level exports), api/     Simulation, run_simulation, results
 components   models/ presets/ geometries/ boundaries/ integrators/
 assembly     planning/                              assemble() -> CompiledSimulation(plan)
-plan         planning/plan.py                       immutable, tensor-free, hashable
+plan         planning/engine_plan.py                immutable, tensor-free, hashable
 engine       engine/                                State, step program, operators, constraints
 numerics     backends/ operators/ linear_solvers/   transforms, projector, Stokes solvers
 run          runtime/                               the single Runner
@@ -80,7 +80,7 @@ import contracts below (rules in `pyproject.toml`,
 | Package | Must not import |
 |---|---|
 | `core`, `planning` | `torch`; `engine`, `runtime`, `io`, `api`, `functional`, `cli`; the implementation modules of `models` and `presets` |
-| `backends`, `operators`, `linear_solvers` | `api`, `runtime`, `io`, `functional`, `cli`, `planning` (except `planning.plan` types) |
+| `backends`, `operators`, `linear_solvers` | `api`, `runtime`, `io`, `functional`, `cli`, except registered planning contracts |
 | `engine` | `api`, `runtime`, `io`, `functional`, `cli` |
 | `runtime` | `api`, `functional`, `cli` |
 | `io` | `api`, `runtime`, `functional`, `cli`; from `engine`, only the `State` type |
@@ -104,7 +104,7 @@ the engine allocates", which could not be checked.
 
 ### 4.1 Plan
 
-`planning.plan.Plan` is a frozen dataclass without tensors. It records:
+`planning.engine_plan.Plan` is a frozen dataclass without tensors. It records:
 - per-field, per-component, per-axis bases;
 - packed transform groups;
 - linear-operator tiers;
@@ -223,10 +223,10 @@ Everything else is rejected before any tensor is read.
 
 | Surface | Status |
 |---|---|
-| `pssolver.Simulation`, `run_simulation`, `compile_simulation`, results, capability catalog | stable within 0.x minor versions. During 0.5 development the v0.4 `Simulation` stays the only public front end until the S-28 switch; migrated combinations reach the engine through the 1.1 translator |
-| `pssolver.engine` (`Engine`, `State`, model terms), `planning.assemble` | internal until the S-28 switch, then public and provisional until 1.0 |
+| `pssolver.Simulation`, `run_simulation`, `compile_simulation`, results, capability catalog | The 0.5 public front end assembles once and hands that Plan to the common Runner; the catalog derives its capabilities from assembly |
+| `pssolver.engine` (`Engine`, `State`, model terms), `planning.assemble` | Public and provisional until 1.0 |
 | `pssolver.functional.api` (functional API 1.1) | stable; inputs (v0.4 `SimulationSpec`) and `identity()` unchanged; kept until its consumers move to 2.0 |
-| `pssolver.functional.legacy_declarations` | 1.1 compatibility surface only: v0.4 declaration types and their translator to components. Not exported at top level; cannot be passed to `run_simulation`; removed together with 1.1 |
+| `pssolver.functional.legacy_declarations` | 1.1 compatibility surface. Also used privately to authenticate and resume qualified v0.4 checkpoints. Not exported at top level; cannot be passed to `run_simulation`; the declaration surface retires with 1.1 |
 | `engine.FieldView`, projector interface for frozen kernels | compatibility surface; new models must not use it |
 | Plane command line `pssolver-plane-beris-edwards` | stable command name and numerical options; `--runtime-path` removed in 0.5 |
 | `experimental/` | not supported; contains only boundary pilots awaiting the boundary work. Each module docstring states its promotion-or-removal condition |

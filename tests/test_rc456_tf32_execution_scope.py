@@ -9,11 +9,7 @@ import torch
 
 from tests.v0_3_s03_successor import resolve_s03_successor
 
-from pssolver.configuration.execution_device import (
-    configure_tf32_execution,
-    scoped_tf32_execution,
-    snapshot_tf32_execution_state,
-)
+from pssolver.engine.execution_device import configure_tf32_execution, scoped_tf32_execution, snapshot_tf32_execution_state
 
 
 ROOT = Path(__file__).resolve().parents[1]

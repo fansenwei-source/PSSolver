@@ -16,15 +16,8 @@ import pytest
 
 import pssolver
 import pssolver.configuration as configuration
-from pssolver.configuration import (
-    PLANE_FREE_SLIP_BOUNDARIES,
-    PlaneBerisEdwardsRunSpec,
-    PlaneFreeSlipBoundaryConditions,
-    PlaneRuntimePath,
-    SpectralRefreshSpec,
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration import plane_beris_edwards as facade
+from pssolver.functional.legacy_declarations.plane_beris_edwards import PLANE_FREE_SLIP_BOUNDARIES, PlaneBerisEdwardsRunSpec, PlaneFreeSlipBoundaryConditions, PlaneRuntimePath, SpectralRefreshSpec, create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations import plane_beris_edwards as facade
 from pssolver.core import (
     BoundarySet,
     DomainSpec,

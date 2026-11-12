@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from pssolver.transforms import (
+from pssolver.backends.tensor_product import (
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     TensorProductTransformBackend,
 )

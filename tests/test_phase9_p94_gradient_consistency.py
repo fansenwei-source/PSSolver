@@ -11,22 +11,11 @@ import torch
 
 import pssolver.functional.validation as functional_validation
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
-from pssolver.configuration.legacy_periodic import load_periodic_initial_q
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-)
-from pssolver.configuration.public_simulation_runner import compile_public_simulation
+from pssolver.functional.legacy_declarations import Output, Simulation, SnapshotInitialCondition, SpectralNumerics, TimeStepping, TorchSpectralExecution
+from pssolver.functional.legacy_declarations.legacy_periodic import load_periodic_initial_q
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
+from pssolver.functional.legacy_declarations.public_simulation_runner import compile_public_simulation
 from pssolver.functional import (
     FunctionalValidationError,
     build_functional_runtime,
@@ -37,7 +26,7 @@ from pssolver.functional import (
     validate_periodic_production_consistency,
 )
 from pssolver.geometries import PeriodicBox
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
+from pssolver.functional.legacy_declarations import CompleteStressBerisEdwards
 from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 
 

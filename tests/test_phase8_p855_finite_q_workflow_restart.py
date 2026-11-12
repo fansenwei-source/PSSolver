@@ -17,32 +17,17 @@ import pytest
 import torch
 
 import pssolver
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.finite_q_anchoring import (
-    apply_plane_finite_q_anchoring_pilot,
-    lower_plane_finite_q_anchoring_pilot,
-)
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.experimental.finite_q_anchoring_declarations import apply_plane_finite_q_anchoring_pilot, lower_plane_finite_q_anchoring_pilot
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
 from pssolver.models.active_nematics import (
     Q_COMPONENTS,
     quadratic_finite_q_anchoring,
     uniaxial_Q,
 )
-from pssolver.runtime.finite_q_anchoring import (
-    PlaneFiniteQAnchoringCheckpoint,
-    PlaneFiniteQAnchoringRuntime,
-)
-from pssolver.workflows.finite_q_anchoring import (
-    PlaneFiniteQAnchoringWorkflow,
-    load_finite_q_anchoring_checkpoint,
-)
+from pssolver.experimental.finite_q_anchoring_runtime import PlaneFiniteQAnchoringCheckpoint, PlaneFiniteQAnchoringRuntime
+from pssolver.experimental.finite_q_anchoring_workflow import PlaneFiniteQAnchoringWorkflow, load_finite_q_anchoring_checkpoint
 
 
 ROOT = Path(__file__).resolve().parents[1]

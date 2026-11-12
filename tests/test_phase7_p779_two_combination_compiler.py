@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pssolver import Simulation
-from pssolver.configuration.public_simulation_runner import PUBLIC_PLANE_APPLICATION, public_compiler_capabilities
+from pssolver.functional.legacy_declarations import Simulation
+from pssolver.functional.legacy_declarations.public_simulation_runner import PUBLIC_PLANE_APPLICATION, public_compiler_capabilities
 
 
 def _replace_channel_declarations(source, *, execution=None, discretization=None):

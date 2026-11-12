@@ -9,6 +9,11 @@ qualification scripts remain in Git but are not shipped in distributions.
 Pygame is loaded only when visualization uses it and is available through
 `pssolver[visualization]`. Numerical implementations and thresholds are unchanged.
 
+The public 0.5 frontend uses a single assembled Plan, Engine and Runner for
+Periodic, Plane and Channel. See the [migration guide](docs/migration_0_4_to_0_5.md)
+for declaration changes, the retained Functional API 1.1, and supported v0.4
+checkpoint continuation. The old runtime selectors and v1 solver are retired.
+
 ## 0.4.0 — 2026-11-04
 
 This release freezes the independently reviewed 0.4 development line. The

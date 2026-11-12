@@ -17,25 +17,12 @@ from pssolver import (
     TorchSpectralExecution,
     compile_simulation,
 )
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    robin,
-)
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.simulation import (
-    ExecutionSpec,
-    TimeIntegrationSpec,
-)
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, robin
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, TimeIntegrationSpec
 
 
 def _specification(tmp_path):

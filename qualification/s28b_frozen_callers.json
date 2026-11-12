@@ -1,0 +1,5578 @@
+{
+  "basis": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802",
+  "modules": {
+    "Plane_beris_edwards_navier_stokes": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen root script; S-30",
+      "path": "Plane_beris_edwards_navier_stokes.py",
+      "sha256": "a0ce0f877096a0def4b9dec35426d4e98a056bea86236d25d53873286be65489",
+      "static": [
+        {
+          "chain": [
+            "Plane_beris_edwards_navier_stokes",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 74,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        },
+        {
+          "chain": [
+            "Plane_beris_edwards_navier_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "BasisAwareSpectralProjector",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "Plane_beris_edwards_navier_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "DEALIAS_RULE_FRACTIONS",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "Plane_beris_edwards_navier_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "DEFAULT_DEALIAS_RULE",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "Plane_beris_edwards_navier_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "DEFAULT_TRANSFORM_EXECUTION_ORDER",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "Plane_fig4_benchmark": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen root script; S-30",
+      "path": "Plane_fig4_benchmark.py",
+      "sha256": "e1935a282b17795ab8cc7630e6376eb5724bd926fa35cfb7528982f1f3a5df96",
+      "static": [
+        {
+          "chain": [
+            "Plane_fig4_benchmark",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "Plane_free_slip_dealiased": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen root script; S-30",
+      "path": "Plane_free_slip_dealiased.py",
+      "sha256": "0a03eb7d5fe2a6fdd76b6242ee5f859c1eff616865f3d011f0ef809ca050f4cb",
+      "static": [
+        {
+          "chain": [
+            "Plane_free_slip_dealiased",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 27,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "Plane_shendruk_stokes": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen root script; S-30",
+      "path": "Plane_shendruk_stokes.py",
+      "sha256": "783cf9b884ce237015a1ddd7d0a79f759df5c57db6d5f66279c5dc0210e32840",
+      "static": [
+        {
+          "chain": [
+            "Plane_shendruk_stokes",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 61,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_periodic_hermitian_profiles": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_periodic_hermitian_profiles.py",
+      "sha256": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_periodic_hermitian_profiles",
+            "benchmarks.profile_periodic_hermitian_qualification",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_periodic_hermitian_profiles",
+            "benchmarks.profile_periodic_hermitian_qualification",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_periodic_hermitian_profiles",
+            "benchmarks.profile_periodic_hermitian_qualification",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.analyze_phase9_p95_gradient_diagnostic": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_phase9_p95_gradient_diagnostic.py",
+      "sha256": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_phase9_p95_gradient_diagnostic",
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.analyze_phase9_p95_gradient_validator_v2": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_phase9_p95_gradient_validator_v2.py",
+      "sha256": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_phase9_p95_gradient_validator_v2",
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc2_g5_installed_smokes": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc2_g5_installed_smokes.py",
+      "sha256": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593",
+      "static": []
+    },
+    "benchmarks.analyze_rc437_lifting_h100": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc437_lifting_h100.py",
+      "sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 15,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 16,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 17,
+          "name": "plan_package_runtime_construction",
+          "target": "pssolver.configuration.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.plane_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 19,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc437_lifting_h100_recovery": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc437_lifting_h100_recovery.py",
+      "sha256": "56340ecb934a5ed68506b13ab88b6544b8e3a431dd0d2ba522b30dd0179897dd",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 15,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 16,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 17,
+          "name": "plan_package_runtime_construction",
+          "target": "pssolver.configuration.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.plane_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc437_lifting_h100_recovery",
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 19,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc458_reserved_memory_recovery": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc458_reserved_memory_recovery.py",
+      "sha256": "3d732f5972589fbad3198cb7bc3baf4c93a7a848889a67624a5746e8a2701087",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_reserved_memory_recovery",
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc458_tf32_h100": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc458_tf32_h100.py",
+      "sha256": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc458_transform_counter_recovery": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc458_transform_counter_recovery.py",
+      "sha256": "1e096655363c3824b03911c340964cffd92c52c3393b1d5fd0cbe75af856a319",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc458_transform_counter_recovery",
+            "benchmarks.analyze_rc458_tf32_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_cumulative_closure": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc5_g1_cumulative_closure.py",
+      "sha256": "6eb46b0471ebe2a3f27f0c3d448bc966eee8c1ff2da5648aff6311ac9827fa51",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_cumulative_closure",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_focused_performance_h100": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+      "sha256": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_h100": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc5_g1_h100.py",
+      "sha256": "6e0453958165ed7239602fefdc7f4c0f23cbdd11efdd1419d14b6b3a8498e994",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_measurement_window_h100": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc5_g1_measurement_window_h100.py",
+      "sha256": "22d9c21bbc44782fbcf88b3cca1d9762299c7404e08c4b4bc847f3a1151510bc",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_measurement_window_h100",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc5_g1_timing_instrumentation": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc5_g1_timing_instrumentation.py",
+      "sha256": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.analyze_rc6_single_h100": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/analyze_rc6_single_h100.py",
+      "sha256": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.assemble_rc5_g1_auxiliary": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/assemble_rc5_g1_auxiliary.py",
+      "sha256": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc5_g1_auxiliary",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.assemble_rc6_h100_auxiliary": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/assemble_rc6_h100_auxiliary.py",
+      "sha256": "62b24f4d2870c001d3477f30026a5b293e4c495addc02e524cb586c82ddec973",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.assemble_rc6_h100_auxiliary",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.benchmark_periodic_fast_path": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'SpectralSolver' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/benchmark_periodic_fast_path.py",
+      "sha256": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a",
+      "static": []
+    },
+    "benchmarks.benchmark_stokes_pressure_diagnostics": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.transforms'"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/benchmark_stokes_pressure_diagnostics.py",
+      "sha256": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.benchmark_stokes_pressure_diagnostics",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 16,
+          "name": "FreeSlipModalStokesSolver",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "benchmarks.benchmark_stokes_pressure_diagnostics",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 16,
+          "name": "TensorProductTransformBackend",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "benchmarks.benchmark_transform_backend": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.transforms'"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/benchmark_transform_backend.py",
+      "sha256": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.benchmark_transform_backend",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 17,
+          "name": "TensorProductTransformBackend",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "benchmarks.build_rc6_single_h100_stage_plan": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/build_rc6_single_h100_stage_plan.py",
+      "sha256": "1732c639efcf36bf3d46b759e4eaef9c189f6ecdcaedddb2d8b380600dbce2e3",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.build_rc6_single_h100_stage_plan",
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.capture_beris_edwards_nsys": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.plane'"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/capture_beris_edwards_nsys.py",
+      "sha256": "b79cadeef16f14bbe925707dc06652c09676075ab937c5103cba1efce8a032b2",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.capture_beris_edwards_nsys",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 24,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.capture_beris_edwards_nsys",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.capture_beris_edwards_nsys",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.capture_beris_edwards_nsys",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.check_periodic_hermitian_stability": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/check_periodic_hermitian_stability.py",
+      "sha256": "a328aaced2cb6a23a049b64e94f6791c20fc1dfb875a8d1c310238b8af02df99",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.check_periodic_hermitian_stability",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.check_periodic_hermitian_stability",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.diagnose_channel_pressure_contract": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_channel_pressure_contract.py",
+      "sha256": "de2e050ea2ed07380763ff1d458c9de1c0afd6a2c55088e2a1bab3f200253635",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_channel_pressure_contract",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 31,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_channel_pressure_contract",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 50,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.diagnose_phase9_p95_gradient_epsilon": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_phase9_p95_gradient_epsilon.py",
+      "sha256": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.diagnose_phase9_p95_gradient_validator_v2": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py",
+      "sha256": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.diagnose_plane_nyquist_storage": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.transforms'"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_plane_nyquist_storage.py",
+      "sha256": "b97586570210a057b5a793b38302489146273c2296871fc1c91ceb09be8b9b07",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_plane_nyquist_storage",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 24,
+          "name": "FreeSlipModalStokesSolver",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_plane_nyquist_storage",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 24,
+          "name": "TensorProductTransformBackend",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "benchmarks.diagnose_rc451_cross_runtime_residuals": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+      "sha256": "c214e485f459d31296dc58fd9531cbb444636c7f4cf701d5e15405a3f0141d3c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.configuration.execution_device"
+          ],
+          "kind": "missing_module",
+          "line": 38,
+          "name": "configure_tf32_execution",
+          "target": "pssolver.configuration.execution_device"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 39,
+          "name": "PublicSimulationCompilationError",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.workflows"
+          ],
+          "kind": "missing_module",
+          "line": 61,
+          "name": "channel_checkpoint",
+          "target": "pssolver.workflows"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.workflows"
+          ],
+          "kind": "missing_module",
+          "line": 62,
+          "name": "periodic_checkpoint",
+          "target": "pssolver.workflows"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc451_cross_runtime_residuals",
+            "pssolver.workflows"
+          ],
+          "kind": "missing_module",
+          "line": 63,
+          "name": "plane_checkpoint",
+          "target": "pssolver.workflows"
+        }
+      ]
+    },
+    "benchmarks.diagnose_rc4_lifting_correctness": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_rc4_lifting_correctness.py",
+      "sha256": "4e50626e4009090d82cfb489cc21da0e876b162dffc19b84546d8c91cf352339",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_rc4_lifting_correctness",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 43,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc4_lifting_correctness",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 48,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc4_lifting_correctness",
+            "pssolver.configuration.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 51,
+          "name": "plan_package_runtime_construction",
+          "target": "pssolver.configuration.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc4_lifting_correctness",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 54,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        }
+      ]
+    },
+    "benchmarks.diagnose_rc5_g1_timing_instrumentation": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/diagnose_rc5_g1_timing_instrumentation.py",
+      "sha256": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.profile_beris_edwards_timestep": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.plane'"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_beris_edwards_timestep.py",
+      "sha256": "7b4b2eb287284832dc000edb0efdaf9c36876f49df6d8ed8a05afbcf60b17681",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.profile_channel_runtime_timestep": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_channel_runtime_timestep.py",
+      "sha256": "7b89c9a4bed3fd3c833eb25f8a836331449c7d8059baf968db20c84294fa8ba2",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_channel_runtime_timestep",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_channel_runtime_timestep",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_channel_runtime_timestep",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.profile_finite_q_anchoring": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.configuration.active_nematics_simulation_adapters'"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_finite_q_anchoring.py",
+      "sha256": "59d798bd41fc8efb99dda33b17786454203aea1c8273811d440147c9d09f6776",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_finite_q_anchoring",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_finite_q_anchoring",
+            "pssolver.configuration.finite_q_anchoring"
+          ],
+          "kind": "missing_module",
+          "line": 24,
+          "name": "apply_plane_finite_q_anchoring_pilot",
+          "target": "pssolver.configuration.finite_q_anchoring"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_finite_q_anchoring",
+            "pssolver.configuration.finite_q_anchoring"
+          ],
+          "kind": "missing_module",
+          "line": 24,
+          "name": "lower_plane_finite_q_anchoring_pilot",
+          "target": "pssolver.configuration.finite_q_anchoring"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_finite_q_anchoring",
+            "pssolver.configuration.plane_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 28,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_finite_q_anchoring",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 31,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_finite_q_anchoring",
+            "pssolver.runtime.finite_q_anchoring"
+          ],
+          "kind": "missing_module",
+          "line": 39,
+          "name": "PlaneFiniteQAnchoringRuntime",
+          "target": "pssolver.runtime.finite_q_anchoring"
+        }
+      ]
+    },
+    "benchmarks.profile_periodic_functional": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_periodic_functional.py",
+      "sha256": "d03c6abff91d7f20f08b7eda7d3b567b2ecc7e823a9a5bc4c3d1bc49024901a8",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.profile_periodic_hermitian_qualification": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_periodic_hermitian_qualification.py",
+      "sha256": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_periodic_hermitian_qualification",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_periodic_hermitian_qualification",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_periodic_hermitian_qualification",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.profile_plane_runtime_timestep": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_plane_runtime_timestep.py",
+      "sha256": "aa682428089be0c00903c3f863ae12b1f565bf3ccdec5a97866068214c39d658",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        }
+      ]
+    },
+    "benchmarks.profile_plane_stage_p": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_plane_stage_p.py",
+      "sha256": "ab3b6f9b94ef5bae6b9a895da1b48654f24bbee7fb8cf79f2232a70152e619f5",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_plane_stage_p",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 27,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_plane_stage_p",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_plane_stage_p",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_plane_stage_p",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.profile_rc458_runtime_family": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_rc458_runtime_family.py",
+      "sha256": "b0d4b3d3efab3248eee3328c7f1eaa31d3bfcf30d365a58ae9186404c6670e04",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.profile_rc5_g1_runtime_family": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_rc5_g1_runtime_family.py",
+      "sha256": "040b04fe92456f083e038a4b9fe593a64f5587759dc799a0bf5c4a286ab38b2c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_rc5_g1_runtime_family",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.profile_v0_3_s09_ap_cache_diagnostic": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
+      "sha256": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.qualify_plane_static_lifting": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/qualify_plane_static_lifting.py",
+      "sha256": "7c463932a7f4cc1f9eef4d1c337b3bf6c1b20e6743f7389d2fe07448b27d534a",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_plane_static_lifting",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 56,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_plane_static_lifting",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 61,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_plane_static_lifting",
+            "pssolver.configuration.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 64,
+          "name": "plan_package_runtime_construction",
+          "target": "pssolver.configuration.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_plane_static_lifting",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 67,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        }
+      ]
+    },
+    "benchmarks.qualify_rc437_lifting_cuda": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/qualify_rc437_lifting_cuda.py",
+      "sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 15,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 16,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.package_construction"
+          ],
+          "kind": "missing_module",
+          "line": 17,
+          "name": "plan_package_runtime_construction",
+          "target": "pssolver.configuration.package_construction"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.plane_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc437_lifting_cuda",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 19,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        }
+      ]
+    },
+    "benchmarks.qualify_rc458_tf32_scope": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/qualify_rc458_tf32_scope.py",
+      "sha256": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "pssolver.configuration.execution_device"
+          ],
+          "kind": "missing_module",
+          "line": 20,
+          "name": "scoped_tf32_execution",
+          "target": "pssolver.configuration.execution_device"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "pssolver.configuration.execution_device"
+          ],
+          "kind": "missing_module",
+          "line": 20,
+          "name": "snapshot_tf32_execution_state",
+          "target": "pssolver.configuration.execution_device"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_rc458_tf32_scope",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.qualify_v0_3_s07_installed_wheel": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/qualify_v0_3_s07_installed_wheel.py",
+      "sha256": "03967ee4444e29a82eba6bb87eed873507abbee5d2527488616bb8b02b2ee21f",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.qualify_v0_3_s07_installed_wheel",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 33,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_v0_3_s07_installed_wheel",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 40,
+          "name": "compose_channel_active_nematics_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_v0_3_s07_installed_wheel",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 46,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "benchmarks.qualify_v0_3_s07_installed_wheel",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 48,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.run_periodic_hermitian_profile_matrix": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_periodic_hermitian_profile_matrix.py",
+      "sha256": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_periodic_hermitian_profile_matrix",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_periodic_hermitian_profile_matrix",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.run_periodic_hermitian_profile_matrix",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.run_phase9_p95_gradient_diagnostic": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_phase9_p95_gradient_diagnostic.py",
+      "sha256": "9aba2b6c0daa8d3f3d3861d0a4e9c222baa7fcc82ae1ea43a6f4bc772766c27d",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_phase9_p95_gradient_diagnostic",
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_phase9_p95_gradient_diagnostic",
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.run_phase9_p95_gradient_diagnostic",
+            "benchmarks.diagnose_phase9_p95_gradient_epsilon",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.run_phase9_p95_gradient_validator_v2": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_phase9_p95_gradient_validator_v2.py",
+      "sha256": "44930fe16019e318c86493029141b6b9575a2078551395c6399c6ad22d51a137",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_phase9_p95_gradient_validator_v2",
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_phase9_p95_gradient_validator_v2",
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 43,
+          "name": "compile_public_simulation",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.run_phase9_p95_gradient_validator_v2",
+            "benchmarks.diagnose_phase9_p95_gradient_validator_v2",
+            "benchmarks.profile_periodic_functional",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 51,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.run_public_simulation_h100_case": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_public_simulation_h100_case.py",
+      "sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_public_simulation_h100_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 43,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_public_simulation_h100_case",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 49,
+          "name": "compose_channel_active_nematics_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "benchmarks.run_public_simulation_h100_case",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 55,
+          "name": "PUBLIC_CHANNEL_APPLICATION",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.run_public_simulation_h100_case",
+            "pssolver.configuration.public_simulation_runner"
+          ],
+          "kind": "missing_module",
+          "line": 55,
+          "name": "PUBLIC_PLANE_APPLICATION",
+          "target": "pssolver.configuration.public_simulation_runner"
+        },
+        {
+          "chain": [
+            "benchmarks.run_public_simulation_h100_case",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 59,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "benchmarks.run_public_simulation_h100_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 61,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.run_rc2_g5_installed_smoke": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc2_g5_installed_smoke.py",
+      "sha256": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc2_g5_installed_smoke",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 38,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc2_g5_installed_smoke",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 45,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc2_g5_installed_smoke",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 47,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py",
+      "sha256": "acaecf9b570a4525f993de3d683a46252ce07b74112ba10ad56e457ddbc70381",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_balanced_crossover_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_focused_profile_matrix": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+      "sha256": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_measurement_window_profile_matrix": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py",
+      "sha256": "478cfcc315939141f59bfb743a31a6a62f7d2e625a655a4755a1d0453090417e",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_measurement_window_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_paired_block_profile_matrix": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc5_g1_paired_block_profile_matrix.py",
+      "sha256": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_paired_block_profile_matrix",
+            "benchmarks.run_rc5_g1_focused_profile_matrix",
+            "benchmarks.analyze_rc5_g1_focused_performance_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_stage_plan": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc5_g1_stage_plan.py",
+      "sha256": "97923baed48737246f68348be0b78fc4c869c6d1b53b726070f35a3f175563f7",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_stage_plan",
+            "benchmarks.analyze_rc5_g1_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc5_g1_timing_instrumentation": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc5_g1_timing_instrumentation.py",
+      "sha256": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc5_g1_timing_instrumentation",
+            "benchmarks.analyze_rc5_g1_timing_instrumentation",
+            "benchmarks.diagnose_rc5_g1_timing_instrumentation",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc6_profile_child": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc6_profile_child.py",
+      "sha256": "e7967f5e7e6055e40de5124199924580cd8e83baa68509b12b16f9810bf26951",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_profile_child",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_rc6_single_h100_stage_plan": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_rc6_single_h100_stage_plan.py",
+      "sha256": "28a4cb97fa5324d9f035596c63149e1352f348772eb18a717f6b23f55e4d6551",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_rc6_single_h100_stage_plan",
+            "benchmarks.analyze_rc6_single_h100",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
+      "sha256": "697267a42521e5599799399d1556ef1073b083fcc77a48335bd7f66e704cb793",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
+      "sha256": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_diagnostic_child",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+      "sha256": "0b8a1244cf0d07262540ce9ff70e2d7fd5419677d4bf905ee596f33ef7e6a744",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_ap_cache_memory_snapshot",
+            "benchmarks.profile_v0_3_s09_ap_cache_diagnostic",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.run_v0_3_s09_numerical": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/run_v0_3_s09_numerical.py",
+      "sha256": "3e2f95312b271e686ac42ed0c8c3f54f521f3dd5bf17685d8caf9b334c539b9c",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 76,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_plane_runtime_timestep",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 34,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "DEFAULT_PLANE_SPECTRAL_STORAGE",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.plane"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "PLANE_HERMITIAN_AXIS",
+          "target": "pssolver.plane"
+        },
+        {
+          "chain": [
+            "benchmarks.run_v0_3_s09_numerical",
+            "benchmarks.profile_rc458_runtime_family",
+            "benchmarks.profile_beris_edwards_timestep",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        }
+      ]
+    },
+    "benchmarks.shendruk_v1_dynamic_velocity.Plane_v1_dynamic_velocity": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py",
+      "sha256": "6812002e4a721eebaa5c96196377bf0fc3eb825c234d989f30e2a710d66d4948",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.shendruk_v1_dynamic_velocity.Plane_v1_dynamic_velocity",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 82,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        },
+        {
+          "chain": [
+            "benchmarks.shendruk_v1_dynamic_velocity.Plane_v1_dynamic_velocity",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 83,
+          "name": "BasisAwareSpectralProjector",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "benchmarks.shendruk_v1_dynamic_velocity.Plane_v1_dynamic_velocity",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 83,
+          "name": "DEALIAS_RULE_FRACTIONS",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "benchmarks.shendruk_v1_dynamic_velocity.Plane_v1_dynamic_velocity",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 83,
+          "name": "DEFAULT_DEALIAS_RULE",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "benchmarks.shendruk_v1_dynamic_velocity.Plane_v1_dynamic_velocity",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 83,
+          "name": "DEFAULT_TRANSFORM_EXECUTION_ORDER",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "benchmarks.smoke_periodic_fast_path_default": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'SpectralSolver' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/smoke_periodic_fast_path_default.py",
+      "sha256": "f10271c79a942a108846c58d47f680a674bc032addcc0f99dde510c80546a1de",
+      "static": []
+    },
+    "benchmarks.v0_2_0_checkpoint_fixtures": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/v0_2_0_checkpoint_fixtures.py",
+      "sha256": "8ac1e229a07c82a606c5e5c9bae2f15f6de4dba778f38c2876b2316183681bce",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 45,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 49,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 57,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "benchmarks.verify_v0_3_s10_build_fingerprints": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "benchmarks/verify_v0_3_s10_build_fingerprints.py",
+      "sha256": "670476ec175e894f93c7735a0b9325d792333a205fc30c6a2d9edcc7ef16591d",
+      "static": [
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 37,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 45,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 49,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "benchmarks.verify_v0_3_s10_build_fingerprints",
+            "benchmarks.v0_2_0_checkpoint_fixtures",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 57,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.generate_s24_retired_fixtures": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/generate_s24_retired_fixtures.py",
+      "sha256": "49060a6dbd3be140d7d90a366d26cb43e54bd00804517f47e045e0e9e369c7c7",
+      "static": [
+        {
+          "chain": [
+            "qualification.generate_s24_retired_fixtures",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 20,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.generate_s24_retired_fixtures",
+            "pssolver.configuration.active_nematics_simulation_adapters"
+          ],
+          "kind": "missing_module",
+          "line": 25,
+          "name": "compose_plane_beris_edwards_simulation",
+          "target": "pssolver.configuration.active_nematics_simulation_adapters"
+        },
+        {
+          "chain": [
+            "qualification.generate_s24_retired_fixtures",
+            "pssolver.configuration.plane_beris_edwards"
+          ],
+          "kind": "missing_module",
+          "line": 28,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards"
+        },
+        {
+          "chain": [
+            "qualification.generate_s24_retired_fixtures",
+            "pssolver.configuration.plane_beris_edwards_components"
+          ],
+          "kind": "missing_module",
+          "line": 29,
+          "name": "decompose_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration.plane_beris_edwards_components"
+        }
+      ]
+    },
+    "qualification.identity.channel_comparison": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.configuration.legacy_channel'"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/channel_comparison.py",
+      "sha256": "0d38b2871f317bcacfe9aed0c7221d1d33034db37afe2ed56151939c03afde92",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.channel_comparison",
+            "pssolver.configuration.legacy_channel"
+          ],
+          "kind": "missing_module",
+          "line": 10,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.configuration.legacy_channel"
+        },
+        {
+          "chain": [
+            "qualification.identity.channel_comparison",
+            "pssolver.configuration.legacy_channel"
+          ],
+          "kind": "missing_module",
+          "line": 10,
+          "name": "translate_channel",
+          "target": "pssolver.configuration.legacy_channel"
+        },
+        {
+          "chain": [
+            "qualification.identity.channel_comparison",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 13,
+          "name": "restore_channel_state",
+          "target": "pssolver.runtime.legacy_entry"
+        },
+        {
+          "chain": [
+            "qualification.identity.channel_comparison",
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.channel_comparison",
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.identity.checkpoint_fixtures": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/checkpoint_fixtures.py",
+      "sha256": "3832e8a8d431fb6b6a98ccf5943ca32d60d1c8af4d42804d4f5b70ab3afee228",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.checkpoint_fixtures",
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.checkpoint_fixtures",
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.identity.historical_continuations": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/historical_continuations.py",
+      "sha256": "19a469fe141573c991663e0cca09f33b8c7c0eba0b85f120c038f71abd6e888a",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 30,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 37,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_channel"
+          ],
+          "kind": "missing_module",
+          "line": 38,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.configuration.legacy_channel"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_channel"
+          ],
+          "kind": "missing_module",
+          "line": 38,
+          "name": "translate_channel",
+          "target": "pssolver.configuration.legacy_channel"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_periodic"
+          ],
+          "kind": "missing_module",
+          "line": 39,
+          "name": "translate_periodic",
+          "target": "pssolver.configuration.legacy_periodic"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_plane"
+          ],
+          "kind": "missing_module",
+          "line": 40,
+          "name": "load_plane_checkpoint",
+          "target": "pssolver.configuration.legacy_plane"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_plane"
+          ],
+          "kind": "missing_module",
+          "line": 41,
+          "name": "translate_plane",
+          "target": "pssolver.configuration.legacy_plane"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 60,
+          "name": "restore_channel_state",
+          "target": "pssolver.runtime.legacy_entry"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 60,
+          "name": "restore_periodic_state",
+          "target": "pssolver.runtime.legacy_entry"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 60,
+          "name": "restore_plane_state",
+          "target": "pssolver.runtime.legacy_entry"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.checkpoint_fixtures",
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.historical_continuations",
+            "qualification.identity.checkpoint_fixtures",
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.identity.retained_v020_fixtures": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/retained_v020_fixtures.py",
+      "sha256": "8cbb08bb1edf80961e3bad294673c17e9778c5ff5b62acdaed036b19130c6d10",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 30,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 37,
+          "name": "create_plane_beris_edwards_run_spec",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_channel"
+          ],
+          "kind": "missing_module",
+          "line": 38,
+          "name": "load_channel_initial_q",
+          "target": "pssolver.configuration.legacy_channel"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_channel"
+          ],
+          "kind": "missing_module",
+          "line": 38,
+          "name": "translate_channel",
+          "target": "pssolver.configuration.legacy_channel"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_periodic"
+          ],
+          "kind": "missing_module",
+          "line": 39,
+          "name": "translate_periodic",
+          "target": "pssolver.configuration.legacy_periodic"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_plane"
+          ],
+          "kind": "missing_module",
+          "line": 40,
+          "name": "load_plane_checkpoint",
+          "target": "pssolver.configuration.legacy_plane"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.legacy_plane"
+          ],
+          "kind": "missing_module",
+          "line": 41,
+          "name": "translate_plane",
+          "target": "pssolver.configuration.legacy_plane"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.configuration.simulation"
+          ],
+          "kind": "missing_module",
+          "line": 42,
+          "name": "InvocationSpec",
+          "target": "pssolver.configuration.simulation"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 55,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 60,
+          "name": "restore_channel_state",
+          "target": "pssolver.runtime.legacy_entry"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 60,
+          "name": "restore_periodic_state",
+          "target": "pssolver.runtime.legacy_entry"
+        },
+        {
+          "chain": [
+            "qualification.identity.retained_v020_fixtures",
+            "pssolver.runtime.legacy_entry"
+          ],
+          "kind": "missing_module",
+          "line": 60,
+          "name": "restore_plane_state",
+          "target": "pssolver.runtime.legacy_entry"
+        }
+      ]
+    },
+    "qualification.identity.runtime_case": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/runtime_case.py",
+      "sha256": "d220f536c9f54f6080a942952a31756d53a19b006a42947b240c6b1741df8d6e",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.identity.runtime_case_v2": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/runtime_case_v2.py",
+      "sha256": "e4506870a4155e5698dbf4800c59cc2ff4bb6ef50437803e165230efbc299bbf",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.runtime_case_v2",
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.runtime_case_v2",
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.identity.trajectory_hashes": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/trajectory_hashes.py",
+      "sha256": "ee95ffa21bb45e53b1a01f9ccc0f809374dd3658b377f019d74806ee4e47344e",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.trajectory_hashes",
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.trajectory_hashes",
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.identity.vjp": {
+      "actual": {
+        "exit_code": 1,
+        "last_line": "ImportError: cannot import name 'TimeStepping' from 'pssolver' (<ROOT>/pssolver/__init__.py)"
+      },
+      "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
+      "path": "qualification/identity/vjp.py",
+      "sha256": "7d73a875affbf94aeb0d4f128e6ecd6d350bdc639c8be0508e2ee0b231cc3f4a",
+      "static": [
+        {
+          "chain": [
+            "qualification.identity.vjp",
+            "qualification.identity.runtime_case",
+            "pssolver.boundaries"
+          ],
+          "kind": "missing_name",
+          "line": 19,
+          "name": "assign_boundaries",
+          "target": "pssolver.boundaries"
+        },
+        {
+          "chain": [
+            "qualification.identity.vjp",
+            "qualification.identity.runtime_case",
+            "pssolver.models.active_nematics"
+          ],
+          "kind": "missing_name",
+          "line": 26,
+          "name": "CompleteStressBerisEdwards",
+          "target": "pssolver.models.active_nematics"
+        }
+      ]
+    },
+    "qualification.stages.stage_n4_qualification": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_n4_qualification.py",
+      "sha256": "56b262ea215967e1b412d50b1aaf959bb22260fea56b2ee9105946581b483a7c",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o431_plan": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o431_plan.py",
+      "sha256": "3c64afab9f4a2b2a91a2690703acfdc2ccb3ab7b1c135630c08f36aeaf1bbf6f",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o431_plan",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o431_plan",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o431_plan",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o433_plan": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o433_plan.py",
+      "sha256": "ceda0da3ec338ae166aaa4949f2e9e2cee5bf58e422bb94c31e04af17082f6ba",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o433_plan",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o433_plan",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o433_plan",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o434_diagnostics": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o434_diagnostics.py",
+      "sha256": "11c1926eb7b1b2ccfe7d78317fca349fdb13113a9892b5dd9a9b1aebe60e058c",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o434_diagnostics",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o434_diagnostics",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o434_diagnostics",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o434_plan": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o434_plan.py",
+      "sha256": "b156af0b4cf1dbb9bab3e18df19455e346c93fff85dd84fa95a326826dfab56c",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o434_plan",
+            "qualification.stages.stage_o434_diagnostics",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o434_plan",
+            "qualification.stages.stage_o434_diagnostics",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o434_plan",
+            "qualification.stages.stage_o434_diagnostics",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o43_plan": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o43_plan.py",
+      "sha256": "ada1b22ae907e5a0d1aff71ed79df2f61e00db22fc164a296c579e5ca3d9acc1",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o43_plan",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o43_plan",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o43_plan",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o43_qualification": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o43_qualification.py",
+      "sha256": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_o_migration": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_o_migration.py",
+      "sha256": "d971bc59f0aec244abbf55c12f55ad601e74fe3f355a924c25b728db0d2cdbe2",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_o_migration",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 19,
+          "name": "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
+          "target": "pssolver.configuration"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_o_migration",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 19,
+          "name": "PlaneRuntimePath",
+          "target": "pssolver.configuration"
+        }
+      ]
+    },
+    "qualification.stages.stage_q4_plan": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_q4_plan.py",
+      "sha256": "2dec2c59778a4727a3d7d188f674ad9fb8794c2252760f4a7a113d2c3450b73a",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_q4_plan",
+            "qualification.stages.stage_q4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 13,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_q4_plan",
+            "qualification.stages.stage_q4_qualification",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_q4_plan",
+            "qualification.stages.stage_q4_qualification",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_q4_plan",
+            "qualification.stages.stage_q4_qualification",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "qualification.stages.stage_q4_qualification": {
+      "actual": null,
+      "authority": "R-0075: already historical at baseline; static-only delta",
+      "path": "qualification/stages/stage_q4_qualification.py",
+      "sha256": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2",
+      "static": [
+        {
+          "chain": [
+            "qualification.stages.stage_q4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 13,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_q4_qualification",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_q4_qualification",
+            "qualification.stages.stage_o43_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 18,
+          "name": "AlgebraicOutputPublicationPolicy",
+          "target": "pssolver.execution"
+        },
+        {
+          "chain": [
+            "qualification.stages.stage_q4_qualification",
+            "qualification.stages.stage_o43_qualification",
+            "qualification.stages.stage_n4_qualification",
+            "pssolver.execution"
+          ],
+          "kind": "missing_module",
+          "line": 21,
+          "name": "AlgebraicExecutionPolicy",
+          "target": "pssolver.execution"
+        }
+      ]
+    },
+    "scripts_channel.check_pressure_bc": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_channel/check_pressure_bc.py",
+      "sha256": "6d9f072f2d3763933a79643e588c69f845b11d9b7c6d0dabd2c7a38cf5a52d64",
+      "static": [
+        {
+          "chain": [
+            "scripts_channel.check_pressure_bc",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 28,
+          "name": "TensorProductTransformBackend",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "scripts_plane.analyze_beris_edwards_stationarity": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_plane/analyze_beris_edwards_stationarity.py",
+      "sha256": "3ab44c45927954c8c34d090a731b71a16f384707567af372a527877840143f8e",
+      "static": [
+        {
+          "chain": [
+            "scripts_plane.analyze_beris_edwards_stationarity",
+            "scripts_plane.validate_beris_edwards_outputs",
+            "scripts_plane.run_beris_edwards_validation",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 32,
+          "name": "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
+          "target": "pssolver.configuration"
+        }
+      ]
+    },
+    "scripts_plane.analyze_fig4_defect_core_convergence": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_plane/analyze_fig4_defect_core_convergence.py",
+      "sha256": "9755efdfb3ac88b85491eda44d273fdf756bb2d2ee861e3a367e915a14e0f91b",
+      "static": [
+        {
+          "chain": [
+            "scripts_plane.analyze_fig4_defect_core_convergence",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 50,
+          "name": "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
+          "target": "pssolver.configuration"
+        }
+      ]
+    },
+    "scripts_plane.check_pressure_bc": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_plane/check_pressure_bc.py",
+      "sha256": "6d9f072f2d3763933a79643e588c69f845b11d9b7c6d0dabd2c7a38cf5a52d64",
+      "static": [
+        {
+          "chain": [
+            "scripts_plane.check_pressure_bc",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 28,
+          "name": "TensorProductTransformBackend",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "scripts_plane.run_beris_edwards_validation": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_plane/run_beris_edwards_validation.py",
+      "sha256": "54080284731062defea6d47466b35b035b0370a770c669e572e1abcf4b019f88",
+      "static": [
+        {
+          "chain": [
+            "scripts_plane.run_beris_edwards_validation",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 32,
+          "name": "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
+          "target": "pssolver.configuration"
+        }
+      ]
+    },
+    "scripts_plane.v3_plane_beris_edwards_stokes": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_plane/v3_plane_beris_edwards_stokes.py",
+      "sha256": "76f48f59d1a9928976fa9c3b5b1193659f2263061dfece235008311c5f0086e9",
+      "static": [
+        {
+          "chain": [
+            "scripts_plane.v3_plane_beris_edwards_stokes",
+            "pssolver.integrator"
+          ],
+          "kind": "missing_module",
+          "line": 75,
+          "name": "SemiImplicitEulerIntegrator",
+          "target": "pssolver.integrator"
+        },
+        {
+          "chain": [
+            "scripts_plane.v3_plane_beris_edwards_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "BasisAwareSpectralProjector",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "scripts_plane.v3_plane_beris_edwards_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "DEALIAS_RULE_FRACTIONS",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "scripts_plane.v3_plane_beris_edwards_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "DEFAULT_DEALIAS_RULE",
+          "target": "pssolver.transforms"
+        },
+        {
+          "chain": [
+            "scripts_plane.v3_plane_beris_edwards_stokes",
+            "pssolver.transforms"
+          ],
+          "kind": "missing_module",
+          "line": 76,
+          "name": "DEFAULT_TRANSFORM_EXECUTION_ORDER",
+          "target": "pssolver.transforms"
+        }
+      ]
+    },
+    "scripts_plane.validate_beris_edwards_outputs": {
+      "actual": null,
+      "authority": "r2.1 \u00a77.5: frozen caller; S-30",
+      "path": "scripts_plane/validate_beris_edwards_outputs.py",
+      "sha256": "1346fdf879889aff25ceee9259931c5a03f823f0ac32dffb1d174f6a8ae5f9fe",
+      "static": [
+        {
+          "chain": [
+            "scripts_plane.validate_beris_edwards_outputs",
+            "scripts_plane.run_beris_edwards_validation",
+            "pssolver.configuration"
+          ],
+          "kind": "missing_module",
+          "line": 32,
+          "name": "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
+          "target": "pssolver.configuration"
+        }
+      ]
+    }
+  }
+}

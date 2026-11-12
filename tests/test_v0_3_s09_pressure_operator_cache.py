@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 import torch
 
-from pssolver import SpectralSolver
+from pssolver.backends.tensor_product import TensorProductTransformBackend
 from pssolver.linear_solvers.stokes import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
@@ -18,15 +18,15 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
 SHAPE = (12, 8, 6)
 
 
-def _solver() -> tuple[SpectralSolver, ChannelNoSlipModalStokesSolver]:
-    spectral = SpectralSolver(
+def _solver() -> tuple[TensorProductTransformBackend, ChannelNoSlipModalStokesSolver]:
+    spectral = TensorProductTransformBackend(
         SHAPE,
-        L=(12.0, 8.0, 6.0),
+        lengths=(12.0, 8.0, 6.0),
         device="cpu",
         dtype=torch.float64,
     )
     pressure = ChannelNoSlipModalStokesSolver(
-        spectral.transform_backend,
+        spectral,
         friction=0.2,
         viscosity=0.73,
         pressure_relative_tolerance=1.0e-5,
@@ -37,7 +37,7 @@ def _solver() -> tuple[SpectralSolver, ChannelNoSlipModalStokesSolver]:
 
 
 def _rhs(
-    spectral: SpectralSolver,
+    spectral: TensorProductTransformBackend,
     pressure: ChannelNoSlipModalStokesSolver,
     *,
     seed: int,
@@ -48,7 +48,7 @@ def _rhs(
         generator=generator,
         dtype=torch.float64,
     )
-    exact = spectral.transform_tensor(
+    exact = spectral.forward(
         physical,
         CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     )

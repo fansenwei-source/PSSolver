@@ -7,10 +7,8 @@ construct fields, transforms, solvers, or runtime tensors.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-
-from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)
@@ -218,3 +216,108 @@ __all__ = [
     "ShendrukPlanePreset",
     "resolve_shendruk_plane_preset",
 ]
+
+
+def positive_equilibrium_S(A: float, B: float, C: float) -> float:
+    """Return the positive root of ``3 C S^2 + B S + 2 A = 0``."""
+    coefficients = (float(A), float(B), float(C))
+    if not all(math.isfinite(value) for value in coefficients):
+        raise ValueError("A, B, and C must be finite")
+    A_value, B_value, C_value = coefficients
+    if C_value <= 0.0:
+        raise ValueError(f"C must be positive, got {C_value}")
+    discriminant = B_value**2 - 24.0 * A_value * C_value
+    if discriminant < 0.0:
+        raise ValueError(
+            "bulk coefficients do not have a real uniaxial equilibrium: "
+            f"discriminant={discriminant}"
+        )
+    square_root = math.sqrt(discriminant)
+    roots = (
+        (-B_value + square_root) / (6.0 * C_value),
+        (-B_value - square_root) / (6.0 * C_value),
+    )
+    positive_roots = [root for root in roots if root > 0.0]
+    if not positive_roots:
+        raise ValueError(f"bulk coefficients have no positive root: roots={roots}")
+    return max(positive_roots)
+
+
+DEFAULT_SPECTRAL_REFRESH_TIME = 0.2
+
+
+@dataclass(frozen=True, slots=True)
+class SpectralRefreshSpec:
+    """Resolved periodic dynamic-spectrum refresh policy."""
+
+    mode: str
+    requested_interval_time: float | None
+    requested_interval_steps: int | None
+    effective_interval_steps: int | None
+    effective_interval_time: float | None
+
+    def __post_init__(self) -> None:
+        if self.mode not in {"physical_time", "steps", "disabled"}:
+            raise ValueError("invalid spectral refresh mode")
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "mode": self.mode,
+            "requested_interval_time": self.requested_interval_time,
+            "requested_interval_steps": self.requested_interval_steps,
+            "effective_interval_steps": self.effective_interval_steps,
+            "effective_interval_time": self.effective_interval_time,
+        }
+
+
+def _resolve_spectral_refresh(
+    *,
+    dt: float,
+    spectral_refresh_time: float | None,
+    spectral_refresh_steps: int | None,
+    disable_spectral_refresh: bool,
+) -> SpectralRefreshSpec:
+    if spectral_refresh_steps is not None:
+        if spectral_refresh_steps <= 0:
+            raise ValueError("--spectral-refresh-steps must be positive")
+        return SpectralRefreshSpec(
+            mode="steps",
+            requested_interval_time=None,
+            requested_interval_steps=spectral_refresh_steps,
+            effective_interval_steps=spectral_refresh_steps,
+            effective_interval_time=spectral_refresh_steps * dt,
+        )
+    if disable_spectral_refresh:
+        return SpectralRefreshSpec(
+            mode="disabled",
+            requested_interval_time=None,
+            requested_interval_steps=None,
+            effective_interval_steps=None,
+            effective_interval_time=None,
+        )
+    requested_time = (
+        DEFAULT_SPECTRAL_REFRESH_TIME
+        if spectral_refresh_time is None
+        else spectral_refresh_time
+    )
+    if not math.isfinite(requested_time) or requested_time <= 0:
+        raise ValueError("--spectral-refresh-time must be positive and finite")
+    interval_ratio = requested_time / dt
+    interval_steps = int(round(interval_ratio))
+    if interval_steps <= 0 or not math.isclose(
+        interval_ratio,
+        interval_steps,
+        rel_tol=1e-12,
+        abs_tol=1e-12,
+    ):
+        raise ValueError(
+            "--spectral-refresh-time must be an integer multiple of --dt; "
+            f"got time/dt={interval_ratio:.17g}"
+        )
+    return SpectralRefreshSpec(
+        mode="physical_time",
+        requested_interval_time=requested_time,
+        requested_interval_steps=None,
+        effective_interval_steps=interval_steps,
+        effective_interval_time=interval_steps * dt,
+    )

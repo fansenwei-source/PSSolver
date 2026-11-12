@@ -10,36 +10,34 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-    compile_simulation,
-)
-from pssolver.boundaries import (
-    assign_boundaries,
-    neumann_pressure_compatibility,
-    neumann_q,
-    no_slip_velocity,
-)
-from pssolver.configuration.legacy_channel import (
-    build_channel_checkpoint_compatibility_identity,
-)
+from pssolver.boundaries import neumann_pressure_compatibility, neumann_q, no_slip_velocity
 from pssolver.functional import (
     FunctionalCheckpointCompatibilityError,
     build_channel_activity_functional_runtime,
     channel_activity_functional_declaration,
     channel_activity_functional_request,
 )
+from pssolver.functional.legacy_declarations import (
+    CompleteStressBerisEdwards,
+    Output,
+    Simulation,
+    SnapshotInitialCondition,
+    SpectralNumerics,
+    TimeStepping,
+    TorchSpectralExecution,
+    assign_boundaries,
+)
+from pssolver.functional.legacy_declarations.legacy_channel import (
+    build_channel_checkpoint_compatibility_identity,
+)
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
+    compile_public_simulation,
+)
 from pssolver.geometries import RectangularChannel
 from pssolver.io.checkpoint import (
     seal_checkpoint_metadata,
     write_functional_checkpoint_provenance,
 )
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
 from tests.v0_5_s28a_channel_v04_checkpoint import (
     build_channel_production_fixture,
     write_channel_beris_edwards_checkpoint,
@@ -132,8 +130,8 @@ def _simulation(
 
 
 def _production(simulation: Simulation):
-    compiled = compile_simulation(simulation)
-    adapter = build_channel_production_fixture(compiled.application_request)
+    compiled = compile_public_simulation(simulation.specification)
+    adapter = build_channel_production_fixture(compiled.run_spec)
     return compiled, adapter
 
 
@@ -279,7 +277,7 @@ def test_v4_identities_bind_pressure_policy_without_layout_version_changes(
     simulation = _simulation(tmp_path)
     compiled, adapter = _production(simulation)
     production = build_channel_checkpoint_compatibility_identity(
-        compiled.application_request,
+        compiled.run_spec,
         fields=adapter.fields,
         pressure_guess=adapter.capture_pressure_guess(),
         backend_restart=adapter.backend_restart_metadata(),
@@ -327,7 +325,7 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
     write_channel_beris_edwards_checkpoint(
         directory,
         source,
-        run_spec=compiled.application_request,
+        run_spec=compiled.run_spec,
     )
     path = directory / "checkpoint.json"
     metadata = json.loads(path.read_text(encoding="utf-8"))
@@ -360,7 +358,7 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
         _load_checkpoint(
             directory,
             target,
-            run_spec=compiled.application_request,
+            run_spec=compiled.run_spec,
         )
     assert target.completed_steps == before_steps
     assert torch.equal(target.capture_pressure_guess(), before_guess)
@@ -425,7 +423,7 @@ def test_production_v3_import_to_functional_rejects_before_tensor_load(
     write_channel_beris_edwards_checkpoint(
         directory,
         production,
-        run_spec=compiled.application_request,
+        run_spec=compiled.run_spec,
     )
     path = directory / "checkpoint.json"
     metadata = json.loads(path.read_text(encoding="utf-8"))

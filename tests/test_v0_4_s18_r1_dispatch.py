@@ -3,11 +3,11 @@
 from copy import copy
 from dataclasses import replace
 
-from pssolver.configuration import application_registry as registry
-from pssolver.configuration import public_simulation_runner as compiler
-from pssolver.configuration.simulation import TimeIntegrationSpec
 from pssolver.core.geometry import AxisTopology, GeometrySpec
 from pssolver.core.integrators import IntegratorSpec
+from pssolver.functional.legacy_declarations import application_registry as registry
+from pssolver.functional.legacy_declarations import public_simulation_runner as compiler
+from pssolver.functional.legacy_declarations.simulation import TimeIntegrationSpec
 
 
 def _outcome(call):

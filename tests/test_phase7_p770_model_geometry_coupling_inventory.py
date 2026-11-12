@@ -4,10 +4,8 @@ from dataclasses import fields
 import hashlib
 import json
 from pathlib import Path
-from pssolver.configuration.plane_beris_edwards import PlaneBerisEdwardsRunSpec
-from pssolver.configuration.plane_beris_edwards_component_graph import (
-    PlaneBerisEdwardsRunComponents,
-)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import PlaneBerisEdwardsRunSpec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_component_graph import PlaneBerisEdwardsRunComponents
 
 
 ROOT = Path(__file__).resolve().parents[1]

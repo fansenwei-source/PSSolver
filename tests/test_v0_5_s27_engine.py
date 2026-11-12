@@ -7,26 +7,31 @@ import pytest
 import torch
 from torch.utils._python_dispatch import TorchDispatchMode
 
-from pssolver.configuration import create_plane_beris_edwards_run_spec
-from pssolver.configuration.legacy_plane import translate_plane
+import pssolver
 from pssolver.engine.engine import Engine
 from pssolver.io import engine_state
 from pssolver.linear_solvers.stokes.plane_free_slip_stateless import solve_force_hats_stateless
+from qualification.identity.scenarios import scenarios
+from qualification.identity.scenes_v05 import simulation_v05
 
 
 def plane_engine(tmp_path, dtype=torch.float64, *, batch=1, diagnostics=True):
-    spec = create_plane_beris_edwards_run_spec(
-        activity_number=18., output_dir=tmp_path, device="cpu", dtype=str(dtype).split('.')[-1],
-        pointwise_execution="eager", nx=8, ny=8, nz=8, lx=8., ly=9., height=20.,
-        steps=24, save_start_step=0, save_interval=1, diagnostic_interval=1,
-        diagnostics=diagnostics, num_defect_pairs=1, defect_min_separation=.5,
-        spectral_refresh_steps=20,
+    scene = next(
+        item for item in scenarios()
+        if item["id"] == f"plane_legacy_production_{str(dtype).split('.')[-1]}_default"
     )
-    engine = Engine(translate_plane(spec), device="cpu", dtype=dtype, batch=batch)
+    scene = {**scene, "shape": [8, 8, 8], "options": {"spectral_refresh_steps": 20}}
+    declaration = simulation_v05(scene, tmp_path, steps=24)
+    declaration = replace(
+        declaration,
+        geometry=pssolver.PlaneSlab(shape=(8, 8, 8), lengths=(8.0, 9.0, 20.0)),
+        output=replace(declaration.output, diagnostics=diagnostics),
+    )
+    engine = Engine(pssolver.compile_simulation(declaration).plan, device="cpu", dtype=dtype, batch=batch)
     generator = torch.Generator().manual_seed(42)
     values = {name: torch.randn((batch, *engine.shape), dtype=dtype, generator=generator) * .01
               for name in engine.components[:engine.evolved_count]}
-    return spec, engine, values
+    return declaration, engine, values
 
 
 def same_state(left, right):
@@ -132,5 +137,7 @@ def test_plane_plan_groups_and_diagnostics_are_declared(tmp_path):
     spec, engine, _ = plane_engine(tmp_path)
     assert [g.indexing for g in engine.plan.groups] == ["contiguous_slice", "advanced", "contiguous_slice"]
     assert engine.plan.constraints[0].arguments["distortion_odd_boundary_conditions"] == ("periodic", "periodic", "dirichlet")
-    other = translate_plane(replace(spec, runtime_path=type(spec.runtime_path)("compiled_v2")))
+    other = pssolver.compile_simulation(
+        replace(spec, output=replace(spec.output, directory=tmp_path / "different"))
+    ).plan
     assert engine.plan.to_metadata() == other.to_metadata()

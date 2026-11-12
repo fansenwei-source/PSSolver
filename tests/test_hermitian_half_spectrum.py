@@ -3,11 +3,8 @@ from types import SimpleNamespace
 import pytest
 import torch
 
-from pssolver.transforms import (
-    BasisAwareSpectralProjector,
-    DEFAULT_SPECTRAL_STORAGE,
-    TensorProductTransformBackend,
-)
+from pssolver.operators.projection import BasisAwareSpectralProjector
+from pssolver.backends.tensor_product import DEFAULT_SPECTRAL_STORAGE, TensorProductTransformBackend
 
 
 LENGTHS = (3.0, 4.0, 2.5)

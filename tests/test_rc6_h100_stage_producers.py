@@ -159,7 +159,7 @@ def test_consumer_summary_binds_counts_identities_and_semantic_nodes():
 
 
 def test_consumer_execution_rebind_uses_the_public_constructor_and_is_fail_closed():
-    from pssolver import TorchSpectralExecution
+    from pssolver.functional.legacy_declarations import TorchSpectralExecution
 
     source = TorchSpectralExecution(
         runtime_path="periodic_spectral",

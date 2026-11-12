@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import difflib
+import functools
 import hashlib
 import json
+import subprocess
 import tarfile
 import zipfile
 from pathlib import Path
@@ -13,6 +16,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE_TOKENS = (b"/home/", b"fansenwei", b"/scratch", b"caspar")
 CONSUMER_TOKENS = (b"PSSolver-Control", b"pssolver_control")
+
+
+@functools.cache
+def decided_source(commit: str, path: str) -> tuple[bytes, ...]:
+    return tuple(subprocess.check_output(["git", "show", f"{commit}:{path}"], cwd=ROOT).splitlines())
+
+
+def decided_line(content: bytes, number: int, item: dict) -> bool:
+    """R-0121: the exception covers the decided line while it is unchanged since its decision.
+
+    The current line is mapped to the decided commit by byte-identical lines only; additions elsewhere in
+    the file do not move the exception, an edit of the line itself ends it.
+    """
+    original = decided_source(item["original_commit"], item["path"])
+    matcher = difflib.SequenceMatcher(a=original, b=tuple(content.splitlines()), autojunk=False)
+    for block in matcher.get_matching_blocks():
+        if block.b < number <= block.b + block.size:
+            return block.a + (number - block.b) == item["original_line"]
+    return False
 
 
 def members(path: Path) -> dict[str, bytes]:
@@ -45,8 +67,8 @@ def scan(files: dict[str, bytes], exceptions: list[dict]) -> dict:
                     item
                     for item in exceptions
                     if item["path"] == name
-                    and item["file_sha256"] == hashlib.sha256(content).hexdigest()
                     and item["line_sha256"] == hashlib.sha256(line).hexdigest()
+                    and decided_line(content, number, item)
                 ]
                 row = {
                     "file": name,

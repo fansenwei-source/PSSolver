@@ -11,15 +11,18 @@ from pathlib import Path
 import pytest
 import torch
 
-from pssolver.boundaries import (
-    HomogeneousBoundaryPolicy,
-    assign_boundaries,
-    prescribed_dirichlet,
-)
-from pssolver.configuration.lifting import build_plane_static_lifting_plan
+from pssolver.boundaries import HomogeneousBoundaryPolicy, prescribed_dirichlet
 from pssolver.core.boundary import BoundarySemantic
 from pssolver.core.domain import DomainSpec, GridPlacement
 from pssolver.core.fields import FieldRole
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.functional.legacy_declarations.lifting import build_plane_static_lifting_plan
+from pssolver.functional.legacy_declarations.systems_algebraic import AlgebraicSystemSpec
+from pssolver.functional.legacy_declarations.systems_equations import (
+    EquationFieldSpec,
+    EquationSystemSpec,
+    EquationTermSpec,
+)
 from pssolver.geometries import PlaneSlab, RectangularChannel
 from pssolver.operators import (
     legacy_whole_slab_sine_conditioning,
@@ -27,16 +30,10 @@ from pssolver.operators import (
     materialize_plane_static_lifting,
     strict_no_automatic_conditioning,
 )
-from pssolver.planning import (
+from pssolver.planning.lifting import (
     STATIC_LIFTING_PLAN_SCHEMA_VERSION,
     StaticLiftExtension,
     StaticLiftingPlan,
-)
-from pssolver.systems.algebraic import AlgebraicSystemSpec
-from pssolver.systems.equations import (
-    EquationFieldSpec,
-    EquationSystemSpec,
-    EquationTermSpec,
 )
 
 

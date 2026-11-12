@@ -7,10 +7,8 @@ import math
 import pytest
 import torch
 
-from pssolver.transforms import (
-    FreeSlipModalStokesSolver,
-    TensorProductTransformBackend,
-)
+from pssolver.backends.tensor_product import TensorProductTransformBackend
+from pssolver.linear_solvers.stokes.plane_free_slip import FreeSlipModalStokesSolver
 
 
 TANGENTIAL_BCS = ("periodic", "periodic", "neumann")

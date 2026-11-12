@@ -12,17 +12,11 @@ from pathlib import Path
 import pytest
 
 import pssolver
-from pssolver import Simulation
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.simulation import ExecutionSpec, WorkflowSpec
+from pssolver.functional.legacy_declarations import Simulation
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, WorkflowSpec
 from pssolver.core.domain import DomainSpec
 from pssolver.geometries import PlaneSlab
 
@@ -82,7 +76,7 @@ def _identity_hashes(value: Simulation) -> dict[str, str]:
 
 
 def test_public_root_retains_the_p777_declaration_identity():
-    from pssolver.api import Simulation as ApiSimulation
+    from pssolver.functional.legacy_declarations import Simulation as ApiSimulation
 
     assert Simulation is ApiSimulation
     assert pssolver.Simulation is Simulation

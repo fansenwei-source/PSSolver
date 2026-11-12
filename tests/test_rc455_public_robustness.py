@@ -9,11 +9,8 @@ import pytest
 
 from tests.v0_3_s03_successor import resolve_s03_successor
 
-from pssolver.configuration.execution_device import validate_execution_device
-from pssolver.configuration.public_option_validation import (
-    validate_iterative_pressure_options,
-    validate_public_execution_device,
-)
+from pssolver.engine.execution_device import validate_execution_device
+from pssolver.functional.legacy_declarations.public_option_validation import validate_iterative_pressure_options, validate_public_execution_device
 from pssolver.io.diagnostic_io import diagnostics_metadata_envelope
 
 

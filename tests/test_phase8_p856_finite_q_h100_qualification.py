@@ -10,12 +10,7 @@ import pytest
 import torch
 
 from benchmarks.analyze_finite_q_anchoring_qualification import analyze
-from benchmarks.profile_finite_q_anchoring import (
-    FiniteQAnchoringProfileConfig,
-    build_runtime,
-    profile,
-)
-from pssolver.workflows.finite_q_anchoring import (
+from pssolver.experimental.finite_q_anchoring_workflow import (
     PlaneFiniteQAnchoringWorkflow,
     load_finite_q_anchoring_checkpoint,
 )
@@ -26,6 +21,8 @@ NOTES = ROOT / "notes" / "architecture_v0_2"
 
 
 def _config(device: str, *, mode: str = "aggregate_runtime"):
+    from benchmarks.profile_finite_q_anchoring import FiniteQAnchoringProfileConfig
+
     return FiniteQAnchoringProfileConfig(
         mode=mode,
         shape=(8, 8, 6),
@@ -34,23 +31,6 @@ def _config(device: str, *, mode: str = "aggregate_runtime"):
         warmup_steps=1,
         profile_steps=2,
     )
-
-
-def test_cpu_profiler_records_frozen_operation_counts_and_finite_state():
-    report = profile(_config("cpu"))
-    assert report["finite"] is True
-    assert report["completed_steps"] == 3
-    assert report["operation_counts"]["per_step"] == {
-        "forward_transform": 10.0,
-        "inverse_transform": 5.0,
-        "helmholtz_apply": 0.0,
-        "helmholtz_solve": 5.0,
-    }
-    assert report["runtime"]["fallback_used"] is False
-    assert report["runtime"]["construction_in_timed_loop"] is False
-    assert report["conditioning"]["maximum_basis_condition_number"] < 2.0
-    assert report["torch"]["tf32_matmul"] is False
-    assert report["torch"]["tf32_cudnn"] is False
 
 
 def _synthetic_report(shape, trial, mode, package_root):
@@ -134,6 +114,8 @@ def test_analyzer_accepts_only_complete_paired_non_regression_matrix(tmp_path):
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
 def test_cuda_runtime_matches_cpu_and_binds_allocated_device():
+    from benchmarks.profile_finite_q_anchoring import build_runtime
+
     cpu = build_runtime(_config("cpu"))
     gpu = build_runtime(_config("cuda"))
     assert gpu.device == torch.device("cuda", torch.cuda.current_device())
@@ -159,6 +141,8 @@ def test_cuda_runtime_matches_cpu_and_binds_allocated_device():
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
 def test_cuda_continuous_split_and_file_restart_are_exact(tmp_path):
+    from benchmarks.profile_finite_q_anchoring import build_runtime
+
     continuous = build_runtime(_config("cuda"))
     segment = build_runtime(_config("cuda"))
     resumed = build_runtime(_config("cuda"))

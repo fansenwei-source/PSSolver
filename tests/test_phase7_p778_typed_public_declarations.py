@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 import pssolver
-from pssolver import (
+from pssolver.functional.legacy_declarations import (
     GeneratedInitialCondition,
     Output,
     Simulation,
@@ -19,26 +19,16 @@ from pssolver import (
     TimeStepping,
     TorchSpectralExecution,
 )
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-)
-from pssolver.configuration.simulation import (
-    ExecutionSpec,
-    InitialConditionSource,
-    InitialConditionSpec,
-    TimeIntegrationSpec,
-    WorkflowSpec,
-)
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
+from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, InitialConditionSource, InitialConditionSpec, TimeIntegrationSpec, WorkflowSpec
 from pssolver.core.boundary import BoundaryKind, BoundarySemantic
 from pssolver.core.domain import DomainSpec
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import NumericsConfig, Precision
 from pssolver.geometries import PlaneSlab, RectangularChannel
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.systems.equations import EquationSystemSpec
+from pssolver.functional.legacy_declarations import CompleteStressBerisEdwards
+from pssolver.functional.legacy_declarations.systems_equations import EquationSystemSpec
 
 
 ROOT = Path(__file__).resolve().parents[1]

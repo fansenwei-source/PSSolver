@@ -1,112 +1,101 @@
-"""Public tensor-free composition contract for one simulation request.
-
-P7.7.7 freezes ownership and naming only. This module deliberately does not
-select a capability implementation, allocate tensors, construct a runtime, or
-execute a workflow. Later public convenience objects may construct the
-canonical declarations accepted here without changing this top-level shape.
-"""
+"""Public, immutable, tensor-free composition of a simulation."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass
+from types import MappingProxyType
 
-from pssolver.configuration.simulation import (
-    ExecutionSpec,
-    InitialConditionSpec,
-    InvocationSpec,
-    SimulationSpec,
-    TimeIntegrationSpec,
-    WorkflowSpec,
+from pssolver.boundaries.homogeneous import (
+    BoundaryPolicy,
+    free_slip_velocity,
+    neumann_pressure_compatibility,
+    neumann_q,
 )
-from pssolver.core.boundary import BoundaryAssignment
-from pssolver.core.geometry import GeometrySpec
-from pssolver.core.numerics import NumericsConfig
-from pssolver.systems.equations import EquationSystemSpec
+from pssolver.core._canonical import canonical_sha256
+from pssolver.geometries.public import PeriodicBox, PlaneSlab, RectangularChannel
+
+from .declarations import (
+    GeneratedInitialCondition,
+    Output,
+    SemiImplicitEuler,
+    SnapshotInitialCondition,
+    SpectralNumerics,
+    TorchSpectralExecution,
+)
+from .models import CompleteStressBerisEdwards, ShendrukPlaneBerisEdwards
 
 
 @dataclass(frozen=True, slots=True)
 class Simulation:
-    """Immutable public declaration of one complete finite simulation.
+    """Compose one complete simulation request without allocating fields."""
 
-    Field ownership is intentionally explicit:
-
-    - ``model`` owns equations, physical parameters, algebraic subsystem
-      requests, diagnostics, and admitted initial-condition families;
-    - ``geometry`` owns domain shape, lengths, axes, and topology;
-    - ``boundaries`` attaches physical or compatibility laws to components
-      and oriented faces;
-    - ``numerics`` owns precision, dealiasing, transform intent, and storage;
-    - ``time`` owns the mathematical integrator and timestep;
-    - ``initial_condition`` owns the realization family, source, and seed;
-    - ``execution`` owns backend, runtime, device, and implementation policy;
-    - ``output`` owns finite duration, observation/output schedule, restart,
-      checkpoint, and output-location policy;
-    - ``discretization`` carries solver controls not already represented by
-      the generic numerical contracts;
-    - ``invocation`` carries non-scientific invocation provenance.
-
-    The validated canonical :class:`SimulationSpec` is available through
-    :attr:`specification`. It remains tensor-free and is not an executable
-    runtime.
-    """
-
-    model: EquationSystemSpec
-    geometry: GeometrySpec
-    boundaries: BoundaryAssignment
-    numerics: NumericsConfig
-    time: TimeIntegrationSpec
-    initial_condition: InitialConditionSpec
-    execution: ExecutionSpec
-    output: WorkflowSpec
-    discretization: Mapping[str, object] = field(default_factory=dict)
-    invocation: InvocationSpec = field(default_factory=InvocationSpec)
-    _specification: SimulationSpec = field(
-        init=False,
-        repr=False,
-        compare=False,
-    )
+    model: CompleteStressBerisEdwards | ShendrukPlaneBerisEdwards
+    geometry: PeriodicBox | PlaneSlab | RectangularChannel
+    boundaries: Mapping[str, BoundaryPolicy]
+    numerics: SpectralNumerics
+    time: SemiImplicitEuler
+    initial_condition: GeneratedInitialCondition | SnapshotInitialCondition
+    execution: TorchSpectralExecution
+    output: Output
 
     def __post_init__(self) -> None:
-        specification = SimulationSpec(
-            equation_system=self.model,
-            geometry=self.geometry,
-            boundaries=self.boundaries,
-            numerics=self.numerics,
-            time_integration=self.time,
-            discretization_parameters=self.discretization,
-            initial_condition=self.initial_condition,
-            execution=self.execution,
-            workflow=self.output,
-            invocation=self.invocation,
-        )
-        object.__setattr__(
-            self,
-            "discretization",
-            specification.discretization_parameters,
-        )
-        object.__setattr__(self, "_specification", specification)
-
-    @property
-    def specification(self) -> SimulationSpec:
-        """Return the canonical tensor-free declaration with stable identity."""
-
-        return self._specification
-
-    def identity_metadata(self) -> dict[str, object]:
-        """Return scientific, discretization, execution, and run identities."""
-
-        return self.specification.identity_metadata()
+        fields: dict[str, type | tuple[type, ...]] = {
+            "model": (CompleteStressBerisEdwards, ShendrukPlaneBerisEdwards),
+            "geometry": (PeriodicBox, PlaneSlab, RectangularChannel),
+            "numerics": SpectralNumerics,
+            "time": SemiImplicitEuler,
+            "initial_condition": (GeneratedInitialCondition, SnapshotInitialCondition),
+            "execution": TorchSpectralExecution,
+            "output": Output,
+        }
+        for name, allowed in fields.items():
+            if not isinstance(getattr(self, name), allowed):
+                raise TypeError(f"unsupported Simulation {name} declaration")
+        if not isinstance(self.boundaries, Mapping) or not all(
+            isinstance(field, str) and isinstance(value, BoundaryPolicy)
+            for field, value in self.boundaries.items()
+        ):
+            raise TypeError("boundaries must map field names to boundary policies")
+        object.__setattr__(self, "boundaries", MappingProxyType(dict(self.boundaries)))
 
     def to_metadata(self) -> dict[str, object]:
-        """Return the complete canonical declaration metadata."""
-
-        return self.specification.to_metadata()
+        """Return the JSON-compatible public declaration."""
+        return {
+            "model": {"kind": type(self.model).__name__, **asdict(self.model)},
+            "geometry": self.geometry.to_metadata(),
+            "boundaries": {
+                field: policy.to_metadata() if hasattr(policy, "to_metadata") else asdict(policy)
+                for field, policy in self.boundaries.items()
+            },
+            "numerics": self.numerics.to_metadata(),
+            "time": self.time.to_metadata(),
+            "initial_condition": self.initial_condition.to_metadata(),
+            "execution": self.execution.to_metadata(),
+            "output": self.output.to_metadata(),
+        }
 
     def canonical_sha256(self) -> str:
-        """Hash the complete normalized declaration deterministically."""
+        """Hash the declaration, including non-Plan execution and output choices."""
+        return canonical_sha256(self.to_metadata())
 
-        return self.specification.canonical_sha256()
+    def identity_metadata(self) -> dict[str, object]:
+        """Return declaration metadata and the identity of its assembled Plan."""
+        from .runner import compile_simulation
+
+        return {
+            "declaration": self.to_metadata(),
+            "plan_identity_sha256": compile_simulation(self).plan_identity_sha256,
+        }
+
+
+def _free_slip_plane_declaration(shape, lengths):
+    """Return the fixed geometry and wall policies used by the Plane command."""
+    return PlaneSlab(shape=shape, lengths=lengths), {
+        "Q": neumann_q(),
+        "velocity": free_slip_velocity(),
+        "pressure": neumann_pressure_compatibility(),
+    }
 
 
 __all__ = ["Simulation"]

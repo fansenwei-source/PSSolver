@@ -9,35 +9,29 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-)
-from pssolver.configuration.legacy_periodic import (
-    load_periodic_initial_q,
-)
-from pssolver.configuration.public_simulation_runner import (
-    PublicSimulationCompilationError,
-    compile_public_simulation,
-)
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
 from pssolver.functional import (
     FUNCTIONAL_API_VERSION,
     FunctionalRuntimeProtocol,
     build_functional_runtime,
     periodic_activity_functional_request,
 )
+from pssolver.functional.legacy_declarations import (
+    CompleteStressBerisEdwards,
+    Output,
+    Simulation,
+    SnapshotInitialCondition,
+    SpectralNumerics,
+    TimeStepping,
+    TorchSpectralExecution,
+    assign_boundaries,
+)
+from pssolver.functional.legacy_declarations.legacy_periodic import load_periodic_initial_q
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
+    PublicSimulationCompilationError,
+    compile_public_simulation,
+)
 from pssolver.geometries import PeriodicBox, PlaneSlab
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
 from tests._dynamic_flags import set_dynamic_flag
 from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 

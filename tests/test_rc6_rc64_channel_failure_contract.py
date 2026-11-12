@@ -13,13 +13,13 @@ from pssolver import (
     SimulationExecutionError,
     SimulationStateError,
 )
-from pssolver.configuration import (
-    PlaneRuntimePath,
-    create_plane_beris_edwards_run_spec,
-)
 from pssolver.functional.errors import (
     FunctionalConvergenceError,
     translate_functional_exception,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    PlaneRuntimePath,
+    create_plane_beris_edwards_run_spec,
 )
 from pssolver.runtime.plane_observations import PlaneCapture
 from pssolver.runtime.runner import Runner, RunSchedule

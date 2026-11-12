@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from dataclasses import dataclass, field
 import hashlib
 import json
 import math
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from numbers import Real
 from pathlib import Path
 from types import MappingProxyType
@@ -15,9 +15,9 @@ from typing import ContextManager, Protocol, TypeAlias, runtime_checkable
 import torch
 
 from pssolver.core._canonical import canonical_json
-from pssolver.configuration.device_tokens import validate_execution_device
-from pssolver.configuration.simulation import SimulationSpec
 from pssolver.core._identifiers import require_python_identifier
+from pssolver.core.device_tokens import validate_execution_device
+from pssolver.functional.legacy_declarations.simulation import SimulationSpec
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
     CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
@@ -28,6 +28,7 @@ from .versioning import (
     FUNCTIONAL_API_VERSION,
     negotiate_functional_api_version,
 )
+
 
 FUNCTIONAL_OBSERVATION_TIME = "input_state_under_current_control"
 

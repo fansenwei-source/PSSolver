@@ -11,22 +11,11 @@ import pytest
 import torch
 
 import pssolver
-from pssolver import (
-    Output,
-    Simulation,
-    SimulationInputError,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
-from pssolver.boundaries import (
-    assign_boundaries,
-    neumann_pressure_compatibility,
-    neumann_q,
-    no_slip_velocity,
-)
-from pssolver.configuration.simulation import ExecutionSpec
+from pssolver.functional.legacy_declarations import Output, Simulation, SnapshotInitialCondition, SpectralNumerics, TimeStepping, TorchSpectralExecution
+from pssolver import SimulationInputError
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import neumann_pressure_compatibility, neumann_q, no_slip_velocity
+from pssolver.functional.legacy_declarations.simulation import ExecutionSpec
 from pssolver.functional import (
     CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
     CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
@@ -39,7 +28,7 @@ from pssolver.functional import (
     channel_activity_functional_request,
 )
 from pssolver.geometries import RectangularChannel
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
+from pssolver.functional.legacy_declarations import CompleteStressBerisEdwards
 
 
 def _simulation(tmp_path: Path, *, pointwise_execution: str = "eager") -> Simulation:

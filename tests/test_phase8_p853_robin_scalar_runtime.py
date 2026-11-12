@@ -12,25 +12,11 @@ import pytest
 import torch
 
 import pssolver
-from pssolver.boundaries import (
-    HomogeneousBoundaryPolicy,
-    assign_boundaries,
-    robin,
-)
-from pssolver.configuration.robin import lower_plane_robin_scalar_pilot
-from pssolver.configuration.simulation import (
-    ExecutionSpec,
-    InitialConditionSource,
-    InitialConditionSpec,
-    InvocationSpec,
-    SimulationSpec,
-    TimeIntegrationSpec,
-    WorkflowSpec,
-)
-from pssolver.configuration.simulation_lowering import (
-    SimulationLoweringError,
-    lower_simulation_spec,
-)
+from pssolver.boundaries import HomogeneousBoundaryPolicy, robin
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.functional.legacy_declarations.robin import lower_plane_robin_scalar_pilot
+from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, InitialConditionSource, InitialConditionSpec, InvocationSpec, SimulationSpec, TimeIntegrationSpec, WorkflowSpec
+from pssolver.functional.legacy_declarations.simulation_lowering import SimulationLoweringError, lower_simulation_spec
 from pssolver.core.boundary import BoundarySemantic
 from pssolver.core.fields import FieldRole
 from pssolver.core.integrators import IntegratorSpec
@@ -43,17 +29,13 @@ from pssolver.core.numerics import (
     TransformExecutionOrder,
 )
 from pssolver.geometries import PeriodicBox, PlaneSlab
-from pssolver.planning import PlaneRobinScalarLoweringPlan
-from pssolver.runtime import (
+from pssolver.planning.robin import PlaneRobinScalarLoweringPlan
+from pssolver.experimental.robin_scalar_runtime import (
     PlaneRobinOperatorCache,
     PlaneRobinScalarRuntime,
 )
-from pssolver.systems.algebraic import AlgebraicSystemSpec
-from pssolver.systems.equations import (
-    EquationFieldSpec,
-    EquationSystemSpec,
-    EquationTermSpec,
-)
+from pssolver.functional.legacy_declarations.systems_algebraic import AlgebraicSystemSpec
+from pssolver.functional.legacy_declarations.systems_equations import EquationFieldSpec, EquationSystemSpec, EquationTermSpec
 
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -14,8 +14,8 @@ import torch
 
 import pssolver.functional as compatibility
 import pssolver.functional.api as stable
-from pssolver import SpectralSolver
 from pssolver import __version__ as PSSOLVER_PACKAGE_VERSION
+from pssolver.backends.tensor_product import TensorProductTransformBackend
 from pssolver.functional import (
     FunctionalRuntimeIdentity,
     FunctionalStateSpec,
@@ -545,14 +545,14 @@ def test_unknown_checkpoint_api_is_rejected_before_tensor_loading(tmp_path):
 
 
 def test_pressure_metadata_distinguishes_cap_from_required_postcondition():
-    spectral = SpectralSolver(
+    spectral = TensorProductTransformBackend(
         (3, 2, 2),
-        L=(3.0, 2.0, 2.0),
+        lengths=(3.0, 2.0, 2.0),
         device="cpu",
         dtype=torch.float64,
     )
     solver = ChannelNoSlipModalStokesSolver(
-        spectral.transform_backend,
+        spectral,
         friction=0.2,
         viscosity=0.73,
         pressure_relative_tolerance=1.0e-30,

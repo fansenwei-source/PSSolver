@@ -12,22 +12,11 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
-from pssolver.configuration.legacy_periodic import load_periodic_initial_q
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-)
-from pssolver.configuration.public_simulation_runner import compile_public_simulation
+from pssolver.functional.legacy_declarations import Output, Simulation, SnapshotInitialCondition, SpectralNumerics, TimeStepping, TorchSpectralExecution
+from pssolver.functional.legacy_declarations.legacy_periodic import load_periodic_initial_q
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
+from pssolver.functional.legacy_declarations.public_simulation_runner import compile_public_simulation
 from pssolver.functional import (
     FunctionalCheckpointBridgeProtocol,
     FunctionalRuntimeIdentity,
@@ -40,7 +29,8 @@ from pssolver.io.checkpoint import (
     seal_checkpoint_metadata,
     write_functional_checkpoint_provenance,
 )
-from pssolver.models.active_nematics import CompleteStressBerisEdwards, Q_COMPONENTS
+from pssolver.functional.legacy_declarations import CompleteStressBerisEdwards
+from pssolver.models.active_nematics import Q_COMPONENTS
 from tests.v0_5_s25_periodic_v04_checkpoint import production_handle
 from tests.v0_5_s25_periodic_v04_checkpoint import (
     capture_periodic_checkpoint,

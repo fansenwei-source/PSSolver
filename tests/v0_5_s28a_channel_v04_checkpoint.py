@@ -5,7 +5,8 @@ import json
 import numpy as np
 import torch
 
-from pssolver.configuration.legacy_channel import (
+from pssolver.engine.engine import Engine
+from pssolver.functional.legacy_declarations.legacy_channel import (
     _STATE_COMPONENTS,
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     CHECKPOINT_VERSION,
@@ -14,10 +15,12 @@ from pssolver.configuration.legacy_channel import (
     load_channel_initial_q,
     translate_channel,
 )
-from pssolver.engine.engine import Engine
+from pssolver.functional.legacy_declarations.legacy_restore import (
+    _ChannelCheckpointDestination,
+    restore_channel_state,
+)
 from pssolver.io.checkpoint import checkpoint_directory_transaction, seal_checkpoint_metadata
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
-from pssolver.runtime.legacy_entry import _ChannelCheckpointDestination, restore_channel_state
 from pssolver.runtime.state_validation import require_finite_tensors
 
 

@@ -11,24 +11,11 @@ import numpy as np
 import pytest
 
 import pssolver
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.finite_q_anchoring import (
-    PlaneFiniteQAnchoringLoweringPlan,
-    apply_plane_finite_q_anchoring_pilot,
-    lower_plane_finite_q_anchoring_pilot,
-)
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.simulation_lowering import (
-    SimulationLoweringError,
-    lower_simulation_spec,
-)
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.experimental.finite_q_anchoring_declarations import PlaneFiniteQAnchoringLoweringPlan, apply_plane_finite_q_anchoring_pilot, lower_plane_finite_q_anchoring_pilot
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.simulation_lowering import SimulationLoweringError, lower_simulation_spec
 from pssolver.core.boundary import BoundarySide
 from pssolver.models.active_nematics import (
     Q_COMPONENTS,

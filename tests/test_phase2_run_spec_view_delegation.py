@@ -14,37 +14,21 @@ import pytest
 
 import pssolver
 import pssolver.configuration as configuration
-from pssolver.configuration import plane_beris_edwards as facade
-from pssolver.configuration import plane_beris_edwards_builders as builders
-from pssolver.configuration import (
-    plane_beris_edwards_component_graph as component_graph,
-)
-from pssolver.configuration import (
-    plane_beris_edwards_components as components,
-)
-from pssolver.configuration import (
-    plane_beris_edwards_declarations as declarations,
-)
-from pssolver.configuration import (
-    PLANE_FREE_SLIP_BOUNDARIES,
-    PlaneBerisEdwardsRunSpec,
-    PlaneFreeSlipBoundaryConditions,
-    PlaneRuntimePath,
-    SpectralRefreshSpec,
-    create_plane_beris_edwards_run_spec,
-)
+from pssolver.functional.legacy_declarations import plane_beris_edwards as facade
+from pssolver.functional.legacy_declarations import plane_beris_edwards_builders as builders
+from pssolver.functional.legacy_declarations import plane_beris_edwards_component_graph as component_graph
+from pssolver.functional.legacy_declarations import plane_beris_edwards_components as components
+from pssolver.functional.legacy_declarations import plane_beris_edwards_declarations as declarations
+from pssolver.functional.legacy_declarations.plane_beris_edwards import PLANE_FREE_SLIP_BOUNDARIES, PlaneBerisEdwardsRunSpec, PlaneFreeSlipBoundaryConditions, PlaneRuntimePath, SpectralRefreshSpec, create_plane_beris_edwards_run_spec
 from pssolver.core import NumericsConfig
 from pssolver.geometries import PlaneSlab
-from pssolver.models.active_nematics.specifications import (
-    BerisEdwardsMaterialRequest,
-    ExtrudedDefectGasInitialConditionSpec,
-)
-from pssolver.plane import PLANE_HERMITIAN_AXIS as RUNTIME_HERMITIAN_AXIS
+from pssolver.functional.legacy_declarations.active_nematics_specifications import BerisEdwardsMaterialRequest, ExtrudedDefectGasInitialConditionSpec
+from pssolver.geometries.plane_numerics import PLANE_HERMITIAN_AXIS as RUNTIME_HERMITIAN_AXIS
 from pssolver.presets.shendruk import (
     ShendrukPlaneParameterRequest,
     ShendrukPlanePreset,
 )
-from pssolver.systems.stokes import IncompressibleStokesSystemSpec
+from pssolver.functional.legacy_declarations.systems_stokes import IncompressibleStokesSystemSpec
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

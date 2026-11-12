@@ -2,8 +2,8 @@ import json
 
 import numpy as np
 
-from pssolver import write_run_metadata
 from pssolver.models.active_nematics import Q_convention_metadata
+from pssolver.run_metadata import write_run_metadata
 
 
 def _write_Q_input(

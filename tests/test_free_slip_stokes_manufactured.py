@@ -4,11 +4,9 @@ from types import SimpleNamespace
 import pytest
 import torch
 
-from pssolver.transforms import (
-    BasisAwareSpectralProjector,
-    FreeSlipModalStokesSolver,
-    TensorProductTransformBackend,
-)
+from pssolver.backends.tensor_product import TensorProductTransformBackend
+from pssolver.linear_solvers.stokes.plane_free_slip import FreeSlipModalStokesSolver
+from pssolver.operators.projection import BasisAwareSpectralProjector
 
 
 TANGENTIAL_BC = ("periodic", "periodic", "neumann")

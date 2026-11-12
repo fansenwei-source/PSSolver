@@ -44,6 +44,7 @@ def test_manifest_is_an_explicit_allowlist_for_only_shipped_sources():
         "setup.py",
         "MANIFEST.in",
         "Plane_beris_edwards_stokes.py",
+        "docs/migration_0_4_to_0_5.md",
     }
     assert set(paths) == expected
     assert not any(
@@ -85,6 +86,10 @@ def test_only_the_two_confirmed_changelog_lines_are_privacy_exceptions():
     assert scan({"CHANGELOG.md": content}, exceptions)["passed"]
     assert not scan({"CHANGELOG.md": content + b"new /scratch entry\n"}, exceptions)["passed"]
     assert not scan({"README.md": b"/scratch1\n"}, exceptions)["passed"]
+    line = exceptions[0]["line"].encode()
+    assert content.count(line) == 1
+    assert not scan({"CHANGELOG.md": content.replace(line, line + b" edit")}, exceptions)["passed"]
+    assert not scan({"CHANGELOG.md": content + line + b"\n"}, exceptions)["passed"]
 
 
 @pytest.mark.parametrize(

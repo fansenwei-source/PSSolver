@@ -9,13 +9,9 @@ import subprocess
 
 import pytest
 
-from pssolver.configuration.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
 from pssolver.core.boundary import BoundaryAssignment, BoundaryKind, BoundarySemantic, BoundarySide, HomogeneousDirichletBC
 from pssolver.core.domain import DomainSpec
 from pssolver.geometries import PlaneSlab

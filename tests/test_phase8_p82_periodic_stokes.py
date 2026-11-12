@@ -7,8 +7,8 @@ import math
 import pytest
 import torch
 
+from pssolver.backends.tensor_product import TensorProductTransformBackend
 from pssolver.linear_solvers.stokes import PeriodicModalStokesSolver
-from pssolver.transforms import TensorProductTransformBackend
 
 
 PERIODIC = ("periodic", "periodic", "periodic")

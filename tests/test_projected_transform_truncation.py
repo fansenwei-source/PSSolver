@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import pytest
 import torch
 
-from pssolver import SpectralSolver
-from pssolver.transforms import (
-    BasisAwareSpectralProjector,
-    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-)
+from pssolver.backends.tensor_product import TensorProductTransformBackend
+from pssolver.operators.projection import BasisAwareSpectralProjector, DEFAULT_PROJECTED_TRANSFORM_EXECUTION
 
 
 SHAPE = (7, 6, 5)
@@ -17,13 +16,14 @@ LENGTHS = (3.0, 4.0, 2.5)
 
 
 def _solver(dtype=torch.float64, execution_order="real_first"):
-    return SpectralSolver(
+    backend = TensorProductTransformBackend(
         SHAPE,
-        L=LENGTHS,
+        lengths=LENGTHS,
         device="cpu",
         dtype=dtype,
-        transform_execution_order=execution_order,
+        execution_order=execution_order,
     )
+    return SimpleNamespace(shape=backend.shape, transform_backend=backend)
 
 
 def _projectors(

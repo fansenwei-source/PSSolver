@@ -12,34 +12,37 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver import (
+from pssolver.boundaries import (
+    free_slip_velocity,
+    neumann_pressure_compatibility,
+    neumann_q,
+    no_slip_velocity,
+)
+from pssolver.functional.legacy_declarations import (
+    CompleteStressBerisEdwards,
     Output,
     Simulation,
     SnapshotInitialCondition,
     SpectralNumerics,
     TimeStepping,
     TorchSpectralExecution,
-    compile_simulation,
-)
-from pssolver.boundaries import (
     assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-    no_slip_velocity,
 )
-from pssolver.configuration.legacy_channel import (
+from pssolver.functional.legacy_declarations.legacy_channel import (
     CHECKPOINT_VERSION as CHANNEL_CHECKPOINT_VERSION,
 )
-from pssolver.configuration.legacy_channel import (
+from pssolver.functional.legacy_declarations.legacy_channel import (
     read_channel_beris_edwards_checkpoint_header,
     upgrade_channel_beris_edwards_checkpoint_directory,
 )
-from pssolver.configuration.legacy_periodic import (
+from pssolver.functional.legacy_declarations.legacy_periodic import (
     load_periodic_initial_q,
     upgrade_periodic_checkpoint_directory,
 )
-from pssolver.configuration.simulation import InvocationSpec
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
+    compile_public_simulation,
+)
+from pssolver.functional.legacy_declarations.simulation import InvocationSpec
 from pssolver.geometries import PeriodicBox, RectangularChannel
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
@@ -55,11 +58,7 @@ from pssolver.io.legacy.periodic_workflow import (
     load_periodic_checkpoint,
     write_periodic_checkpoint,
 )
-from pssolver.models.active_nematics import (
-    Q_COMPONENTS,
-    VELOCITY_COMPONENTS,
-    CompleteStressBerisEdwards,
-)
+from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from tests.v0_5_s25_periodic_v04_checkpoint import (
     capture_periodic_checkpoint,
     production_handle,
@@ -156,8 +155,8 @@ def _periodic_simulation(tmp_path: Path, storage: str, *, device="cpu"):
 
 
 def _periodic_runtime(simulation):
-    compiled = compile_simulation(simulation)
-    run_spec = compiled.application_request
+    compiled = compile_public_simulation(simulation.specification)
+    run_spec = compiled.run_spec
     initial, _, _ = load_periodic_initial_q(run_spec)
     _, adapter = production_handle(simulation)
     return run_spec, adapter
@@ -224,8 +223,8 @@ def _channel_simulation(tmp_path: Path, nx: int, *, device="cpu"):
 
 
 def _channel_runtime(simulation):
-    compiled = compile_simulation(simulation)
-    run_spec = compiled.application_request
+    compiled = compile_public_simulation(simulation.specification)
+    run_spec = compiled.run_spec
     adapter = build_channel_production_fixture(run_spec)
     return run_spec, adapter
 

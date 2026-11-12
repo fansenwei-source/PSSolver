@@ -15,8 +15,8 @@ import torch
 from pssolver.linear_solvers.stokes.periodic import PeriodicModalStokesSolver
 from pssolver.models.active_nematics.stokes import BerisEdwardsFreeSlipStokes
 from qualification.identity.records import tensor_record
-from qualification.identity.runtime_case_v2 import RuntimeCaseV2
 from qualification.identity.scenarios import scenarios
+from qualification.s28b_trajectory import Case05
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,7 +59,7 @@ def _diagnostics(flow):
 def test_legacy_forward_preserves_result_diagnostics_and_mro(tmp_path, dtype, family, path):
     scene = next(row for row in scenarios() if row["id"] == f"{family}_{path}_{dtype}_default")
     if family == "periodic":
-        case = RuntimeCaseV2(scene, tmp_path)
+        case = _prepared_case(scene, tmp_path)
         reference = json.loads((ROOT / "tests/baselines/s25/periodic_comparison.json").read_text())[
             "core"
         ][dtype]
@@ -70,7 +70,7 @@ def test_legacy_forward_preserves_result_diagnostics_and_mro(tmp_path, dtype, fa
         assert actual == reference["static"]
         assert _diagnostics(flow) == reference["diagnostics"]
         return
-    case = RuntimeCaseV2(scene, tmp_path)
+    case = _prepared_case(scene, tmp_path)
     flow = case.engine.constraint.term
     expected_forward = _old_method(
         "pssolver/models/active_nematics/stokes.py",
@@ -101,7 +101,7 @@ def test_periodic_stateless_solve_does_not_assign_or_extract_scalars(
     tmp_path, dtype, pressure_diagnostics
 ):
     scene = next(row for row in scenarios() if row["id"] == f"periodic_default_{dtype}_default")
-    case = RuntimeCaseV2(scene, tmp_path)
+    case = _prepared_case(scene, tmp_path)
     flow = case.engine.constraint.term
     before = dict(vars(flow))
     records = _diagnostics(flow)
@@ -125,7 +125,7 @@ def test_legacy_force_recording_precedes_solver_failure_and_preserves_overrides(
     scene = next(
         row for row in scenarios() if row["id"] == "plane_legacy_production_float64_default"
     )
-    case = RuntimeCaseV2(scene, tmp_path)
+    case = _prepared_case(scene, tmp_path)
     flow = case.engine.constraint.term
     original = flow.compute_nematic_force
     calls = []
@@ -148,3 +148,7 @@ def test_legacy_force_recording_precedes_solver_failure_and_preserves_overrides(
             flow.forward(case.engine.field_view(case.state), {"alpha": case.engine.default_controls["alpha"]})
     assert calls == ["force", "solve"]
     assert not math.isnan(float(flow.last_total_tangential_force_mean[0]))
+def _prepared_case(scene, tmp_path):
+    table = json.loads((ROOT / "qualification/s28b_tables.json").read_text())
+    expected = table["plan_identity_reference"][scene["id"]]["plan_identity_sha256"]
+    return Case05(scene, tmp_path, expected_plan=expected)

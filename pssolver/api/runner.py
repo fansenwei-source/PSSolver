@@ -1,394 +1,83 @@
-"""Public compile-once and execute-once simulation connection."""
+"""Compile public declarations and run their prepared immutable inputs."""
 
 from __future__ import annotations
 
-import json
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from collections.abc import Iterable
+from dataclasses import dataclass, field
 from pathlib import Path
-from types import MappingProxyType
-from typing import TYPE_CHECKING, Callable
+from typing import TypedDict
 
-from pssolver.core._canonical import canonical_json, canonical_sha256
+from pssolver.core._canonical import canonical_sha256
+from pssolver.planning.assemble import AssembledProblem, AssemblyRejection, assemble
+from pssolver.planning.engine_plan import Plan
 
+from .declarations import GeneratedInitialCondition, Output, SnapshotInitialCondition
+from .errors import PublicSimulationCompilationError
+from .lowering import EngineConstruction, lower_simulation
 from .results import SimulationResult, SimulationRunStatus
 from .simulation import Simulation
 
 
-if TYPE_CHECKING:
-    from pssolver.configuration.simulation import SimulationSpec
-    from pssolver.planning.package_construction import (
-        PackageRuntimeConstructionPlan,
-    )
-    from pssolver.planning.simulation import SimulationLoweringPlan
+class _ResultIdentity(TypedDict):
+    application: str
+    plan_identity_sha256: str
+    source_simulation_sha256: str
+    provenance: dict[str, object]
 
 
-def _frozen_json(value: Mapping[str, object]) -> Mapping[str, object]:
-    payload = canonical_json(dict(value))
-    return MappingProxyType(json.loads(payload))
+@dataclass(frozen=True, slots=True)
+class _RunCarrier:
+    """Tensor-free owner of everything required to execute a compiled run."""
 
-
-def _canonical_sha256(value: object) -> str:
-    return canonical_sha256(value)
-
-
-def _compiled_simulation_identity(
-    *,
-    source: Simulation,
-    application: str,
-    application_specification: object,
-    lowering_plan: object,
-    construction_plan: object,
-    application_request: object,
-    normalization: Mapping[str, object],
-) -> str:
-    """Bind every executable part of one public compilation product."""
-
-    request_type = (
-        f"{type(application_request).__module__}."
-        f"{type(application_request).__qualname__}"
-    )
-    return _canonical_sha256(
-        {
-            "schema_version": 1,
-            "source_simulation_sha256": source.canonical_sha256(),
-            "application": application,
-            "application_simulation_sha256": (
-                application_specification.canonical_sha256()
-            ),
-            "lowering_plan_sha256": lowering_plan.canonical_sha256(),
-            "construction_plan_sha256": construction_plan.canonical_sha256(),
-            "application_request_type": request_type,
-            "application_request_sha256": (
-                application_request.canonical_sha256()
-            ),
-            "normalization": dict(normalization),
-        }
-    )
+    assembled: AssembledProblem
+    construction: EngineConstruction
+    initial_condition: GeneratedInitialCondition | SnapshotInitialCondition
+    output: Output
 
 
 @dataclass(frozen=True, slots=True)
 class CompiledSimulation:
-    """Immutable public evidence for one qualified application connection."""
+    """Public Plan, source declaration and their independent identities."""
 
     source: Simulation
-    application: str
-    application_specification: SimulationSpec
-    lowering_plan: SimulationLoweringPlan
-    construction_plan: PackageRuntimeConstructionPlan
-    application_request: object
-    normalization: Mapping[str, object]
-    compilation_identity_sha256: str
-
-    def __post_init__(self) -> None:
-        object.__setattr__(self, "normalization", _frozen_json(self.normalization))
-        if (
-            not isinstance(self.compilation_identity_sha256, str)
-            or len(self.compilation_identity_sha256) != 64
-            or any(
-                value not in "0123456789abcdef"
-                for value in self.compilation_identity_sha256
-            )
-        ):
-            raise ValueError(
-                "compilation identity must be a lowercase SHA-256"
-            )
+    plan: Plan
+    plan_identity_sha256: str
+    declaration_sha256: str
+    _run: _RunCarrier | None = field(default=None, init=False, compare=False, hash=False, repr=False)
 
     def validate_integrity(self) -> None:
-        """Reject a compilation product whose bound fields were replaced."""
-
-        observed = _compiled_simulation_identity(
-            source=self.source,
-            application=self.application,
-            application_specification=self.application_specification,
-            lowering_plan=self.lowering_plan,
-            construction_plan=self.construction_plan,
-            application_request=self.application_request,
-            normalization=self.normalization,
-        )
-        if observed != self.compilation_identity_sha256:
-            raise ValueError(
-                "compiled simulation integrity mismatch: "
-                f"expected={self.compilation_identity_sha256}, "
-                f"observed={observed}"
-            )
-
-    def to_metadata(self) -> dict[str, object]:
-        self.validate_integrity()
-        return {
-            "schema_version": 1,
-            "compilation_identity_sha256": self.compilation_identity_sha256,
-            "source_simulation_sha256": self.source.canonical_sha256(),
-            "application": self.application,
-            "application_simulation_sha256": (
-                self.application_specification.canonical_sha256()
-            ),
-            "lowering_plan": self.lowering_plan.to_metadata(),
-            "construction_plan": self.construction_plan.to_metadata(),
-            "application_request_type": (
-                f"{type(self.application_request).__module__}."
-                f"{type(self.application_request).__qualname__}"
-            ),
-            "application_request_sha256": (
-                self.application_request.canonical_sha256()
-            ),
-            "normalization": dict(self.normalization),
-            "fallback_allowed": False,
-        }
-
-
-@dataclass(frozen=True, slots=True)
-class _PublicApplicationRunnerRegistration:
-    """One application-level dispatch resolved before the timestep."""
-
-    application: str
-    runner: str
-    invoke: Callable[
-        [CompiledSimulation, Iterable[int] | None, bool],
-        tuple[object | None, str | Path | None],
-    ]
-
-
-def _run_plane_application(
-    compiled: CompiledSimulation,
-    progress: Iterable[int] | None,
-    emit_metadata: bool,
-) -> tuple[object | None, str | Path | None]:
-    from pssolver.runtime.legacy_entry import (
-        run_v04_plane_translation,
-    )
-
-    kwargs = {}
-    if compiled.lowering_plan.lifting_plan is not None:
-        kwargs["application_simulation"] = (
-            compiled.application_specification
-        )
-    result = run_v04_plane_translation(
-        compiled.application_request,
-        progress=progress,
-        emit_metadata=emit_metadata,
-        public_compilation_metadata=_public_compilation_run_metadata(compiled),
-        **kwargs,
-    )
-    return result, compiled.application_request.output_dir
-
-
-def _run_periodic_application(
-    compiled: CompiledSimulation,
-    progress: Iterable[int] | None,
-    emit_metadata: bool,
-) -> tuple[object | None, str | Path | None]:
-    from pssolver.runtime.legacy_entry import (
-        run_v04_translation,
-    )
-
-    result = run_v04_translation(
-        compiled.application_request,
-        progress=progress,
-        emit_metadata=emit_metadata,
-        public_compilation_metadata=_public_compilation_run_metadata(compiled),
-    )
-    output = None if result is None else compiled.application_request.output_dir
-    return result, output
-
-
-def _run_channel_beris_edwards_application(
-    compiled: CompiledSimulation,
-    progress: Iterable[int] | None,
-    emit_metadata: bool,
-) -> tuple[object | None, str | Path | None]:
-    from pssolver.runtime.legacy_entry import run_v04_translation
-
-    result = run_v04_translation(
-        compiled.application_request,
-        progress=progress,
-        emit_metadata=emit_metadata,
-        public_compilation_metadata=_public_compilation_run_metadata(compiled),
-    )
-    output = None if result is None else compiled.application_request.output_dir
-    return result, output
-
-
-_PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
-    {
-        "plane_complete_stress_beris_edwards": (
-            _PublicApplicationRunnerRegistration(
-                "plane_complete_stress_beris_edwards",
-                (
-                    "pssolver.runtime.legacy_entry."
-                    "run_v04_plane_translation"
-                ),
-                _run_plane_application,
-            )
-        ),
-        "periodic_complete_stress_beris_edwards": (
-            _PublicApplicationRunnerRegistration(
-                "periodic_complete_stress_beris_edwards",
-                (
-                    "pssolver.runtime.legacy_entry."
-                    "run_v04_translation"
-                ),
-                _run_periodic_application,
-            )
-        ),
-        "channel_complete_stress_beris_edwards": (
-            _PublicApplicationRunnerRegistration(
-                "channel_complete_stress_beris_edwards",
-                "pssolver.runtime.legacy_entry.run_v04_translation",
-                _run_channel_beris_edwards_application,
-            )
-        ),
-    }
-)
-
-
-def _runtime_path(compiled: CompiledSimulation) -> str:
-    value = compiled.application_request.runtime_path
-    return value.value if hasattr(value, "value") else str(value)
-
-
-def _public_compilation_run_metadata(
-    compiled: CompiledSimulation,
-) -> dict[str, object]:
-    """Return the compilation fields that belong in run provenance."""
-
-    compiled.validate_integrity()
-    return {
-        "schema_version": 1,
-        "compilation_identity_sha256": (
-            compiled.compilation_identity_sha256
-        ),
-        "source_simulation_sha256": compiled.source.canonical_sha256(),
-        "application": compiled.application,
-        "application_simulation_sha256": (
-            compiled.application_specification.canonical_sha256()
-        ),
-        "application_request_sha256": (
-            compiled.application_request.canonical_sha256()
-        ),
-        "normalization": dict(compiled.normalization),
-        "fallback_allowed": False,
-    }
-
-
-def _result_provenance(compiled: CompiledSimulation) -> dict[str, object]:
-    return {
-        "application_simulation_sha256": (
-            compiled.application_specification.canonical_sha256()
-        ),
-        "lowering_plan_sha256": compiled.lowering_plan.canonical_sha256(),
-        "construction_plan_sha256": (
-            compiled.construction_plan.canonical_sha256()
-        ),
-        "fallback_allowed": False,
-    }
-
-
-def _public_result(
-    compiled: CompiledSimulation,
-    application_result: object | None,
-    *,
-    output_directory: str | Path | None,
-) -> SimulationResult:
-    common = {
-        "application": compiled.application,
-        "runtime_path": _runtime_path(compiled),
-        "source_simulation_sha256": compiled.source.canonical_sha256(),
-        "application_request_sha256": (
-            compiled.application_request.canonical_sha256()
-        ),
-        "provenance": _result_provenance(compiled),
-    }
-    if application_result is None:
-        requested_dry_run = getattr(
-            compiled.application_request,
-            "dry_run",
-            compiled.application_specification.invocation.options.get(
-                "dry_run",
-                False,
-            ),
-        )
-        if (
-            compiled.application
-            not in {
-                "plane_complete_stress_beris_edwards",
-                "periodic_complete_stress_beris_edwards",
-                "channel_complete_stress_beris_edwards",
-            }
-            or requested_dry_run is not True
+        """Check the declaration, Plan and private preparation agree."""
+        if self.declaration_sha256 != self.source.canonical_sha256():
+            raise ValueError("compiled simulation declaration identity does not match source")
+        plan_metadata = self.plan.to_metadata()
+        stored = plan_metadata.pop("identity_sha256")
+        if stored != self.plan_identity_sha256 or canonical_sha256(plan_metadata) != stored:
+            raise ValueError("compiled simulation Plan identity does not match Plan")
+        if self._run is not None and (
+            self._run.assembled.plan is not self.plan
+            or self._run.initial_condition is not self.source.initial_condition
+            or self._run.output is not self.source.output
         ):
-            raise RuntimeError(
-                "application returned no workflow result outside a qualified "
-                "public dry-run"
-            )
-        return SimulationResult(
-            status=SimulationRunStatus.DRY_RUN,
-            output_directory=None,
-            start_step=None,
-            final_step=None,
-            elapsed_seconds=None,
-            **common,
-        )
-    required = (
-        "start_step",
-        "final_step",
-        "elapsed_seconds",
-        "saved_steps",
-        "checkpoint_steps",
-        "final_observation",
-        "diagnostics",
-    )
-    missing = tuple(
-        name for name in required if not hasattr(application_result, name)
-    )
-    if missing:
-        raise TypeError(
-            "application result does not satisfy the public workflow "
-            f"contract; missing={missing!r}"
-        )
-    return SimulationResult(
-        status=SimulationRunStatus.COMPLETE,
-        output_directory=output_directory,
-        start_step=application_result.start_step,
-        final_step=application_result.final_step,
-        elapsed_seconds=application_result.elapsed_seconds,
-        saved_steps=tuple(application_result.saved_steps),
-        checkpoint_steps=tuple(application_result.checkpoint_steps),
-        final_observation=application_result.final_observation,
-        diagnostics=tuple(application_result.diagnostics),
-        **common,
-    )
+            raise ValueError("compiled simulation runtime inputs do not match source and Plan")
 
 
 def compile_simulation(simulation: Simulation) -> CompiledSimulation:
-    """Compile a public declaration without allocating or running tensors."""
-
-    from pssolver.configuration.public_simulation_runner import (
-        compile_public_simulation,
-    )
-
+    """Assemble once, without resolving devices or importing tensor runtimes."""
     if not isinstance(simulation, Simulation):
-        raise TypeError("simulation must be a public Simulation")
-    value = compile_public_simulation(simulation.specification)
-    compilation_identity_sha256 = _compiled_simulation_identity(
-        source=simulation,
-        application=value.application,
-        application_specification=value.application_simulation,
-        lowering_plan=value.lowering_plan,
-        construction_plan=value.construction_plan,
-        application_request=value.run_spec,
-        normalization=value.normalization,
+        raise TypeError("expected a 0.5 Simulation; see docs/migration_0_4_to_0_5.md")
+    try:
+        problem, construction = lower_simulation(simulation)
+        assembled = assemble(problem)
+    except AssemblyRejection as exc:
+        raise PublicSimulationCompilationError(
+            exc.code, exc.reason, kind=exc.kind, source=exc.source, opens_in=exc.opens_in,
+        ) from exc
+    result = CompiledSimulation(
+        simulation, assembled.plan, assembled.plan.identity_sha256, simulation.canonical_sha256(),
     )
-    return CompiledSimulation(
-        source=simulation,
-        application=value.application,
-        application_specification=value.application_simulation,
-        lowering_plan=value.lowering_plan,
-        construction_plan=value.construction_plan,
-        application_request=value.run_spec,
-        normalization=value.normalization,
-        compilation_identity_sha256=compilation_identity_sha256,
-    )
+    carrier = _RunCarrier(assembled, construction, simulation.initial_condition, simulation.output)
+    object.__setattr__(result, "_run", carrier)
+    return result
 
 
 def run_simulation(
@@ -397,38 +86,55 @@ def run_simulation(
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
 ) -> SimulationResult:
-    """Run one qualified public simulation through its existing application.
-
-    Compilation and application selection happen once before runtime
-    construction.  There is no runtime fallback and no public dispatch in the
-    timestep.
-    """
-
-    compiled = (
-        simulation
-        if isinstance(simulation, CompiledSimulation)
-        else compile_simulation(simulation)
-    )
+    """Run a public declaration or the exact product of compile_simulation."""
+    compiled = simulation if isinstance(simulation, CompiledSimulation) else compile_simulation(simulation)
+    if compiled._run is None:
+        raise TypeError("run_simulation requires a product of compile_simulation")
     compiled.validate_integrity()
-    registration = _PUBLIC_APPLICATION_RUNNERS.get(compiled.application)
-    if registration is None:
-        raise RuntimeError(
-            "compiled simulation has no qualified public application runner"
+    from pssolver.runtime.simulation_run import run_assembled_simulation
+
+    preflight = None
+    if compiled.source.output.restart_from is not None:
+        from .legacy_checkpoints import continue_from_v04_checkpoint
+
+        def preflight(dtype):
+            return continue_from_v04_checkpoint(compiled, dtype=dtype)
+
+    runtime_result = run_assembled_simulation(
+        compiled, progress=progress, emit_metadata=emit_metadata,
+        legacy_preflight=preflight,
+    )
+    application = {
+        "periodic_box": "periodic_complete_stress_beris_edwards",
+        "plane_slab": "plane_complete_stress_beris_edwards",
+        "rectangular_channel": "channel_complete_stress_beris_edwards",
+    }[compiled.plan.geometry.kind]
+    provenance: dict[str, object] = {
+        "plan_identity_sha256": compiled.plan_identity_sha256,
+        "declaration_sha256": compiled.declaration_sha256,
+    }
+    common: _ResultIdentity = {
+        "application": application,
+        "plan_identity_sha256": compiled.plan_identity_sha256,
+        "source_simulation_sha256": compiled.declaration_sha256,
+        "provenance": provenance,
+    }
+    if runtime_result is None:
+        return SimulationResult(
+            SimulationRunStatus.DRY_RUN, output_directory=None, start_step=None,
+            final_step=None, elapsed_seconds=None, **common,
         )
-    application_result, output_directory = registration.invoke(
-        compiled,
-        progress,
-        emit_metadata,
-    )
-    return _public_result(
-        compiled,
-        application_result,
-        output_directory=output_directory,
+    return SimulationResult(
+        SimulationRunStatus.COMPLETE,
+        output_directory=Path(compiled.source.output.directory),
+        start_step=runtime_result.start_step, final_step=runtime_result.final_step,
+        elapsed_seconds=runtime_result.elapsed_seconds,
+        saved_steps=runtime_result.saved_steps,
+        checkpoint_steps=runtime_result.checkpoint_steps,
+        final_observation=runtime_result.final_observation,
+        diagnostics=runtime_result.diagnostics,
+        **common,
     )
 
 
-__all__ = [
-    "CompiledSimulation",
-    "compile_simulation",
-    "run_simulation",
-]
+__all__ = ["CompiledSimulation", "compile_simulation", "run_simulation"]

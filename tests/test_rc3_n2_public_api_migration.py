@@ -5,7 +5,7 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
-from pssolver import Output, SpectralNumerics
+from pssolver.functional.legacy_declarations import Output, SpectralNumerics
 
 
 ROOT = Path(__file__).resolve().parents[1]

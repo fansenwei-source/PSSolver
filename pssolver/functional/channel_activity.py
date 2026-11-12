@@ -7,14 +7,14 @@ functional factory.
 
 from __future__ import annotations
 
-from pssolver.configuration.execution_device import (
+from pssolver.engine.execution_device import (
     resolve_allocated_execution_device,
 )
-from pssolver.configuration.public_simulation_runner import (
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
     PUBLIC_CHANNEL_COMPLETE_APPLICATION,
     compile_public_simulation,
 )
-from pssolver.configuration.simulation import SimulationSpec
+from pssolver.functional.legacy_declarations.simulation import SimulationSpec
 from pssolver.linear_solvers.stokes._pressure_policy import (
     channel_pressure_policy_metadata,
 )

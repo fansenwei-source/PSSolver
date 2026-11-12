@@ -12,22 +12,13 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-)
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.simulation_binding import bind_simulation_runtime
-from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.simulation_binding import bind_simulation_runtime
+from pssolver.functional.legacy_declarations.simulation_lowering import lower_simulation_spec
 from pssolver.core.boundary import BoundarySide
 from pssolver.models.active_nematics import (
     Q_COMPONENTS,
@@ -36,7 +27,7 @@ from pssolver.models.active_nematics import (
     strong_homeotropic_q,
     strong_planar_q,
 )
-from pssolver.planning import TransformKind
+from pssolver.functional.legacy_declarations.planning_plan import TransformKind
 
 
 ROOT = Path(__file__).resolve().parents[1]

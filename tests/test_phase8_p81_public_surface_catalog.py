@@ -10,7 +10,7 @@ import pickle
 import pytest
 
 import pssolver
-from pssolver.configuration.public_simulation_runner import public_compiler_capabilities
+from pssolver.functional.legacy_declarations.public_simulation_runner import public_compiler_capabilities
 from pssolver.core.domain import DomainSpec
 from pssolver.geometries import PeriodicBox, RectangularChannel
 from pssolver.geometries.tensor_product import (

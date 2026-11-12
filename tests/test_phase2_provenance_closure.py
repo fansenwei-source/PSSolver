@@ -5,7 +5,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-from pssolver.configuration import (
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
 )
 

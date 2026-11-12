@@ -36,27 +36,22 @@ from .boundaries import (
     strong_homeotropic_q,
     strong_planar_q,
 )
-from .constitutive import (
+from .fields import (
     ALGEBRAIC_STRESS_COMPONENTS,
     BERIS_EDWARDS_FORCE_CAPABILITY,
     BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY,
     BERIS_EDWARDS_Q_GRADIENT_CAPABILITY,
     BERIS_EDWARDS_STRESS_CAPABILITY,
     BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY,
+    CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS,
+    CHANNEL_Q_BOUNDARY_CONDITIONS,
     DISTORTION_STRESS_COMPONENTS,
     H_COMPONENTS,
     NEMATIC_FORCE_COMPONENTS,
+    Q_COMPONENTS,
     Q_GRADIENT_COMPONENTS,
     VELOCITY_COMPONENTS,
     VELOCITY_GRADIENT_COMPONENTS,
-    BerisEdwardsConstitutiveParameters,
-    BerisEdwardsConstitutiveStokesCanaryModel,
-    BerisEdwardsPlaneCoupledModel,
-)
-from .fields import (
-    CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS,
-    CHANNEL_Q_BOUNDARY_CONDITIONS,
-    Q_COMPONENTS,
 )
 from .initial_conditions import (
     aligned_x_band_limited_noise_2d,
@@ -75,7 +70,6 @@ from .nematics3d_adapter import (
     eigenframe_from_Q,
     q_field_object_from_Q,
 )
-from .public import CompleteStressBerisEdwards
 from .q_tensor import (
     PLANAR_Q_COMPONENTS,
     Q_components,
@@ -110,10 +104,6 @@ __all__ = [
     "BerisEdwardsQNonlinearModel",
     "BerisEdwardsPointwiseKernels",
     "BerisEdwardsFreeSlipStokes",
-    "BerisEdwardsConstitutiveParameters",
-    "BerisEdwardsConstitutiveStokesCanaryModel",
-    "BerisEdwardsPlaneCoupledModel",
-    "CompleteStressBerisEdwards",
     "DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE",
     "DEFAULT_POINTWISE_EXECUTION",
     "DEFAULT_STRESS_DIVERGENCE_SUM_SPACE",

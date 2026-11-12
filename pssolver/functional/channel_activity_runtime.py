@@ -6,21 +6,21 @@ from collections.abc import Mapping
 
 import torch
 
-from pssolver.configuration.execution_device import (
+from pssolver.engine.engine import Engine
+from pssolver.engine.execution_device import (
     configure_tf32_execution,
     scoped_tf32_execution,
 )
-from pssolver.configuration.legacy_channel import (
+from pssolver.engine.state import State
+from pssolver.functional.legacy_declarations.legacy_channel import (
     channel_forward_dynamics_identity,
     load_channel_initial_q,
     translate_channel,
 )
-from pssolver.configuration.public_simulation_runner import (
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
     PUBLIC_CHANNEL_COMPLETE_APPLICATION,
     compile_public_simulation,
 )
-from pssolver.engine.engine import Engine
-from pssolver.engine.state import State
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,

@@ -5,8 +5,7 @@ import os
 import pytest
 import torch
 
-from benchmarks.diagnose_plane_nyquist_storage import diagnose
-from pssolver.configuration.execution_device import scoped_tf32_execution
+from pssolver.engine.execution_device import scoped_tf32_execution
 
 
 _H100_QUALIFICATION_ENVIRONMENT_VARIABLE = "PSSOLVER_REQUIRE_H100"
@@ -33,6 +32,8 @@ def test_h100_identity_is_an_explicit_qualification_policy(monkeypatch):
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
 def test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence():
+    from benchmarks.diagnose_plane_nyquist_storage import diagnose
+
     with scoped_tf32_execution(
         "off",
         real_dtype=torch.float64,

@@ -3,6 +3,12 @@
   "scope": "pssolver/",
   "command": "ruff check --isolated --select E4,E7,E9,F pssolver",
   "tool_version": "0.17.3",
+  "s28b_whole_module_renames": {
+    "basis": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802",
+    "table": "qualification/s28b_tables.json",
+    "key": "renames",
+    "policy": "The r2.1 exact whole-module map carries the basis lint count; original diagnostics remain unchanged."
+  },
   "counts": {
     "F401": 65,
     "F841": 3,

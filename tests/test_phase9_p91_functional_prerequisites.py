@@ -11,21 +11,18 @@ import torch
 
 import pssolver
 from pssolver import (
+    CompleteStressBerisEdwards,
     Output,
+    SemiImplicitEuler,
     Simulation,
     SnapshotInitialCondition,
     SpectralNumerics,
-    TimeStepping,
     TorchSpectralExecution,
     compile_simulation,
     run_simulation,
 )
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-)
+from pssolver.api.legacy_checkpoints import downgrade_simulation
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
 from pssolver.functional import (
     FUNCTIONAL_API_VERSION,
     FUNCTIONAL_OBSERVATION_TIME,
@@ -39,11 +36,7 @@ from pssolver.functional import (
     FunctionalTensorSpec,
 )
 from pssolver.geometries import PeriodicBox
-from pssolver.models.active_nematics import (
-    CompleteStressBerisEdwards,
-    embed_z_invariant_planar_q,
-    project_z_invariant_planar_q,
-)
+from pssolver.models.active_nematics import embed_z_invariant_planar_q, project_z_invariant_planar_q
 
 
 def _model(*, friction=0.0, policy="zero_mean"):
@@ -75,15 +68,11 @@ def _simulation(
         shape=(8, 8, z_points),
         lengths=(8.0, 8.0, float(z_points)),
     )
-    boundaries = assign_boundaries(
-        model=model,
-        geometry=geometry,
-        policies={
+    boundaries = {
             "Q": neumann_q(),
             "velocity": free_slip_velocity(),
             "pressure": neumann_pressure_compatibility(),
-        },
-    )
+    }
     generator = np.random.default_rng(20260927)
     planar = np.empty((3, 1, 8, 8), dtype=np.float64)
     planar[0] = 0.2 + generator.normal(scale=1.0e-3, size=(1, 8, 8))
@@ -107,10 +96,9 @@ def _simulation(
             spectral_storage="hermitian_half",
             hermitian_axis=1,
         ),
-        time=TimeStepping(dt=0.001, refresh={"mode": "disabled"}),
+        time=SemiImplicitEuler(dt=0.001),
         initial_condition=SnapshotInitialCondition(snapshot, step=0),
         execution=TorchSpectralExecution(
-            runtime_path="periodic_spectral",
             device="cpu",
             options={
                 "tf32": "off",
@@ -160,12 +148,7 @@ def test_public_periodic_friction_compiles_and_runs_at_nz_one(tmp_path):
     )
     compiled = compile_simulation(simulation)
 
-    assert compiled.lowering_plan.nullspace.uniform_mode_action == (
-        "retain_all_uniform_velocity_resolved_by_friction"
-    )
-    assert compiled.normalization["uniform_velocity_mode_action"] == (
-        "retain_all_uniform_velocity_resolved_by_friction"
-    )
+    assert compiled.plan.constraints[0].arguments["zero_mode_policy"] == "friction"
     result = run_simulation(compiled)
     assert result.final_step == 1
     assert result.final_observation.q.shape == (8, 8, 1, 5)
@@ -294,7 +277,7 @@ def test_provisional_functional_declarations_are_fail_closed_and_json_safe(
     )
     capabilities = FunctionalCapabilitySet()
     request = FunctionalRuntimeConstructionRequest(
-        simulation=simulation.specification,
+        simulation=downgrade_simulation(simulation),
         control_fields=(control,),
         observations=(observation,),
     )
@@ -344,7 +327,7 @@ def test_provisional_functional_declarations_are_fail_closed_and_json_safe(
         state_tensor.validate(torch.zeros(state_tensor.shape, dtype=torch.float32))
     with pytest.raises(ValueError, match="batch_size=1"):
         FunctionalRuntimeConstructionRequest(
-            simulation=simulation.specification,
+            simulation=downgrade_simulation(simulation),
             control_fields=(control,),
             observations=(observation,),
             batch_size=2,

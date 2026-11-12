@@ -3,11 +3,10 @@
 from .homogeneous import (
     BoundaryPolicy,
     HomogeneousBoundaryPolicy,
-    assign_boundaries,
     free_slip_velocity,
-    no_slip_velocity,
     neumann_pressure_compatibility,
     neumann_q,
+    no_slip_velocity,
 )
 from .prescribed import (
     PrescribedFaceValue,
@@ -20,6 +19,7 @@ from .robin import (
     robin,
 )
 
+
 __all__ = [
     "BoundaryPolicy",
     "HomogeneousBoundaryPolicy",
@@ -27,7 +27,6 @@ __all__ = [
     "RobinFaceLaw",
     "StaticPrescribedDirichletPolicy",
     "StaticRobinBoundaryPolicy",
-    "assign_boundaries",
     "free_slip_velocity",
     "no_slip_velocity",
     "neumann_pressure_compatibility",

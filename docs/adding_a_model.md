@@ -1,6 +1,8 @@
-# Adding an internal engine-v2 model
+# Adding a model to Engine v2
 
-The component API is internal until S-28; the released public API is unchanged.
+The 0.5 component API is provisional. Assemble custom model terms through
+`pssolver.planning.assemble`; the higher-level `Simulation` API exposes the
+qualified declarations listed in its capability catalog.
 
 1. Write the PDE and units. Here the dimensionless periodic Allen–Cahn equation is
    `∂φ/∂t = ε²∇²φ + φ − φ³`.

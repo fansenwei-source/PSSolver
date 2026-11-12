@@ -1,6 +1,6 @@
 """Test-only v0.4 checkpoint capture; not a production compatibility adapter."""
 
-from pssolver.configuration.legacy_periodic import (
+from pssolver.functional.legacy_declarations.legacy_periodic import (
     PeriodicBerisEdwardsRunSpec,
     build_periodic_checkpoint_compatibility_identity,
 )
@@ -16,8 +16,8 @@ def production_handle(simulation):
     """Construct explicit test state without retaining a production adapter."""
     import torch
 
-    from pssolver.configuration.legacy_periodic import translate_periodic
     from pssolver.engine.engine import Engine
+    from pssolver.functional.legacy_declarations.legacy_periodic import translate_periodic
     from pssolver.functional.validation import PeriodicProductionHandle
 
     translation = translate_periodic(
@@ -43,7 +43,7 @@ def capture_periodic_checkpoint(production, *, run_spec):
 
 
 def restore_periodic_checkpoint(production, checkpoint, *, run_spec):
-    from pssolver.runtime.legacy_entry import restore_periodic_state
+    from pssolver.functional.legacy_declarations.legacy_restore import restore_periodic_state
 
     return restore_periodic_state(
         production.engine, production.state, checkpoint, run_spec=run_spec

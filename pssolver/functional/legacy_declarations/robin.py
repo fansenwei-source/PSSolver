@@ -1,0 +1,207 @@
+"""Fail-closed lowering for the P8.5.3 generic scalar Robin pilot."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+
+from pssolver.core._canonical import canonical_sha256
+from pssolver.core.boundary import (
+    BoundaryKind,
+    BoundarySemantic,
+    BoundarySide,
+    StaticRobinBC,
+)
+from pssolver.core.domain import GridPlacement
+from pssolver.core.fields import FieldRole
+from pssolver.core.geometry import AxisTopology
+from pssolver.core.numerics import Precision
+from pssolver.functional.legacy_declarations.simulation import SimulationSpec
+from pssolver.planning.robin import (
+    MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE,
+    PlaneRobinScalarLoweringPlan,
+    build_cell_centered_robin_eigenbasis_plan,
+    validate_dimensionless_robin_impedance,
+)
+
+
+def _sha256(value: object) -> str:
+    return canonical_sha256(value)
+
+
+class RobinImpedanceSupportError(ValueError):
+    """Raised before allocation for a Robin law outside the public domain."""
+
+    def __init__(self, message: str, *, context: dict[str, object]) -> None:
+        self.context = dict(context)
+        super().__init__(message)
+
+
+def validate_public_robin_impedance_support(
+    simulation: SimulationSpec,
+) -> None:
+    """Reject public Robin declarations outside the frozen binary64 domain."""
+
+    if not isinstance(simulation, SimulationSpec):
+        raise TypeError("simulation must be a SimulationSpec")
+    lengths = simulation.geometry.domain.lengths
+    for assignment in simulation.boundaries.components:
+        for face in assignment.faces:
+            condition = face.condition
+            if not isinstance(condition, StaticRobinBC):
+                continue
+            coefficients = condition.coefficients
+            axis_length = float(lengths[face.axis])
+            alpha = coefficients.alpha.value
+            beta = coefficients.beta.value
+            context: dict[str, object] = {
+                "component": assignment.component,
+                "axis": face.axis,
+                "side": face.side.value,
+                "axis_length": axis_length,
+                "alpha": alpha,
+                "beta": beta,
+                "qualified_lower_inclusive": 0.0,
+                "qualified_upper_inclusive": (
+                    MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE
+                ),
+            }
+            if beta <= 0.0:
+                context["dimensionless_impedance"] = "undefined_beta_nonpositive"
+                raise RobinImpedanceSupportError(
+                    "public Robin beta must be positive before operator "
+                    "materialization",
+                    context=context,
+                )
+            impedance = axis_length * alpha / beta
+            context["dimensionless_impedance"] = impedance
+            try:
+                validate_dimensionless_robin_impedance(
+                    impedance,
+                    "public dimensionless Robin impedance",
+                )
+            except ValueError as exc:
+                raise RobinImpedanceSupportError(
+                    "public dimensionless Robin impedance is outside the "
+                    "qualified closed interval [0, 1e14]",
+                    context=context,
+                ) from exc
+
+
+def lower_plane_robin_component_pilot(
+    simulation: SimulationSpec,
+    *,
+    field_name: str,
+    component: str,
+) -> PlaneRobinScalarLoweringPlan:
+    """Resolve one component of a registered evolved field onto P8.5.2.
+
+    This deliberately separate entry point cannot make an unsupported Robin
+    law executable through the production simulation compiler.
+    """
+
+    if not isinstance(simulation, SimulationSpec):
+        raise TypeError("simulation must be a SimulationSpec")
+    if not isinstance(field_name, str) or not field_name.isidentifier():
+        raise ValueError("field_name must be a Python identifier")
+    if not isinstance(component, str) or not component.isidentifier():
+        raise ValueError("component must be a Python identifier")
+    geometry = simulation.geometry
+    domain = geometry.domain
+    if geometry.name != "plane_slab":
+        raise ValueError("P8.5.3 Robin lowering requires plane_slab geometry")
+    if geometry.axis_topologies != (
+        AxisTopology.PERIODIC,
+        AxisTopology.PERIODIC,
+        AxisTopology.BOUNDED,
+    ):
+        raise ValueError("P8.5.3 requires periodic-periodic-bounded topology")
+    if geometry.bounded_axes != (2,):
+        raise ValueError("P8.5.3 requires wall-normal axis 2")
+    if domain.grid_placement is not GridPlacement.CELL_CENTERED:
+        raise ValueError("P8.5.3 requires a cell-centered grid")
+    if simulation.numerics.precision is not Precision.FLOAT64:
+        raise ValueError("P8.5.3 CPU pilot requires float64 numerics")
+    if simulation.execution.backend != "torch_spectral":
+        raise ValueError("P8.5.3 requires the torch_spectral backend intent")
+
+    matches = tuple(
+        value
+        for value in simulation.equation_system.fields
+        if value.name == field_name
+    )
+    if len(matches) != 1:
+        raise ValueError("Robin pilot field must be registered exactly once")
+    field = matches[0]
+    if field.role is not FieldRole.EVOLVED:
+        raise ValueError("Robin pilot field must have the evolved role")
+    if component not in field.components:
+        raise ValueError("Robin pilot component is not registered by the field")
+    assignment = simulation.boundaries.for_component(component)
+    if assignment.semantic is not BoundarySemantic.PHYSICAL:
+        raise ValueError("Robin pilot field requires physical boundary semantics")
+
+    face_lookup = {
+        (face.axis, face.side): face.condition for face in assignment.faces
+    }
+    for axis in (0, 1):
+        for side in BoundarySide:
+            if face_lookup[(axis, side)].kind is not BoundaryKind.PERIODIC:
+                raise ValueError("Robin pilot periodic axes require periodic laws")
+    lower = face_lookup[(2, BoundarySide.LOWER)]
+    upper = face_lookup[(2, BoundarySide.UPPER)]
+    if not isinstance(lower, StaticRobinBC) or not isinstance(
+        upper,
+        StaticRobinBC,
+    ):
+        raise ValueError("both Plane wall faces require static Robin laws")
+    robin_plan = build_cell_centered_robin_eigenbasis_plan(
+        size=domain.shape[2],
+        length=domain.lengths[2],
+        lower=lower.coefficients,
+        upper=upper.coefficients,
+    )
+    return PlaneRobinScalarLoweringPlan(
+        source_simulation_sha256=simulation.canonical_sha256(),
+        source_boundary_sha256=_sha256(assignment.to_metadata()),
+        field_name=field.name,
+        component=component,
+        geometry_name=geometry.name,
+        domain_shape=domain.shape,
+        domain_lengths=domain.lengths,
+        axis_names=domain.axis_names,
+        periodic_axes=geometry.periodic_axes,
+        wall_normal_axis=geometry.bounded_axes[0],
+        robin_plan=robin_plan,
+    )
+
+
+def lower_plane_robin_scalar_pilot(
+    simulation: SimulationSpec,
+    *,
+    field_name: str,
+) -> PlaneRobinScalarLoweringPlan:
+    """Resolve a registered one-component evolved field onto P8.5.2."""
+
+    matches = tuple(
+        value
+        for value in simulation.equation_system.fields
+        if value.name == field_name
+    )
+    if len(matches) != 1:
+        raise ValueError("Robin pilot field must be registered exactly once")
+    if len(matches[0].components) != 1:
+        raise ValueError("P8.5.3 supports one scalar component only")
+    return lower_plane_robin_component_pilot(
+        simulation,
+        field_name=field_name,
+        component=matches[0].components[0],
+    )
+
+
+__all__ = [
+    "RobinImpedanceSupportError",
+    "lower_plane_robin_component_pilot",
+    "lower_plane_robin_scalar_pilot",
+    "validate_public_robin_impedance_support",
+]

@@ -8,15 +8,22 @@ from pathlib import Path
 import pytest
 import torch
 
-from pssolver.configuration.legacy_channel import load_channel_initial_q, translate_channel
-from pssolver.configuration.public_simulation_runner import compile_public_simulation
+from pssolver import compile_simulation
 from pssolver.core._canonical import canonical_sha256
 from pssolver.engine import members
 from pssolver.engine.engine import Engine
 from pssolver.engine.state import State
+from pssolver.functional.legacy_declarations.legacy_channel import (
+    load_channel_initial_q,
+    translate_channel,
+)
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
+    compile_public_simulation,
+)
 from pssolver.io import engine_state
 from pssolver.io.checkpoint import seal_checkpoint_metadata
-from qualification.identity.channel_comparison import ChannelEngineCase
+from qualification.identity.scenes_v05 import simulation_v05
+from qualification.s28b_trajectory import Case05
 from tests.test_phase9_p974_channel_functional_runtime import _simulation
 from tests.test_v0_3_s09_pressure_operator_cache import _cache, _rhs, _solve, _solver
 
@@ -103,19 +110,24 @@ def test_channel_restart_recovers_fft_layout_without_solving(tmp_path, monkeypat
         "family": "channel", "shape": shape, "steps": 2, "dtype": dtype,
         "options": {"fixed_iterations": 12}, "observe": True, "restart_steps": [1],
     }
-    continuous = ChannelEngineCase(scene, tmp_path)
+    plan = compile_simulation(simulation_v05(scene, tmp_path)).plan_identity_sha256
+    continuous = Case05(scene, tmp_path, expected_plan=plan)
     continuous.step()
     checkpoint = tmp_path / "saved"
     continuous.export(checkpoint)
     saved = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in checkpoint.iterdir()}
-    resumed = ChannelEngineCase(scene, tmp_path)
+    resumed = Case05(scene, tmp_path, expected_plan=plan)
 
     def unexpected_solve(*args, **kwargs):
         pytest.fail("checkpoint restore unexpectedly solves the pressure constraint")
 
     with monkeypatch.context() as patch:
         patch.setattr(resumed.engine.constraint.term.pressure_solver, "solve", unexpected_solve)
-        resumed.restore(checkpoint, 1)
+        resumed.state = engine_state.read(
+            checkpoint, plan_identity_sha256=plan, dtype=getattr(torch, dtype), batch=1, device="cpu"
+        )
+        resumed.engine._restore_channel_state_layout(resumed.state)
+        resumed.index = 1
     assert resumed.state.completed_steps == continuous.state.completed_steps == 1
     for name, tensor in continuous.state.solver.items():
         if isinstance(tensor, torch.Tensor):
@@ -169,7 +181,8 @@ def test_channel_member_copy_preserves_coherent_warm_states(tmp_path, inplace):
 
 def test_engine_does_not_modify_solver_tensor_slots_in_place():
     root = Path(__file__).resolve().parents[1] / "pssolver"
-    for rel in ("engine", "io/engine_state.py", "runtime/legacy_entry.py",
+    for rel in ("engine", "io/engine_state.py", "runtime/simulation_run.py",
+                "functional/legacy_declarations/legacy_restore.py",
                 "linear_solvers/stokes/channel_no_slip.py"):
         target = root / rel
         for path in target.glob("*.py") if target.is_dir() else (target,):

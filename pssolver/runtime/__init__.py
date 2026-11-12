@@ -1,71 +1,23 @@
-"""Geometry-specific runtime selection boundaries.
-
-Runtime adapters are intentionally not re-exported from :mod:`pssolver`.
-Production drivers must select a geometry-specific factory explicitly.
-"""
+"""Runtime preparation, observation and common Runner modules."""
 
 from importlib import import_module as _import_module
 
-from pssolver.core._compatibility import (
-    facade_dir as _facade_dir,
-)
-from pssolver.core._compatibility import (
-    resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
-)
-
-
-_PILOT_EXPORTS = {
-    name: ("pssolver.experimental.boundary_pilots", name)
-    for name in (
-        "FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION",
-        "FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION",
-        "FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION",
-        "PlaneFiniteQAnchoringCheckpoint",
-        "PlaneFiniteQAnchoringRuntime",
-        "PlaneRobinOperatorCache",
-        "PlaneRobinOperatorCacheKey",
-        "PlaneRobinScalarCheckpoint",
-        "PlaneRobinScalarRuntime",
-        )
-}
 
 _IMPLICIT_SUBMODULE_NAMES = frozenset(
-    {
-        "channel_observations",
-        "finite_q_anchoring",
-        "plane_observations",
-        "robin_scalar",
-        "state_validation",
-    }
+    {"channel_observations", "plane_observations", "state_validation"}
 )
 
 
 def __getattr__(name: str) -> object:
-    if name in _IMPLICIT_SUBMODULE_NAMES:
-        module = _import_module(f"{__name__}.{name}")
-        globals()[name] = module
-        return module
-    return _resolve_deprecated_facade_name(
-        name,
-        facade=__name__,
-        replacement="pssolver.experimental.boundary_pilots",
-        exports=_PILOT_EXPORTS,
-        namespace=globals(),
-    )
+    if name not in _IMPLICIT_SUBMODULE_NAMES:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    module = _import_module(f"{__name__}.{name}")
+    globals()[name] = module
+    return module
 
 
 def __dir__() -> list[str]:
-    return sorted(set(_facade_dir(globals(), _PILOT_EXPORTS)) | _IMPLICIT_SUBMODULE_NAMES)
+    return sorted(set(globals()) | _IMPLICIT_SUBMODULE_NAMES)
 
 
-__all__ = [
-    "PlaneRobinOperatorCache",
-    "PlaneRobinOperatorCacheKey",
-    "PlaneRobinScalarCheckpoint",
-    "PlaneRobinScalarRuntime",
-    "FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION",
-    "FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION",
-    "FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION",
-    "PlaneFiniteQAnchoringCheckpoint",
-    "PlaneFiniteQAnchoringRuntime",
-]
+__all__: list[str] = []

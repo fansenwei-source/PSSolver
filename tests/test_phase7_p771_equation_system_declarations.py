@@ -7,28 +7,14 @@ from pathlib import Path
 
 import pytest
 
-from pssolver.configuration.active_nematics_equation_adapters import declare_plane_complete_stress_equation_system
-from pssolver.configuration.plane_beris_edwards import (
-    create_plane_beris_edwards_run_spec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
-)
+from pssolver.functional.legacy_declarations.active_nematics_equation_adapters import declare_plane_complete_stress_equation_system
+from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
 from pssolver.core import FieldRole
-from pssolver.models.active_nematics.equation_systems import ACTIVE_FORCE_COMPONENTS, COMPLETE_STRESS_FORCE_COMPONENTS, CompleteStressBerisEdwardsEquationRequest
-from pssolver.models.active_nematics.specifications import (
-    BerisEdwardsMaterialRequest,
-)
-from pssolver.systems.equations import (
-    EquationFieldSpec,
-    EquationSystemSpec,
-    EquationTermSpec,
-)
-from pssolver.systems.stokes import (
-    IncompressibleStokesSystemSpec,
-    PressureGauge,
-    TangentialZeroModePolicy,
-)
+from pssolver.functional.legacy_declarations.active_nematics_equation_systems import ACTIVE_FORCE_COMPONENTS, COMPLETE_STRESS_FORCE_COMPONENTS, CompleteStressBerisEdwardsEquationRequest
+from pssolver.functional.legacy_declarations.active_nematics_specifications import BerisEdwardsMaterialRequest
+from pssolver.functional.legacy_declarations.systems_equations import EquationFieldSpec, EquationSystemSpec, EquationTermSpec
+from pssolver.functional.legacy_declarations.systems_stokes import IncompressibleStokesSystemSpec, PressureGauge, TangentialZeroModePolicy
 
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -24,20 +24,6 @@ from pathlib import Path
 
 import pytest
 
-from pssolver.configuration import (
-    PLANE_FREE_SLIP_BOUNDARIES,
-    PlaneFreeSlipBoundaryConditions,
-    PlaneRuntimePath,
-    SpectralRefreshSpec,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    PlaneBerisEdwardsExecutionSpec,
-    PlaneBerisEdwardsPhysicsSpec,
-    PlaneBerisEdwardsRunComponents,
-    PlaneInvocationSpec,
-    PlaneTimeSteppingSpec,
-    PlaneWorkflowSpec,
-)
 from pssolver.core import (
     BoundarySet,
     DealiasRule,
@@ -51,19 +37,33 @@ from pssolver.core import (
     SpectralStorage,
     TransformExecutionOrder,
 )
-from pssolver.geometries import PlaneSlab
-from pssolver.models.active_nematics.specifications import (
+from pssolver.functional.legacy_declarations.active_nematics_specifications import (
     BerisEdwardsMaterialRequest,
     ExtrudedDefectGasInitialConditionSpec,
 )
-from pssolver.presets.shendruk import (
-    ShendrukPlaneParameterRequest,
-    resolve_shendruk_plane_preset,
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    PLANE_FREE_SLIP_BOUNDARIES,
+    PlaneFreeSlipBoundaryConditions,
+    PlaneRuntimePath,
+    SpectralRefreshSpec,
 )
-from pssolver.systems.stokes import (
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    PlaneBerisEdwardsExecutionSpec,
+    PlaneBerisEdwardsPhysicsSpec,
+    PlaneBerisEdwardsRunComponents,
+    PlaneInvocationSpec,
+    PlaneTimeSteppingSpec,
+    PlaneWorkflowSpec,
+)
+from pssolver.functional.legacy_declarations.systems_stokes import (
     IncompressibleStokesSystemSpec,
     PressureGauge,
     TangentialZeroModePolicy,
+)
+from pssolver.geometries import PlaneSlab
+from pssolver.presets.shendruk import (
+    ShendrukPlaneParameterRequest,
+    resolve_shendruk_plane_preset,
 )
 
 

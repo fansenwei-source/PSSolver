@@ -1,6 +1,6 @@
 import pytest
 
-from pssolver import prepare_new_run_directory
+from pssolver.run_metadata import prepare_new_run_directory
 
 
 def test_prepare_new_run_directory_creates_missing_directory(tmp_path):

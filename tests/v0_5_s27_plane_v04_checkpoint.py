@@ -2,14 +2,14 @@
 
 from dataclasses import dataclass
 
-from pssolver.configuration.legacy_plane import (
+from pssolver.engine.engine import Engine
+from pssolver.engine.state import State
+from pssolver.functional.legacy_declarations.legacy_plane import (
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneBerisEdwardsRunSpec,
     PlaneWorkflowCheckpoint,
     build_plane_checkpoint_compatibility_identity,
 )
-from pssolver.engine.engine import Engine
-from pssolver.engine.state import State
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.runtime.state_validation import require_finite_tensors
 
@@ -31,7 +31,7 @@ class PlaneTestState:
 
 
 def capture_plane_checkpoint(production, *, run_spec):
-    from pssolver.configuration.legacy_plane import plane_backend_restart
+    from pssolver.functional.legacy_declarations.legacy_plane import plane_backend_restart
 
     return plane_v04_checkpoint_from_state(
         production.engine, production.state, run_spec,
@@ -40,7 +40,7 @@ def capture_plane_checkpoint(production, *, run_spec):
 
 
 def restore_plane_checkpoint(production, checkpoint, *, run_spec):
-    from pssolver.runtime.legacy_entry import restore_plane_state
+    from pssolver.functional.legacy_declarations.legacy_restore import restore_plane_state
 
     return restore_plane_state(production.engine, production.state, checkpoint, run_spec=run_spec)
 

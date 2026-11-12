@@ -9,23 +9,7 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
-from pssolver.boundaries import (
-    assign_boundaries,
-    neumann_pressure_compatibility,
-    neumann_q,
-    no_slip_velocity,
-)
-from pssolver.configuration.public_simulation_runner import (
-    PublicSimulationCompilationError,
-)
+from pssolver.boundaries import neumann_pressure_compatibility, neumann_q, no_slip_velocity
 from pssolver.functional import (
     CHANNEL_ACTIVITY_RUNTIME_STAGE,
     ChannelActivityCheckpointBridge,
@@ -34,8 +18,20 @@ from pssolver.functional import (
     build_channel_activity_functional_runtime,
     channel_activity_functional_request,
 )
+from pssolver.functional.legacy_declarations import (
+    CompleteStressBerisEdwards,
+    Output,
+    Simulation,
+    SnapshotInitialCondition,
+    SpectralNumerics,
+    TimeStepping,
+    TorchSpectralExecution,
+    assign_boundaries,
+)
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
+    PublicSimulationCompilationError,
+)
 from pssolver.geometries import RectangularChannel
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
 from tests._dynamic_flags import set_dynamic_flag
 
 

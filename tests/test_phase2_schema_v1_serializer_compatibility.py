@@ -12,13 +12,13 @@ import pytest
 
 import pssolver
 import pssolver.configuration as configuration
-from pssolver.configuration import (
+from pssolver.functional.legacy_declarations import plane_beris_edwards as facade
+from pssolver.functional.legacy_declarations import plane_beris_edwards_schema_v1 as schema_v1
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PlaneBerisEdwardsRunSpec,
     create_plane_beris_edwards_run_spec,
 )
-from pssolver.configuration import plane_beris_edwards as facade
-from pssolver.configuration import plane_beris_edwards_schema_v1 as schema_v1
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

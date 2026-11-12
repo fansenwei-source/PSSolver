@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 import pssolver.functional.api as stable_functional
-from pssolver.api import capability_catalog
+from pssolver import capability_catalog
 from pssolver.experimental import boundary_pilots
 
 
@@ -104,31 +104,27 @@ print(json.dumps(pilots.boundary_pilot_status(), sort_keys=True))
         "released_checkpoint_readers_preserved": True,
     }
 
+    catalog = capability_catalog().to_metadata()
     robin = next(
         item
-        for item in capability_catalog().to_metadata()["boundary_policies"]
+        for item in catalog["boundary_policies"]
         if item["key"] == "robin"
     )
     assert robin["declarable"] is True
     assert robin["executable"] is False
-    assert robin["qualified_applications"] == []
+    assert "qualified_applications" not in robin
+    assert all("robin" not in row["boundary_policies"] for row in catalog["qualified_combinations"])
 
 
-def test_old_pilot_facades_warn_and_resolve_to_the_explicit_namespace():
+def test_retained_operator_facade_warns_and_resolves_to_the_explicit_namespace():
     result = _isolated_python(
         """
 import warnings
 from pssolver.experimental import boundary_pilots as pilots
 import pssolver.operators as operators
-import pssolver.planning as planning
-import pssolver.runtime as runtime
-import pssolver.workflows as workflows
 
 pairs = (
-    (planning, "StaticLiftingPlan", pilots.StaticLiftingPlan),
     (operators, "CellCenteredRobinEigenbasisOperator", pilots.CellCenteredRobinEigenbasisOperator),
-    (runtime, "PlaneRobinScalarRuntime", pilots.PlaneRobinScalarRuntime),
-    (workflows, "PlaneFiniteQAnchoringWorkflow", pilots.PlaneFiniteQAnchoringWorkflow),
 )
 with warnings.catch_warnings(record=True) as observed:
     warnings.simplefilter("always")
@@ -158,6 +154,7 @@ expected = {
         "checkpoint_identity",
         "contracts",
         "errors",
+        "legacy_declarations",
         "legacy_identity",
         "periodic_activity",
         "periodic_checkpoint",
@@ -173,13 +170,8 @@ expected = {
     ],
     "pssolver.runtime": [
         "channel_observations",
-        "finite_q_anchoring",
         "plane_observations",
-        "robin_scalar",
         "state_validation",
-    ],
-    "pssolver.workflows": [
-        "finite_q_anchoring",
     ],
 }
 observed = {}
@@ -200,7 +192,7 @@ with warnings.catch_warnings(record=True) as caught:
         assert "facade_dir" not in dir(package)
         assert "resolve_deprecated_facade_name" not in dir(package)
 assert not caught, [str(item.message) for item in caught]
-assert observed == expected
+assert observed == expected, (observed, expected)
 print(json.dumps(observed, sort_keys=True))
 """
     )
@@ -208,16 +200,14 @@ print(json.dumps(observed, sort_keys=True))
 
 
 def test_released_finite_q_reader_keeps_its_defining_module_identity():
-    from pssolver.workflows.finite_q_anchoring import (
-        load_finite_q_anchoring_checkpoint,
-    )
+    from pssolver.experimental.finite_q_anchoring_workflow import load_finite_q_anchoring_checkpoint
 
     assert (
         boundary_pilots.load_finite_q_anchoring_checkpoint
         is load_finite_q_anchoring_checkpoint
     )
     assert load_finite_q_anchoring_checkpoint.__module__ == (
-        "pssolver.workflows.finite_q_anchoring"
+        "pssolver.experimental.finite_q_anchoring_workflow"
     )
 
 

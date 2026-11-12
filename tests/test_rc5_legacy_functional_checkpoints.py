@@ -12,22 +12,10 @@ import numpy as np
 import pytest
 import torch
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-    no_slip_velocity,
-)
-from pssolver.configuration.simulation import InvocationSpec
+from pssolver.functional.legacy_declarations import Output, Simulation, SnapshotInitialCondition, SpectralNumerics, TimeStepping, TorchSpectralExecution
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q, no_slip_velocity
+from pssolver.functional.legacy_declarations.simulation import InvocationSpec
 from pssolver.functional import (
     FunctionalCheckpointCompatibilityError,
     build_channel_activity_functional_runtime,
@@ -39,7 +27,8 @@ from pssolver.functional.legacy_identity import (
     legacy_runtime_identity_sha256,
 )
 from pssolver.geometries import PeriodicBox, RectangularChannel
-from pssolver.models.active_nematics import CompleteStressBerisEdwards, Q_COMPONENTS
+from pssolver.functional.legacy_declarations import CompleteStressBerisEdwards
+from pssolver.models.active_nematics import Q_COMPONENTS
 
 
 _FIXTURE_ROOT = (

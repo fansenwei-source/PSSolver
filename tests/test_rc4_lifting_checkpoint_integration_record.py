@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from pssolver.configuration.legacy_plane import (
+from pssolver.functional.legacy_declarations.legacy_plane import (
     PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION,
     PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION,
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,

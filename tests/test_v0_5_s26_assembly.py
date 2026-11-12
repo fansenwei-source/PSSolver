@@ -239,7 +239,7 @@ def test_complete_stress_preset_remains_qualified_in_legacy_catalog():
 
 
 def test_all_nineteen_periodic_plans_match_installed_s25(tmp_path):
-    from pssolver.configuration.legacy_periodic import translate_periodic
+    from pssolver.functional.legacy_declarations.legacy_periodic import translate_periodic
     from qualification.identity.runtime_case import complete_simulation
     from qualification.identity.scenarios import scenarios
 

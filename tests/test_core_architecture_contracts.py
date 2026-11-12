@@ -7,7 +7,7 @@ import json
 
 import pytest
 
-from pssolver import DEFAULT_SPECTRAL_STORAGE, SpectralSolver
+from pssolver.backends.tensor_product import DEFAULT_SPECTRAL_STORAGE, TensorProductTransformBackend
 from pssolver.core import (
     AxisTopology,
     BoundaryCondition,
@@ -31,10 +31,7 @@ from pssolver.core import (
     SpectralStorage,
     TransformExecutionOrder,
 )
-from pssolver.plane import (
-    DEFAULT_PLANE_SPECTRAL_STORAGE,
-    PLANE_HERMITIAN_AXIS,
-)
+from pssolver.geometries.plane_numerics import DEFAULT_PLANE_SPECTRAL_STORAGE, PLANE_HERMITIAN_AXIS
 
 
 def _plane_boundaries(normal_condition):
@@ -328,9 +325,9 @@ def test_problem_rejects_hermitian_storage_on_a_bounded_axis():
 
 
 def test_stage_a_does_not_change_runtime_or_geometry_specific_defaults():
-    solver = SpectralSolver((4,), device="cpu")
+    backend = TensorProductTransformBackend((4,), lengths=(1.0,), device="cpu")
 
     assert DEFAULT_SPECTRAL_STORAGE == "full_complex"
-    assert solver.transform_backend.spectral_storage == "full_complex"
+    assert backend.spectral_storage == "full_complex"
     assert DEFAULT_PLANE_SPECTRAL_STORAGE == "hermitian_half"
     assert PLANE_HERMITIAN_AXIS == 1

@@ -28,152 +28,106 @@ class ImportEdge:
 # Allowed internal dependency layers for packages governed in Phase 0.
 # Applications are composition roots and are checked separately below.
 ALLOWED_INTERNAL_LAYERS = {
-    "cli": frozenset({"cli"}),
-    "engine": frozenset({"engine", "core", "planning", "backends", "operators", "linear_solvers", "models"}),
-    # Top-level modules are compatibility facades or small legacy roots.  They
-    # retain distinct names so an allowance for one facade cannot silently
-    # authorize imports from or to every other top-level module.
-    "Field": frozenset(),
-    "PDEmodel": frozenset({"Field", "linear_solvers"}),
     "_version": frozenset(),
-    "channel": frozenset({"linear_solvers", "models", "solver"}),
-    "errors": frozenset({"core"}),
-    "integrator": frozenset(),
-    "loop_conventions": frozenset(),
-    "plane": frozenset({"geometries"}),
-    "run_metadata": frozenset(),
-    "snapshots": frozenset({"models"}),
-    "solver": frozenset({"Field", "PDEmodel", "backends", "integrator"}),
-    "transforms": frozenset({"backends", "linear_solvers", "operators"}),
-    "utils": frozenset(),
-    "visualizer": frozenset(),
-    "core": frozenset({"core"}),
-    "systems": frozenset({"core", "systems"}),
-    "geometries": frozenset({"core", "geometries"}),
-    "planning": frozenset({"core", "planning"}),
-    "execution": frozenset(
-        {
-            "backends",
-            "core",
-            "execution",
-            "linear_solvers",
-            "operators",
-            "planning",
-            "systems",
-        }
-    ),
-    "backends": frozenset({"backends", "core", "planning"}),
-    "operators": frozenset({"backends", "core", "operators", "planning"}),
-    "linear_solvers": frozenset(
-        {"backends", "core", "linear_solvers", "operators", "planning"}
-    ),
-    "integrators": frozenset({"core", "execution", "integrators", "planning"}),
-    "models": frozenset({"core", "execution", "models"}),
-    "adapters": frozenset({"adapters", "core", "planning"}),
-    "presets": frozenset({"models", "presets"}),
-    "configuration": frozenset(
-        {
-            "adapters",
-            "configuration",
-            "core",
-            "geometries",
-            "models",
-            "presets",
-            "systems",
-        }
-    ),
-    "runtime": frozenset(
-        {
-            "backends",
-            "configuration",
-            "core",
-            "execution",
-            "integrators",
-            "linear_solvers",
-            "models",
-            "operators",
-            "planning",
-            "runtime",
-        }
-    ),
-    "workflows": frozenset(
-        {
-            "configuration",
-            "errors",
-            "io",
-            "models",
-            "run_metadata",
-            "runtime",
-            "workflows",
-        }
-    ),
-    "io": frozenset({"core", "io", "runtime"}),
-    "control": frozenset({"control", "models", "snapshots"}),
-    "applications": frozenset(
-        {
-            "applications",
-            "configuration",
-            "errors",
-            "io",
-            "models",
-            "operators",
-            "planning",
-            "run_metadata",
-            "runtime",
-            "workflows",
-        }
-    ),
-    "experimental": frozenset(
-        {
-            "adapters",
-            "channel",
-            "configuration",
-            "core",
-            "diagnostics",
-            "execution",
-            "experimental",
-            "geometries",
-            "integrator",
-            "integrators",
-            "io",
-            "linear_solvers",
-            "models",
-            "operators",
-            "planning",
-            "run_metadata",
-            "solver",
-        }
-    ),
-    # S-10 brings the post-Phase-9 public and functional layers under the
-    # executable ratchet.  These sets freeze the dependencies that exist at
-    # the S-10 baseline; adding a new layer edge now requires explicit review.
     "api": frozenset(
         {
             "api",
-            "applications",
-            "configuration",
+            "boundaries",
             "core",
+            "engine",
             "errors",
-            "planning",
-            "systems",
-        }
-    ),
-    "boundaries": frozenset({"boundaries", "core", "systems"}),
-    "diagnostics": frozenset({"core", "diagnostics"}),
-    "functional": frozenset(
-        {
-            "_version",
-            "applications",
-            "configuration",
-            "core",
             "functional",
+            "geometries",
             "io",
             "linear_solvers",
             "models",
+            "planning",
+            "presets",
             "runtime",
-            "workflows",
         }
     ),
+    "backends": frozenset({"backends", "core", "planning"}),
+    "boundaries": frozenset({"boundaries", "core"}),
+    "channel": frozenset({"linear_solvers", "models", "solver"}),
+    "cli": frozenset({"api", "cli", "core"}),
+    "control": frozenset({"control", "models", "snapshots"}),
+    "core": frozenset({"core"}),
+    "diagnostics": frozenset({"core", "diagnostics"}),
+    "engine": frozenset(
+        {
+            "backends",
+            "core",
+            "engine",
+            "linear_solvers",
+            "models",
+            "operators",
+            "planning",
+        }
+    ),
+    "errors": frozenset({"core"}),
+    "experimental": frozenset(
+        {
+            "boundaries",
+            "core",
+            "diagnostics",
+            "engine",
+            "experimental",
+            "functional",
+            "geometries",
+            "integrators",
+            "io",
+            "linear_solvers",
+            "models",
+            "operators",
+            "planning",
+            "runtime",
+        }
+    ),
+    "functional": frozenset(
+        {
+            "_version",
+            "boundaries",
+            "core",
+            "engine",
+            "errors",
+            "functional",
+            "geometries",
+            "io",
+            "linear_solvers",
+            "models",
+            "planning",
+            "presets",
+            "runtime",
+        }
+    ),
+    "geometries": frozenset({"core", "geometries"}),
+    "integrators": frozenset({"core", "execution", "integrators", "planning"}),
+    "io": frozenset({"core", "io"}),
+    "linear_solvers": frozenset({"backends", "core", "linear_solvers", "operators", "planning"}),
+    "loop_conventions": frozenset(),
+    "models": frozenset({"core", "models"}),
+    "operators": frozenset({"backends", "core", "operators", "planning"}),
+    "planning": frozenset({"core", "planning"}),
+    "presets": frozenset({"models", "presets"}),
+    "run_metadata": frozenset(),
+    "runtime": frozenset(
+        {
+            "backends",
+            "core",
+            "diagnostics",
+            "engine",
+            "integrators",
+            "io",
+            "linear_solvers",
+            "models",
+            "operators",
+            "planning",
+            "runtime",
+        }
+    ),
+    "snapshots": frozenset({"models"}),
+    "utils": frozenset(),
+    "visualizer": frozenset(),
 }
 
 

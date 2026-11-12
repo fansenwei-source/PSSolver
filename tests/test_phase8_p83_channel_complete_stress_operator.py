@@ -6,13 +6,13 @@ import math
 
 import torch
 
+from pssolver.backends.tensor_product import TensorProductTransformBackend
 from pssolver.models.active_nematics import (
     CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS,
 )
 from pssolver.operators.tensor_divergence import (
     projected_component_basis_stress_divergence,
 )
-from pssolver.transforms import TensorProductTransformBackend
 
 
 VELOCITY_BASIS = ("periodic", "dirichlet", "dirichlet")

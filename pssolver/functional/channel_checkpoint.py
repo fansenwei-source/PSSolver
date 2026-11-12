@@ -17,11 +17,11 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from pssolver.configuration.legacy_channel import (
+from pssolver.core._canonical import canonical_json, canonical_sha256
+from pssolver.functional.legacy_declarations.legacy_channel import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     CHECKPOINT_VERSION,
 )
-from pssolver.core._canonical import canonical_json, canonical_sha256
 from pssolver.io._checkpoint_artifacts import write_standard_tensor_record
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,

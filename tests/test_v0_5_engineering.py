@@ -51,7 +51,7 @@ def test_ast_import_resolution_includes_relative_from_imports(statement, target)
         ("core", "import torch"),
         ("backends", "from .. import runtime"),
         ("operators", "from pssolver.api import Simulation"),
-        ("linear_solvers", "def f():\n    import pssolver.workflows"),
+        ("linear_solvers", "def f():\n    import pssolver.runtime"),
     ],
 )
 def test_new_forbidden_imports_fail_closed(tmp_path, layer, statement):

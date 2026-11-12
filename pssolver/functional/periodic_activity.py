@@ -13,29 +13,28 @@ from collections.abc import Mapping
 
 import torch
 
-from pssolver.configuration.legacy_periodic import translate_periodic
 from pssolver.engine.engine import Engine
-from pssolver.engine.state import State
-from pssolver.configuration.public_simulation_runner import (
-    PUBLIC_PERIODIC_APPLICATION,
-    compile_public_simulation,
-)
-from pssolver.configuration.execution_device import (
+from pssolver.engine.execution_device import (
     configure_tf32_execution,
     resolve_allocated_execution_device,
     scoped_tf32_execution,
 )
-from pssolver.configuration.simulation import SimulationSpec
+from pssolver.engine.state import State
+from pssolver.functional.legacy_declarations.legacy_periodic import translate_periodic
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
+    PUBLIC_PERIODIC_APPLICATION,
+    compile_public_simulation,
+)
+from pssolver.functional.legacy_declarations.simulation import SimulationSpec
 from pssolver.models.active_nematics import Q_COMPONENTS
-
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
     FunctionalCapabilitySet,
     FunctionalControlFieldSpec,
     FunctionalControls,
-    FunctionalObservationSpec,
     FunctionalObservations,
+    FunctionalObservationSpec,
     FunctionalRuntimeConstructionRequest,
     FunctionalRuntimeIdentity,
     FunctionalState,

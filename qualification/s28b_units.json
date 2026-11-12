@@ -1,0 +1,253 @@
+{
+  "pssolver.api.capabilities": {
+    "DeclarationCapability": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "QualifiedCombination": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "PublicCapabilityCatalog": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "_model_vocab": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "_boundary_vocab": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "_probe_inputs": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "capability_catalog": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "available_models": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "available_geometries": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "available_boundary_policies": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    },
+    "available_combinations": {
+      "authority": "r2 §2.7: derive public vocabulary and acceptance/rejection records by tensor-free assembly."
+    }
+  },
+  "pssolver.api.declarations": {
+    "_enum": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "_integer": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "_positive_real": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "_freeze_json": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "_mapping": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "_plain_json": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "SpectralNumerics": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "SemiImplicitEuler": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "TorchSpectralExecution": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "GeneratedInitialCondition": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "SnapshotInitialCondition": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    },
+    "Output": {
+      "authority": "r2 §2.3: immutable 0.5 declarations and their canonical, tensor-free validation."
+    }
+  },
+  "pssolver.api.legacy_checkpoints": {
+    "_legacy_refresh": {
+      "authority": "r2 §4.3: map the declaration to legacy options and authenticate the header before restoring."
+    },
+    "_legacy_options": {
+      "authority": "r2 §4.3: map the declaration to legacy options and authenticate the header before restoring."
+    },
+    "_plane_preflight": {
+      "authority": "r2 §4.3: map the declaration to legacy options and authenticate the header before restoring."
+    }
+  },
+  "pssolver.api.lowering": {
+    "_FIELDS": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_COMPONENTS": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_BASIS": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_CAPTURES": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_EXECUTION_DEFAULTS": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "EngineConstruction": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "ITERATIVE_PRESSURE_OPTION_KEYS": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "validate_iterative_pressure_options": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_pressure_options": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_material": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_plane_model": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    },
+    "_validate_initial_condition": {
+      "authority": "r2 §2.4 and §2.9: resolve boundary bases and the one assembly request, with construction-only inputs outside Plan identity."
+    }
+  },
+  "pssolver.api.models": {
+    "_finite": {
+      "authority": "r2 §2.2: scalar validation of the tensor-free public model declarations."
+    }
+  },
+  "pssolver.api.runner": {
+    "_ResultIdentity": {
+      "authority": "r2.1 §7.1 and §2.6: type the existing result identity fields without changing the public result."
+    }
+  },
+  "pssolver.api.simulation": {
+    "Simulation": {
+      "authority": "r2 §2.1 and §2.8: immutable public declaration and shared Plane geometry/policy construction for CLI."
+    },
+    "_free_slip_plane_declaration": {
+      "authority": "r2 §2.1 and §2.8: immutable public declaration and shared Plane geometry/policy construction for CLI."
+    }
+  },
+  "pssolver.api.snapshot_header": {
+    "_SIMPLE": {
+      "authority": "r2 §2.4: bounded NumPy-free NPY header validation."
+    },
+    "_itemsize": {
+      "authority": "r2 §2.4: bounded NumPy-free NPY header validation."
+    }
+  },
+  "pssolver.cli.plane": {
+    "DEFAULT_ZERO_MODE_POLICY": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/configuration/plane_beris_edwards_declarations.py:DEFAULT_ZERO_MODE_POLICY"
+    },
+    "DEFAULT_FRICTION_MODE_FRIC": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/configuration/plane_beris_edwards_declarations.py:DEFAULT_FRICTION_MODE_FRIC"
+    },
+    "DEFAULT_SPECTRAL_REFRESH_TIME": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/configuration/plane_beris_edwards_declarations.py:DEFAULT_SPECTRAL_REFRESH_TIME"
+    },
+    "DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/models/active_nematics/stokes.py:DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE"
+    },
+    "DEFAULT_STRESS_DIVERGENCE_SUM_SPACE": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/models/active_nematics/stokes.py:DEFAULT_STRESS_DIVERGENCE_SUM_SPACE"
+    },
+    "DEFAULT_PLANE_SPECTRAL_STORAGE": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/geometries/plane_numerics.py:DEFAULT_PLANE_SPECTRAL_STORAGE"
+    },
+    "DEFAULT_POINTWISE_EXECUTION": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/models/active_nematics/beris_edwards.py:DEFAULT_POINTWISE_EXECUTION"
+    },
+    "POINTWISE_EXECUTION_MODES": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner.",
+      "copy_of": "pssolver/models/active_nematics/beris_edwards.py:POINTWISE_EXECUTION_MODES"
+    },
+    "_parser": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner."
+    },
+    "_simulation": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner."
+    },
+    "_print_workflow_summary": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner."
+    },
+    "main": {
+      "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner."
+    }
+  },
+  "pssolver.functional.legacy_declarations._aliases": {
+    "_COMPILER_MODULES": {
+      "authority": "r2 §4.2: resolve only the frozen compiler identities."
+    }
+  },
+  "pssolver.runtime": {
+    "_IMPLICIT_SUBMODULE_NAMES": {
+      "authority": "r2 §5: remove retired facades and preserve the surviving runtime submodule accesses."
+    }
+  },
+  "pssolver.runtime.runner": {
+    "Runner": {
+      "authority": "r2 §2.5 and §2.9: publish the common diagnostic envelope and preserve the Runner step sequence."
+    }
+  },
+  "pssolver.runtime.simulation_run": {
+    "_APPLICATIONS": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_CHECKPOINT_OPERATIONS": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_Q_BOUNDARY": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_PreparedRun": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_PLANE_IMPLEMENTATION_FILES": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_pointwise_metadata": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_q_assignment": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_plane_metadata": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_require_empty_output": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_restart_input": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "_capture": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    },
+    "tensor_sha256": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys.",
+      "copy_of": "pssolver/runtime/legacy_entry.py:tensor_sha256"
+    },
+    "_record_prepared_metadata": {
+      "authority": "r2 §2.5, §2.9 and W6: prepare the compiled run and retain the specified published metadata keys."
+    }
+  }
+}

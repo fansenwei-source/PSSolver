@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import json
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
-import json
-import math
 from pathlib import Path
 from types import MappingProxyType
 from typing import Protocol, runtime_checkable
@@ -80,9 +80,8 @@ class SimulationResult:
 
     status: SimulationRunStatus
     application: str
-    runtime_path: str
+    plan_identity_sha256: str
     source_simulation_sha256: str
-    application_request_sha256: str
     output_directory: Path | None
     start_step: int | None
     final_step: int | None
@@ -96,14 +95,10 @@ class SimulationResult:
     def __post_init__(self) -> None:
         if not isinstance(self.status, SimulationRunStatus):
             raise TypeError("status must be a SimulationRunStatus")
-        for value, description in (
-            (self.application, "application"),
-            (self.runtime_path, "runtime_path"),
-        ):
-            if not isinstance(value, str) or not value:
-                raise ValueError(f"{description} must be a non-empty string")
+        if not isinstance(self.application, str) or not self.application:
+            raise ValueError("application must be a non-empty string")
+        _sha256(self.plan_identity_sha256, "Plan identity")
         _sha256(self.source_simulation_sha256, "source simulation identity")
-        _sha256(self.application_request_sha256, "application request identity")
         object.__setattr__(
             self,
             "saved_steps",
@@ -201,9 +196,8 @@ class SimulationResult:
             "status": self.status.value,
             "completed": self.completed,
             "application": self.application,
-            "runtime_path": self.runtime_path,
+            "plan_identity_sha256": self.plan_identity_sha256,
             "source_simulation_sha256": self.source_simulation_sha256,
-            "application_request_sha256": self.application_request_sha256,
             "output_directory": (
                 None
                 if self.output_directory is None

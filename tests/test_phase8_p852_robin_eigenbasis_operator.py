@@ -15,7 +15,7 @@ from pssolver.operators import (
     CellCenteredRobinEigenbasisOperator,
     materialize_cell_centered_robin_eigenbasis,
 )
-from pssolver.planning import (
+from pssolver.planning.robin import (
     CellCenteredRobinEigenbasisPlan,
     build_cell_centered_robin_eigenbasis_plan,
 )

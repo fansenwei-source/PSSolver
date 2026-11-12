@@ -1,18 +1,17 @@
-"""Typed public conveniences that normalize to canonical declarations."""
+"""Immutable tensor-free inputs to the public simulation compiler."""
 
 from __future__ import annotations
 
+import json
+import math
 from collections.abc import Mapping
+from dataclasses import dataclass
+from numbers import Real
 from pathlib import Path
+from types import MappingProxyType
 
-from pssolver.configuration.simulation import (
-    ExecutionSpec,
-    InitialConditionSource,
-    InitialConditionSpec,
-    TimeIntegrationSpec,
-    WorkflowSpec,
-)
-from pssolver.core.integrators import IntegratorScheme, IntegratorSpec
+from pssolver.core._canonical import canonical_json
+from pssolver.core.device_tokens import validate_execution_device
 from pssolver.core.numerics import (
     DEFAULT_DEALIAS_RULE,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
@@ -26,33 +25,60 @@ from pssolver.core.numerics import (
 )
 
 
-def _enum(value: object, value_type: type, description: str):
+def _enum(value, enum_type, name):
     try:
-        return value if isinstance(value, value_type) else value_type(value)
+        return enum_type(value)
     except (TypeError, ValueError) as exc:
-        raise ValueError(f"unsupported {description}: {value!r}") from exc
+        raise ValueError(f"unsupported {name}: {value!r}") from exc
 
 
-def _positive_integer(value: object, description: str) -> int:
-    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
-        raise ValueError(f"{description} must be a positive integer")
+def _integer(value: object, name: str, *, minimum: int) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        qualifier = "positive" if minimum else "non-negative"
+        raise ValueError(f"{name} must be a {qualifier} integer")
     return value
 
 
-def _non_negative_integer(value: object, description: str) -> int:
-    if not isinstance(value, int) or isinstance(value, bool) or value < 0:
-        raise ValueError(f"{description} must be a non-negative integer")
+def _positive_real(value: object, name: str) -> float:
+    if (
+        not isinstance(value, Real)
+        or isinstance(value, bool)
+        or not math.isfinite(float(value))
+        or value <= 0
+    ):
+        raise ValueError(f"{name} must be positive and finite")
+    return float(value)
+
+
+def _freeze_json(value):
+    if isinstance(value, dict):
+        return MappingProxyType({key: _freeze_json(item) for key, item in value.items()})
+    if isinstance(value, list):
+        return tuple(_freeze_json(item) for item in value)
+    return value
+
+
+def _mapping(values: Mapping[str, object] | None, name: str) -> Mapping[str, object]:
+    if values is None:
+        return MappingProxyType({})
+    if not isinstance(values, Mapping) or not all(isinstance(key, str) for key in values):
+        raise TypeError(f"{name} must be a string-keyed mapping")
+    return _freeze_json(json.loads(canonical_json(dict(values), description=name)))
+
+
+def _plain_json(value):
+    if isinstance(value, Mapping):
+        return {key: _plain_json(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_plain_json(item) for item in value]
     return value
 
 
 class SpectralNumerics(NumericsConfig):
-    """String-friendly constructor for canonical spectral numerics.
+    """Precision, storage and nonlinear projection choices for one simulation."""
 
-    Storage is explicit because the qualified representation depends on the
-    selected geometry/runtime and therefore has no honest global default.
-    """
-
-    __slots__ = ()
+    __slots__ = ("pressure_solver",)
+    pressure_solver: Mapping[str, object] | None
 
     def __init__(
         self,
@@ -60,215 +86,196 @@ class SpectralNumerics(NumericsConfig):
         dtype: str | Precision,
         spectral_storage: str | SpectralStorage,
         dealias_rule: str | DealiasRule = DEFAULT_DEALIAS_RULE,
-        transform_execution_order: str | TransformExecutionOrder = (
-            DEFAULT_TRANSFORM_EXECUTION_ORDER
-        ),
         projected_transform_execution: str | ProjectedTransformExecution = (
             DEFAULT_PROJECTED_TRANSFORM_EXECUTION
         ),
         hermitian_axis: int | None = None,
+        transform_execution_order: str | TransformExecutionOrder = (
+            DEFAULT_TRANSFORM_EXECUTION_ORDER
+        ),
+        pressure_solver: Mapping[str, object] | None = None,
     ) -> None:
         super().__init__(
             precision=_enum(dtype, Precision, "dtype"),
             dealias_rule=_enum(dealias_rule, DealiasRule, "dealias rule"),
             transform_execution_order=_enum(
-                transform_execution_order,
-                TransformExecutionOrder,
-                "transform execution order",
+                transform_execution_order, TransformExecutionOrder, "transform execution order"
             ),
             projected_transform_execution=_enum(
                 projected_transform_execution,
                 ProjectedTransformExecution,
                 "projected transform execution",
             ),
-            spectral_storage=_enum(
-                spectral_storage,
-                SpectralStorage,
-                "spectral storage",
-            ),
+            spectral_storage=_enum(spectral_storage, SpectralStorage, "spectral storage"),
             hermitian_axis=hermitian_axis,
         )
+        object.__setattr__(
+            self, "pressure_solver",
+            None if pressure_solver is None else _mapping(pressure_solver, "pressure_solver")
+        )
+
+    def __setattr__(self, name, value):
+        raise AttributeError(f"cannot assign to field {name!r}")
+
+    def __delattr__(self, name):
+        raise AttributeError(f"cannot delete field {name!r}")
+
+    @property
+    def dtype(self) -> str:
+        """Return the canonical precision token, not a torch dtype."""
+        return self.precision.value
+
+    def to_metadata(self) -> dict[str, object]:
+        return {**super().to_metadata(), "pressure_solver": _plain_json(self.pressure_solver)}
 
 
-class TimeStepping(TimeIntegrationSpec):
-    """Typed fixed-step integrator and optional refresh declaration."""
+@dataclass(frozen=True, slots=True)
+class SemiImplicitEuler:
+    """Declare the fixed timestep and optional dynamic-spectrum refresh cadence."""
 
-    __slots__ = ()
+    dt: float
+    refresh: Mapping[str, object] | None = None
 
-    def __init__(
-        self,
-        *,
-        dt: float,
-        integrator: str | IntegratorScheme = (
-            IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
-        ),
-        refresh: Mapping[str, object] | None = None,
-    ) -> None:
-        scheme = _enum(integrator, IntegratorScheme, "integrator")
-        if scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER:
-            specification = IntegratorSpec.projected_semi_implicit_euler(dt=dt)
+    def __post_init__(self):
+        object.__setattr__(self, "dt", _positive_real(self.dt, "dt"))
+        if self.refresh is None:
+            return
+        refresh = _mapping(self.refresh, "refresh")
+        if set(refresh) == {"steps"}:
+            _integer(refresh["steps"], "refresh steps", minimum=1)
+        elif set(refresh) == {"physical_time"}:
+            _positive_real(refresh["physical_time"], "refresh physical_time")
         else:
-            specification = IntegratorSpec.sbdf2(dt=dt)
-        super().__init__(
-            integrator=specification,
-            refresh={"mode": "disabled"} if refresh is None else refresh,
-        )
+            raise ValueError("refresh must contain exactly 'steps' or 'physical_time'")
+        object.__setattr__(self, "refresh", refresh)
+
+    def to_metadata(self) -> dict[str, object]:
+        return {"dt": self.dt, "refresh": _plain_json(self.refresh)}
 
 
-class GeneratedInitialCondition(InitialConditionSpec):
-    """Canonical generated initial-condition request."""
+@dataclass(frozen=True, slots=True, kw_only=True)
+class TorchSpectralExecution:
+    """Device and implementation options; construction does not resolve devices."""
 
-    __slots__ = ()
+    device: str = "cpu"
+    options: Mapping[str, object] | None = None
 
-    def __init__(
-        self,
-        family: str,
-        *,
-        parameters: Mapping[str, object] | None = None,
-    ) -> None:
-        super().__init__(
-            family=family,
-            source=InitialConditionSource.GENERATED,
-            parameters={} if parameters is None else parameters,
-        )
-
-
-class SnapshotInitialCondition(InitialConditionSpec):
-    """Canonical external-snapshot initial-condition request."""
-
-    __slots__ = ()
-
-    def __init__(
-        self,
-        directory: str | Path,
-        *,
-        step: int,
-        mode: str = "branch",
-    ) -> None:
-        if mode not in {"branch", "resume"}:
-            raise ValueError("snapshot mode must be 'branch' or 'resume'")
-        super().__init__(
-            family="external_snapshot",
-            source=InitialConditionSource.SNAPSHOT,
-            parameters={
-                "directory": str(Path(directory)),
-                "step": _non_negative_integer(step, "snapshot step"),
-                "mode": mode,
-            },
-        )
-
-
-class TorchSpectralExecution(ExecutionSpec):
-    """Explicit Torch spectral runtime request with no fallback."""
-
-    __slots__ = ()
-
-    def __init__(
-        self,
-        *,
-        runtime_path: str,
-        device: str,
-        options: Mapping[str, object] | None = None,
-    ) -> None:
-        if not isinstance(device, str) or not device:
-            raise ValueError("device must be a non-empty string")
-        normalized = {} if options is None else dict(options)
-        if "device" in normalized:
+    def __post_init__(self):
+        validate_execution_device(self.device)
+        options = _mapping(self.options, "execution options")
+        if "device" in options:
             raise ValueError("execution options must not repeat device")
-        normalized["device"] = device
-        normalized["fallback_allowed"] = False
-        super().__init__(
-            backend="torch_spectral",
-            runtime_path=runtime_path,
-            options=normalized,
-        )
+        object.__setattr__(self, "options", options)
+
+    def to_metadata(self) -> dict[str, object]:
+        return {"device": self.device, "options": _plain_json(self.options)}
 
 
-class Output(WorkflowSpec):
-    """Finite output, observation, checkpoint, and restart schedule.
+@dataclass(frozen=True, slots=True)
+class GeneratedInitialCondition:
+    """Request a generated field from a named initialization family."""
 
-    Start, diagnostic, and hydrodynamic policies are explicit so changing
-    from a CLI/run-spec entry point cannot silently change saved evidence.
-    Application compilers may translate these common fields into a legacy
-    workflow's internal key names without changing their meaning.
-    """
+    family: str
+    parameters: Mapping[str, object] | None = None
 
-    __slots__ = ()
+    def __post_init__(self):
+        if not isinstance(self.family, str) or not self.family.isidentifier():
+            raise ValueError("initial condition family must be a Python identifier")
+        object.__setattr__(self, "parameters", _mapping(self.parameters, "initial condition parameters"))
 
-    def __init__(
-        self,
-        *,
-        directory: str | Path,
-        steps: int,
-        save_interval: int,
-        diagnostic_interval: int,
-        save_start_step: int,
-        diagnostics: bool,
-        save_hydrodynamics: bool,
-        checkpoint_interval: int | None = None,
-        restart_from: str | Path | None = None,
-        options: Mapping[str, object] | None = None,
-    ) -> None:
-        steps = _positive_integer(steps, "steps")
-        save_start_step = _non_negative_integer(
-            save_start_step,
-            "save_start_step",
-        )
-        restart_path = None if restart_from is None else Path(restart_from)
-        if restart_path is None and save_start_step > steps:
-            raise ValueError("save_start_step must not exceed steps")
-        values = {} if options is None else dict(options)
-        reserved = {
-            "output_dir",
-            "save_start_step",
-            "save_interval",
-            "diagnostic_interval",
-            "diagnostics",
-            "save_hydrodynamics",
-            "checkpoint_interval",
-            "restart_from",
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "source": "generated",
+            "family": self.family,
+            "parameters": _plain_json(self.parameters),
         }
-        overlap = reserved & set(values)
-        if overlap:
+
+
+@dataclass(frozen=True, slots=True)
+class SnapshotInitialCondition:
+    """Declare a compact-Q file in an existing snapshot directory."""
+
+    directory: str | Path
+    step: int
+    mode: str = "branch"
+
+    def __post_init__(self):
+        if self.mode not in {"branch", "resume"}:
+            raise ValueError("snapshot mode must be 'branch' or 'resume'")
+        _integer(self.step, "snapshot step", minimum=0)
+        object.__setattr__(self, "directory", Path(self.directory))
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "source": "snapshot",
+            "directory": str(self.directory),
+            "step": self.step,
+            "mode": self.mode,
+        }
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class Output:
+    """Declare output scheduling and checkpoint/restart options."""
+
+    directory: str | Path
+    steps: int
+    save_interval: int
+    diagnostic_interval: int
+    save_start_step: int
+    diagnostics: bool
+    save_hydrodynamics: bool
+    checkpoint_interval: int | None = None
+    restart_from: str | Path | None = None
+    dry_run: bool = False
+    validation_config_sha256: str | None = None
+
+    def __post_init__(self):
+        _integer(self.steps, "steps", minimum=1)
+        _integer(self.save_start_step, "save_start_step", minimum=0)
+        if self.restart_from is None and self.save_start_step > self.steps:
+            raise ValueError("save_start_step must not exceed steps")
+        for name in ("diagnostics", "save_hydrodynamics", "dry_run"):
+            if type(getattr(self, name)) is not bool:
+                raise TypeError(f"{name} must be a bool")
+        _integer(self.save_interval, "save_interval", minimum=1)
+        _integer(self.diagnostic_interval, "diagnostic_interval", minimum=1)
+        if self.checkpoint_interval is not None:
+            _integer(self.checkpoint_interval, "checkpoint_interval", minimum=1)
+        digest = self.validation_config_sha256
+        if digest is not None and (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+        ):
             raise ValueError(
-                "output options repeat typed fields: "
-                f"{tuple(sorted(overlap))!r}"
+                "validation_config_sha256 must be null or exactly 64 lowercase hexadecimal characters"
             )
-        if not isinstance(diagnostics, bool):
-            raise TypeError("diagnostics must be a bool")
-        if not isinstance(save_hydrodynamics, bool):
-            raise TypeError("save_hydrodynamics must be a bool")
-        if checkpoint_interval is not None:
-            checkpoint_interval = _positive_integer(
-                checkpoint_interval,
-                "checkpoint_interval",
-            )
-        values.update(
-            {
-                "output_dir": str(Path(directory)),
-                "save_start_step": save_start_step,
-                "save_interval": _positive_integer(
-                    save_interval,
-                    "save_interval",
-                ),
-                "diagnostic_interval": _positive_integer(
-                    diagnostic_interval,
-                    "diagnostic_interval",
-                ),
-                "diagnostics": diagnostics,
-                "save_hydrodynamics": save_hydrodynamics,
-                "checkpoint_interval": checkpoint_interval,
-                "restart_from": None if restart_path is None else str(restart_path),
-            }
-        )
-        super().__init__(steps=steps, options=values)
+        object.__setattr__(self, "directory", Path(self.directory))
+        if self.restart_from is not None:
+            object.__setattr__(self, "restart_from", Path(self.restart_from))
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "directory": str(self.directory),
+            "steps": self.steps,
+            "save_interval": self.save_interval,
+            "diagnostic_interval": self.diagnostic_interval,
+            "save_start_step": self.save_start_step,
+            "diagnostics": self.diagnostics,
+            "save_hydrodynamics": self.save_hydrodynamics,
+            "checkpoint_interval": self.checkpoint_interval,
+            "restart_from": None if self.restart_from is None else str(self.restart_from),
+            "dry_run": self.dry_run,
+            "validation_config_sha256": self.validation_config_sha256,
+        }
 
 
 __all__ = [
     "GeneratedInitialCondition",
     "Output",
+    "SemiImplicitEuler",
     "SnapshotInitialCondition",
     "SpectralNumerics",
-    "TimeStepping",
     "TorchSpectralExecution",
 ]

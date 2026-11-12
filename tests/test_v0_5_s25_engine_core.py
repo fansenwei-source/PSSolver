@@ -11,17 +11,16 @@ from unittest.mock import patch
 import pytest
 import torch
 
-from pssolver.configuration.legacy_periodic import translate_periodic
+from pssolver import compile_simulation
 from pssolver.engine import Engine
 from qualification.identity.records import tensor_record
-from qualification.identity.runtime_case import complete_simulation, initial_values
 from qualification.identity.scenarios import scenarios
+from qualification.identity.scenes_v05 import initial_values, simulation_v05
 
 
-def _setup(tmp_path, dtype="float64", variant="default", flavour="production", batch=1):
+def _setup(tmp_path, dtype="float64", variant="default", batch=1):
     scene = next(row for row in scenarios() if row["id"] == f"periodic_default_{dtype}_{variant}")
-    spec = complete_simulation(scene, tmp_path).specification
-    plan = translate_periodic(spec, flavour=flavour, load_initial=False).plan
+    plan = compile_simulation(simulation_v05(scene, tmp_path)).plan
     engine = Engine(plan, device="cpu", dtype=getattr(torch, dtype), batch=batch)
     raw = initial_values(scene)
     initial = {

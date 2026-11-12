@@ -5,32 +5,27 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import torch
 
 from pssolver import (
+    CompleteStressBerisEdwards,
     GeneratedInitialCondition,
     Output,
+    PublicCompilationRejectionCode,
+    PublicSimulationCompilationError,
+    SemiImplicitEuler,
     Simulation,
     SpectralNumerics,
-    SpectralSolver,
-    TimeStepping,
     TorchSpectralExecution,
     compile_simulation,
 )
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-)
-from pssolver.configuration.public_simulation_runner import (
-    PublicCompilationRejectionCode,
-    PublicSimulationCompilationError,
-)
+from pssolver.backends.tensor_product import TensorProductTransformBackend
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import (
-    CompleteStressBerisEdwards,
     beris_edwards_bulk_molecular_field_components,
     strong_homeotropic_q,
 )
@@ -65,15 +60,15 @@ def test_lifted_stress_projects_nonzero_wall_molecular_field_in_dct_basis():
     height = 10.0
     scalar_order = 0.4
     for nz in (16, 32, 64):
-        solver = SpectralSolver(
+        backend = TensorProductTransformBackend(
             (4, 4, nz),
-            L=(4.0, 4.0, height),
+            lengths=(4.0, 4.0, height),
             device="cpu",
             dtype=torch.float64,
             spectral_storage="full_complex",
         )
         projector = BasisAwareSpectralProjector(
-            solver,
+            SimpleNamespace(shape=backend.shape, transform_backend=backend),
             rule="cubic_half",
             transform_execution="full",
         )
@@ -149,15 +144,11 @@ def _public_simulation(tmp_path: Path) -> Simulation:
             (2, "upper"): (0.0, 0.0, 1.0),
         },
     )
-    boundaries = assign_boundaries(
-        model=model,
-        geometry=geometry,
-        policies={
+    boundaries = {
             "Q": policy,
             "velocity": free_slip_velocity(),
             "pressure": neumann_pressure_compatibility(),
-        },
-    )
+    }
     return Simulation(
         model=model,
         geometry=geometry,
@@ -167,7 +158,7 @@ def _public_simulation(tmp_path: Path) -> Simulation:
             dealias_rule="cubic_half",
             spectral_storage="full_complex",
         ),
-        time=TimeStepping(dt=0.005, refresh={"mode": "disabled"}),
+        time=SemiImplicitEuler(dt=0.005),
         initial_condition=GeneratedInitialCondition(
             "extruded_defect_gas",
             parameters={
@@ -182,7 +173,6 @@ def _public_simulation(tmp_path: Path) -> Simulation:
             },
         ),
         execution=TorchSpectralExecution(
-            runtime_path="legacy_production",
             device="cpu",
             options={
                 "tf32": "off",
@@ -214,8 +204,9 @@ def test_public_runner_rejects_historical_lifted_capability_before_output(
 
     assert caught.value.code is (
         PublicCompilationRejectionCode
-        .UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD
+        .NONZERO_DIRICHLET_LIFTING
     )
+    assert caught.value.kind == "scope"
     assert not (tmp_path / "public_lifted").exists()
 
 

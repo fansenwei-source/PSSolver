@@ -15,7 +15,7 @@ import numpy as np
 import pytest
 
 import pssolver
-from pssolver.configuration.legacy_plane import read_plane_checkpoint_header
+from pssolver.functional.legacy_declarations.legacy_plane import read_plane_checkpoint_header
 from pssolver.io import CheckpointCompatibilityError
 from pssolver.linear_solvers.stokes import _pressure_policy
 

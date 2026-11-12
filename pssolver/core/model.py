@@ -1,7 +1,7 @@
 """Declarative physical-model protocol.
 
 This core protocol remains tensor- and runtime-free.  The opt-in execution
-contract introduced after spectral planning lives in :mod:`pssolver.execution`
+contract used for assembly lives in :mod:`pssolver.core.terms`
 and extends these declarations without coupling core specifications to the
 current solver implementation.
 """

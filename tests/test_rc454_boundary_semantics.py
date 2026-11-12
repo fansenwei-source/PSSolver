@@ -10,26 +10,24 @@ import numpy as np
 import pytest
 
 from pssolver import Simulation, compile_simulation
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_plane_beris_edwards_simulation,
-)
-from pssolver.configuration.finite_q_anchoring import (
+from pssolver.core.boundary import BoundarySide, StaticRobinCoefficients
+from pssolver.experimental.finite_q_anchoring_declarations import (
     apply_plane_finite_q_anchoring_pilot,
 )
-from pssolver.configuration.plane_beris_edwards import (
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
-from pssolver.configuration.plane_beris_edwards_components import (
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.configuration.public_simulation_runner import (
+from pssolver.functional.legacy_declarations.public_simulation_runner import (
     PublicCompilationRejectionCode,
     PublicSimulationCompilationError,
 )
-from pssolver.configuration.robin import (
-    validate_public_robin_impedance_support,
-)
-from pssolver.core.boundary import BoundarySide, StaticRobinCoefficients
+from pssolver.functional.legacy_declarations.robin import validate_public_robin_impedance_support
 from pssolver.models.active_nematics import (
     finite_homeotropic_q_anchoring,
     finite_planar_q_anchoring,

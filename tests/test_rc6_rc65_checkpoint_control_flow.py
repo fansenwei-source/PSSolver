@@ -9,16 +9,7 @@ import pytest
 import torch
 from torch.utils.checkpoint import checkpoint
 
-from pssolver import (
-    Output,
-    Simulation,
-    SnapshotInitialCondition,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-)
 from pssolver.boundaries import (
-    assign_boundaries,
     free_slip_velocity,
     neumann_pressure_compatibility,
     neumann_q,
@@ -32,8 +23,17 @@ from pssolver.functional.api import (
     channel_activity_functional_request,
     periodic_activity_functional_request,
 )
+from pssolver.functional.legacy_declarations import (
+    CompleteStressBerisEdwards,
+    Output,
+    Simulation,
+    SnapshotInitialCondition,
+    SpectralNumerics,
+    TimeStepping,
+    TorchSpectralExecution,
+    assign_boundaries,
+)
 from pssolver.geometries import PeriodicBox, RectangularChannel
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
 
 
 def _model(*, periodic: bool) -> CompleteStressBerisEdwards:

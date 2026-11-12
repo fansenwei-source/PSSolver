@@ -141,10 +141,41 @@ def test_registered_exact_unit_bytes_and_lines_are_enforced(tmp_path, monkeypatc
     (tmp_path / "qualification/s28a_tables.json").write_text(
         json.dumps(dict(basis=basis, exact_moves=[]))
     )
+    table = tmp_path / "qualification/s28b_tables.json"
+    with pytest.raises(FileNotFoundError, match="s28b_tables.json"):
+        check.exact_assemblies()
+    table.write_text(json.dumps(dict(
+        basis=basis, exact_moves=[], mechanical_moves=[], changed_paths={},
+        replaced_exact_units=[],
+    )))
     assert check.exact_assemblies()["new.py"][0]["unit"] == "old"
     (tmp_path / "new.py").write_text(source.replace("return  1", "return 1"))
     with pytest.raises(ValueError, match="altered exact move"):
         check.exact_assemblies()
+    (tmp_path / "new.py").unlink()
+    with pytest.raises(FileNotFoundError, match="new.py"):
+        check.exact_assemblies()
+    table.write_text(json.dumps(dict(
+        basis=basis, exact_moves=[], mechanical_moves=[], changed_paths={"new.py": "delete"},
+        replaced_exact_units=[],
+    )))
+    assert check.exact_assemblies() == {}
+    table.write_text(json.dumps(dict(
+        basis=basis, exact_moves=[], mechanical_moves=[], changed_paths={},
+        replaced_exact_units=[{"path": "new.py", "unit": "old"}],
+    )))
+    (tmp_path / "new.py").write_text(source.replace("return  1", "return 2"))
+    assert check.exact_assemblies() == {}
+
+
+def test_mechanical_move_requires_the_exact_declared_bytes():
+    source = "def f():\n    return 1\n"
+    target = "def f():\n    return 2\n"
+    rule = dict(source="old.py:f", source_substitutions=[["return 1", "return 2"]],
+                target_text_sha256=hashlib.sha256(target.encode()).hexdigest())
+    assert check.substitute(source, source, rule) == (target, target)
+    with pytest.raises(ValueError, match="mechanical move text differs"):
+        check.substitute(source, source, dict(rule, source_substitutions=[["return 1", "return 3"]]))
 
 
 def test_exact_moves_require_the_latest_manifest(tmp_path, monkeypatch):

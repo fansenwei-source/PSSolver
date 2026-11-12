@@ -12,7 +12,7 @@ from pssolver.backends.bounded import (
     DenseBoundedAxisExecutionPlan,
     build_dense_orthonormal_matrix,
 )
-from pssolver.transforms import TensorProductTransformBackend
+from pssolver.backends.tensor_product import TensorProductTransformBackend
 
 
 def _frozen_v011_matrix(kind, size, *, dtype=torch.float64):

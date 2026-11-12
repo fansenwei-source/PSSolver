@@ -11,10 +11,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 import pssolver
 import pssolver.api
-from pssolver.configuration.public_simulation_runner import (
-    PublicCompilationRejectionCode,
-    PublicSimulationCompilationError,
-)
+from pssolver.functional.legacy_declarations.public_simulation_runner import PublicCompilationRejectionCode, PublicSimulationCompilationError
 
 
 ROOT = Path(__file__).resolve().parents[1]

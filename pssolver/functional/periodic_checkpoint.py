@@ -2,19 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 import torch
 
-from pssolver.core._canonical import canonical_json
-from pssolver.core._canonical import canonical_sha256
-
-from pssolver.configuration.legacy_periodic import (
+from pssolver.core._canonical import canonical_json, canonical_sha256
+from pssolver.functional.legacy_declarations.legacy_periodic import (
     PERIODIC_RUNTIME_PATH,
 )
-from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
     CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
@@ -29,7 +26,6 @@ from pssolver.io.checkpoint_identity import (
     SourceReleaseGeneration,
     resolve_legacy_identity_schema,
 )
-from pssolver.models.active_nematics.engine_terms import PERIODIC_BOUNDARIES
 from pssolver.io.legacy.periodic_workflow import (
     PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PeriodicWorkflowCheckpoint,
@@ -37,7 +33,13 @@ from pssolver.io.legacy.periodic_workflow import (
     read_periodic_checkpoint_header,
     write_periodic_checkpoint,
 )
+from pssolver.models.active_nematics import Q_COMPONENTS
+from pssolver.models.active_nematics.engine_terms import PERIODIC_BOUNDARIES
 
+from .checkpoint_identity import (
+    build_periodic_functional_checkpoint_identity,
+    normalize_functional_checkpoint_identity,
+)
 from .contracts import (
     FUNCTIONAL_API_VERSION,
     FunctionalCheckpointCompatibility,
@@ -50,15 +52,11 @@ from .errors import (
     FunctionalCheckpointCompatibilityError,
     translate_functional_exception,
 )
-from .checkpoint_identity import (
-    build_periodic_functional_checkpoint_identity,
-    normalize_functional_checkpoint_identity,
-)
+from .legacy_identity import legacy_runtime_identity_sha256
 from .versioning import (
     negotiate_functional_api_version,
     runtime_identity_sha256_for_api_version,
 )
-from .legacy_identity import legacy_runtime_identity_sha256
 
 
 PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3

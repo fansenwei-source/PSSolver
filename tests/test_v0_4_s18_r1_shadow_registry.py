@@ -10,8 +10,8 @@ from pathlib import Path
 import pytest
 
 from pssolver.api.capabilities import available_combinations
-from pssolver.configuration import application_registry as shadow
-from pssolver.configuration import public_simulation_runner as compiler
+from pssolver.functional.legacy_declarations import application_registry as shadow
+from pssolver.functional.legacy_declarations import public_simulation_runner as compiler
 
 
 ROOT = Path(__file__).resolve().parents[1]
