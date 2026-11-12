@@ -1,6 +1,7 @@
 """P7.1 contracts for the disconnected Channel run specification."""
 
 from __future__ import annotations
+
 import hashlib
 import json
 from pathlib import Path
@@ -14,13 +15,6 @@ NOTES = ROOT / "notes" / "architecture_v0_2"
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-
-
-def test_p74_keeps_the_frozen_configuration_package_root_surface():
-    import pssolver.configuration as configuration
-
-    assert "ChannelActiveNematicRunSpec" not in configuration.__all__
-    assert not hasattr(configuration, "ChannelActiveNematicRunSpec")
 
 
 def test_p71_preserves_the_historical_oracle_source_identities():

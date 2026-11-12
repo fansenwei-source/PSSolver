@@ -6,7 +6,11 @@ import json
 import subprocess
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import (
+    read_registered_source,
+    registered_source_sha256,
+    resolve_s03_successor,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,11 +21,11 @@ def test_s23_sources_and_previous_engineering_policy_resolve_forward():
         (ROOT / "notes/PSSolver_v0_3_0_s03_successor_137_s23_baselines.json").read_text()
     )
     for path, historical in record["sources"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(
+        assert registered_source_sha256(path) == resolve_s03_successor(
             path, historical
         )
     for path, entry in record["historical_successor_sources"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(
+        assert registered_source_sha256(path) == resolve_s03_successor(
             path, entry["historical_sha256"]
         )
     assert record["review_order"] == ["R-0071 / S-22", "S-23 independently"]
@@ -43,7 +47,7 @@ def test_tf32_teardown_repair_retains_each_original_assertion_and_forward_bindin
         (ROOT / "notes/PSSolver_v0_3_0_s03_successor_138_s23_test_teardown.json").read_text()
     )
     for path, sha in record["sources"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(
+        assert registered_source_sha256(path) == resolve_s03_successor(
             path, sha
         )
     for path, name in record["test_functions"].items():
@@ -52,7 +56,7 @@ def test_tf32_teardown_repair_retains_each_original_assertion_and_forward_bindin
             cwd=ROOT,
             text=True,
         )
-        trees = [ast.parse(old), ast.parse((ROOT / path).read_text())]
+        trees = [ast.parse(old), ast.parse(read_registered_source(path))]
         functions = [
             next(node for node in tree.body if getattr(node, "name", None) == name)
             for tree in trees
@@ -66,7 +70,7 @@ def test_tf32_teardown_repair_retains_each_original_assertion_and_forward_bindin
         assert hashlib.sha256(old.encode()).hexdigest() == binding["historical_sha256"]
         assert (
             resolve_s03_successor(path, binding["historical_sha256"])
-            == hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            == registered_source_sha256(path)
         )
 
 
@@ -77,11 +81,11 @@ def test_rc445_qualification_binding_resolves_only_registered_forward_hashes():
     for path, binding in record["historical_successor_sources"].items():
         assert (
             resolve_s03_successor(path, binding["historical_sha256"])
-            == hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            == registered_source_sha256(path)
         )
         assert resolve_s03_successor(path, "0" * 64) == "0" * 64
     for path, expected in record["sources"].items():
         assert (
             resolve_s03_successor(path, expected)
-            == hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            == registered_source_sha256(path)
         )

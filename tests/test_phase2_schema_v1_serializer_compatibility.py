@@ -10,9 +10,6 @@ from pathlib import Path
 
 import pytest
 
-import pssolver
-import pssolver.configuration as configuration
-from pssolver.functional.legacy_declarations import plane_beris_edwards as facade
 from pssolver.functional.legacy_declarations import plane_beris_edwards_schema_v1 as schema_v1
 from pssolver.functional.legacy_declarations.plane_beris_edwards import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
@@ -208,34 +205,6 @@ def test_schema_v1_hashes_continue_to_reject_non_finite_values(field):
         spec.runtime_identity_sha256()
 
 
-def test_serializer_is_one_stateless_direct_module_only_authority():
-    serializer = schema_v1.PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
-
-    assert isinstance(
-        serializer,
-        schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer,
-    )
-    assert (
-        schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer.__slots__
-        == ()
-    )
-    assert not hasattr(serializer, "__dict__")
-    assert facade.PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER is serializer
-    assert facade.PLANE_RUN_SPEC_SCHEMA_VERSION == (
-        schema_v1.PLANE_RUN_SPEC_SCHEMA_VERSION
-    )
-    for name in (
-        "PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER",
-        "PlaneBerisEdwardsSchemaV1CompatibilitySerializer",
-    ):
-        assert name in schema_v1.__all__
-        assert name not in facade.__all__
-        assert name not in configuration.__all__
-        assert name not in pssolver.__all__
-        assert not hasattr(configuration, name)
-        assert not hasattr(pssolver, name)
-
-
 @pytest.mark.parametrize(
     ("facade_method", "serializer_calls"),
     (
@@ -306,11 +275,6 @@ def test_serializer_direct_entry_points_equal_all_facade_documents_and_hashes():
         assert serializer.runtime_selection_metadata(spec) == (
             spec.runtime_selection_metadata()
         )
-
-
-def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges():
-    from qualification.s27_forward import assert_forward_binding
-    assert_forward_binding(Path(__file__).resolve().parents[1], 'tests/test_phase2_schema_v1_serializer_compatibility.py::test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges')
 
 
 def test_serializer_and_migrated_component_graph_are_in_source_inventory():

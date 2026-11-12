@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,7 +22,7 @@ def _read(path: Path) -> dict[str, object]:
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return registered_source_sha256(path.relative_to(ROOT).as_posix())
 
 
 def test_successor_87_advances_every_changed_historical_source() -> None:

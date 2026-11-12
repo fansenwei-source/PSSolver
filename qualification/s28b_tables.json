@@ -4658,6 +4658,337 @@
   "experimental"
  ],
  "criteria": {
+  "cli_rejections": [
+   {
+    "argv": [
+     "--activity-number",
+     "0"
+    ],
+    "case": "activity_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'activity_number': 0.0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--height",
+     "0"
+    ],
+    "case": "height_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'height': 0.0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--frank-k",
+     "0"
+    ],
+    "case": "frank_k_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'frank_k': 0.0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--lx",
+     "-1"
+    ],
+    "case": "lx_negative",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'lx': -1.0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--nx",
+     "0"
+    ],
+    "case": "nx_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'nx': 0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--dt",
+     "0"
+    ],
+    "case": "dt_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'dt': 0.0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--steps",
+     "0"
+    ],
+    "case": "steps_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'steps': 0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--save-interval",
+     "0"
+    ],
+    "case": "save_interval_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'save_interval': 0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--diagnostic-interval",
+     "0"
+    ],
+    "case": "diagnostic_interval_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'diagnostic_interval': 0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--gamma",
+     "0"
+    ],
+    "case": "gamma_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: these values must be positive: {'gamma': 0.0}",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--initial-s",
+     "0"
+    ],
+    "case": "initial_s_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --initial-s must be positive",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--num-defect-pairs",
+     "0"
+    ],
+    "case": "defect_pairs_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --num-defect-pairs must be positive",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--defect-min-separation",
+     "0"
+    ],
+    "case": "defect_separation_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --defect-min-separation must be positive",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--defect-core-radius",
+     "0"
+    ],
+    "case": "defect_core_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --defect-core-radius must be positive",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--twist-amplitude",
+     "-1"
+    ],
+    "case": "twist_amplitude_negative",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --twist-amplitude must be non-negative",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--twist-modes",
+     "1",
+     "1"
+    ],
+    "case": "twist_modes_repeated",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --twist-modes must be unique",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--twist-modes",
+     "0"
+    ],
+    "case": "twist_modes_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --twist-modes must satisfy 1 <= mode < nz",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--twist-modes",
+     "64"
+    ],
+    "case": "twist_modes_nz",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --twist-modes must satisfy 1 <= mode < nz",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--zero-mode-policy",
+     "friction",
+     "--friction-mode-fric",
+     "0"
+    ],
+    "case": "friction_fric_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --friction-mode-fric must be positive in friction mode",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--coefficient-min",
+     "0.05",
+     "--coefficient-max",
+     "0.01"
+    ],
+    "case": "coefficient_order",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --coefficient-min must be smaller than --coefficient-max",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--checkpoint-interval",
+     "0"
+    ],
+    "case": "checkpoint_interval_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --checkpoint-interval must be positive",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--dealias-rule",
+     "none",
+     "--projected-transform-execution",
+     "truncated"
+    ],
+    "case": "dealias_truncated",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --projected-transform-execution truncated requires enabled dealiasing",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--save-start-step",
+     "-1"
+    ],
+    "case": "save_start_negative",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --save-start-step must lie between 0 and --steps for a fresh run",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--save-start-step",
+     "20000"
+    ],
+    "case": "save_start_after_steps",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --save-start-step must lie between 0 and --steps for a fresh run",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--validation-config-sha256",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    ],
+    "case": "validation_digest_upper",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --validation-config-sha256 must be exactly 64 lowercase hexadecimal characters",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--spectral-storage",
+     "hermitian_half",
+     "--transform-execution-order",
+     "legacy"
+    ],
+    "case": "hermitian_legacy_order",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --spectral-storage hermitian_half requires --transform-execution-order real_first",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--spectral-refresh-steps",
+     "0"
+    ],
+    "case": "refresh_steps_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --spectral-refresh-steps must be positive",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--spectral-refresh-time",
+     "0"
+    ],
+    "case": "refresh_time_zero",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --spectral-refresh-time must be positive and finite",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--spectral-refresh-time",
+     "inf"
+    ],
+    "case": "refresh_time_inf",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --spectral-refresh-time must be positive and finite",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--dt",
+     "0.03"
+    ],
+    "case": "dt_integer_multiple",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --spectral-refresh-time must be an integer multiple of --dt; got time/dt=6.666666666666667",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--device",
+     "tpu"
+    ],
+    "case": "device_unknown",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: invalid execution device; expected exactly 'auto', 'cpu', 'cuda', or 'cuda:N' with canonical non-negative N",
+    "source": "installed v0.4.0 (R-0122 runs/matrix_v04)"
+   },
+   {
+    "argv": [
+     "--runtime-path",
+     "legacy_production"
+    ],
+    "case": "runtime_path_option",
+    "exit": 2,
+    "line": "Plane_beris_edwards_stokes.py: error: --runtime-path was removed; see docs/migration_0_4_to_0_5.md",
+    "source": "r2 \u00a72.8 (Df12)"
+   }
+  ],
   "criteria": {
    "W1": {
     "comparison_object": "plan_identity_reference (49d1c32 v0.4 translator path, this table)",
@@ -4705,7 +5036,7 @@
     "comparison_object": "criteria.rejections (this table)",
     "dry_run": "S-23 rejected scenes listed; feasibility probe: assemble + rejection without torch (probe_torchfree)",
     "format": "exception type, public code/kind, message; torch-free and before any tensor",
-    "what": "Production rejections: the 7 rejected S-23 production scenes plus the negative matrix of \u00a78",
+    "what": "Production rejections: the 7 rejected S-23 production scenes plus the negative matrix of \u00a78; r2.2 (R-0122): the 8 Plane generated-initial-condition parameter faults are rejected by compile_simulation (initial_condition_contract) before allocation, as v0.4 rejected them before dry-run (\u00a72.9 order), with the v0.4 run-spec text as reason",
     "writer": "candidate declarations (construction) and compile_simulation"
    },
    "W4": {
@@ -4730,10 +5061,10 @@
     "writer": "candidate run_simulation (one metadata builder)"
    },
    "W7": {
-    "comparison_object": "v0.4 CLI option table minus --runtime-path (option strings, dest, default, type, choices, nargs, required, action); v0.4 CLI outputs for the S-27 option matrix at the same thread settings",
+    "comparison_object": "v0.4 CLI option table minus --runtime-path (option strings, dest, default, type, choices, nargs, required, action); v0.4 CLI outputs for the S-27 option matrix at the same thread settings; criteria.cli_rejections (installed v0.4.0, R-0122)",
     "dry_run": "R-0120: 55/55 options equal; CLI fresh outputs identical; digest recorded; uppercase exits 2",
     "format": "argparse option table; ordinary files; checkpoint tensors",
-    "what": "CLI pssolver-plane-beris-edwards: option set and outputs; --validation-config-sha256 recorded verbatim at the top-level metadata key and an invalid value exits 2 with the v0.4 text (R-0118)",
+    "what": "CLI pssolver-plane-beris-edwards: option set and outputs; --validation-config-sha256 recorded verbatim at the top-level metadata key and an invalid value exits 2 with the v0.4 text (R-0118); r2.2 (R-0122): every v0.4 parse-boundary rejection the 0.5 options can still trigger exits 2 with the identical final stderr line, before any declaration is compiled or directory created, dry-run included (criteria.cli_rejections, 31 rows + the --runtime-path row)",
     "writer": "candidate CLI (cli/plane.py builds a 0.5 Simulation)"
    },
    "W8": {
@@ -4779,6 +5110,38 @@
    {
     "expect": "PublicSimulationCompilationError(kind='mathematical', code='pressure_tolerance_below_floor') at compile_simulation; message names the float32 floor",
     "scene": "channel_default_float32_relative_tolerance"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--initial-s must be positive' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_initial_s_zero"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--num-defect-pairs must be positive' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_num_defect_pairs_zero"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--defect-min-separation must be positive' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_defect_min_separation_zero"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--defect-core-radius must be positive' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_defect_core_radius_zero"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--twist-amplitude must be non-negative' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_twist_amplitude_negative"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--twist-modes must be unique' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_twist_modes_repeated"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--twist-modes must satisfy 1 <= mode < nz' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_twist_modes_zero"
+   },
+   {
+    "expect": "PublicSimulationCompilationError(kind='mathematical', code='initial_condition_contract') at compile_simulation, before allocation and without torch; reason '--twist-modes must satisfy 1 <= mode < nz' (v0.4 run-spec text; R-0122)",
+    "scene": "plane_generated_ic_twist_modes_nz"
    }
   ],
   "section9_exclusions": [
@@ -7542,7 +7905,7 @@
   "qualification/identity/runtime_case.py": "d220f536c9f54f6080a942952a31756d53a19b006a42947b240c6b1741df8d6e",
   "qualification/identity/scenarios.py": "966c261ba3b2ecc34dd8dd2d4c06697f495535c7ffd6196c74a9a9ab5de241f9"
  },
- "gate_sha256": "3fea467b588d460224c9e677df132ba571b671bde4b6abf38eaf1b72c4a15c00",
+ "gate_sha256": "2dc3e72505758605398bd27c165fbdd0cd884165cd75a723d8c05d9bca697b3d",
  "installation_removes": [],
  "installed_paths": {
   "gate": "qualification/s28b_guard.py",
@@ -7657,6 +8020,7 @@
     ]
    ],
    "target": "pssolver/functional/legacy_declarations/public_simulation_runner.py",
+   "target_ast_sha256": "ac1969ebd7a97cfd8d13e60cb90a919ce13db7dcc5f52eb02f2743dca8b46138",
    "target_text_sha256": "9955cde4eae6d37a8b466aabb33eaa13b6f937ad56c88cca9449f4caa5c88634",
    "unit": "compile_public_simulation"
   },
@@ -7676,6 +8040,7 @@
     ]
    ],
    "target": "pssolver/functional/legacy_declarations/plane_beris_edwards.py",
+   "target_ast_sha256": "0ee385d7ef08dde8200a58f0d7ec1ad4701616fe0c5dde21d6dae3d6f5207363",
    "target_text_sha256": "6c0f0fc35a01266e1575ec2781d5f25c1701bffb7851e15d37b6e747a6332446",
    "unit": "__all__"
   },
@@ -7695,6 +8060,7 @@
     ]
    ],
    "target": "pssolver/functional/legacy_declarations/legacy_periodic.py",
+   "target_ast_sha256": "a9cee17709703c802ffb5d318858ca36baf9010d93134154f99d25f0f26d300f",
    "target_text_sha256": "0714fbdc6c0dcd403df47cdf83cb8c62571d559828131229768f8ce143fec49a",
    "unit": "load_periodic_initial_q"
   },
@@ -7714,6 +8080,7 @@
     ]
    ],
    "target": "pssolver/functional/legacy_declarations/legacy_channel.py",
+   "target_ast_sha256": "5d5832936cfc21dc8642b4710bc908489d7fac3c0366b9d6e39ce9a39010f9f7",
    "target_text_sha256": "dd76981272213a3c600ca9f05fc9fae909720e8ceac59d5aa7be7a38f8f40043",
    "unit": "load_channel_initial_q"
   }
@@ -16467,7 +16834,7 @@
    "unit": "pssolver/configuration/plane_beris_edwards.py:PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES"
   }
  ],
- "revision": "s28b r2.1 (R-0121: engineering entries follow the S-28b routes: historical exact units moved/retired/replaced, mechanical moves as byte-exact source substitutions, tools/check.py and tools/check_distributions.py authorized, qualification v0.4 drivers registered as frozen qualification callers); r2 (R-0120, D-0068 final rewrite: W2 writer with the B9 Plane initial-values input and construction diagnostics, Channel cache leaves per S28bQ5, W4 work path, W5 v0.4 public continuation reference, W6 FORMAT keys and key closure, D6 cross-check with the accepted S-27 metadata classes); r1.5 (R-0119: /configuration, /runtime_construction and /implementation_provenance compared as whole objects with pinned 0.5 values, superseded identities, schema_version v0.4+1, exclusive trace rules and layer allow/forbid disjointness checked by D6/D5, io layer row explicit, root _EXPORTS listed, D7 accepts only authorized frozen data lines in move targets); r1.4 (R-0118: Output.validation_config_sha256, v0.4 field trace and W6 metadata value rules); r1.3 (R-0117: two Shendruk G7 inputs take the recorded diagnostics bit; generator self-check); r1.2 (R-0116: compiled run carrier, W1 writers, STRESS_COMPONENTS copy, new-cycle check; r1.1 R-0115: B1 loader rewrites, B2 scalar copies, D12/G7 process probes)",
+ "revision": "s28b r2.2 (R-0122: mechanical moves checked without ast.unparse (target_ast_sha256), the same on Python 3.12.3 and 3.12.16; W7 CLI parse-boundary rejections keep the v0.4 text (cli_rejections); W3 Plane generated-IC parameter faults rejected at compile); r2.1 (R-0121: engineering entries follow the S-28b routes: historical exact units moved/retired/replaced, mechanical moves as byte-exact source substitutions, tools/check.py and tools/check_distributions.py authorized, qualification v0.4 drivers registered as frozen qualification callers); r2 (R-0120, D-0068 final rewrite: W2 writer with the B9 Plane initial-values input and construction diagnostics, Channel cache leaves per S28bQ5, W4 work path, W5 v0.4 public continuation reference, W6 FORMAT keys and key closure, D6 cross-check with the accepted S-27 metadata classes); r1.5 (R-0119: /configuration, /runtime_construction and /implementation_provenance compared as whole objects with pinned 0.5 values, superseded identities, schema_version v0.4+1, exclusive trace rules and layer allow/forbid disjointness checked by D6/D5, io layer row explicit, root _EXPORTS listed, D7 accepts only authorized frozen data lines in move targets); r1.4 (R-0118: Output.validation_config_sha256, v0.4 field trace and W6 metadata value rules); r1.3 (R-0117: two Shendruk G7 inputs take the recorded diagnostics bit; generator self-check); r1.2 (R-0116: compiled run carrier, W1 writers, STRESS_COMPONENTS copy, new-cycle check; r1.1 R-0115: B1 loader rewrites, B2 scalar copies, D12/G7 process probes)",
  "root_all_at_basis": [
   "__version__",
   "SpectralSolver",

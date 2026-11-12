@@ -5,8 +5,6 @@ from __future__ import annotations
 import pytest
 import torch
 
-import pssolver
-import pssolver.execution as execution
 from pssolver.engine.workspace import (
     RuntimeWorkspace,
     WorkspacePlan,
@@ -33,12 +31,6 @@ def _plan(*, maximum_bytes: int | None = None) -> WorkspacePlan:
         device="cpu",
         maximum_bytes=maximum_bytes,
     )
-
-
-def test_workspace_contract_is_provisional_and_disconnected():
-    names = {"RuntimeWorkspace", "WorkspacePlan", "WorkspaceSlotSpec"}
-    assert names.isdisjoint(execution.__all__)
-    assert names.isdisjoint(pssolver.__all__)
 
 
 def test_workspace_plan_is_bounded_and_has_stable_slot_handles():

@@ -105,7 +105,8 @@ def test_rc423_record_binds_plan_parent_and_implementation_files():
                 and registration["historical_sha256"] == resolved
             ):
                 resolved = registration["current_sha256"]
-        assert resolve_s03_successor(relative, resolved) == actual
+        terminal = source_path(ROOT, relative).relative_to(ROOT).as_posix()
+        assert resolve_s03_successor(terminal, resolve_s03_successor(relative, resolved)) == actual
 
 
 def test_rc423_record_freezes_periodic_and_channel_v3_contracts():

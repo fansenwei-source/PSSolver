@@ -1,14 +1,17 @@
 """Qualification tests for the Stage L production/shadow trajectory gate."""
 
 from __future__ import annotations
+
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
+
 import pytest
 
 import pssolver
+from tests.v0_3_s03_successor import read_registered_source
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -168,6 +171,6 @@ def test_stage_l_remains_opt_in_and_outside_production_paths():
         "pssolver/plane.py",
         "pssolver/solver.py",
     ):
-        text = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+        text = read_registered_source(relative).decode("utf-8")
         assert "plane_shadow_driver" not in text
         assert "shadow_comparison" not in text

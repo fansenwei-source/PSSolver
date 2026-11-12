@@ -1,11 +1,11 @@
 """Historical shadow-stage scope; no assertions about future branch status."""
 
-import hashlib
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_111_r1_shadow_registry.json"
@@ -29,7 +29,7 @@ def test_r1_shadow_record_limits_claim_to_pre_dispatch_stage():
 
 def test_r1_shadow_record_binds_introduced_sources_forward():
     for path, digest in _record()["introduced_sources"].items():
-        actual = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        actual = registered_source_sha256(path)
         assert actual == resolve_s03_successor(path, digest)
 
 

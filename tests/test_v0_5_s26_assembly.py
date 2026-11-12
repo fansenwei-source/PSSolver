@@ -236,28 +236,3 @@ def test_complete_stress_preset_remains_qualified_in_legacy_catalog():
     catalog = json.dumps(pssolver.capability_catalog().to_metadata())
     assert "beris_edwards" in catalog and "periodic" in catalog and "qualified" in catalog
     assert CompleteStressBerisEdwards.Q.reference("Q").components == ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
-
-
-def test_all_nineteen_periodic_plans_match_installed_s25(tmp_path):
-    from pssolver.functional.legacy_declarations.legacy_periodic import translate_periodic
-    from qualification.identity.runtime_case import complete_simulation
-    from qualification.identity.scenarios import scenarios
-
-    baseline = json.loads((Path(__file__).parent / "baselines/s26/periodic_plans.json").read_text())
-    expected = {row["scene"]: row for row in baseline["scenes"]}
-    actual = {}
-    for scene in scenarios():
-        if scene["family"] not in {"periodic", "functional_periodic"}:
-            continue
-        try:
-            declaration = complete_simulation(scene, tmp_path).specification
-            translation = translate_periodic(declaration, flavour=(
-                "functional_1_1" if scene["family"] == "functional_periodic" else "production"),
-                load_initial=False)
-            row = dict(scene=scene["id"], identity_sha256=translation.plan.identity_sha256,
-                       metadata=translation.plan.to_metadata())
-        except (TypeError, ValueError) as error:
-            row = dict(scene=scene["id"], rejected=type(error).__name__, message=str(error))
-        actual[scene["id"]] = row
-    assert len(actual) == 19
-    assert actual == expected

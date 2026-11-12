@@ -149,7 +149,7 @@ EXPECTED_LEGACY_EXCEPTIONS = set()
 
 
 TENSOR_FREE_LAYERS = frozenset(
-    {"core", "geometries", "planning", "systems"}
+    {"core", "geometries", "planning"}
 )
 
 
@@ -389,14 +389,10 @@ REVIEWED_S28A_EDGES = {
 
 
 def test_systems_layer_has_only_the_authorized_dependency_edges():
-    assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
-        {"core", "systems"}
-    )
-    assert "systems" in ALLOWED_INTERNAL_LAYERS["execution"]
-    assert "systems" in ALLOWED_INTERNAL_LAYERS["configuration"]
-    assert "systems" in TENSOR_FREE_LAYERS
-    for layer in ("models", "planning", "runtime"):
-        assert "systems" not in ALLOWED_INTERNAL_LAYERS[layer]
+    assert "systems" not in ALLOWED_INTERNAL_LAYERS
+    assert "systems" not in TENSOR_FREE_LAYERS
+    assert all("systems" not in targets for targets in ALLOWED_INTERNAL_LAYERS.values())
+    assert not (PACKAGE_ROOT / "systems").exists()
 
 
 def _module_name(path: Path) -> str:
@@ -511,16 +507,17 @@ def test_every_internal_source_layer_is_governed_by_the_ratchet():
 
 
 def test_s16_does_not_widen_v030_top_level_target_allowances():
-    observed = {
-        layer: frozenset(
-            target
-            for target in allowed
-            if target in ROOT_MODULE_NAMES
-        )
-        for layer, allowed in ALLOWED_INTERNAL_LAYERS.items()
-        if layer in V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER
+    expected = {
+        "api": frozenset({"errors"}),
+        "control": frozenset({"snapshots"}),
+        "functional": frozenset({"_version", "errors"}),
     }
-    assert observed == V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER
+    assert set(expected) == set(V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER) - {"workflows"}
+    assert {
+        layer: ALLOWED_INTERNAL_LAYERS[layer] & ROOT_MODULE_NAMES
+        for layer in expected
+    } == expected
+    assert "workflows" not in ALLOWED_INTERNAL_LAYERS
 
 
 def _all_edges() -> set[ImportEdge]:
@@ -534,35 +531,27 @@ def _all_edges() -> set[ImportEdge]:
 
 
 def test_configuration_has_only_the_reviewed_systems_dependency_edge():
-    observed = {
-        edge
-        for edge in _all_edges()
-        if _layer(edge.source) == "configuration"
-        and _layer(edge.destination) == "systems"
+    assert not {
+        edge for edge in _all_edges()
+        if _layer(edge.source) == "configuration" or _layer(edge.destination) == "systems"
     }
-    assert observed == EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES
 
 
 def test_configuration_has_only_reviewed_planning_composition_edges():
-    observed = {
-        edge
-        for edge in _all_edges()
-        if _layer(edge.source) == "configuration"
-        and _layer(edge.destination) == "planning"
+    assert not {
+        edge for edge in _all_edges()
+        if _layer(edge.source) == "configuration" and _layer(edge.destination) == "planning"
     }
-    assert observed == REVIEWED_CONFIGURATION_TO_PLANNING_EDGES | {
-        ImportEdge("pssolver.configuration.legacy_channel", "pssolver.planning.assemble"),
-    }
+    assert "configuration" not in ALLOWED_INTERNAL_LAYERS
 
 
 def test_models_have_only_reviewed_tensor_free_system_declaration_edges():
-    observed = {
-        edge
-        for edge in _all_edges()
+    assert not {
+        edge for edge in _all_edges()
         if _layer(edge.source) == "models"
-        and _layer(edge.destination) == "systems"
+        and (_layer(edge.destination) == "systems" or
+             edge.destination.startswith("pssolver.functional.legacy_declarations.systems_"))
     }
-    assert observed == REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES
 
 
 def test_models_have_only_reviewed_public_boundary_policy_edges():
@@ -586,13 +575,12 @@ def test_models_have_only_the_two_reviewed_stokes_implementation_edges():
 
 
 def test_only_reviewed_workflows_use_the_private_canonical_helper():
-    observed = {
-        edge
-        for edge in _all_edges()
+    assert not {
+        edge for edge in _all_edges()
         if _layer(edge.source) == "workflows"
         and edge.destination == "pssolver.core._canonical"
     }
-    assert observed == REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES
+    assert "workflows" not in ALLOWED_INTERNAL_LAYERS
 
 
 def test_tensor_free_declaration_and_planning_layers_use_no_third_party_runtime():
@@ -667,13 +655,29 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
 
 
 def test_experimental_boundary_pilots_have_only_the_reviewed_cross_layer_edges():
-    observed = {
-        edge
-        for edge in _all_edges()
-        if edge.source == "pssolver.experimental.boundary_pilots"
+    source = "pssolver.experimental.boundary_pilots"
+    assert {
+        edge for edge in _all_edges()
+        if edge.source == source
         and _layer(edge.destination) not in ALLOWED_INTERNAL_LAYERS["experimental"]
+    } == set()
+    assert {
+        edge.destination for edge in _all_edges() if edge.source == source
+    } == {
+        "pssolver.boundaries",
+        "pssolver.boundaries.robin",
+        "pssolver.experimental.finite_q_anchoring_declarations",
+        "pssolver.experimental.finite_q_anchoring_runtime",
+        "pssolver.experimental.finite_q_anchoring_workflow",
+        "pssolver.experimental.robin_scalar_runtime",
+        "pssolver.functional.legacy_declarations.lifting",
+        "pssolver.functional.legacy_declarations.robin",
+        "pssolver.models.active_nematics.boundaries",
+        "pssolver.operators.lifting",
+        "pssolver.operators.robin",
+        "pssolver.planning.lifting",
+        "pssolver.planning.robin",
     }
-    assert observed == REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES
 
 
 def test_applications_do_not_reach_into_experimental_implementations():

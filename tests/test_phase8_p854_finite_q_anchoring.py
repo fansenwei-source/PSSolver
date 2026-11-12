@@ -2,24 +2,37 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import ast
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 import pytest
 
 import pssolver
-from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
-from pssolver.experimental.finite_q_anchoring_declarations import PlaneFiniteQAnchoringLoweringPlan, apply_plane_finite_q_anchoring_pilot, lower_plane_finite_q_anchoring_pilot
-from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.simulation_lowering import SimulationLoweringError, lower_simulation_spec
 from pssolver.core.boundary import BoundarySide
+from pssolver.experimental.finite_q_anchoring_declarations import (
+    PlaneFiniteQAnchoringLoweringPlan,
+    apply_plane_finite_q_anchoring_pilot,
+    lower_plane_finite_q_anchoring_pilot,
+)
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    create_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.simulation_lowering import (
+    SimulationLoweringError,
+    lower_simulation_spec,
+)
 from pssolver.models.active_nematics import (
-    Q_COMPONENTS,
     Q_COMPONENT_METRIC,
+    Q_COMPONENTS,
     QUADRATIC_FINITE_Q_SURFACE_LAW_ID,
     QuadraticFiniteQAnchoring,
     finite_homeotropic_q_anchoring,
@@ -334,7 +347,7 @@ def test_generic_robin_layers_remain_free_of_active_nematic_imports():
         "pssolver/boundaries/robin.py",
         "pssolver/planning/robin.py",
         "pssolver/operators/robin.py",
-        "pssolver/runtime/robin_scalar.py",
+        "pssolver/experimental/robin_scalar_runtime.py",
     ):
         source = (ROOT / relative).read_text(encoding="utf-8")
         tree = ast.parse(source, filename=relative)

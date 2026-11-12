@@ -1,6 +1,7 @@
 """Run the qualified Plane model through the public simulation API."""
 
 import argparse
+import math
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -139,8 +140,7 @@ def _parser() -> argparse.ArgumentParser:
         type=float,
         default=1.0 / 3.0,
         help=(
-            "Initial S in Q=(3S/2)(nn-I/3); default 1/3, equal to the "
-            "Shendruk bulk equilibrium."
+            "Initial S in Q=(3S/2)(nn-I/3); default 1/3, equal to the Shendruk bulk equilibrium."
         ),
     )
     parser.add_argument("--device", default="auto")
@@ -287,47 +287,88 @@ def _simulation(args: argparse.Namespace) -> Simulation:
             refresh = {"steps": args.spectral_refresh_steps}
         else:
             interval = args.spectral_refresh_time
-            refresh = {"physical_time": DEFAULT_SPECTRAL_REFRESH_TIME if interval is None else interval}
+            refresh = {
+                "physical_time": DEFAULT_SPECTRAL_REFRESH_TIME if interval is None else interval
+            }
     geometry, boundaries = _free_slip_plane_declaration(
-        (args.nx, args.ny, args.nz), (args.lx, args.ly, args.height),
+        (args.nx, args.ny, args.nz),
+        (args.lx, args.ly, args.height),
     )
     values = vars(args)
     return Simulation(
-        model=ShendrukPlaneBerisEdwards(**{
-            key: values[key] for key in (
-                "activity_number", "parameterization", "frank_k", "coefficient_min",
-                "coefficient_max", "ldg_a", "ldg_b", "ldg_c", "gamma", "flow_alignment",
-                "eta", "beta", "zero_mode_policy", "friction_mode_fric",
-            )
-        }),
+        model=ShendrukPlaneBerisEdwards(
+            **{
+                key: values[key]
+                for key in (
+                    "activity_number",
+                    "parameterization",
+                    "frank_k",
+                    "coefficient_min",
+                    "coefficient_max",
+                    "ldg_a",
+                    "ldg_b",
+                    "ldg_c",
+                    "gamma",
+                    "flow_alignment",
+                    "eta",
+                    "beta",
+                    "zero_mode_policy",
+                    "friction_mode_fric",
+                )
+            }
+        ),
         geometry=geometry,
         boundaries=boundaries,
         numerics=SpectralNumerics(
-            dtype=args.dtype, dealias_rule=args.dealias_rule,
+            dtype=args.dtype,
+            dealias_rule=args.dealias_rule,
             projected_transform_execution=args.projected_transform_execution,
             spectral_storage=args.spectral_storage,
             hermitian_axis=1 if args.spectral_storage == "hermitian_half" else None,
             transform_execution_order=args.transform_execution_order,
         ),
         time=SemiImplicitEuler(args.dt, refresh=refresh),
-        initial_condition=GeneratedInitialCondition("extruded_defect_gas", {
-            key: values[key] for key in (
-                "seed", "num_defect_pairs", "defect_min_separation", "defect_core_radius",
-                "background_angle", "twist_amplitude", "twist_modes", "initial_s",
-            )
-        }),
-        execution=TorchSpectralExecution(device=args.device, options={
-            key: values[key] for key in (
-                "tf32", "molecular_field_linear_space", "stress_divergence_sum_space",
-                "pointwise_execution", "disable_q_gradient_reuse",
-            )
-        }),
+        initial_condition=GeneratedInitialCondition(
+            "extruded_defect_gas",
+            {
+                key: values[key]
+                for key in (
+                    "seed",
+                    "num_defect_pairs",
+                    "defect_min_separation",
+                    "defect_core_radius",
+                    "background_angle",
+                    "twist_amplitude",
+                    "twist_modes",
+                    "initial_s",
+                )
+            },
+        ),
+        execution=TorchSpectralExecution(
+            device=args.device,
+            options={
+                key: values[key]
+                for key in (
+                    "tf32",
+                    "molecular_field_linear_space",
+                    "stress_divergence_sum_space",
+                    "pointwise_execution",
+                    "disable_q_gradient_reuse",
+                )
+            },
+        ),
         output=Output(
-            directory=args.output_dir, steps=args.steps, save_interval=args.save_interval,
-            diagnostic_interval=args.diagnostic_interval, save_start_step=args.save_start_step,
-            diagnostics=args.diagnostics, save_hydrodynamics=args.save_hydrodynamics,
-            checkpoint_interval=args.checkpoint_interval, restart_from=args.restart_from,
-            dry_run=args.dry_run, validation_config_sha256=args.validation_config_sha256,
+            directory=args.output_dir,
+            steps=args.steps,
+            save_interval=args.save_interval,
+            diagnostic_interval=args.diagnostic_interval,
+            save_start_step=args.save_start_step,
+            diagnostics=args.diagnostics,
+            save_hydrodynamics=args.save_hydrodynamics,
+            checkpoint_interval=args.checkpoint_interval,
+            restart_from=args.restart_from,
+            dry_run=args.dry_run,
+            validation_config_sha256=args.validation_config_sha256,
         ),
     )
 
@@ -355,6 +396,92 @@ def _print_workflow_summary(workflow_result) -> None:
         )
 
 
+def _v04_parse_boundary(args: argparse.Namespace) -> str | None:
+    """Reject invalid Plane options in the v0.4 run-spec order."""
+    positive = {
+        name: getattr(args, name)
+        for name in (
+            "activity_number",
+            "height",
+            "frank_k",
+            "coefficient_min",
+            "coefficient_max",
+            "lx",
+            "ly",
+            "nx",
+            "ny",
+            "nz",
+            "dt",
+            "steps",
+            "save_interval",
+            "diagnostic_interval",
+            "gamma",
+        )
+    }
+    invalid = {name: value for name, value in positive.items() if value <= 0}
+    if invalid:
+        return f"these values must be positive: {invalid}"
+    for value, text in (
+        (args.initial_s, "--initial-s must be positive"),
+        (args.num_defect_pairs, "--num-defect-pairs must be positive"),
+        (args.defect_min_separation, "--defect-min-separation must be positive"),
+        (args.defect_core_radius, "--defect-core-radius must be positive"),
+    ):
+        if value <= 0:
+            return text
+    if args.twist_amplitude < 0:
+        return "--twist-amplitude must be non-negative"
+    modes = tuple(args.twist_modes)
+    if len(set(modes)) != len(modes):
+        return "--twist-modes must be unique"
+    if any(mode <= 0 or mode >= args.nz for mode in modes):
+        return "--twist-modes must satisfy 1 <= mode < nz"
+    if args.zero_mode_policy == "friction" and args.friction_mode_fric <= 0:
+        return "--friction-mode-fric must be positive in friction mode"
+    if args.coefficient_min >= args.coefficient_max:
+        return "--coefficient-min must be smaller than --coefficient-max"
+    interval = args.checkpoint_interval
+    if interval is not None and (
+        not isinstance(interval, int) or isinstance(interval, bool) or interval <= 0
+    ):
+        return "--checkpoint-interval must be positive"
+    if args.projected_transform_execution == "truncated" and args.dealias_rule == "none":
+        return "--projected-transform-execution truncated requires enabled dealiasing"
+    if args.save_start_step < 0 or (
+        args.restart_from is None and args.save_start_step > args.steps
+    ):
+        return "--save-start-step must lie between 0 and --steps for a fresh run"
+    digest = args.validation_config_sha256
+    if digest is not None and (
+        len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest)
+    ):
+        return "--validation-config-sha256 must be exactly 64 lowercase hexadecimal characters"
+    if args.spectral_storage == "hermitian_half" and args.transform_execution_order != "real_first":
+        return "--spectral-storage hermitian_half requires --transform-execution-order real_first"
+    if args.spectral_refresh_steps is not None:
+        return (
+            "--spectral-refresh-steps must be positive"
+            if args.spectral_refresh_steps <= 0
+            else None
+        )
+    if args.disable_spectral_refresh:
+        return None
+    requested = (
+        DEFAULT_SPECTRAL_REFRESH_TIME
+        if args.spectral_refresh_time is None
+        else args.spectral_refresh_time
+    )
+    if not math.isfinite(requested) or requested <= 0:
+        return "--spectral-refresh-time must be positive and finite"
+    ratio = requested / args.dt
+    steps = int(round(ratio))
+    if steps <= 0 or not math.isclose(ratio, steps, rel_tol=1e-12, abs_tol=1e-12):
+        return (
+            f"--spectral-refresh-time must be an integer multiple of --dt; got time/dt={ratio:.17g}"
+        )
+    return None
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Translate the command options into a public declaration and run it."""
     parser = _parser()
@@ -362,15 +489,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     if any(arg.split("=", 1)[0] == "--runtime-path" for arg in argv):
         parser.error("--runtime-path was removed; see docs/migration_0_4_to_0_5.md")
     args = parser.parse_args(argv)
-    digest = args.validation_config_sha256
-    if digest is not None and (
-        len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest)
-    ):
-        parser.error("--validation-config-sha256 must be exactly 64 lowercase hexadecimal characters")
+    message = _v04_parse_boundary(args)
+    if message is not None:
+        parser.error(message)
     try:
         simulation = _simulation(args)
         result = run_simulation(
-            simulation, progress=None if args.dry_run else trange(args.steps), emit_metadata=True,
+            simulation,
+            progress=None if args.dry_run else trange(args.steps),
+            emit_metadata=True,
         )
     except (TypeError, ValueError) as exc:
         parser.error(str(exc))

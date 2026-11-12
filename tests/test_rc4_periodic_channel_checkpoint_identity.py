@@ -320,7 +320,7 @@ def test_channel_v3_rejects_unregistered_manifest_keys_before_payload_load(
         ),
     )
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel.np.load",
+        "pssolver.functional.legacy_declarations.legacy_channel.np.load",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
@@ -503,7 +503,7 @@ def test_m10_rc1_even_channel_rejects_before_tensor_load(tmp_path, monkeypatch):
     write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
     _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC1)
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel.np.load",
+        "pssolver.functional.legacy_declarations.legacy_channel.np.load",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
@@ -527,7 +527,7 @@ def test_m11_rc1_odd_channel_rejects_exact_upgrade_before_tensor_load(
     _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC1)
     before = _tree_sha256(directory)
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel.np.load",
+        "pssolver.functional.legacy_declarations.legacy_channel.np.load",
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
@@ -616,7 +616,7 @@ def test_c2_17_failed_read_only_channel_upgrade_leaves_no_staging(
     modes = _set_tree_read_only(directory)
     target = tmp_path / "upgrade_must_fail"
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel.seal_checkpoint_metadata",
+        "pssolver.functional.legacy_declarations.legacy_channel.seal_checkpoint_metadata",
         lambda _metadata: (_ for _ in ()).throw(
             RuntimeError("injected migration metadata failure")
         ),
@@ -661,7 +661,7 @@ def test_unknown_periodic_and_channel_versions_reject_before_tensor_load(
         path.write_text(json.dumps(metadata), encoding="utf-8")
     monkeypatch.setattr(periodic_module, "_load_tensor", lambda *_a: pytest.fail())
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel.np.load",
+        "pssolver.functional.legacy_declarations.legacy_channel.np.load",
         lambda *_a: pytest.fail(),
     )
 
@@ -698,7 +698,7 @@ def test_current_identity_digest_tamper_rejects_before_tensor_load(
         path.write_text(json.dumps(metadata), encoding="utf-8")
     monkeypatch.setattr(periodic_module, "_load_tensor", lambda *_a: pytest.fail())
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel.np.load",
+        "pssolver.functional.legacy_declarations.legacy_channel.np.load",
         lambda *_a: pytest.fail(),
     )
 

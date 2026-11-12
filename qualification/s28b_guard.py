@@ -31,8 +31,13 @@ unit carries a retired module name; (D9) every module-level edge the design plan
 authorized and obeys the layer rule.
 draft: after implementation, the draft tree is checked against the baseline (G1-G5 and OWNERS, as the S-27
 r2.3 gate): new import edges, layers and the torch-free closure, retired names, changed paths and frozen
-files, and units (exact moves AST-identical, mechanical moves AST-identical after their declared
-substitutions, required units present, every new or rewritten unit registered).
+files, and units (exact moves AST-identical, mechanical moves byte-identical to the basis source text after
+their declared source substitutions, required units present, every new or rewritten unit registered).
+
+S-28b r2.2 (R-0122) removes every ast.unparse text route for mechanical moves: the authority is the basis source
+text with the table's source substitutions (target_text_sha256) and the AST of that text (target_ast_sha256), so
+D2, D3, D8 and G5 give the same result on every Python 3.12 patch release (ast.unparse changed its f-string quotes
+between 3.12.3 and 3.12.16).
 
 Installation view (R-0098, R-0099): --simulate-install overlays this gate and the tables at their installed
 paths; without it an installed copy must be byte-identical to the running copy, and in both views the running
@@ -241,19 +246,6 @@ def ast_sha(node):
     return sha_bytes(ast.dump(node).encode())
 
 
-def substituted(node, substitutions):
-    """Apply the declared text substitutions to the unparsed unit; return the new AST node or None."""
-    text = ast.unparse(node)
-    for old, new in substitutions:
-        if old not in text:
-            return None
-        text = text.replace(old, new)
-    try:
-        return ast.parse(text).body[0]
-    except SyntaxError:
-        return None
-
-
 def target_ref(move):
     name = move["unit"]
     return f"{move['target']}:{name}"
@@ -373,6 +365,17 @@ def mechanical_text(base, move):
     return text
 
 
+def mechanical_node(base, move):
+    """r2.2: the AST of mechanical_text (no ast.unparse route, which differs between Python patch releases)."""
+    text = mechanical_text(base, move)
+    if text is None:
+        return None
+    try:
+        return ast.parse(text).body[0]
+    except SyntaxError:
+        return None
+
+
 def historical_exact_units(base):
     """(target, unit) of every accepted exact move before S-28b (S-25..S-27 manifest, S-28a table)."""
     rows = []
@@ -426,16 +429,15 @@ def design_moves(tables, base, changed):
             continue
         if ast_sha(node) != m["source_ast_sha256"]:
             out.append(dict(kind="move_source_hash_differs", source=m["source"]))
-        if kind == "mechanical" and substituted(node, m["substitutions"]) is None:
-            out.append(dict(kind="substitution_not_applicable", source=m["source"]))
-        if kind == "mechanical":  # R-0121: byte-exact source form, same AST, valid for Python 3.10
+        # R-0121/r2.2: byte-exact source form, recorded AST, valid for Python 3.10
+        if kind == "mechanical":
             text = mechanical_text(base, m)
-            routed = substituted(node, m["substitutions"])
+            moved = mechanical_node(base, m)
             if (
                 text is None
+                or moved is None
                 or sha_bytes(text.encode()) != m.get("target_text_sha256")
-                or routed is None
-                or ast.dump(ast.parse(text).body[0]) != ast.dump(routed)
+                or ast_sha(moved) != m.get("target_ast_sha256")
                 or pep701_quote_reuse(text)
             ):
                 out.append(dict(kind="mechanical_source_text_invalid", source=m["source"]))
@@ -466,7 +468,10 @@ def design_closure(tables, base):
         if node is None:
             continue
         if kind == "mechanical" and "." not in name:
-            node = substituted(node, m["substitutions"]) or node
+            node = mechanical_node(base, m)
+            if node is None:
+                out.append(dict(kind="mechanical_source_text_invalid", source=m["source"]))
+                continue
         if "." in name:
             target_cls = m["unit"].split(".")[0]
             tnode = units_of_source((base / m["target"]).read_text()).get(target_cls)
@@ -478,8 +483,9 @@ def design_closure(tables, base):
             }
             dynamic = tables.get("mechanical_target_dynamic_members", {}).get(target_cls, ())
             available = class_members(tnode, dynamic) | moved
-            sub = substituted(node, m["substitutions"])
+            sub = mechanical_node(base, m)
             if sub is None:
+                out.append(dict(kind="mechanical_source_text_invalid", source=m["source"]))
                 continue
             for attr in sorted(
                 {
@@ -1023,8 +1029,11 @@ def design_move_imports(tables, base):
             out.append(dict(kind="moved_unit_carries_retired_name", unit=m["source"]))
         target = m["target"][:-3].replace("/", ".")
         target = target[:-9] if target.endswith(".__init__") else target
-        if "substitutions" in m:
-            node = substituted(node, m["substitutions"]) or node
+        if "source_substitutions" in m:
+            node = mechanical_node(base, m)
+            if node is None:
+                out.append(dict(kind="mechanical_source_text_invalid", source=m["source"]))
+                continue
         bindings = module_bindings(base, path)
         target_rel = m["target"]
         target_defs = (
@@ -1488,7 +1497,7 @@ def draft_units(tables, base, draft, base_mods, draft_mods, touched):
         if dst is None:
             out.append(dict(kind="moved_unit_missing", unit=target_ref(m)))
             continue
-        want = src if kind == "exact" else substituted(src, m["substitutions"])
+        want = src if kind == "exact" else mechanical_node(base, m)
         if want is None or ast.dump(want) != ast.dump(dst):
             out.append(dict(kind=f"{kind}_move_not_identical", unit=target_ref(m)))
         elif kind == "mechanical":  # R-0121: the moved text itself, not only its AST

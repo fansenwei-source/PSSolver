@@ -1,45 +1,53 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError, replace
 import json
+from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 
 import pytest
 
-from pssolver.functional.legacy_declarations.active_nematics_equation_adapters import declare_plane_complete_stress_equation_system
-from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
 from pssolver.core import FieldRole
-from pssolver.functional.legacy_declarations.active_nematics_equation_systems import ACTIVE_FORCE_COMPONENTS, COMPLETE_STRESS_FORCE_COMPONENTS, CompleteStressBerisEdwardsEquationRequest
-from pssolver.functional.legacy_declarations.active_nematics_specifications import BerisEdwardsMaterialRequest
-from pssolver.functional.legacy_declarations.systems_equations import EquationFieldSpec, EquationSystemSpec, EquationTermSpec
-from pssolver.functional.legacy_declarations.systems_stokes import IncompressibleStokesSystemSpec, PressureGauge, TangentialZeroModePolicy
+from pssolver.functional.legacy_declarations.active_nematics_equation_adapters import (
+    declare_plane_complete_stress_equation_system,
+)
+from pssolver.functional.legacy_declarations.active_nematics_equation_systems import (
+    ACTIVE_FORCE_COMPONENTS,
+    COMPLETE_STRESS_FORCE_COMPONENTS,
+    CompleteStressBerisEdwardsEquationRequest,
+)
+from pssolver.functional.legacy_declarations.active_nematics_specifications import (
+    BerisEdwardsMaterialRequest,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    create_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.systems_equations import (
+    EquationFieldSpec,
+    EquationSystemSpec,
+    EquationTermSpec,
+)
+from pssolver.functional.legacy_declarations.systems_stokes import (
+    IncompressibleStokesSystemSpec,
+    PressureGauge,
+    TangentialZeroModePolicy,
+)
+from tests.v0_3_s03_successor import read_registered_source
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-EQUATION_DECLARATIONS = (
-    ROOT / "pssolver" / "systems" / "equations.py"
-)
+EQUATION_DECLARATIONS = ROOT / "pssolver/functional/legacy_declarations/systems_equations.py"
 
 
-ACTIVE_NEMATIC_DECLARATIONS = (
-    ROOT
-    / "pssolver"
-    / "models"
-    / "active_nematics"
-    / "equation_systems.py"
-)
+ACTIVE_NEMATIC_DECLARATIONS = ROOT / "pssolver/functional/legacy_declarations/active_nematics_equation_systems.py"
 
 
-ADAPTERS = (
-    ROOT
-    / "pssolver"
-    / "configuration"
-    / "active_nematics_equation_adapters.py"
-)
+ADAPTERS = ROOT / "pssolver/functional/legacy_declarations/active_nematics_equation_adapters.py"
 
 
 RESULT_PATH = (
@@ -301,7 +309,6 @@ def test_p771_result_preserves_historical_reviewed_source_identities():
 
     assert len(identities) == 5
     for relative_path, expected in identities.items():
-        path = ROOT / relative_path
-        assert path.is_file(), relative_path
+        assert read_registered_source(relative_path), relative_path
         assert len(expected) == 64, relative_path
         assert set(expected) <= set("0123456789abcdef"), relative_path

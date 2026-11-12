@@ -2100,7 +2100,7 @@
     "benchmarks.profile_finite_q_anchoring": {
       "actual": {
         "exit_code": 1,
-        "last_line": "ModuleNotFoundError: No module named 'pssolver.configuration.active_nematics_simulation_adapters'"
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.configuration'"
       },
       "authority": "r2.1 \u00a77.5: frozen caller; S-30",
       "path": "benchmarks/profile_finite_q_anchoring.py",
@@ -4481,7 +4481,7 @@
     "qualification.identity.channel_comparison": {
       "actual": {
         "exit_code": 1,
-        "last_line": "ModuleNotFoundError: No module named 'pssolver.configuration.legacy_channel'"
+        "last_line": "ModuleNotFoundError: No module named 'pssolver.configuration'"
       },
       "authority": "r2.1 \u00a77.5 Q1: unchanged v0.4 qualification driver",
       "path": "qualification/identity/channel_comparison.py",

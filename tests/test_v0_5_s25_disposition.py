@@ -1,10 +1,9 @@
 """S-25's live-tree guard, separate from S-24's frozen endpoint audit."""
 
-import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +19,6 @@ def test_forward_record_binds_changed_sources_without_historical_rewrite():
     for path, expected in record["introduced_sources"].items():
         if path in retired:
             continue
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(
+        assert registered_source_sha256(path) == resolve_s03_successor(
             path, expected
         )

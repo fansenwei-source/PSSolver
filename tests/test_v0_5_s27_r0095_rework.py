@@ -9,6 +9,7 @@ import pytest
 
 from qualification import s27_records
 from qualification.s27_reexports import resolve_reexport
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -74,7 +75,9 @@ def test_plane_reference_is_from_v04_and_has_all_sixty_nine_filename_keys():
     assert record["source_commit"] == "4c12228aba01e8483e80d28a1471ab72384d5fda"
     assert record["fingerprint"] == frozen["fingerprint"]
     for relative, sha in record["source_files"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == sha
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolve_s03_successor(
+            relative, sha
+        )
 
 
 def test_successor_146_is_generated_after_all_registry_files():

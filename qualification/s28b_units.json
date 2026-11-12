@@ -189,6 +189,9 @@
     "_print_workflow_summary": {
       "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner."
     },
+    "_v04_parse_boundary": {
+      "authority": "r2.2 §2.8 and W7: preserve v0.4 rejection order and messages before declaration construction."
+    },
     "main": {
       "authority": "r2 §2.8 and W7: keep the Plane command and numerical options, using the new declaration and runner."
     }

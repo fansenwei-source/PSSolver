@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,7 +48,7 @@ V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _sha256(relative: str) -> str:
-    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+    return registered_source_sha256(relative)
 
 
 def _record() -> dict[str, object]:

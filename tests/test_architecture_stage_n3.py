@@ -12,6 +12,7 @@ from pssolver.experimental.representations import (
     AlgebraicGenerationState,
     BatchedPhysicalMaterialization,
 )
+from tests.v0_3_s03_successor import read_registered_source
 
 
 P = PeriodicBC()
@@ -73,6 +74,6 @@ def test_stage_n3_remains_outside_production_and_generic_solver_paths():
         "pssolver/solver.py",
         "pssolver/plane.py",
     ):
-        text = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+        text = read_registered_source(relative).decode("utf-8")
         assert "enable_batched_physical_islands" not in text
         assert "BatchedPhysicalMaterialization" not in text

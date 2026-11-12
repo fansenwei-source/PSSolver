@@ -1,17 +1,20 @@
 """RC4.5.5 shared public validation and diagnostics-envelope contract."""
 
 from __future__ import annotations
+
 import json
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 from pssolver.engine.execution_device import validate_execution_device
-from pssolver.functional.legacy_declarations.public_option_validation import validate_iterative_pressure_options, validate_public_execution_device
+from pssolver.functional.legacy_declarations.public_option_validation import (
+    validate_iterative_pressure_options,
+    validate_public_execution_device,
+)
 from pssolver.io.diagnostic_io import diagnostics_metadata_envelope
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -137,7 +140,7 @@ def test_public_device_tokens_reject_aliases_whitespace_and_non_strings(
 
 def test_public_device_normalization_records_requested_and_resolved(monkeypatch):
     monkeypatch.setattr(
-        "pssolver.configuration.execution_device.torch.cuda.is_available",
+        "pssolver.engine.execution_device.torch.cuda.is_available",
         lambda: False,
     )
     assert validate_public_execution_device("auto") == {

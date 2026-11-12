@@ -351,7 +351,7 @@ def test_production_stale_or_tampered_identity_rejects_before_mutation(
         raise AssertionError("tensor payload opened before identity rejection")
 
     monkeypatch.setattr(
-        "pssolver.configuration.legacy_channel._validated_array",
+        "pssolver.functional.legacy_declarations.legacy_channel._validated_array",
         forbidden,
     )
     with pytest.raises(ValueError, match="identity does not match target"):

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -30,7 +29,7 @@ from pssolver.models.active_nematics import (
     strong_homeotropic_q,
 )
 from pssolver.operators.projection import BasisAwareSpectralProjector
-from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -251,9 +250,9 @@ def test_p844_record_matches_qualified_sources_and_scope():
             identity = s16_successor[relative]
             assert identity["historical_sha256"] == expected, relative
             assert (
-                hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+                registered_source_sha256(relative)
                 == resolve_s03_successor(relative, identity["current_sha256"])
             ), relative
             continue
-        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+        actual = registered_source_sha256(relative)
         assert actual == expected, relative

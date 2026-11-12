@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import replace
 import json
 import math
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -13,10 +13,6 @@ import torch
 
 import pssolver
 from pssolver.boundaries import HomogeneousBoundaryPolicy, robin
-from pssolver.functional.legacy_declarations import assign_boundaries
-from pssolver.functional.legacy_declarations.robin import lower_plane_robin_scalar_pilot
-from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, InitialConditionSource, InitialConditionSpec, InvocationSpec, SimulationSpec, TimeIntegrationSpec, WorkflowSpec
-from pssolver.functional.legacy_declarations.simulation_lowering import SimulationLoweringError, lower_simulation_spec
 from pssolver.core.boundary import BoundarySemantic
 from pssolver.core.fields import FieldRole
 from pssolver.core.integrators import IntegratorSpec
@@ -28,14 +24,33 @@ from pssolver.core.numerics import (
     SpectralStorage,
     TransformExecutionOrder,
 )
-from pssolver.geometries import PeriodicBox, PlaneSlab
-from pssolver.planning.robin import PlaneRobinScalarLoweringPlan
 from pssolver.experimental.robin_scalar_runtime import (
     PlaneRobinOperatorCache,
     PlaneRobinScalarRuntime,
 )
+from pssolver.functional.legacy_declarations import assign_boundaries
+from pssolver.functional.legacy_declarations.robin import lower_plane_robin_scalar_pilot
+from pssolver.functional.legacy_declarations.simulation import (
+    ExecutionSpec,
+    InitialConditionSource,
+    InitialConditionSpec,
+    InvocationSpec,
+    SimulationSpec,
+    TimeIntegrationSpec,
+    WorkflowSpec,
+)
+from pssolver.functional.legacy_declarations.simulation_lowering import (
+    SimulationLoweringError,
+    lower_simulation_spec,
+)
 from pssolver.functional.legacy_declarations.systems_algebraic import AlgebraicSystemSpec
-from pssolver.functional.legacy_declarations.systems_equations import EquationFieldSpec, EquationSystemSpec, EquationTermSpec
+from pssolver.functional.legacy_declarations.systems_equations import (
+    EquationFieldSpec,
+    EquationSystemSpec,
+    EquationTermSpec,
+)
+from pssolver.geometries import PeriodicBox, PlaneSlab
+from pssolver.planning.robin import PlaneRobinScalarLoweringPlan
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -376,10 +391,10 @@ def test_runtime_metadata_records_plan_cache_state_and_disconnected_scope():
 
 def test_generic_lowering_and_runtime_do_not_import_active_nematics():
     for relative in (
-        "pssolver/configuration/robin.py",
+        "pssolver/functional/legacy_declarations/robin.py",
         "pssolver/planning/robin.py",
         "pssolver/operators/robin.py",
-        "pssolver/runtime/robin_scalar.py",
+        "pssolver/experimental/robin_scalar_runtime.py",
     ):
         path = ROOT / relative
         source = path.read_text(encoding="utf-8")

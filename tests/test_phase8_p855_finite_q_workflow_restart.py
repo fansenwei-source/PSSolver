@@ -2,32 +2,46 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import copy
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import sys
 import zipfile
+from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 import pytest
 import torch
 
 import pssolver
-from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
-from pssolver.experimental.finite_q_anchoring_declarations import apply_plane_finite_q_anchoring_pilot, lower_plane_finite_q_anchoring_pilot
-from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
+from pssolver.experimental.finite_q_anchoring_declarations import (
+    apply_plane_finite_q_anchoring_pilot,
+    lower_plane_finite_q_anchoring_pilot,
+)
+from pssolver.experimental.finite_q_anchoring_runtime import (
+    PlaneFiniteQAnchoringRuntime,
+)
+from pssolver.experimental.finite_q_anchoring_workflow import (
+    PlaneFiniteQAnchoringWorkflow,
+    load_finite_q_anchoring_checkpoint,
+)
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    create_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
 from pssolver.models.active_nematics import (
     Q_COMPONENTS,
     quadratic_finite_q_anchoring,
     uniaxial_Q,
 )
-from pssolver.experimental.finite_q_anchoring_runtime import PlaneFiniteQAnchoringCheckpoint, PlaneFiniteQAnchoringRuntime
-from pssolver.experimental.finite_q_anchoring_workflow import PlaneFiniteQAnchoringWorkflow, load_finite_q_anchoring_checkpoint
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -368,8 +382,8 @@ def test_wheel_contains_and_imports_finite_q_runtime_and_workflow(tmp_path):
     installed = tmp_path / "installed"
     with zipfile.ZipFile(wheels[0]) as archive:
         names = set(archive.namelist())
-        assert "pssolver/runtime/finite_q_anchoring.py" in names
-        assert "pssolver/workflows/finite_q_anchoring.py" in names
+        assert "pssolver/experimental/finite_q_anchoring_runtime.py" in names
+        assert "pssolver/experimental/finite_q_anchoring_workflow.py" in names
         archive.extractall(installed)
     environment = os.environ.copy()
     environment["PYTHONPATH"] = str(installed)
@@ -379,8 +393,8 @@ def test_wheel_contains_and_imports_finite_q_runtime_and_workflow(tmp_path):
             "-c",
             (
                 "import pathlib; "
-                "import pssolver.runtime.finite_q_anchoring as r; "
-                "import pssolver.workflows.finite_q_anchoring as w; "
+                "import pssolver.experimental.finite_q_anchoring_runtime as r; "
+                "import pssolver.experimental.finite_q_anchoring_workflow as w; "
                 f"root=pathlib.Path({str(installed)!r}).resolve(); "
                 "assert pathlib.Path(r.__file__).resolve().is_relative_to(root); "
                 "assert pathlib.Path(w.__file__).resolve().is_relative_to(root); "

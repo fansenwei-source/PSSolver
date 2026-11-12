@@ -124,17 +124,15 @@ def test_public_complete_stress_declares_both_periodic_zero_mode_policies():
     default = _model()
     friction = _model(friction=0.2, policy="friction")
 
-    default_stokes = default.parameters["stokes"]["parameters"]
-    friction_stokes = friction.parameters["stokes"]["parameters"]
-    assert default_stokes["friction"] == 0.0
-    assert default_stokes["tangential_zero_mode_policy"] == "zero_mean"
-    assert friction_stokes["friction"] == 0.2
-    assert friction_stokes["tangential_zero_mode_policy"] == "friction"
+    assert default.friction == 0.0
+    assert default.tangential_zero_mode_policy == "zero_mean"
+    assert friction.friction == 0.2
+    assert friction.tangential_zero_mode_policy == "friction"
     with pytest.raises(ValueError, match="requires friction == 0"):
         _model(friction=0.2, policy="zero_mean")
     with pytest.raises(ValueError, match="requires friction > 0"):
         _model(friction=0.0, policy="friction")
-    with pytest.raises(ValueError, match="zero_mean or friction"):
+    with pytest.raises(ValueError, match="must be 'zero_mean' or 'friction'"):
         _model(policy="not_applicable")
 
 

@@ -44,28 +44,6 @@ def test_structured_public_diagnostics_preserve_fields_and_raw_bytes(tmp_path):
         harness._persist_output_array(tmp_path / 'bad.npy', 'bad.npy', value)
 
 
-@pytest.mark.parametrize(
-    'runtime', ("legacy_production", "compiled_v2", 'periodic_spectral', "channel_complete_stress")
-)
-def test_public_execution_rebind_changes_only_device_for_all_six_paths(tmp_path, runtime):
-    from tests import test_phase7_p7711_public_entry_equivalence as legacy
-    from tests import test_phase8_p82_periodic_application as periodic
-    from tests import test_phase8_p83_channel_complete_stress_application as channel
-
-    if runtime in harness.PUBLIC_PATHS[:2]:
-        simulation = legacy._simulation('plane' if runtime in harness.PUBLIC_PATHS[:2] else 'channel',
-                                        tmp_path / runtime, runtime, steps=4)
-    else:
-        module = periodic if runtime == 'periodic_spectral' else channel
-        simulation = module._simulation(tmp_path, output_name=runtime, steps=4)
-    original = simulation.execution.to_metadata()
-    result = harness._public_execution_on_device(simulation.execution, 'cuda')
-    expected = dict(original, options=dict(original['options'], device='cuda'))
-    assert result.to_metadata() == expected
-    assert simulation.execution.to_metadata() == original
-    assert harness._public_execution_on_device(simulation.execution, 'cpu').to_metadata() == original
-
-
 def test_pcg_exact_arrays_and_diagnostics_both_required(tmp_path):
     record = harness._persist_tensor(tmp_path / "left.npy", torch.ones(2))
     data = {"kind": "pcg", "cases": [{"case": {"name": "fixed"}, "path": "production",

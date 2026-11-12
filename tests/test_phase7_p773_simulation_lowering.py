@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError, replace
 import hashlib
 import json
+from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 
 import pytest
 
-from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
-from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.simulation_lowering import LoweringRejectionCode, SimulationLoweringError, lower_simulation_spec
 from pssolver.core.boundary import (
     BoundarySemantic,
     BoundarySide,
@@ -20,19 +16,34 @@ from pssolver.core.boundary import (
 from pssolver.core.geometry import GeometrySpec
 from pssolver.core.integrators import IntegratorSpec
 from pssolver.core.numerics import SpectralStorage
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    create_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
 from pssolver.functional.legacy_declarations.planning_plan import TransformKind
-from pssolver.functional.legacy_declarations.planning_simulation import BasisProvenance, DerivativeMultiplier
+from pssolver.functional.legacy_declarations.planning_simulation import (
+    BasisProvenance,
+    DerivativeMultiplier,
+)
+from pssolver.functional.legacy_declarations.simulation_lowering import (
+    LoweringRejectionCode,
+    SimulationLoweringError,
+    lower_simulation_spec,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-LOWERING_DECLARATIONS = ROOT / "pssolver" / "planning" / "simulation.py"
+LOWERING_DECLARATIONS = ROOT / "pssolver/functional/legacy_declarations/planning_simulation.py"
 
 
-LOWERING_RESOLVER = (
-    ROOT / "pssolver" / "configuration" / "simulation_lowering.py"
-)
+LOWERING_RESOLVER = ROOT / "pssolver/functional/legacy_declarations/simulation_lowering.py"
 
 
 RESULT_PATH = (

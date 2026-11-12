@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from pssolver import available_combinations
 
@@ -63,5 +63,7 @@ def test_complete_stress_channel_is_distinct_registered_combination():
         ("complete_stress_beris_edwards", "rectangular_channel")
     ]
 
-    assert channel.application == "channel_complete_stress_beris_edwards"
-    assert channel.runtime_paths == ("channel_complete_stress",)
+    assert channel.qualified is True
+    assert channel.boundary_policies == (
+        "neumann_q", "no_slip_velocity", "neumann_pressure_compatibility",
+    )

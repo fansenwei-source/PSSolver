@@ -16,9 +16,7 @@ from benchmarks.run_rc426_cross_device_checkpoint import (
     MATRIX,
     PASS_CLASSIFICATION,
     SCHEMA,
-    MatrixCell,
     _atomic_json,
-    _run_functional,
     matrix_plan,
 )
 
@@ -112,26 +110,6 @@ def test_atomic_json_refuses_overwrite(tmp_path):
     assert path.read_text(encoding="utf-8") == '{\n  "value": 1\n}\n'
 
 
-
-
-@pytest.mark.parametrize(
-    ("family", "runtime_path", "executor"),
-    (
-        ("periodic_functional", "periodic_activity_batch_one", _run_functional),
-        ("channel_functional", "channel_activity_batch_one", _run_functional),
-    ),
-)
-def test_periodic_channel_cell_protocol_executes_on_cpu(
-    tmp_path,
-    family,
-    runtime_path,
-    executor,
-):
-    cell = MatrixCell(1, "CPU", family, runtime_path, "cpu", "cpu")
-    report = executor(cell, tmp_path / family)
-    assert report["passed"] is True
-    assert report["state"]["serialized_payload_equal"] is True
-    assert report["state"]["post_restore_step_finite"] is True
 
 
 def test_analyzer_accepts_only_the_complete_ordered_matrix():

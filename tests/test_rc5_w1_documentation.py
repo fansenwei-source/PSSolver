@@ -8,10 +8,9 @@ import json
 import re
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 from pssolver import SimulationRunStatus, capability_catalog
 from pssolver.operators.robin import CellCenteredRobinEigenbasisOperator
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -112,26 +111,17 @@ def test_w1_record_closes_only_the_documentation_batch():
 
 
 def test_live_catalog_keeps_static_q_lifting_declaration_only():
+    catalog = capability_catalog()
     policies = {
-        policy.key: policy for policy in capability_catalog().boundary_policies
+        policy.key: policy for policy in catalog.boundary_policies
     }
-    for key in ("prescribed_q", "strong_homeotropic_q", "strong_planar_q"):
-        assert key in policies
-        assert policies[key].qualified_applications == ()
-
-
-def test_readme_documents_exact_execution_option_ownership():
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    exact_keys = (
-        "`tf32`, `molecular_field_linear_space`, "
-        "`stress_divergence_sum_space`, `pointwise_execution`, "
-        "`disable_q_gradient_reuse`"
+    assert policies["prescribed_q"].executable is False
+    static_q = {"prescribed_q", "strong_homeotropic_q", "strong_planar_q"}
+    assert not any(static_q.intersection(row.boundary_policies) for row in catalog.qualified_combinations)
+    assert any(
+        "prescribed_q" in row.boundary_policies and row.kind == "scope" and row.opens_in == "0.6"
+        for row in catalog.rejected_combinations
     )
-    assert readme.count(exact_keys) == 3
-    assert "`legacy_channel`, `compiled_channel_v2` | `batch_size`, `dtype`" in readme
-    assert "`pssolver.configuration.simulation`" in readme
-    assert "static prescribed-Q lifting" in readme
-    assert "unsupported_lifted_wall_molecular_field" in readme
 
 
 def test_complete_readme_simulation_example_executes_verbatim(tmp_path, monkeypatch):
@@ -144,12 +134,6 @@ def test_complete_readme_simulation_example_executes_verbatim(tmp_path, monkeypa
     assert result.final_step == 2
     assert result.output_directory == output
     assert (output / "COMPLETE").is_file()
-
-
-def test_historical_plane_example_sets_a_compatible_save_start_step():
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    historical = readme.split("## Historical Plane application", 1)[1]
-    assert "save_start_step=0" in historical
 
 
 def test_robin_and_fixed_work_explanations_match_the_live_contract():

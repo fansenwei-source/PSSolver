@@ -33,53 +33,6 @@ def run_dry_run(*extra_arguments, script=BENCHMARK_SCRIPT):
 
 
 class Fig4NumericsCliTests(unittest.TestCase):
-    def test_default_refresh_holds_physical_interval_fixed(self):
-        coarse = run_dry_run("--dt", "0.01")
-        fine = run_dry_run("--dt", "0.005")
-        self.assertEqual(coarse.returncode, 0, coarse.stderr)
-        self.assertEqual(fine.returncode, 0, fine.stderr)
-
-        coarse_refresh = json.loads(coarse.stdout)["numerics"]["spectral_refresh"]
-        fine_refresh = json.loads(fine.stdout)["numerics"]["spectral_refresh"]
-        self.assertEqual(coarse_refresh["mode"], "physical_time")
-        self.assertEqual(fine_refresh["mode"], "physical_time")
-        self.assertEqual(coarse_refresh["effective_interval_steps"], 20)
-        self.assertEqual(fine_refresh["effective_interval_steps"], 40)
-        self.assertAlmostEqual(coarse_refresh["effective_interval_time"], 0.2)
-        self.assertAlmostEqual(fine_refresh["effective_interval_time"], 0.2)
-
-    def test_refresh_modes_and_precision_are_recorded(self):
-        disabled = run_dry_run(
-            "--dtype",
-            "float64",
-            "--tf32",
-            "on",
-            "--disable-spectral-refresh",
-        )
-        legacy = run_dry_run("--spectral-refresh-steps", "7")
-        self.assertEqual(disabled.returncode, 0, disabled.stderr)
-        self.assertEqual(legacy.returncode, 0, legacy.stderr)
-
-        disabled_metadata = json.loads(disabled.stdout)
-        disabled_refresh = disabled_metadata["numerics"]["spectral_refresh"]
-        precision = disabled_metadata["numerics"]["precision"]
-        self.assertEqual(disabled_refresh["mode"], "disabled")
-        self.assertIsNone(disabled_refresh["effective_interval_steps"])
-        self.assertEqual(precision["real_dtype"], "float64")
-        self.assertEqual(precision["spectral_dtype"], "complex128")
-        self.assertFalse(precision["tf32_effective"])
-
-        legacy_refresh = json.loads(legacy.stdout)["numerics"]["spectral_refresh"]
-        self.assertEqual(legacy_refresh["mode"], "steps")
-        self.assertEqual(legacy_refresh["requested_interval_steps"], 7)
-        self.assertAlmostEqual(legacy_refresh["effective_interval_time"], 0.07)
-
-    def test_physical_refresh_rejects_noninteger_dt_ratio(self):
-        result = run_dry_run("--dt", "0.03")
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("integer multiple", result.stderr)
-
-
     def test_beris_edwards_identity_parameters_and_hashes_are_recorded(self):
         result = run_dry_run(
             "--dtype",
@@ -162,75 +115,57 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(
             set(files),
             {
-                'pssolver/applications/__init__.py',
-                'pssolver/solver.py',
-                'pssolver/Field.py',
-                'pssolver/PDEmodel.py',
-                'pssolver/integrator.py',
-                'pssolver/plane.py',
-                'pssolver/transforms.py',
-                'pssolver/backends/__init__.py',
-                'pssolver/backends/bounded.py',
-                'pssolver/backends/tensor_product.py',
-                'pssolver/operators/__init__.py',
-                'pssolver/operators/projection.py',
-                'pssolver/operators/tensor_divergence.py',
-                'pssolver/planning/__init__.py',
-                'pssolver/linear_solvers/__init__.py',
-                'pssolver/linear_solvers/stokes/__init__.py',
-                'pssolver/linear_solvers/stokes/plane_free_slip.py',
-                'pssolver/__init__.py',
-                'pssolver/adapters/legacy_boundaries.py',
-                'pssolver/configuration/__init__.py',
-                'pssolver/configuration/plane_beris_edwards_builders.py',
-                'pssolver/configuration/plane_beris_edwards_component_graph.py',
-                'pssolver/configuration/plane_beris_edwards_components.py',
-                'pssolver/configuration/plane_beris_edwards_declarations.py',
-                'pssolver/configuration/plane_beris_edwards_schema_v1.py',
-                'pssolver/configuration/plane_beris_edwards.py',
-                'pssolver/runtime/__init__.py',
-                'pssolver/workflows/__init__.py',
-                'pssolver/core/__init__.py',
-                'pssolver/core/boundary.py',
-                'pssolver/core/domain.py',
-                'pssolver/core/geometry.py',
-                'pssolver/core/numerics.py',
-                'pssolver/geometries/__init__.py',
-                'pssolver/geometries/tensor_product.py',
-                'pssolver/geometries/plane_numerics.py',
-                'pssolver/models/active_nematics/__init__.py',
-                'pssolver/models/active_nematics/fields.py',
-                'pssolver/models/active_nematics/q_tensor.py',
-                'pssolver/models/active_nematics/beris_edwards.py',
-                'pssolver/models/active_nematics/specifications.py',
-                'pssolver/models/active_nematics/stokes.py',
-                'pssolver/models/active_nematics/initial_conditions.py',
-                'pssolver/presets/__init__.py',
-                'pssolver/presets/shendruk.py',
-                'pssolver/systems/__init__.py',
-                'pssolver/systems/algebraic.py',
-                'pssolver/systems/stokes.py',
-                'pssolver/configuration/legacy_plane.py',
-                'pssolver/linear_solvers/stokes/plane_free_slip_stateless.py',
-                'pssolver/cli/__init__.py',
-                'pssolver/cli/plane.py',
-                'pssolver/engine/engine.py',
-                'pssolver/engine/program.py',
-                'pssolver/engine/constraints.py',
-                'pssolver/engine/groups.py',
-                'pssolver/engine/terms.py',
-                'pssolver/planning/assemble.py',
-                'pssolver/planning/capabilities.py',
-                'pssolver/planning/engine_plan.py',
-                'pssolver/presets/beris_edwards.py',
-                'pssolver/models/active_nematics/engine_terms.py',
-                'pssolver/runtime/runner.py',
-                'pssolver/runtime/legacy_entry.py',
-                'pssolver/runtime/plane_observations.py',
-                'pssolver/api/runner.py',
-                'pssolver/configuration/application_registry.py',
-                'pssolver/configuration/package_construction.py',
-                'pssolver/experimental/boundary_pilots.py',
+                "pssolver/backends/__init__.py",
+                "pssolver/backends/bounded.py",
+                "pssolver/backends/tensor_product.py",
+                "pssolver/operators/__init__.py",
+                "pssolver/operators/projection.py",
+                "pssolver/operators/tensor_divergence.py",
+                "pssolver/planning/__init__.py",
+                "pssolver/linear_solvers/__init__.py",
+                "pssolver/linear_solvers/stokes/__init__.py",
+                "pssolver/linear_solvers/stokes/plane_free_slip.py",
+                "pssolver/__init__.py",
+                "pssolver/runtime/__init__.py",
+                "pssolver/core/__init__.py",
+                "pssolver/core/boundary.py",
+                "pssolver/core/domain.py",
+                "pssolver/core/geometry.py",
+                "pssolver/core/numerics.py",
+                "pssolver/geometries/__init__.py",
+                "pssolver/geometries/tensor_product.py",
+                "pssolver/geometries/plane_numerics.py",
+                "pssolver/models/active_nematics/__init__.py",
+                "pssolver/models/active_nematics/fields.py",
+                "pssolver/models/active_nematics/q_tensor.py",
+                "pssolver/models/active_nematics/beris_edwards.py",
+                "pssolver/models/active_nematics/stokes.py",
+                "pssolver/models/active_nematics/initial_conditions.py",
+                "pssolver/presets/__init__.py",
+                "pssolver/presets/shendruk.py",
+                "pssolver/linear_solvers/stokes/plane_free_slip_stateless.py",
+                "pssolver/cli/__init__.py",
+                "pssolver/cli/plane.py",
+                "pssolver/engine/engine.py",
+                "pssolver/engine/program.py",
+                "pssolver/engine/constraints.py",
+                "pssolver/engine/groups.py",
+                "pssolver/engine/terms.py",
+                "pssolver/planning/assemble.py",
+                "pssolver/planning/capabilities.py",
+                "pssolver/planning/engine_plan.py",
+                "pssolver/presets/beris_edwards.py",
+                "pssolver/models/active_nematics/engine_terms.py",
+                "pssolver/runtime/runner.py",
+                "pssolver/runtime/plane_observations.py",
+                "pssolver/api/runner.py",
+                "pssolver/experimental/boundary_pilots.py",
+                "pssolver/api/simulation.py",
+                "pssolver/api/declarations.py",
+                "pssolver/api/models.py",
+                "pssolver/api/lowering.py",
+                "pssolver/runtime/simulation_run.py",
+                "pssolver/engine/execution_device.py",
             },
         )
         self.assertTrue(

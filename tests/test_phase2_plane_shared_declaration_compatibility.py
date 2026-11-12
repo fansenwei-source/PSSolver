@@ -2,28 +2,29 @@
 
 from __future__ import annotations
 
-import base64
-from dataclasses import MISSING, fields, replace
-from enum import Enum
-import hashlib
 import inspect
 import json
-from pathlib import Path
 import pickle
+from dataclasses import MISSING, fields, replace
+from pathlib import Path
 from typing import get_type_hints
 
 import pytest
 
-import pssolver
-import pssolver.configuration as configuration
-from pssolver.functional.legacy_declarations.plane_beris_edwards import PLANE_FREE_SLIP_BOUNDARIES, PlaneBerisEdwardsRunSpec, PlaneFreeSlipBoundaryConditions, PlaneRuntimePath, SpectralRefreshSpec, create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations import plane_beris_edwards as facade
 from pssolver.core import (
     BoundarySet,
     DomainSpec,
     HomogeneousDirichletBC,
     NumericsConfig,
     PeriodicBC,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    PLANE_FREE_SLIP_BOUNDARIES,
+    PlaneBerisEdwardsRunSpec,
+    PlaneFreeSlipBoundaryConditions,
+    PlaneRuntimePath,
+    SpectralRefreshSpec,
+    create_plane_beris_edwards_run_spec,
 )
 from pssolver.geometries import PlaneSlab
 from pssolver.presets import ShendrukPlanePreset
@@ -96,52 +97,6 @@ def _pickle_objects() -> dict[str, object]:
     }
 
 
-def test_shared_declaration_surfaces_match_the_pre_extraction_oracle():
-    runtime = SHARED_ORACLE["runtime_path"]
-    assert PlaneRuntimePath.__module__ == runtime["module"]
-    assert PlaneRuntimePath.__qualname__ == runtime["qualname"]
-    assert issubclass(PlaneRuntimePath, str)
-    assert issubclass(PlaneRuntimePath, Enum)
-    members = [[item.name, item.value] for item in PlaneRuntimePath]
-    assert members[: len(runtime["members"])] == runtime["members"]
-    assert members[len(runtime["members"]):] == [
-        ["COMPILED_V2", "compiled_v2"]
-    ]
-
-    for value_type, key in (
-        (PlaneFreeSlipBoundaryConditions, "boundaries"),
-        (SpectralRefreshSpec, "spectral_refresh"),
-    ):
-        expected = SHARED_ORACLE[key]
-        assert value_type.__module__ == expected["module"]
-        assert value_type.__qualname__ == expected["qualname"]
-        assert str(inspect.signature(value_type)) == expected["signature"]
-        assert _field_surface(value_type) == expected["fields"]
-        names = [item.name for item in fields(value_type)]
-        assert list(value_type.__slots__) == names
-        assert list(value_type.__match_args__) == names
-        parameters = value_type.__dataclass_params__
-        assert parameters.frozen is True
-        assert parameters.eq is True
-        assert parameters.order is False
-        assert parameters.unsafe_hash is False
-
-
-def test_legacy_facade_and_stable_package_share_exact_objects():
-    for name in (
-        "PlaneRuntimePath",
-        "PlaneFreeSlipBoundaryConditions",
-        "SpectralRefreshSpec",
-        "PLANE_FREE_SLIP_BOUNDARIES",
-    ):
-        assert getattr(facade, name) is getattr(configuration, name)
-        assert not hasattr(pssolver, name)
-
-    spec = _spec()
-    assert spec.boundaries is PLANE_FREE_SLIP_BOUNDARIES
-    assert spec.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION
-
-
 def test_legacy_nominal_module_resolves_postponed_boundary_annotations():
     hints = get_type_hints(PlaneFreeSlipBoundaryConditions)
     assert hints == {
@@ -151,31 +106,6 @@ def test_legacy_nominal_module_resolves_postponed_boundary_annotations():
         "pressure_modal": BoundarySet,
         "distortion_odd_z": BoundarySet,
     }
-
-
-def test_protocol4_pickle_bytes_and_legacy_globals_are_frozen():
-    objects = _pickle_objects()
-    oracle = SHARED_ORACLE["protocol4_pickles"]
-    assert set(objects) == set(oracle)
-
-    identity_names = {
-        "PlaneRuntimePath_class",
-        "PlaneFreeSlipBoundaryConditions_class",
-        "SpectralRefreshSpec_class",
-        "runtime_legacy_member",
-        "runtime_canary_member",
-    }
-    for name, value in objects.items():
-        expected = oracle[name]
-        payload = base64.b64decode(expected["base64"])
-        assert hashlib.sha256(payload).hexdigest() == expected["sha256"]
-        assert pickle.dumps(value, protocol=4) == payload
-        restored = pickle.loads(payload)
-        if name in identity_names:
-            assert restored is value
-        else:
-            assert restored == value
-            assert type(restored) is type(value)
 
 
 @pytest.mark.parametrize("protocol", (0, 2, 4, pickle.HIGHEST_PROTOCOL))

@@ -18,7 +18,18 @@ def _sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
 
 
-def _details(root, changed_modules):
+def _literal_path(node):
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+        left = _literal_path(node.left)
+        right = _literal_path(node.right)
+        if right is not None:
+            return f"{left}/{right}" if left else right
+    return None
+
+
+def _details(root, changed_modules, changed_paths, frozen_callers):
     module_paths = sources(root)
     impacts = {}
     for module, path in module_paths.items():
@@ -33,6 +44,23 @@ def _details(root, changed_modules):
             target = member if member in module_paths else base
             if target.startswith(("tests.", "qualification.", "benchmarks.")):
                 callers.add(target)
+        nodes = list(ast.walk(tree))
+        launches_process = any(
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in {"run", "check_call", "check_output", "Popen", "call"}
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "subprocess"
+            for node in nodes
+        )
+        for node in nodes:
+            literal = _literal_path(node)
+            if literal is None:
+                continue
+            if literal in changed_paths or literal in changed_modules:
+                related.add(f"literal {literal}:{node.lineno}")
+            if launches_process and literal in frozen_callers:
+                related.add(f"subprocess frozen caller {literal}:{node.lineno}")
         impacts[module] = (related, callers)
     result = {}
     for module, path in module_paths.items():
@@ -59,12 +87,25 @@ def _details(root, changed_modules):
 
 def collect(basis, tree):
     table = json.loads((tree / "qualification/s28b_tables.json").read_bytes())
-    changed = {module_name(path) for path in table["changed_paths"] if path.startswith("pssolver/")}
-    before, after = (_details(root, changed) for root in (basis, tree))
+    changed_paths = set(table["changed_paths"])
+    changed = {module_name(path) for path in changed_paths if path.startswith("pssolver/")}
+    changed_paths.update(module.replace(".", "/") + ".py" for module in table["retired_modules"])
+    frozen_callers = {
+        row["path"]
+        for row in json.loads((tree / "qualification/s28b_frozen_callers.json").read_bytes())[
+            "modules"
+        ].values()
+    }
+    before, after = (
+        _details(root, changed, changed_paths, frozen_callers) for root in (basis, tree)
+    )
+    dispositions = json.loads((tree / REGISTRY).read_bytes()).get("prior_trial_files", {})
     return {
         path: {"before": before.get(path), "after": after.get(path)}
         for path in sorted(before.keys() | after.keys())
-        if before.get(path) != after.get(path) or before[path]["changed_module_references"]
+        if before.get(path) != after.get(path)
+        or before[path]["changed_module_references"]
+        or path in dispositions
     }
 
 
@@ -78,6 +119,8 @@ def verify(rows, tree, record):
         if path not in recorded or path not in rows or rows[path] != recorded[path]["evidence"]
     ]
     invalid = []
+    if set(record.get("prior_trial_files", {})) - recorded.keys():
+        invalid.extend(sorted(set(record["prior_trial_files"]) - recorded.keys()))
     for path in rows.keys() & recorded.keys():
         row = recorded[path]
         rule = row["rule"]

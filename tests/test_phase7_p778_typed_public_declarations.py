@@ -3,14 +3,20 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError
 import json
+from dataclasses import FrozenInstanceError
 from pathlib import Path
 
 import pytest
 
 import pssolver
+from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
+from pssolver.core.boundary import BoundaryKind, BoundarySemantic
+from pssolver.core.domain import DomainSpec
+from pssolver.core.integrators import IntegratorScheme
+from pssolver.core.numerics import NumericsConfig, Precision
 from pssolver.functional.legacy_declarations import (
+    CompleteStressBerisEdwards,
     GeneratedInitialCondition,
     Output,
     Simulation,
@@ -18,17 +24,17 @@ from pssolver.functional.legacy_declarations import (
     SpectralNumerics,
     TimeStepping,
     TorchSpectralExecution,
+    assign_boundaries,
 )
-from pssolver.functional.legacy_declarations import assign_boundaries
-from pssolver.boundaries import free_slip_velocity, neumann_pressure_compatibility, neumann_q
-from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, InitialConditionSource, InitialConditionSpec, TimeIntegrationSpec, WorkflowSpec
-from pssolver.core.boundary import BoundaryKind, BoundarySemantic
-from pssolver.core.domain import DomainSpec
-from pssolver.core.integrators import IntegratorScheme
-from pssolver.core.numerics import NumericsConfig, Precision
-from pssolver.geometries import PlaneSlab, RectangularChannel
-from pssolver.functional.legacy_declarations import CompleteStressBerisEdwards
+from pssolver.functional.legacy_declarations.simulation import (
+    ExecutionSpec,
+    InitialConditionSource,
+    InitialConditionSpec,
+    TimeIntegrationSpec,
+    WorkflowSpec,
+)
 from pssolver.functional.legacy_declarations.systems_equations import EquationSystemSpec
+from pssolver.geometries import PlaneSlab, RectangularChannel
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -293,6 +299,14 @@ def test_snapshot_and_sbdf2_conveniences_preserve_identity_ownership():
     assert sbdf2.integrator.formal_order == 2
 
 
+CURRENT_DECLARATION_SOURCES = (
+    "pssolver/api/declarations.py",
+    "pssolver/boundaries/homogeneous.py",
+    "pssolver/functional/legacy_declarations/active_nematics_public.py",
+    "pssolver/geometries/public.py",
+)
+
+
 def test_new_public_declaration_modules_are_tensor_and_runtime_free():
     forbidden = {
         "numpy",
@@ -307,7 +321,7 @@ def test_new_public_declaration_modules_are_tensor_and_runtime_free():
         "pssolver.transforms",
         "pssolver.workflows",
     }
-    for relative in REVIEWED_SOURCES:
+    for relative in CURRENT_DECLARATION_SOURCES:
         path = ROOT / relative
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         imports = set()
@@ -333,7 +347,7 @@ def test_public_exports_retain_p778_declarations_after_runner_connection():
         "Simulation",
         "SnapshotInitialCondition",
         "SpectralNumerics",
-        "TimeStepping",
+        "SemiImplicitEuler",
         "TorchSpectralExecution",
     }
     assert expected <= set(pssolver.__all__)

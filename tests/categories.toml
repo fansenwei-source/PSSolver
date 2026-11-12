@@ -41,7 +41,6 @@ functional = [
   "tests/test_phase2_run_spec_components.py",
   "tests/test_phase2_run_spec_view_delegation.py",
   "tests/test_phase2_schema_v1_serializer_compatibility.py",
-  "tests/test_phase2_system_declaration_import_order.py",
   "tests/test_phase2_system_declaration_restart_provenance.py",
   "tests/test_phase7_p779_two_combination_compiler.py",
   "tests/test_phase8_p861_local_cumulative_audit.py",
@@ -120,7 +119,6 @@ numerical = [
   "tests/test_phase9_p94_gradient_consistency.py",
   "tests/test_phase9_p971_channel_functional_declarations.py",
   "tests/test_phase9_p974_channel_functional_runtime.py",
-  "tests/test_plane_beris_edwards_navier_stokes.py",
   "tests/test_prepare_phase9_p95_inputs.py",
   "tests/test_projected_transform_truncation.py",
   "tests/test_qualify_v3_2d_mother.py",
@@ -147,7 +145,6 @@ numerical = [
   "tests/test_v0_4_s18_r2_checkpoint_artifacts.py",
   "tests/test_v0_4_s19_failure_classification.py",
   "tests/test_v0_4_s19_self_compare.py",
-  "tests/test_v3_initialization_protocol.py",
 ]
 historical = [
   "tests/test_v0_5_s28b_historical_tests.py",

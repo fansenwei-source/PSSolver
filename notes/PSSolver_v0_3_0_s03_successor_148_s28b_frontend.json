@@ -1,8 +1,10 @@
 {
+  "authority_archive_sha256": "e28d4250e65c45a51121249d9a1e4a21d6ba744524d94993314f18fc6b1e2ec9",
   "classification": "S28B_IMPLEMENTATION_PENDING_QUALIFICATION",
   "correction_source": [
     "R-0120",
-    "R-0121"
+    "R-0121",
+    "R-0122"
   ],
   "decisions": [
     "D-0058",
@@ -11,581 +13,901 @@
     "D-0068",
     "D-0069"
   ],
-  "design": "S-28b_public_frontend_r2.md r2.1",
+  "design": "S-28b_public_frontend_r2.md r2.2",
   "git_identity": {
-    "implementation_parent": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
+    "implementation_parent": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802",
+    "reviewed_trial": "5f9b919105ab71e35d801437ade5ad0fd21c8d1d"
   },
   "historical_records_rewritten": false,
   "historical_successor_sources": {
     "ARCHITECTURE.md": {
       "current_sha256": "50bb7a368d4da4370de0ea11ac9807eb6d4c104fc25c17be8dc7a6c155a05ced",
       "historical_sha256": "35a14f952baf4743d3cc6bfa5250a34aefb5aae16bf5cce5a7bbac32f882a3e2",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "CHANGELOG.md": {
       "current_sha256": "4063fb3891791c16e71fb6cc65cc753969eb0608773600be07eaad9a2f138be6",
       "historical_sha256": "b4c0313130cf2aa5f7e11111378eb8f04af064090db845d245ccdf2fd0e0d35a",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "MANIFEST.in": {
       "current_sha256": "92700e47332313bdd2646ef12197404dc906885382f646015a0fbf399811378e",
       "historical_sha256": "30701437d9ca3bcd9d33e40ae5c4d028dd5c14d37917f4cb6ab398f38be6c0be",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "README.md": {
-      "current_sha256": "bd3e1589c086049b432f792fb3247d0fb73762994230e6c1570ec64d2b40c580",
+      "accepted_predecessor_sha256": [
+        "49597ab3ea9b02b9f45ce52edf7eebbd28dc17a26ea2fd1543879576b9258dc9",
+        "bd3e1589c086049b432f792fb3247d0fb73762994230e6c1570ec64d2b40c580"
+      ],
+      "current_sha256": "8642de946bf144f4fd8efa4b53ffd794496ce65e84001bed6e2ca23152d9cbe7",
       "historical_sha256": "49597ab3ea9b02b9f45ce52edf7eebbd28dc17a26ea2fd1543879576b9258dc9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "docs/adding_a_model.md": {
       "current_sha256": "17b53c9d2ec193399df524bbcfadf0762ef12a4e9d0ff906c69760e7569bce58",
       "historical_sha256": "cff0e14c2276e6edaf8042adfc5449b47e94178ae03f5055612a4f36c226cc69",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/__init__.py": {
       "current_sha256": "79b752364325c9cca87378105345400be2c8624fbc2db88f8ce1367fa7100796",
       "historical_sha256": "390492fa0fb20e9b4e01366ec784219c4469e266921635df3746cd03297c1f7d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/api/__init__.py": {
       "current_sha256": "6950d2f664b711e0bcd2c45e4482e145dfccb49c7d54e35b594cb26c0047d865",
       "historical_sha256": "1d0132aabf4c7507986fa9b23c01cb77ce8ab1758270d73bd7149b98f1af745d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/api/capabilities.py": {
       "current_sha256": "8fe488c00f5bedac7c187d9945e9bc955c713551765d5dce2f88d84907233ca5",
       "historical_sha256": "b0314f04318dc02ef41299841494a6a99be3d4ece70cb0a47408167ea3eeae07",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/api/declarations.py": {
       "current_sha256": "d1a4897d2ce1833b9ce1612d915b25993adec932177fb4de001bb6e489d6c680",
       "historical_sha256": "21e456e8e75e4a506e545f842fb5703190b8ca0541e2af3277d55b7d1340efe2",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/api/results.py": {
       "current_sha256": "cd0c1474fe11ee941276331f1550b265eb6c9a8c205d37197e98726b737f5f08",
       "historical_sha256": "b2d5584aa4f6eab652a1e6dee300047caed6bcc70b80ffe4a85ae82ae13e6b47",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/api/runner.py": {
       "current_sha256": "f3d8c0cc9e69557305602dd0d8ddf9631cbeb06ce19567c5c8a736e421843b68",
       "historical_sha256": "e85a9a12e857d6f68abcd005704a2a9c76687005cc85425ef467619c5220f5ec",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/api/simulation.py": {
       "current_sha256": "5e3549db3e7fb61c151b686b1e1a0538192d952c0822b6220180a2345848dcda",
       "historical_sha256": "3842fca7c61fb7bda2fa760101fa1b5d20a0e9fa768f8cc1b39313dd7d81f3bd",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/boundaries/__init__.py": {
       "current_sha256": "8a85b0254431fd11bc14f14abea889f7c9c97f06f18985114b8b5e080f0c19bf",
       "historical_sha256": "2004ceadb7c99059204ab04730796dfe1b5d091c0746f14123cc37b59f094a2f",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/boundaries/homogeneous.py": {
       "current_sha256": "a98d6b87ceff3133a7895a849afeed59b0579bd4d8b4227ed27c980236fd96df",
       "historical_sha256": "6ccefc2763b60403445f4a659a499abe16f17c92d0994ec3ba953b7e0ccd11a4",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/cli/plane.py": {
-      "current_sha256": "2f1df7aa83da0cee8b541689928728fd2c3398c6987fbef4456b284abb7cb2e4",
+      "accepted_predecessor_sha256": [
+        "2f1df7aa83da0cee8b541689928728fd2c3398c6987fbef4456b284abb7cb2e4",
+        "f3e37b0d8f7c478551b348524979722d4ea67410eaeee63e5099ee746ff793f6"
+      ],
+      "current_sha256": "18fd8c51a75c704b38c993e058edad1d3e6945ce2e80f4425ace2989e71d5b14",
       "historical_sha256": "f3e37b0d8f7c478551b348524979722d4ea67410eaeee63e5099ee746ff793f6",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/core/model.py": {
       "current_sha256": "f86d578052006e9d660be8a3a0be8a510cf7b954d5ae93ac11e0c2ee634b4bbb",
       "historical_sha256": "3937de35daec69183832ec5a0ef654dfd91ff71d5f30d005be419c5165fd867e",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/experimental/boundary_pilots.py": {
       "current_sha256": "4f85e2564e041ad1a82c7a48c54e45abe17ca94f05e47e22ef5a5aaa9942aa72",
       "historical_sha256": "73411a0f0236e55af706123d36bab04d8a7f2cec2a55e474568660f8ce0a099f",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/functional/channel_activity.py": {
       "current_sha256": "d62ab1e9777c9e06f65ee834e7feb5d66706647fbe32738c6d615918b400f363",
       "historical_sha256": "54c8a1a6e78de1a76c473f703a2740607297ef440957cbd403d7a20527ec38a5",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/functional/channel_activity_runtime.py": {
       "current_sha256": "dbfe3ed4519356c42d11ee28648cd3c14cd85efb4d8ebfd88b641ad8a2291a15",
       "historical_sha256": "97a3f7a8e2f7867b1262ab5b8c45f1cd68033a9fb3328b94fd72a124a47166b9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/functional/channel_checkpoint.py": {
       "current_sha256": "aafc8f2dae756753534faca4256a4a2353472c71dbc2bcd45eb687475758b402",
       "historical_sha256": "707a2f73656706d77fa6f0b7bc3e76c180cd63927b1e3f1b9f17adc103cc58d1",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/functional/contracts.py": {
       "current_sha256": "9ce7e1c469dd83ebd4ce0e4a0b99678bc9f83d6beebdc14743508a5f007512d6",
       "historical_sha256": "0b11a4a84f8a236918e794e6899fafe8b90ec645f9ae36fcd57ceddf19b8a974",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/functional/periodic_activity.py": {
       "current_sha256": "57fc8f80146fdd5badd5902a460000f9a586a86f7bc44a7d8a6891aaf09d504c",
       "historical_sha256": "34dd000c25a0db8c72252a00f33bda9c30e2424c851c63a90343f816e66486dd",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/functional/periodic_checkpoint.py": {
       "current_sha256": "94b611c4da07c0f6d637a4ea3505facacf937d5a6f9496cc97f357511e22b55c",
       "historical_sha256": "204fc3dc681534935feb031a30ee0c5756731358b6caa4cee0a2ea7f144dd748",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/models/active_nematics/__init__.py": {
       "current_sha256": "e6a5fa796fd6a749f05a6b04891a9cb6630c48c8ea873c24ca92fa50cb631429",
       "historical_sha256": "2dbf45bf61825b483280b50313f3ee195cc5ade3ec7806b26d4505f2c052ff17",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/models/active_nematics/fields.py": {
       "current_sha256": "46e2b837e343bc4af69c8b937d62b29bc3f75b527e475ff90d7cbd409ba6ac2e",
       "historical_sha256": "e0052ff4d5202f0bf4473fa7dbfbeacf832e634ccde2203e72c3b4a5ffc4f7ea",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/planning/__init__.py": {
       "current_sha256": "8b6ca6bf9446c0cf8704d8d064af11b0778a0030ca07a77f0f6d4a9b02003571",
       "historical_sha256": "763d531a79d64363a97f182c922cfa7d4966f1b276a242194d5f4bd8d23434dc",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/presets/shendruk.py": {
       "current_sha256": "420d17ec65d7c8a8ef4e6fb486bbddf90b021fa825a7f821476cbeef8ca27466",
       "historical_sha256": "47fc69566caf1bc3870d8ab4ccd6f5b3d81d22a371d6e3f81ac220b5e9776151",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/runtime/__init__.py": {
       "current_sha256": "021388cacec8e4ce5f7e09e884c1c5f9a34ae1fa63f261a1217db761cd25c5b7",
       "historical_sha256": "bd60651528f1706d159c6f505491a8fa3c4124c48b348833f08fcb633568c43d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pssolver/runtime/runner.py": {
       "current_sha256": "2fd16fc4803729562adbbf8b6ac94b357f5b21bd747591812f9d99bbde7db17c",
       "historical_sha256": "c9a3ce1c15855864a01afbeff86b96f705b867774d6b688d46315300194f5da6",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "pyproject.toml": {
       "current_sha256": "04aa06b2183f1c991a8bfe4ff53c665aa2fafd288a3f6a84fc4b3a504a999227",
       "historical_sha256": "9bc20a63734e9cdf085164304fd43fc7040b32bb8d9e1eb98f95051fe32d0eca",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "qualification/identity/sampling.py": {
       "current_sha256": "8e8203086533c1bfecd5ef7f1633a63d7d9456b8d89d524013d892c023d27f6a",
       "historical_sha256": "d56ba8498052efd127173bd74d69f6c6ec435d813e87fc3d3b4cb4bc54e3778d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "qualification/lint_baseline.json": {
       "current_sha256": "4be4d0ea0b8835ea1f2c0f9e84fcee0ef5a7d2e6966ecb7e7007f894a23c19ee",
       "historical_sha256": "7cde4882d66d845b227dc9e1fb3ed9df596f004073bec0603d01e6d3157f345b",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "setup.py": {
       "current_sha256": "dec2dd18ff243c37876c3044e9bd67d0ab5bfd4983a27d6ab9d1f36d23ca0e75",
       "historical_sha256": "5e0e2cbec17397dee581d4a46bed3956b56bc553cca570c84313f111e7165075",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/categories.toml": {
-      "current_sha256": "345fbd68911e45325356f0cc57c8d5db80a7ad8d75c8a4e85a856980c1a628dc",
+      "accepted_predecessor_sha256": [
+        "345fbd68911e45325356f0cc57c8d5db80a7ad8d75c8a4e85a856980c1a628dc",
+        "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830"
+      ],
+      "current_sha256": "76e11c59289a4dc7ec449bf5dd2aa85d78e69d8e9fa0484ba725123df0338e87",
       "historical_sha256": "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_architecture_import_boundaries.py": {
-      "current_sha256": "9176c609db732487135108dd218c7d8f71fafb5489eeca9d592caf306c0c267f",
+      "accepted_predecessor_sha256": [
+        "304a6cc89de5d2fd132acff7a2df79c7e519692a4dc8e13309974ed5420d1c05",
+        "9176c609db732487135108dd218c7d8f71fafb5489eeca9d592caf306c0c267f"
+      ],
+      "current_sha256": "ff796aae6af9aaca1adfb00517e05f682129636f9c26a17bc6d456fae994b65a",
       "historical_sha256": "304a6cc89de5d2fd132acff7a2df79c7e519692a4dc8e13309974ed5420d1c05",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_l.py": {
+      "current_sha256": "2bdc94815090d587485cf563999e3d72ff8ebf2e3017399a129f28e6956b4e62",
+      "historical_sha256": "c020ef1a53b3c52a99f24d73aba47135cfa016464734d934626c6fdf04422565",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_n1.py": {
+      "current_sha256": "2e875ce7925ba6214c489e630ac00b7381030e33c1bc3a329737022cdaf5b792",
+      "historical_sha256": "f906c6f2066f6787b82105b185d393ef613cd11be6360278657505cd274e51ad",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_n2.py": {
+      "current_sha256": "4ccb1cb32e987871c6fd0d9c397e1b0311e17ae36db110ab8d294835d8ac220d",
+      "historical_sha256": "6a2dc53151b108b49f45ebdb862adcec60bc82110e248f0eef3ba36723e79fb4",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_n3.py": {
+      "current_sha256": "2775059351571829314c9d6c9d7267c18a0465e1ed6669e81772b9cc79c331cb",
+      "historical_sha256": "297396cb4b2036525348cc2b9575c89ed1aa6c53e4b80f1bd0dae03cd0d91f10",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_o43.py": {
+      "current_sha256": "d7f22d1694ada13c6225410ba909b7af58f956491166a7440064cb0d5cb389d3",
+      "historical_sha256": "7e74c6f3cd6ac577fe50cd5773c07325446c2c8c0e055f877b2b371cd6402b0c",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_o432.py": {
+      "current_sha256": "04ba6c85f79b9dd7c9df73659f14d6e14d03945dec816f0f8b20ba066f73a052",
+      "historical_sha256": "4caf6ecd9a98c577786bda5b28abd9fadf44a780cf0b06f67cf347b6084cd906",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_architecture_stage_o434.py": {
+      "current_sha256": "396fa2df4575910a9d8d7c5c073715f5755f478493f58181958020cbd3d34bb9",
+      "historical_sha256": "10b796e28887b2ab8566cf3996ba16d514af4d86e1b5f0f4045da5d3750d3cb2",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_bounded_axis_execution_plan.py": {
       "current_sha256": "f637b60b8e48aee222b5158127969e8698053e1f428b62d70cdd75a235059899",
       "historical_sha256": "7fb98d8b93f275dcd0f16a7cedc877343d42a01d56d8d52aa6ff7a189e6953f7",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_channel_dal.py": {
       "current_sha256": "16e251446d05eccf52ad54d4c8bd90a99e2e90b68384ebfa6db281f4e6306976",
       "historical_sha256": "36c6ac0f782c6d33937dc909d6519af40f83e2e9703416fc3885f9ccb56dc368",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_core_architecture_contracts.py": {
       "current_sha256": "0a26ad873301663608e2af19b65a13e5efc8f013d7203a06a3ead8d802495507",
       "historical_sha256": "80d2515fdaef6d3c09e7e3808a61b91d5cc64426af6e463da0625505c9e2216c",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_fig4_numerics_cli.py": {
+      "current_sha256": "2bbf4ea6ce01b736fc35765490c724b63f0d4ce90a1b5cfb1cbebc5fffeaa593",
+      "historical_sha256": "7ddd6aff2d0fed6ae91f433cfb857fa8733184abcfa9de19db31e1e08ac3f866",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_free_slip_stokes_manufactured.py": {
       "current_sha256": "a9bc0c1b906afa50b489623a1ab03344b9578215fb266fe85fe9df74cd0fd377",
       "historical_sha256": "19f2559ad4f31d3691f6960149e0a91d8bf261156e02d74fdf8f74ce14ab5eb9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_hermitian_half_spectrum.py": {
       "current_sha256": "760326e17a4bf049d3fc9b1770db08a76ceba0443e8c78718db57b0edf0744a7",
       "historical_sha256": "fd5bf027b1e39258d2fdfff07ffe9d24755158c5385507046a27577e7f7ee04e",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase2_plane_shared_declaration_compatibility.py": {
-      "current_sha256": "f96c11697147426f889d779e2e2fc589d9bbc26b100029c39826897532ba1828",
+      "accepted_predecessor_sha256": [
+        "217d2745b145659018c325d0941cbb7913643fce88fc9d9721055348dfc33275",
+        "f96c11697147426f889d779e2e2fc589d9bbc26b100029c39826897532ba1828"
+      ],
+      "current_sha256": "23a848f013031581950ead1914bc9a6218a1018001a47a326cef8949309c1eed",
       "historical_sha256": "217d2745b145659018c325d0941cbb7913643fce88fc9d9721055348dfc33275",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase2_provenance_closure.py": {
       "current_sha256": "999b8845ce5cd72f151db09031ef4cfb5748d398f95959abd1a9831e4677eb53",
       "historical_sha256": "db06e8280ef502b283f9914f204714d4c12a1015f958374ce32c4eb3bd7a99bf",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase2_run_spec_components.py": {
-      "current_sha256": "f5f8711ba22eeee17ef840ed04b58a4908c1cb784c6f0330a903e2da63addbb2",
+      "accepted_predecessor_sha256": [
+        "8e20149f764907e0d535db3a2062ba9a6c09c1c529f8dd18496ed52d5ec55147",
+        "f5f8711ba22eeee17ef840ed04b58a4908c1cb784c6f0330a903e2da63addbb2"
+      ],
+      "current_sha256": "fa4bb12bc8ffaf178db39a2989633d2cbf74bc7612a9c03e811fe24bab0b73fa",
       "historical_sha256": "8e20149f764907e0d535db3a2062ba9a6c09c1c529f8dd18496ed52d5ec55147",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase2_run_spec_view_delegation.py": {
-      "current_sha256": "ffa88511da43bbb0960e748fb5179384ed795124d9707c4451ecb2d18da724a3",
+      "accepted_predecessor_sha256": [
+        "1f8b71abd9ff55d9981a4933abb9636e32ad8f2059ff18234eb9c7ca0023058d",
+        "ffa88511da43bbb0960e748fb5179384ed795124d9707c4451ecb2d18da724a3"
+      ],
+      "current_sha256": "8ae6939414342bebc5cc1cd0299b23c4fa7f3998e359c86d50f5e0b678d78597",
       "historical_sha256": "1f8b71abd9ff55d9981a4933abb9636e32ad8f2059ff18234eb9c7ca0023058d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase2_schema_v1_serializer_compatibility.py": {
-      "current_sha256": "a27cbcf0dfdd73aa0d4bb8d06d3ea852e7be489eb532a68113b307d89488fcc0",
+      "accepted_predecessor_sha256": [
+        "9aff2a5ebb3608161610aa9d65b21403a3a47a043175d8c76943d7ce4503b3a9",
+        "a27cbcf0dfdd73aa0d4bb8d06d3ea852e7be489eb532a68113b307d89488fcc0"
+      ],
+      "current_sha256": "73394ef2a6ce9229f4cd9f2363e98c057aa516871cee8d4e9bc43a75fcf56cbd",
       "historical_sha256": "9aff2a5ebb3608161610aa9d65b21403a3a47a043175d8c76943d7ce4503b3a9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_phase3_runtime_workspace.py": {
+      "current_sha256": "50251928f5640ba977b386a2877f5f63f13d2538a5c1c2f45819b0968e7aee13",
+      "historical_sha256": "632d5596685309a5f1451370d6dc17b4f63a30768dd4737b66d20cbf40a924b4",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_phase7_channel_run_spec.py": {
+      "current_sha256": "b79afe1b444a32e9b948a36509ed5ec2a9ae529dd18c4789f2e65fef577bdbab",
+      "historical_sha256": "cd80be9f0e9655db4bed5cd089e581ba37f825e4e6a2ba5424172e1f6e1d7139",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p770_model_geometry_coupling_inventory.py": {
       "current_sha256": "f664e2ecd26f70e3966adf0fecc0bf541bbcb21817654b34c582c4f189b86d83",
       "historical_sha256": "b70f952c87bce330428a4b7fc68e4cbff513868e8d410a6ad037d97dd5b448df",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p7710_public_runner_result.py": {
-      "current_sha256": "34410975937a8f96657cafeea9b9832badafb1662d183079c51f438bba592888",
+      "accepted_predecessor_sha256": [
+        "34410975937a8f96657cafeea9b9832badafb1662d183079c51f438bba592888",
+        "859f5849026fe675aa853181b17544c913de67eb956bb3c3e3a8e5a531f76c0e"
+      ],
+      "current_sha256": "c4ff38dc6b4bbc74d031d5fdcf04a3ccb471e3cd4d82c0cc7c4aa5374f52deb6",
       "historical_sha256": "859f5849026fe675aa853181b17544c913de67eb956bb3c3e3a8e5a531f76c0e",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p771_equation_system_declarations.py": {
-      "current_sha256": "9791b80c2649c806cf576129de38a2818338e649c72382ee511ca537ba927f61",
+      "accepted_predecessor_sha256": [
+        "9791b80c2649c806cf576129de38a2818338e649c72382ee511ca537ba927f61",
+        "995d8d578e872f9df550b010d5770e182149048c4f79975cd79c781f7b997579"
+      ],
+      "current_sha256": "7173da28463b7f3c8709f9230896f38cd6ec29904bab6ece914981a28a9ef9cb",
       "historical_sha256": "995d8d578e872f9df550b010d5770e182149048c4f79975cd79c781f7b997579",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p772_simulation_composition.py": {
-      "current_sha256": "15d20eafb183894d7300e95527456c8a1fd19e9697eba18ed0a5120ed73c5312",
+      "accepted_predecessor_sha256": [
+        "15d20eafb183894d7300e95527456c8a1fd19e9697eba18ed0a5120ed73c5312",
+        "ae4e0c749ff64f49a8d1444b144b8b23adc82e4ff2549eb1ed0a957267c6fde9"
+      ],
+      "current_sha256": "edff0de6f98ace9c1f3e78b3d0075a3c300e89107c2094932e271cf91affd946",
       "historical_sha256": "ae4e0c749ff64f49a8d1444b144b8b23adc82e4ff2549eb1ed0a957267c6fde9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p773_simulation_lowering.py": {
-      "current_sha256": "5bbc3d3eedd33ef65bdff90f825a325cf657c2785729c89d15435e6ccadde577",
+      "accepted_predecessor_sha256": [
+        "5bbc3d3eedd33ef65bdff90f825a325cf657c2785729c89d15435e6ccadde577",
+        "9d9187b31e61b4ddf5cd0b63ab149e49cd868fd9f0da025ffcbc2351aad15fdc"
+      ],
+      "current_sha256": "84fb17967e8462391a2b3d0d9f03afb115b89d5b655d8a86dab7934107c49a6b",
       "historical_sha256": "9d9187b31e61b4ddf5cd0b63ab149e49cd868fd9f0da025ffcbc2351aad15fdc",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p777_public_simulation_api.py": {
-      "current_sha256": "b72ea7b1bcf7b8d82de3fd033c4e206fab51caeaacbed4a81d7f8330728c8a8a",
+      "accepted_predecessor_sha256": [
+        "9234634d634e7b45a90790f88fc38b16ac87c4ce5333362105a6b1a4b6a327e9",
+        "b72ea7b1bcf7b8d82de3fd033c4e206fab51caeaacbed4a81d7f8330728c8a8a"
+      ],
+      "current_sha256": "81c186316d0444957769e135a168d5103ae75981ce7710f92dde78a41009343b",
       "historical_sha256": "9234634d634e7b45a90790f88fc38b16ac87c4ce5333362105a6b1a4b6a327e9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p778_typed_public_declarations.py": {
-      "current_sha256": "7ea4ba75f61ed6bb5cf7292ceb7d29c257705e5c0fe05d50e7adcfeda8e1b34b",
+      "accepted_predecessor_sha256": [
+        "7ea4ba75f61ed6bb5cf7292ceb7d29c257705e5c0fe05d50e7adcfeda8e1b34b",
+        "9bde3b574dddcbadbe18e90b41ee81c49845b47a3a8aa595e8ccdc069248e9c4"
+      ],
+      "current_sha256": "d40e6197c9cf20f60171c7d7b1880bdb0663e7ce7b2c2f283892df6d138f9e50",
       "historical_sha256": "9bde3b574dddcbadbe18e90b41ee81c49845b47a3a8aa595e8ccdc069248e9c4",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase7_p779_two_combination_compiler.py": {
       "current_sha256": "99ddbb705d0710b50aeac34b79c0fc1e64c66e3f0a22c8a590421ceefcb7462c",
       "historical_sha256": "2b00354e58d4f68b9123c382540f94215a954c239c1c85defbf0623c5518fa79",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p81_public_surface_catalog.py": {
-      "current_sha256": "6059fffaddfd9f99929ff56c3aa0e29ac8d30277ad31714eed068d5ed7db3b2c",
+      "accepted_predecessor_sha256": [
+        "6059fffaddfd9f99929ff56c3aa0e29ac8d30277ad31714eed068d5ed7db3b2c",
+        "b2ba6ad05ae7c702d02bc5e4ffacef98353a3c0a8c540859cf6a9b0416ba8979"
+      ],
+      "current_sha256": "402dbd8d32c7da9f0ac7c8f635ff9663a593523d8f3897734663b26b6b1b206e",
       "historical_sha256": "b2ba6ad05ae7c702d02bc5e4ffacef98353a3c0a8c540859cf6a9b0416ba8979",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p82_periodic_stokes.py": {
       "current_sha256": "dc9cd931c0be681a59a0bc3a45d4a00386f1e98422dd84daede5cde14962e81e",
       "historical_sha256": "143fbdbca47fceca3519dd5e7a5e9880d6e261f79faffb647a2c14af74a1c1e1",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p83_channel_complete_stress_operator.py": {
       "current_sha256": "fdeff73cd99df469b357ac075343d940c813ca6e69cc30c8cd49806e8ec21f24",
       "historical_sha256": "7e45471563925418a964d82a3990732197a85a259cc3aa8893b5de7bfa2a0171",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_phase8_p83_local_candidate_record.py": {
+      "current_sha256": "4b691c273dc491e353821829963b2f638f5afbf80150e3bc75452e144a8df46c",
+      "historical_sha256": "31b90e6aa37dbba5525dc431546cea1a186e5ff31a840d581a628909738ecb7b",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p841_prescribed_dirichlet_declarations.py": {
       "current_sha256": "9e70d1b641d54d8e043d57d1e2bf5db58e2c1453e37d261306847e565cc72e46",
       "historical_sha256": "d166ba1e3c751deb6cef8112023a794ff0ca37cd3c4052a2d63c51b8760b81dd",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p842_plane_static_lifting.py": {
       "current_sha256": "df6a8d33d405f491e87ed76e17abc0dd9009267762d7e961c2233923aaa111f9",
       "historical_sha256": "3c69ccfda932f3774b3ab699afc84a1cf654600e74b592f1fcb8e8a27e06c5c9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p843_q_lifting_lowering.py": {
       "current_sha256": "c7ff8cbe7b529d419605106844642055491ec428043eb05c472ae977a7498ad8",
       "historical_sha256": "2247590d6ae43cd357b46d258823e5c9ade45cb039fdf049c06ebf2c91ed9ac8",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p844_lifting_workflow_restart.py": {
-      "current_sha256": "2bf404a0fea817d3a16e671c5775c2a047afbf6ccd72ddda67fe37f5d8f4321e",
+      "accepted_predecessor_sha256": [
+        "2bf404a0fea817d3a16e671c5775c2a047afbf6ccd72ddda67fe37f5d8f4321e",
+        "f8223193d5bb5b9da5f445e5adc0c5ebe017c8cf1662f39d6e3652387504ca37"
+      ],
+      "current_sha256": "389e84cbf1f511d41616894f28b2e8285f9f6d983916936c62e90c0976876d4b",
       "historical_sha256": "f8223193d5bb5b9da5f445e5adc0c5ebe017c8cf1662f39d6e3652387504ca37",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p851_robin_declarations.py": {
-      "current_sha256": "e8f0f80c68e78e5d89509d13d08bec3b587b92b56bb2ec62a922ff2c4c171c48",
+      "accepted_predecessor_sha256": [
+        "e8f0f80c68e78e5d89509d13d08bec3b587b92b56bb2ec62a922ff2c4c171c48",
+        "f6902d97f138242c84bf7131bb641248ea0e55d4c3f22fabe46b0fc6edc823d8"
+      ],
+      "current_sha256": "7343b5e95d667324119c742c9ea7ac40623f30af2e8c248c66715ccdb8e17fb6",
       "historical_sha256": "f6902d97f138242c84bf7131bb641248ea0e55d4c3f22fabe46b0fc6edc823d8",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p852_robin_eigenbasis_operator.py": {
       "current_sha256": "db637ba93c9f32a57c35fc2b69e9773ffa22af491958fdd460232b44250ed8d7",
       "historical_sha256": "4aae3de68ead0f4d7017898ee825eb91c14aab8000c7798f52666c0620d806f5",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p853_robin_scalar_runtime.py": {
-      "current_sha256": "9a89f490b3ecd51e7ee207ef51c8a490ef9cb70aa3fd72eb07bf31ce0e646b26",
+      "accepted_predecessor_sha256": [
+        "2c235fef5fd6a04dbdd3876dd7788307963f864abb1336c6f7006c918e401e37",
+        "9a89f490b3ecd51e7ee207ef51c8a490ef9cb70aa3fd72eb07bf31ce0e646b26"
+      ],
+      "current_sha256": "fa5c7d2f88afbf5899fedf29c11ee067a6807b180323d342b5850a23f31f646b",
       "historical_sha256": "2c235fef5fd6a04dbdd3876dd7788307963f864abb1336c6f7006c918e401e37",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p854_finite_q_anchoring.py": {
-      "current_sha256": "9bb92b75e4c62b83c1a80b0c34992eaaa159c994cc073507a98c0e892e38b0dd",
+      "accepted_predecessor_sha256": [
+        "6e6c720e72d575502fd20ad85595e1427551a702ad7ce845a0f0c40b456119ee",
+        "9bb92b75e4c62b83c1a80b0c34992eaaa159c994cc073507a98c0e892e38b0dd"
+      ],
+      "current_sha256": "a79d969b619dd74387c769cc7f3a2f87ba9fa7bacc7e76335dba44d64e99deb8",
       "historical_sha256": "6e6c720e72d575502fd20ad85595e1427551a702ad7ce845a0f0c40b456119ee",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p855_finite_q_workflow_restart.py": {
-      "current_sha256": "75a49d1834afa196e32d23d6d8284d2635eb87300e9e1ef0940de7a857a864c9",
+      "accepted_predecessor_sha256": [
+        "75a49d1834afa196e32d23d6d8284d2635eb87300e9e1ef0940de7a857a864c9",
+        "ac46ca5fbb47408f2b89dce3c3cd50fb1ac1a6d1da5ac7531dbc3d190117475d"
+      ],
+      "current_sha256": "80b77e0df653e5f23e5afd8a2b719071a5959c046fdbd89c65e158d6c5a1bc64",
       "historical_sha256": "ac46ca5fbb47408f2b89dce3c3cd50fb1ac1a6d1da5ac7531dbc3d190117475d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase8_p856_finite_q_h100_qualification.py": {
       "current_sha256": "791185732d925d71849967f9e9086dbc6d6a42cd2b8616b1506d8917c2b97974",
       "historical_sha256": "d467a3a11a524e6377a3493075e1d95d03f508f71133488abd3cb6c082462492",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p91_functional_prerequisites.py": {
-      "current_sha256": "6d11c0545e84fe390c7f5d81a9b94806fd53bb31a421c1127938fcf0f90d1afb",
+      "accepted_predecessor_sha256": [
+        "66629bbba4f30859dc3768e19181b8b63ef0fa03db665e907625a0095613e3a5",
+        "6d11c0545e84fe390c7f5d81a9b94806fd53bb31a421c1127938fcf0f90d1afb"
+      ],
+      "current_sha256": "bbca414337b419a8e6fc5ef820ae73ae89afb2e863bfd04e04b8104110750013",
       "historical_sha256": "66629bbba4f30859dc3768e19181b8b63ef0fa03db665e907625a0095613e3a5",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p92_periodic_functional_runtime.py": {
       "current_sha256": "4292e8e0ebaedb014be1e9cb780b539535f25d2cc2525c9990b2f3abd13d60ed",
       "historical_sha256": "5c14dbfa9e827339a5cb1207c6411fa54d3d2b9d39d357addab7e56c51e52b40",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p93_replay_checkpoint_bridge.py": {
       "current_sha256": "93a8085ff2919d4026b25d0de93b9bb59ac02cd7330d33cee59ab68b77452cff",
       "historical_sha256": "4cd26085f34b22f0193d93e459b898012aadbf850d82ca839b7f989eea25421c",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p94_gradient_consistency.py": {
       "current_sha256": "c34ff8b16c37e3ecf5319324fb9685e5599ab9f0d82ce6e9c2f6035e4ea890e5",
       "historical_sha256": "43ae062a7a298b78e6197dbacf9106af4ad7364a8234ec392b793dabea759b59",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p971_channel_functional_declarations.py": {
       "current_sha256": "f6784fb4292de932b7de8bb13257f2dfc211ea7235f037316c001d6c10ae548f",
       "historical_sha256": "21651e0c4c0d48449fd5b17050ac5f8b080f003679c1a6acf0444d1392152f2c",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p974_channel_functional_runtime.py": {
       "current_sha256": "c7b8d4841e74c86b995057b765066c0d5ae33b7f1cace8a6d14bcdd49765c2be",
       "historical_sha256": "c75eb68874e582f33f93bf6f04904d1b39592cba2e000c6c53ed6d03e72f21a6",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p982_stable_functional_api.py": {
       "current_sha256": "c01f574814a5166ad89125c1674ef333e6592e9ccbb14e75a61affd4b95c010f",
       "historical_sha256": "566dfdeb9461089a85f328e54f47ea693b6a8383d188b62070c984ab98cf54c2",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_phase9_p985a_runtime_diagnostics.py": {
       "current_sha256": "7983899e8929e7eb85a89b603fdbe93ff8ed8bb71aa94b87cf107b96b5431fab",
       "historical_sha256": "565574e7ad32919288100cf7b365661b767c1a6f61e838ac067b9813a6095d84",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_projected_transform_truncation.py": {
       "current_sha256": "878f90ea1277834f028b6e0e52a8a7cd09a150b6f341d19d477da952fe35be7e",
       "historical_sha256": "b99f58f0a3c90dd2fe29149c8e83bd8588ac431cfb008f7309181a8420f1b1ec",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc3_n2_public_api_migration.py": {
       "current_sha256": "026aaf577722ee9ef97b64375ba5dc0fafd95ece7150cdc70d7886d2428a9808",
       "historical_sha256": "e483724db88ec8c3c4b79e564212ced4f42f27178d4887b6f03d8ba59b9af9b8",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc426_cross_device_checkpoint_harness.py": {
+      "current_sha256": "ad1f8fa3c64e9a130f2bd20c77cbbc130f4adb220e31a2541f6c3a5d13f53978",
+      "historical_sha256": "f43a0505b242eb9c7ae647d616a49eb940f1ca3c58ed629158fbb61e30740cdf",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": {
+      "current_sha256": "448bfba55ee813cf51e7dffe671a13b0fe10be0be07f2ffa2afbd38b752f7cbf",
+      "historical_sha256": "5a9ac95438f0a70c37cdb4f52a87775bfbf6851fe3450587131f5a39010d5914",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc454_boundary_semantics.py": {
-      "current_sha256": "11fc8d2ddd3a9e416ca14aa85612f0f224c9e7ad58c6c9816e8ce8dadac8a1b3",
+      "accepted_predecessor_sha256": [
+        "11fc8d2ddd3a9e416ca14aa85612f0f224c9e7ad58c6c9816e8ce8dadac8a1b3",
+        "25c1966ff6d1ad56e05f27ed3d7d3933f1d6732a20fbffa5ae74b04e7fe5d47f"
+      ],
+      "current_sha256": "db3db88b850194b1c4456f2a726d4d62714ebc78f89f75147c62b62a66ec358e",
       "historical_sha256": "25c1966ff6d1ad56e05f27ed3d7d3933f1d6732a20fbffa5ae74b04e7fe5d47f",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc455_public_robustness.py": {
-      "current_sha256": "6a6ca06a0c1c4cdeae98f5abd647528807a640dbf8f4af8c817a8135269a7d12",
+      "accepted_predecessor_sha256": [
+        "6a6ca06a0c1c4cdeae98f5abd647528807a640dbf8f4af8c817a8135269a7d12",
+        "a551b7e6a5dc76146ebe31bde6aa94becd64ec43648b265b0d85fd409eec2f97"
+      ],
+      "current_sha256": "0f9e3c5d8e93ebe3ce4eecdaf4ba302b9d4bc9317cfaf94879f865763459e322",
       "historical_sha256": "a551b7e6a5dc76146ebe31bde6aa94becd64ec43648b265b0d85fd409eec2f97",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc456_tf32_execution_scope.py": {
       "current_sha256": "46fccaa8d8be5d2acb384a97ddf826e5a196ca7f89a4beb7994566fb1e9e5054",
       "historical_sha256": "67957fe5b18630f58cee31143a77b320dd611a06fc14777b61257c40a13ce937",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc4_lifting_capability_contract.py": {
+      "current_sha256": "53de7372f711d316bb63a55bcb07fff97bbb5b6bb6db2fe8bdf2a379cad871f1",
+      "historical_sha256": "aa743a7a06abeffdf52f7484e8ca5604e2581d8adbc4190a7ff012823d100034",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc4_lifting_checkpoint_integration_record.py": {
       "current_sha256": "badfcaa288e98ef581f77b392f039695cfc4ecb344ec7fa2f63d6f1b63c5a918",
       "historical_sha256": "8ecec60e08121584c522e46d6a25cd7dff9335c70195d7ee02b2eeee90eb8d18",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc4_lifting_correctness_plan.py": {
+      "current_sha256": "6367acfaf077a71c14fa7a5b34ac3e0d8dba14b66fbf7d95b34c3403ca7daa6f",
+      "historical_sha256": "39414fe2b3000e681ed84d6ede94bf06455a749fac374c4b7d581b3a98f30b2a",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc4_periodic_channel_checkpoint_identity.py": {
-      "current_sha256": "6797ed8f8a9407cfeda183180590c9aa634b277338789011255e66778d5193fc",
+      "accepted_predecessor_sha256": [
+        "5a2e0633dbbf1deea60981c0fb43f1683fc59a3afee87f99547f55d1b4725b4b",
+        "6797ed8f8a9407cfeda183180590c9aa634b277338789011255e66778d5193fc"
+      ],
+      "current_sha256": "b270bb351a05280328c1e24f742fa1c56fefbecd9cbde3ef8734d2679e98f479",
       "historical_sha256": "5a2e0633dbbf1deea60981c0fb43f1683fc59a3afee87f99547f55d1b4725b4b",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "current_sha256": "28add48e41a5dd29ee74cb2a16c0bc76dd40692c7853ff3d3456297f5a02b8cd",
+      "historical_sha256": "9eace9c3cc51df20667e10b611cc3df7308e80441ea8277c981cca578761af21",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc4_plane_nyquist_cuda.py": {
       "current_sha256": "02794815948caf6da5e1097a1dde708687b1bce1fc6d3588c2de8c8be3cb10d9",
       "historical_sha256": "ac9a06ee265c7b77ffa0bacde0dfe149d7367a14ca804bb1ee0ca3cda61057cd",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc4_plane_nyquist_qualification_plan.py": {
+      "current_sha256": "7ed845f5c7f0efd03c0e47ed429bb0d83b913018b4abc80358d2d756f9e8f3a7",
+      "historical_sha256": "63c0e36974246407934bf15163265dc85c881b7a8ad885ce655374c2277713bd",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc4_pressure_adjudication.py": {
+      "current_sha256": "2b5d261e0794fd0b6f9aa0a294956dafcac8fd2483949ed20699f9a7ca482700",
+      "historical_sha256": "30b9a0246d4ef785444692a2199e4b8b4e07e63f79c0cac7a663f7bf46f22b40",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": {
+      "current_sha256": "ef374f196c67679124f4a3ab04508f6b1808219ebb048b94a86352d6579516e2",
+      "historical_sha256": "9205305e0a81953e4a65ebbf14820dceefd4489286a2ecc42c886798a832af58",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc4_pressure_metadata_identity_connection.py": {
-      "current_sha256": "c20d8a23e67c73ca3e7d849a5bf98340a2b17b9232de504d3a980452f3564d64",
+      "accepted_predecessor_sha256": [
+        "381a1d107181b584503262e04df7456b073880401294a2de8887834a82fc4515",
+        "c20d8a23e67c73ca3e7d849a5bf98340a2b17b9232de504d3a980452f3564d64"
+      ],
+      "current_sha256": "b35594182d36ca2d058a0080a379a75a1a41d59e2625ed55eeb5440206a0b018",
       "historical_sha256": "381a1d107181b584503262e04df7456b073880401294a2de8887834a82fc4515",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc5_legacy_functional_checkpoints.py": {
       "current_sha256": "961822741a204cd14c99f7627517c93f63c2cb06e488c45f38bdb88da915a227",
       "historical_sha256": "11ea244dcff575b1a21ee600f712c3e9dba37b45bc3083cd4bb61de790c1eba8",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc5_public_error_boundary.py": {
-      "current_sha256": "c840d1d9a39696e6b8225179e9fc22b407cbfd1d24b91ba14269b2b11be1bbc3",
+      "accepted_predecessor_sha256": [
+        "c840d1d9a39696e6b8225179e9fc22b407cbfd1d24b91ba14269b2b11be1bbc3",
+        "e54103bf4140129e1d510b32188176cc2ef873e1c00bf7d90e492f118985a313"
+      ],
+      "current_sha256": "b1de91f7ec5408114ecb9d38571de00ac5016180e9a2c3547f935e10f072f949",
       "historical_sha256": "e54103bf4140129e1d510b32188176cc2ef873e1c00bf7d90e492f118985a313",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "current_sha256": "c70b327ab45f85f4bdef0a0f785787ab5fa13bae1d3d940cb22a7a886dc15abb",
+      "historical_sha256": "ec1f51b9938c6235f1c812f52e84b44b7ab91c12c829c5fcd59a7f21bcb3a6d8",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "current_sha256": "f08da7f4d60a7bde50a7f2d4ba949db0821951724fe4c28150a0f8917caf183f",
+      "historical_sha256": "16bb8b1a6ccf65cfe981bad22750dd874503845b506312d577f678bcfe58c79f",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc5_r54_packaging_record.py": {
+      "current_sha256": "d4c2bf2b9a3165b600b82d3ac598fd5f8f2fbe1a5e801a37d78a3349f7da1bc9",
+      "historical_sha256": "e121b86e1bc463663ef76103071bb74025bbe4d952b9c62a6d546c9e844e47ca",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "current_sha256": "acaef7ede2da824b8bba1260e832b52033b4fe8e40b3db50e241538464416c4c",
+      "historical_sha256": "e07972e48ac2fdfdb0ba51850d063d1e6c6b17b11b20d7b6478d06d683ba71ba",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc5_r56_public_error_boundary_record.py": {
-      "current_sha256": "7b51dd8ed5d3be1e11e0162045290728f6104a0db9f315b8a8a60ae1bc19ee31",
+      "accepted_predecessor_sha256": [
+        "1a2482248bcdea89781c95282def9c5a87bbe05d023b53575060ef73490b5c9b",
+        "7b51dd8ed5d3be1e11e0162045290728f6104a0db9f315b8a8a60ae1bc19ee31"
+      ],
+      "current_sha256": "d506f51c61a4c95b4253ced8f821df78edc03cd90aa4784f2f436168c9813123",
       "historical_sha256": "1a2482248bcdea89781c95282def9c5a87bbe05d023b53575060ef73490b5c9b",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "current_sha256": "1de9f15387a2c4413f6bab3fb721a9eeb570be51eedb99cb3b64760a314cf957",
+      "historical_sha256": "5506176dcc65ec083f82ed5d15a90b9dd654c547d78d631a3e986dfc5290f760",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "current_sha256": "f4572335c3f66b9a73b35cb964adcfe7334ca4ca1877b43ce34a5de0d9a8da9e",
+      "historical_sha256": "e84dea4df3c27da5bf2fe2599d26a1187718d4fb7d94d718786aa9f11bcd551d",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc6_h100_stage_producers.py": {
-      "current_sha256": "cf1b219c2856de862d0cbdb28e3cb01c38dbc0f64b10986763f4ee46bd335972",
+      "accepted_predecessor_sha256": [
+        "1e8f393e97d622e99bb61e44ce047e253fd8b3a9efad092b4adcc8a28989c38c",
+        "cf1b219c2856de862d0cbdb28e3cb01c38dbc0f64b10986763f4ee46bd335972"
+      ],
+      "current_sha256": "f655f4aff7780b34b8f0104c28a2a5a594925a338d0196baa0ccad11d8999ab4",
       "historical_sha256": "1e8f393e97d622e99bb61e44ce047e253fd8b3a9efad092b4adcc8a28989c38c",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": {
+      "current_sha256": "c97e9bf15dcfa9e211802e1ede006e44d11455f506f92733c3933e17fd5e4ee7",
+      "historical_sha256": "b5827d7f4d4e3e051a3750aa8ce67a436acd649f0e712075dfa018309c8dff58",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc6_rc64_channel_failure_contract.py": {
       "current_sha256": "2010c93202c89a815bd270a38a2fffbc807d2f3df2e56439febc40f4462a442e",
       "historical_sha256": "de2f89d8e9e1268d8b0463a332d3b64b7717044614ade134ed0ffa19c5b57b43",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_rc6_rc65_checkpoint_control_flow.py": {
       "current_sha256": "eaa698ebfec440224b823a3d249a602632ef8e5eb79a5da797a7e269f73e3910",
       "historical_sha256": "324bde66f8323e92fa29e1394df9a038ea34f6349869b676f73013501851d8e9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_run_metadata.py": {
       "current_sha256": "b7c87143e089857de6a8eabf9c9550a26adcba0991c98062ac0762006125d40b",
       "historical_sha256": "336f1e60ef3ad605c8d5a3379f1f607f2ecf953e0b59691c1c10bfe19d3c9926",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_stokes_pressure_diagnostics.py": {
       "current_sha256": "aa600a292eedb4a7834f555e4faa721157f0616e3aee6c5228a005644b534a40",
       "historical_sha256": "236190d81a4b7e2512849d0fd69d158ce08521fdc1420ca79265a25984262c4b",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_transform_execution_order.py": {
       "current_sha256": "5594ba48ce73f94aa2ecc1daf540ca5bd06cb7f23e8d9ebad956a3f893fa32f0",
       "historical_sha256": "67ab38179aa45b63cd9b9942929e03f136ac404b264d82beaeda47fd45ea61f6",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_record.py": {
+      "current_sha256": "a43ccbfec91e354714513dc64220eae56b9b91bc92c34b6cd50d65a6732dbb19",
+      "historical_sha256": "ec869256b9bda7d73c7f7170b228111f54c6d4d42fcdf0ecb9b1ee152bac973a",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_3_s07_qualification_support_record.py": {
+      "current_sha256": "9eea9fc5f676cf3f1e4ed907f63f69a592ee102ae81f2796bd27de0cbb9c6632",
+      "historical_sha256": "a07baf8ad56161da1ba65f80e55382d000a15ffeb13c3aafd62c78514cfbd68c",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_3_s08_historical_cpu_coverage.py": {
       "current_sha256": "79341d0163db834da9cc430caf22124620ca5cb1535db6c8a9d27f96f847ccc7",
       "historical_sha256": "46cb2d9d17c3dad08312334627cd0fa3e7cea53fe4f5f5b25f77138903376d28",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_3_s09_functional_execution_scope.py": {
       "current_sha256": "34dedf49a7c597d6b32be7122e329da53188c5ddca73910889c2bb7a22ecbd39",
       "historical_sha256": "fdefb30d7738cdbce88df41fa39451a9f5fc716050be31bf200176eabd15204a",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_3_s09_pressure_operator_cache.py": {
       "current_sha256": "2cfd893663253c8e41af04d74dee6ed344198e3f967e63274f9d0183f964fb82",
       "historical_sha256": "dc12fde3daae7b61560e4deb631aac67d27b65470ce048cc66747bb49edae300",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_3_s10_r0033_candidate.py": {
+      "current_sha256": "97d118e67d0c9e5efbc9bc20d07fa0285674d13b42558a35cafabc1cc0999260",
+      "historical_sha256": "960edbdba6fc033401f1b4722b7e850a0a77bf4cb2b157b10af09bdb68be72b8",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_4_s17_r3_r6_implementation.py": {
       "current_sha256": "dc75a57de9f49cc598846f0e5fa76e6b758c9f613306e380da8acd2aadf90277",
       "historical_sha256": "e48d0fa0e305ba1a24f717cf66d892755864da3793cc1b678e839099af9d0387",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_4_s17_r3_r6_successor_87.py": {
+      "current_sha256": "51051db46aa08ee572132723abd7693e8fae973125931167e5ce3f363487990c",
+      "historical_sha256": "649068570605f8a1ee46d231964c09082bf37fdabc41e99198b7251655694838",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_4_s17_v59_successor_89.py": {
+      "current_sha256": "41ed3c1638d7004614e56b0b45c986e7c9be6588e15e5083a6eb029f31b307bf",
+      "historical_sha256": "f16d4608fadcbd7599b825dadca979124179ac37e89cb1da7f8e835526c1276b",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_4_s18_r1_dispatch.py": {
       "current_sha256": "907ce5c69e67a758cb4f11d1be29cdda98496e3807d79bbe72e265df410aa684",
       "historical_sha256": "43705d35f65c05cd21405f6601692d4a7ec17d0ec2edf3d37290cbf8fa86fa9a",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_4_s18_r1_shadow_record.py": {
+      "current_sha256": "b15f4b1c27715a53c7f2f89811f6d778205b7c23bde8f579d48b9a37e3d621ad",
+      "historical_sha256": "896b051431b0d93025c970f0e30638c91251b7fa31fe65789ccbd87e8e715d2d",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_4_s18_r1_shadow_registry.py": {
-      "current_sha256": "5772df72ff2d49e8b5266b2f856b89a6a7cc00a0d9bd5576996a06442fd14867",
+      "accepted_predecessor_sha256": [
+        "5772df72ff2d49e8b5266b2f856b89a6a7cc00a0d9bd5576996a06442fd14867",
+        "a9785c78308b2d17a4d30fbbf26c16f682e7182274a95017e99e1d0f48e8118d"
+      ],
+      "current_sha256": "fbc5dc75b49f96092a83d7819114caac25b3baf368ccbf9aba081c358e46a217",
       "historical_sha256": "a9785c78308b2d17a4d30fbbf26c16f682e7182274a95017e99e1d0f48e8118d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_4_s18_r4_successor_97.py": {
+      "current_sha256": "501d8195170337f33d28fe62527934c8bc1f06fcb7b2d7a9bb93967a20c690f6",
+      "historical_sha256": "ffe87ca36dced58cc8e91742780c6df6c5005100023e67ec5ce222cddddf7719",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_4_s18_r5_postcondition.py": {
+      "current_sha256": "5b139ac69959b9e6dbdafbc04fcba6f2e2d809060a8ede12a214425a4eb1dc42",
+      "historical_sha256": "f9f33cc60accc121916ecdef80d1ff18cd15cf7f5e51b18b306a28fdd82c1328",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_4_s19_self_compare.py": {
+      "current_sha256": "eccfa9dac98be1c7f5f57339f3781dae7148e5f37f4a150fe03173b32df7f7ed",
+      "historical_sha256": "abb035aeee350326218aef25f04895d47722006da7a562bcdecefc5d9538274a",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_engineering.py": {
       "current_sha256": "d72678cc179e2631e73b2807c405a22f5d7fe560689282781b8b55f55e576f83",
       "historical_sha256": "9a27b0bafca3c29516e5b6a4474fe530780e3b74bf5193c8b0d73017c8fb1ce1",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_foundation.py": {
       "current_sha256": "c82cc3d59fb33efaaee8872478719453fc72e0ec52c07c787657ea9f8c057f7d",
       "historical_sha256": "5b332730bf159b82aab00c14dd2c2f58959e90071e75398f05610dd70e6ee59f",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_5_s23_record.py": {
+      "current_sha256": "24806a2295d46994050a7c9debfd4987211aba6612be6a2b097347743e7ca22b",
+      "historical_sha256": "4f5a5f45045d779372439e746a743e452b9b2837c6cb459bff29333f87e8ee5b",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s24_retirement.py": {
-      "current_sha256": "3a6edbcd4eff0dcaeb7e2d85e80305d2824d19b8dab860adaa969ed7d91978b3",
+      "accepted_predecessor_sha256": [
+        "3a6edbcd4eff0dcaeb7e2d85e80305d2824d19b8dab860adaa969ed7d91978b3",
+        "5726ebe9a1161bdd3a2a33ff8d5e956219245a4919aec10ea6eda20f4c0d839e"
+      ],
+      "current_sha256": "ed7766533e4542d9b1b1890339ac75ea68aae75600e47c8b2cdb3c5856a7023c",
       "historical_sha256": "5726ebe9a1161bdd3a2a33ff8d5e956219245a4919aec10ea6eda20f4c0d839e",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_5_s25_disposition.py": {
+      "current_sha256": "94ef8150629c421aadbfe7dba4dca1eeb6592b2bc7fa63a4d15100d9845579c7",
+      "historical_sha256": "53f03fbd41d1432c6d64d1c5e3144ac9c73251c3685473534b1ded255b418eca",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s25_engine_core.py": {
       "current_sha256": "d8a8ad63325e69f1e4afd2ffdac1cc0a3600f0f2b74050ee23eac8a87ecbf3bb",
       "historical_sha256": "2952dd4565b86831af6f9d90684ac8571fc52dea1e15d3690a6f5f779f4adfa3",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s25_engineering.py": {
       "current_sha256": "7e684ad8008e71171fa7339b2db0003b04603058ca12a7bf07952877e8fd2b91",
       "historical_sha256": "8f0a2dab1f94010945b097a972f3628b03e8f0ba7d87b9a831473240cc709260",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s25_stokes_extraction.py": {
       "current_sha256": "249a6e06483109066980576886a57bf7c9716d2946f89be4f8a6d071f6c7eb09",
       "historical_sha256": "b1000f08220ef9a0ffd428f914024b1eb78447189572f0fedb7cc7fecbed3a8e",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s26_assembly.py": {
-      "current_sha256": "9c9e228fce07699d53f56bd6cfcfc1df1b822e5fe5ed4b6f70ca98f4ffd9742b",
+      "accepted_predecessor_sha256": [
+        "2498a8b04fc005b627b9be49fd32e8a3c029857404054a31aa6001d71c458f2d",
+        "9c9e228fce07699d53f56bd6cfcfc1df1b822e5fe5ed4b6f70ca98f4ffd9742b"
+      ],
+      "current_sha256": "e6ce64ec18a638d27f4c3b93fa4a6e91a519b3683bbb565c5bfab2bd6ee90f1b",
       "historical_sha256": "2498a8b04fc005b627b9be49fd32e8a3c029857404054a31aa6001d71c458f2d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s26_rework.py": {
       "current_sha256": "4b6e5c87ceac3c33edfe91e0111c8525764b3b7c6d551d4459e31011b2c21cb5",
       "historical_sha256": "87e14c423aa815b02fe91fb73ccdcc1dbc10a2889027e060c962d93c16e5abd9",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s27_engine.py": {
       "current_sha256": "496411048d7af4b8a58073a12279a2cab0f4272486b43c5ae50176d430430e99",
       "historical_sha256": "29c896cede960317dd3bfbde2823fe3e8929ac04bef4bdf995bc55d2c15ec579",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_5_s27_r0095_rework.py": {
+      "current_sha256": "a6fc1fce93f4d8c4d7a728875d0bb76b95e52c4db55f038f6b36a0554fc690b8",
+      "historical_sha256": "679370faa713c97084cc1fc21834b4516a514ac164b8585687c3b1602c3c5ab2",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "tests/test_v0_5_s27_r0096_rework.py": {
+      "current_sha256": "e774af885f6b64e84559fdbdc4d085023a38bc696f5e55ffd090de2956b16f0a",
+      "historical_sha256": "296728016128f0f4ed7552a796133eda40f4aac1f7f536060c2577f76d72646e",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s27_rewrite_contracts.py": {
       "current_sha256": "0e8db96c4923631d96a587a8b89316d043317b69ce7ad9b183b5e251d4e75d8a",
       "historical_sha256": "dfa6498ea2b04b6600c34c3ee878f9d3be7cca84f267e164dcf0c31ea3ca42a4",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s28a_solver_state.py": {
       "current_sha256": "1aa314ccbdfd946aa9d3f34d1f2f6c1b5dfe9a1bc4704a5939286d855f5ffcfb",
       "historical_sha256": "e145f7d924423b63041fdbb49f0b23d3094c8b71c0c6fc54c5c7108be5e06600",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/v0_5_s25_periodic_v04_checkpoint.py": {
       "current_sha256": "7e838324d3889de7d4525d4ae0f5c3861464694f1cfd265b4b0595a06f34ed1e",
       "historical_sha256": "c221fba74b49b6910743bfcb5b17abf8805d17163b8776f94649d114bda9911b",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/v0_5_s27_plane_v04_checkpoint.py": {
       "current_sha256": "6d6e1a9c0d76bc557af828d33aca441c9ecf8fa81e79ea44198abe60b5f128fa",
       "historical_sha256": "ef4dd3fdfaa1667f80c673755b0c5c23149cd8fbf688cdacd8ac9d7cae64419d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/v0_5_s28a_channel_v04_checkpoint.py": {
       "current_sha256": "a9b7024e56ea795e10f08ab367c5ab20838bce5f37c520375f90857afb494d69",
       "historical_sha256": "5765f4fbb565ca738df7a9e4087665aad0a8721b626a37598a12cd8834bb5f1d",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tools/check.py": {
       "current_sha256": "d598373b69817bf3c75de06c5d0615878878a99bfc8beaaf1b0a60e03068252e",
       "historical_sha256": "1d02ba76048bfafa150793760ecd87c65401d89653ee389c8bff90494853ae36",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tools/check_distributions.py": {
       "current_sha256": "a54d6ad8fcde266a73dc83f63ca6a9016984d0d52da2a312fee38cbf14751f3a",
       "historical_sha256": "c3146769344fce750dda9ffad90787b529f50c92175223d398c13cc4b097a812",
-      "reason": "S-28b r2.1 public migration, test or engineering provenance."
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
     }
   },
   "introduced_sources": {
@@ -593,7 +915,7 @@
     "notes/PSSolver_v0_3_0_s03_successor_148_s28b_frontend_zh.md": "31699659941e0c0da6d51a80f79670cbef20ec3eb0f0b9897443132b31258f2a",
     "pssolver/api/errors.py": "b2ec31ab255dded7276273fea87945c208ae2931c5287eefcfd13ca6ad410d33",
     "pssolver/api/legacy_checkpoints.py": "07c212fac46c175dbbec358ad103ea11d2088d548bcebcbee15d0e6a2c10aef4",
-    "pssolver/api/lowering.py": "c6c8802150c4d2dc98837fb3d97760af2c24c08164834c5d8415a55a2a56cedb",
+    "pssolver/api/lowering.py": "04c19e9a33bfbaaf3721f30ebf5b25d8e8d9a728f6d3e618ef68d15856484a48",
     "pssolver/api/models.py": "fd2d974550f572834f31f8510f7804baa0b07fcfaac7ba5c166a195087564b1b",
     "pssolver/api/snapshot_header.py": "4023f957ded888caaaf43e1bd9d1e8c52eb7dec7ef0551ee4b3063d5ee287c5b",
     "pssolver/core/device_tokens.py": "4bdee2202d11e005c1c2a3d7b68db5e390ea0e5b386206cccb2d08123f0cd646",
@@ -642,17 +964,18 @@
     "pssolver/functional/legacy_declarations/systems_stokes.py": "ee3dced549c9fd1fab70cd784e46e73dc24aef7c1ee530ac2ba9ff7e61f5a828",
     "pssolver/io/initial_snapshot.py": "8ca84d6cd7fb7dc5b01f0004ea7903c7f856365d0a0e4939c66e7ebc06676f36",
     "pssolver/runtime/simulation_run.py": "5ee8f4f4f9d9b8f2f9352170610f3771fae64e6c9b5b3ccac55f21964097b3ff",
+    "qualification/historical_s28b_audit.py": "ef18719284a1c9ceb145831abb2a2751ebcdaf006c56d504ab5ddbe5d7552b29",
     "qualification/identity/scenes_v05.py": "e1f32d516073a88dfe8569b0c05442f073eb6e1cd4c5c2e1a634059e784eb426",
-    "qualification/s28b_frozen_callers.json": "5b2abeb06de111247e2fb8255e096624ce8cee9310867e1be3fd3e3e05c91a70",
-    "qualification/s28b_guard.py": "3fea467b588d460224c9e677df132ba571b671bde4b6abf38eaf1b72c4a15c00",
-    "qualification/s28b_historical_tests.json": "d0a4a88546424102999c6e74abccde5c9f616e36c3b00209a80f6b6786b8e10a",
+    "qualification/s28b_frozen_callers.json": "12c33fa49aaa8e5ec953e225fbd6d039249ab5b249a245c6e00e2ca075c27063",
+    "qualification/s28b_guard.py": "2dc3e72505758605398bd27c165fbdd0cd884165cd75a723d8c05d9bca697b3d",
+    "qualification/s28b_historical_tests.json": "c53386167a7490530b9ec8b0873845db048f97236e60459242cfe8933d6a807e",
     "qualification/s28b_import_delta.py": "a20b763d97709d62721f792ffe965eb59e089d8ea0329135021328a487544dfb",
-    "qualification/s28b_tables.json": "bc8a761403218258b373c5c1711809539cf6bb3e68c2c7f76df286ad5e79780a",
-    "qualification/s28b_test_classify.py": "5f3dbc921c2da730d01004ee9ee0543a7da71fec5e01c4a1083998501eae26e5",
-    "qualification/s28b_test_disposition.json": "c444772563da998fdba7025262ec3d61f67d7989242983c989832f0686ce13c6",
+    "qualification/s28b_tables.json": "a2184e6e888590470c446960f1fbae3c541df6f081721ad708f1b47b6effdb01",
+    "qualification/s28b_test_classify.py": "c6c9ce982d6117c543cb216cf2bd17d7facfeb89166bf61c2e5f7230694350d0",
+    "qualification/s28b_test_disposition.json": "eebbeca1fa42d6a54eeeba6f75ef1bd9a9920a61e720d159edab0429623f51b9",
     "qualification/s28b_trajectory.py": "39ec2258fbc4d8c671fa83efe61683586a00eec2a41a58f282042adddc45ab8e",
-    "qualification/s28b_units.json": "53c889632acd372dd568aa338e3a16c5858d6fcbca4c2c2931eb27b742ffdaa6",
-    "tests/test_v0_5_s28b_historical_tests.py": "6b872218dad65f55605f77378cdae76a8006178c2eae7b733b16cb09c1db8fde",
+    "qualification/s28b_units.json": "6ad441352983d2fbe3d5985fea7a980a1c6a9470db078daeb0dc2aaa796b7091",
+    "tests/test_v0_5_s28b_historical_tests.py": "8f66bc8d6914821cdd45ff619e020a45e5b4f329bd814bed556fe4564f4c1c90",
     "tests/test_v0_5_s28b_public_frontend.py": "8351f8b2554d3eb8a3a971b1b3021a982b9af19d58b2509be398285f747422f4",
     "tests/test_v0_5_s28b_trajectory.py": "8fa763edad8575a7dbf18ee7ceb3376a64f1c76b5a0463d7a9b99401bcf3fc73"
   },
@@ -660,877 +983,895 @@
   "retired_sources": {
     "examples/cahn_hilliard.py": {
       "lines": 54,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "11e89a6e26067a879b00ec88959f898f1d7b0cb043487678ed401e2b68454e58",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/cahn_hilliard_3D.py": {
       "lines": 48,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "e272cb0fcaa797b5973a346efbb8e90fe4becfa368381118c184309c267f2ea7",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/dal_small_3d.py": {
       "lines": 106,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "35ab7ddde8decde26e7fa2d201f61666d6fdba3e61b2be7f6919226c4829ab79",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/diffusion.py": {
       "lines": 70,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "fdef4c55ba4e55151e4014599d9c41d4a2d348839bd46b473a290ac01b43afa3",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/diffusion_mixed_bc.py": {
       "lines": 46,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "98ee5200f0daf432c8b2bab0badb2651806d3a0d42e9e07303e05864be7499bf",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/gray_scott.py": {
       "lines": 77,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "42c1628db334b95c70d57355f40d5f51358f735fe8512a33ae2e641e9b87c28b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/modelH.py": {
       "lines": 129,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "78246353ff896b3903c6914230be17138459bdee6b7c3404224d543cc92444f1",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/nematic.py": {
       "lines": 193,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "8018a3a1609dd1c038af20b2d70fae8d32e3d102b3b80be615965846de77f477",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "examples/validate_mixed_bc.py": {
       "lines": 142,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "4913a36c6c53f8428f86511307110ebfa121bb4094b0a754cc63850b910b7a26",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/Field.py": {
       "lines": 474,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "5e75b3446cea0b5d421f5d94a9d24571ff66fea0451819701ad0f7243c74bc40",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/PDEmodel.py": {
       "lines": 249,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "316e771a40ead9587708922b340f3a50524ee0415ba6e71e32c711f150a5e1f1",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/adapters/__init__.py": {
       "lines": 19,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "5ed4a4bf08c224083fc54768259820ce98378f63240aa8d602cd15dcd8fe4028",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/adapters/legacy_boundaries.py": {
       "lines": 44,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "5319c025a488f0bc35dc3b67395caf38a83fd91c5e405f3aeb5e32e746d3c544",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/adapters/runtime_shadow.py": {
       "lines": 326,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "37d0ca0c3fa9b5f48c582d0da1c7000d03520756df2329ee69a84e97c7004660",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/applications/__init__.py": {
       "lines": 3,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "2c6babfabe92085225a89443e048ebb566ae29b14e5f875ad18dd1e62334cc02",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/__init__.py": {
       "lines": 32,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bccda261edf8f82d3d02d02362b48ad6a32139cf34bbe3016f38f683c1d9cfaf",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/active_nematics_equation_adapters.py": {
       "lines": 39,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d53d0233042a5a008760df0178aab157e3bcea442d14595612a90c2ac1bc51de",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/active_nematics_simulation_adapters.py": {
       "lines": 161,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "477ff3a0a4da6bda8ad92acc120713b837a1e3d95d7e635633b27b54f3ed093a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/application_registry.py": {
       "lines": 148,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d2a636e3ce007101d00ebfd902c116827b15f6ccdd95a4e501712562e37ec3b1",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/device_tokens.py": {
       "lines": 26,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "4bdee2202d11e005c1c2a3d7b68db5e390ea0e5b386206cccb2d08123f0cd646",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/execution_device.py": {
       "lines": 200,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "9f55a51e05d32fd4d0b62a8a633611e7689b9ffbd879b6ae64127154a0417108",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/finite_q_anchoring.py": {
       "lines": 291,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "a930207c069d3a490eb6433aeb72fcc39051ba904dce440f10e33faa8f175fa3",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/legacy_channel.py": {
       "lines": 1250,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "07d48de3d3493e59ce5fca4811fa9c77cbd743a965289f00c148b3c534ceb26b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/legacy_periodic.py": {
       "lines": 950,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "b88800d2e37332400933349bdd54087b5ded76c22944cd9187dde64dee5c9550",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/legacy_plane.py": {
       "lines": 1193,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "19f9ae7ebcaff131563a4d9fae035734597832bffd29d406d341b826171f9480",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/lifting.py": {
       "lines": 137,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bbe843ec58d2e1b4ed5bf3861ca119b2cb36623a816654284e0817c0b18248d1",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/package_construction.py": {
       "lines": 69,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "20db2d34b1f94f3ca20272084e2251896bde6dea92f7cbe2a469f252360bcae9",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/plane_beris_edwards.py": {
       "lines": 927,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "5fa6a95a3947224388e37b6a9f7c7264b445cf6fc04dbbb19330154b182a7451",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/plane_beris_edwards_builders.py": {
       "lines": 106,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "eeb302c9f1c571f767f195b206f6367d1633d23eb23abe8caabf48c96a8570f9",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/plane_beris_edwards_component_graph.py": {
       "lines": 761,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "402c02de2f1243404119088428aad435705a472bdddedb72406e6c32bd5e2417",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/plane_beris_edwards_components.py": {
       "lines": 142,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/plane_beris_edwards_declarations.py": {
       "lines": 147,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "3df3198bbcfd1e08c5d94050c63b87da00c239d242e11cb6f8b3692681c345ac",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/plane_beris_edwards_schema_v1.py": {
       "lines": 207,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "36de74a3b2c44bb4e6fa35074f412e82fe528cfffbd8a65245e0f3bb6a24e731",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/public_complete_stress_validation.py": {
       "lines": 170,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6af909eb8b668a182bb753ad255a73dedf2d74f7bd3463fad389d538cae30000",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/public_option_validation.py": {
       "lines": 119,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "72d2160e9ef3459c25f6b7c159b2270b8ec11715971a1cb64070c3caae559d00",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/public_simulation_runner.py": {
       "lines": 945,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "2c8c5fe155746fc32478d7806d9745ca247be76156aa4d479dfeafcf88b96f98",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/robin.py": {
       "lines": 208,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "7f1ccb7154b01d353088ebc7449c0d1b8d8d69319382962db9158c31115c8630",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/simulation.py": {
       "lines": 410,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "c0f695d0e0a5f66eb11a8d20c82a2da073f217e8d94768316d2744e7ab622e81",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/simulation_binding.py": {
       "lines": 182,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "3f4fab36e3c83815c7d4b716034faabaae727ca5919cd92cc64e499046f44cda",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/configuration/simulation_lowering.py": {
       "lines": 1057,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "fc691532ce4f2ecadce82bcccae5fb90faccd8aee34f53969ec6dcdc152ca726",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/execution/__init__.py": {
       "lines": 77,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "0bd138276e03c382f24bb4d4d564f578394406431d900ca935110a0e90ddd01c",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/execution/algebraic.py": {
       "lines": 526,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "b4276b89ffca07d810c61f31887925e34fe6e47b3f58e2598587ddb48757dccb",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/execution/contracts.py": {
       "lines": 192,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "25f05a01245d07da2f179de352f1dabeeaa36783e68726443b4011bce67f2072",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/execution/dispatch.py": {
       "lines": 300,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "eb06eb1c9418de14a8e01a6d8926f0ba80ea555e25f808a124ecdf4943bbad51",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/execution/policy.py": {
       "lines": 213,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "335d76ddae56825cf67a1542f3378efb86587813ec6523046c48c2bd36b5a329",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/execution/stokes.py": {
       "lines": 8,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "312c491c4c5b567ad69ab7c0ecdc47b80ce5a6260fbf192cdca487dbc0f755d0",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/integrator.py": {
       "lines": 116,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d79217d86fe4716ba9c51fbfc3988adc1eaac3b9d6a36263d9f283bf17473052",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/integrators/state_backed.py": {
       "lines": 360,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "02c220cc1f5bc317517ba94ddcbeaf927040ccb34df9ca58ab54d8f9a32541b3",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/integrators/step_program.py": {
       "lines": 188,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bbdcf44633ffee9f601d855ceee32ff218adc15b57e13d9ad087f40adf765620",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/active_nematics/constitutive.py": {
       "lines": 624,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "fbbb934da06c711776eea4e05df28349e1791ba857cc442d527f7702385416ed",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/active_nematics/equation_systems.py": {
       "lines": 307,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "e3f38644faa1e2306a59b611d3ae5e284cedcd32d44eff975f53d6847602beca",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/active_nematics/public.py": {
       "lines": 87,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "4a6fbc8dbe0cc136b1c619a8e6144fa0b3de741541a3619d579a3070614e960a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/active_nematics/specifications.py": {
       "lines": 172,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "950d563469ed31190f4481787bd51a7fb59b35b96cb2159896d38886a18cf47d",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/canary/__init__.py": {
       "lines": 17,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "da5a00cfd86b493c3a2873acdfa59a6d11f3e9d5e4057d348679d46aa604e440",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/canary/scalar.py": {
       "lines": 534,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6f615b1b32278794cdc9745dce1966ebb814fba39fc45ee9f6934ae00eba1fa3",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/models/canary/stokes.py": {
       "lines": 251,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "e68d5d6ee52e3d09112f19991f3b75af511c786e90ed4b5b13e565c580d70a66",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/plane.py": {
       "lines": 16,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d097b3d720936941ca0a897652d9a1043f97a95a57663f3d600bfab7ff4a6a82",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/planning/construction.py": {
       "lines": 139,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "02f6dd365d286fae30325faec7666b3480e25c619f365850439b73f10fd27514",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/planning/package_construction.py": {
       "lines": 95,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "74a2560559cac05388609bffbc4ef555cb38fde796f4b6a9e812c67a0e6a4490",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/planning/plan.py": {
       "lines": 409,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "83778f8edb0d00409afdb594fc4c9a6d7fab38cdd7cf01a8a5a595feeb6c3c7b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/planning/simulation.py": {
       "lines": 564,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "57ca93a454db8e5abc4f641f26881bc2f898f69b89c594ba3d02756f1590d9ce",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/runtime/finite_q_anchoring.py": {
       "lines": 387,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "db4eb4fd703b8e5c4b005024ee4695dd4a8f476af700df073b9742ad71520cc7",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/runtime/legacy_entry.py": {
       "lines": 1505,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bf227f5850f64626e8a5c1b8f2c016e883db4cca622d711d37d3d174d3ed9246",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/runtime/robin_scalar.py": {
       "lines": 482,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bcfc06ed2c9c92d6c1d345efbd2e475ed7b3f66fea0a657b807bae8b5fb06bad",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/solver.py": {
       "lines": 151,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "917a7d960eb5f4f51d697644a8f62c14d2e902b1aca3510206d4767998463386",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/systems/__init__.py": {
       "lines": 7,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "7742238d0ff73dc51c73d0871e0348a6d06e828695ec95ca4b7c23d2a9236176",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/systems/algebraic.py": {
       "lines": 113,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "9bab80479c920dcc82736fcb71950f98919b06e117e10b08070ac878a24467d6",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/systems/equations.py": {
       "lines": 352,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "60ed25159707fdd6b9bc0c07ba0b1732457f2b008115a928ed7e390f13b719c2",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/systems/stokes.py": {
       "lines": 206,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6b4c9100beb5bb56ab4cdd4802e08aed5efebb5abfd9467305a6e00364c69fc2",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/transforms.py": {
       "lines": 55,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6ece0e748ed6ec50e4220b40c237bb043336491a03b82504ad62fa1272b57020",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/workflows/__init__.py": {
       "lines": 155,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "28009fbd9de4216b446b9f7b1249ea82ff0554537313070c92989451fc654424",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "pssolver/workflows/finite_q_anchoring.py": {
       "lines": 482,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "150c666f8bf0f2f4871a0fff0014c7ab6a8215db053b664ad00a7f3274f7237a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_analyze_beris_edwards_stationarity.py": {
       "lines": 1414,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bec9fd87c7aafcdc4a672812f9ed3c99ee16a2773907089a8eddcba656e68e7e",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_analyze_fig4_defect_core_convergence.py": {
       "lines": 1768,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "360c642f767db45dc61593aa60cfe4f4837b35aefcb56746597e0af4e8f47c0a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_b.py": {
       "lines": 251,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "ce16f9ed9ba186b2956ea3a1fc4d82af6f99e21dc3435e62a48812f5d9eb5200",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_d.py": {
       "lines": 111,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "e127d22401803d8f527fb6148ea4a04c4071885c62f8fcf13ff01e74e3462a9c",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_e.py": {
       "lines": 168,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "599a72bb406e3030062bfa5fe83886c909289b1aa0a1e65db95c6b32cac2647f",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_f.py": {
       "lines": 220,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "b75d2e28c3eb081125822996e1b269cdd41a3d80e2fc3c0bacba885d586f8811",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_g.py": {
       "lines": 170,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "9df0b7dd9694f992516c98b4be23c98bb00b6d1511b41b038ce3b00f27637ebb",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_h.py": {
       "lines": 190,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "471eed3faa9fa9daba11d53f2e843b5f356341069064fdeaf594f4d154184456",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_i.py": {
       "lines": 145,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "561ffa611e33d64c4733e64b4ec96bace94b6dee8e120d4eb2891d2f49b81dde",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_j.py": {
       "lines": 127,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "4d9711c4083342c43f5f1bef7f88a8003d2bd3b7972d38769514fd74cfb418e9",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_k.py": {
       "lines": 132,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "c8d7099913490a6ba26eb08a0df76d8c0e752843c2d25398954386b4ad74063e",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_n4.py": {
       "lines": 79,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "a0447212dc3fec5c21425bfdda34537112b244eb51e604e2f1943e7ca148cab3",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_o1.py": {
       "lines": 268,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "e9202a2447d44caa3daa8c2a3c98958040e3dd4d65a4da3b5a0499ee467ca533",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_q1.py": {
       "lines": 131,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "7b50474b7a487bcfbab4cd227bd6045c146933f2ef756ad717560dd9e7b0432e",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_architecture_stage_s.py": {
       "lines": 159,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "51b5424fa74d5eed5071f0fc70bcb73053a3e5dc0dcb14516de10a40e5f95481",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_benchmark_periodic_fast_path.py": {
       "lines": 52,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "a9fee591159ff88d9ff3e8a6ad4d00c3c29b8a3fe18286c9599323101171bb36",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_beris_edwards_energy_budget.py": {
       "lines": 680,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d11ececf3756558962b1dc4c1f9bb3d4b035afaac5f6cb0bb54b5b4d51faa982",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_beris_edwards_force_manufactured.py": {
       "lines": 524,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "cd1cc26294f4a284a93c3d180d9cb6e3668030e88a18bee2cc9cd370547c0a56",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_beris_edwards_validation_plan.py": {
       "lines": 1025,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "579145b026682454e38d93c51f686e710ceadba7fad35c340cb176444d47e4e0",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_bounded_transform_dataflow.py": {
       "lines": 241,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "540b0198124fbe0a9f16c21016b59e3d80dae63d720a3bacba844eed018781d9",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_capture_beris_edwards_nsys.py": {
       "lines": 226,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "f691ffcbb59b415dd045343251b1c083d0123dec23d0697addbc1d40f150a179",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_channel_no_slip_modal_stokes.py": {
       "lines": 297,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "70613cd54a96d6e367da84cab225392ed7689bc9c842acb6ad81ae8df9192590",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_dal.py": {
       "lines": 279,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6b7c69bd75afd25d888cbeb7fe8290d9471319fe98abf7ee66e7b739f8bd2c94",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_diagnose_plane_nyquist_storage.py": {
       "lines": 188,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6f58b6d12f69ee3666ca2ccb379c4e93ae1a11dd78b63bbf0924bd9929eef6a9",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_integrator_spectral_refresh.py": {
       "lines": 127,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6dfaf76f48c401a0118649aaa9037afc89411e95c58078dec3c55fb8a8fe2c9b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_periodic_fast_path.py": {
       "lines": 284,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "bd0029715deecad93fa007763c28ac45995d76f293efae448956ce0cc0817581",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_periodic_functional_hermitian_stability.py": {
       "lines": 82,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "8787f81e977c3178d65f9badcbab0daaebd30141964f28061b97b33f9cc4cc47",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase2_configuration_policy_migration.py": {
       "lines": 94,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "a9edee29484003adf2d25303bd1bd89658f09fdb62432ca04b8c49148da8114f",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase2_plane_application_migration.py": {
       "lines": 249,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "7127f2f6e959746c0f3eed0ed491c4c74316fa946e8aff1e40c2573089355671",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase2_plane_legacy_runtime_migration.py": {
       "lines": 154,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "84c30c25afced21f0e727dc9b8a77dcf2a89e61de25c5210fbf4b1699d1c97c7",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase2_run_spec_compatibility.py": {
       "lines": 697,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "517dece1648ba9707be36ab9cfb855ec164b9108eb2ff6a15c1620478900283c",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase2_run_spec_decomposition.py": {
       "lines": 687,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "663a79d92de92bdacac94f0636f0c9d44bbc2f6c1b7aacebb7a060527c6e7c87",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase2_system_declaration_compatibility.py": {
       "lines": 814,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "7db97ba24e662f8e4b60a09e6205ac85c8698aa044a6b925db1037e30e084352",
+      "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
+    },
+    "tests/test_phase2_system_declaration_import_order.py": {
+      "lines": 215,
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
+      "sha256": "e5420514fdc39adb83fc61d1bdfa007300f265caf598bfba44125c0a249d3bfc",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase3_step_program.py": {
       "lines": 178,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "fd699e4b30da25a21fd2aca73b02748a2dfa888e22073b725a15212c0f2b9b9a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase5_compiled_application_connection.py": {
       "lines": 258,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "508ccf002e986c30d27aaec8758a20d0e008e208c4b9b92f6182fe50a08a0996",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase7_p7711_public_entry_equivalence.py": {
       "lines": 515,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "f24bc86ca30f9edddbc3476b775a13da64a9a9f37681002aeca08d0791f5ef02",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase7_p776_production_connection.py": {
       "lines": 121,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "cff77ce0d1835497fd8e24fba2f5bd16dfc114b75611aead0cec69278e7f473a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase7_p779_public_runner_connection.py": {
       "lines": 529,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "be034361f641ac0c3dfba76c43b013cd25fdd066906ab8b0a4704e829a5bda4a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase8_p82_periodic_application.py": {
       "lines": 539,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "797d650a2da857d13cc8ab52556a03c156d59b15d7bf748b23b50a0399151c1b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase8_p83_channel_complete_stress_application.py": {
       "lines": 767,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "b4c701ed1f5a7be3edb25da77f3d510900b127231f517447403cce4c0fc86573",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase9_p972_channel_pressure_transpose.py": {
       "lines": 269,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "ed67f39f90413cc50feb6f8f7e51384a72d2c9276f7e03649cfa68796bb808b5",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_phase9_p973_channel_pressure_implicit_adjoint.py": {
       "lines": 334,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "19d82f3d9efd7da466af3ccc94046fa7696d6efc0f9c55cee662b5ba5ba62653",
+      "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
+    },
+    "tests/test_plane_beris_edwards_navier_stokes.py": {
+      "lines": 147,
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
+      "sha256": "1d93053aa6f2d9d93254363326a391e60cb9be2e0a61bd6055179b92a2a40c28",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_profile_beris_edwards_timestep.py": {
       "lines": 482,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "214186f15da4965491a34baa25bf59c561d4c8f7078876131d0699fef535752b",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc2_g5_installed_smoke.py": {
       "lines": 169,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "25b6ee73b9250f0f547162831e2ffcb4917c8f8fa46b64f2ebb88197f21fd1db",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc4_lifting_capability_restriction.py": {
       "lines": 366,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "76938e169fdc2f70cfd597453161e0138b1ae80db9a18d39cc64a31262c9f536",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc4_lifting_installed_wheel.py": {
       "lines": 215,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "e92ee4ad44ee5255b5e4c70282a94b7f343093b7f6aa552241a997a6e316f643",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc4_plane_checkpoint_identity.py": {
       "lines": 445,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "2aef847dfe561281af9d9335b5c8ebe1cd2b1eda0b22d62237325c36ee80b8c2",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc4_pressure_policy_implementation.py": {
       "lines": 752,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "fdce0b5d9752ede07bd2a401990af8fead1fd5acb68d9ba242257ba3099fefd5",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r510_channel_checkpoint_observation.py": {
       "lines": 186,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "a04d33fd78967891d6f6c25783ade81c51d5e4e5edc3d7871416c7ffa554a362",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r512_compiled_simulation_integrity.py": {
       "lines": 172,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "71162a09df9812a8199e7fd0367e2e14e33a9567f006d3a5de2134277d413a98",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r513_optional_hygiene.py": {
       "lines": 145,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "94a92d77d0e6197002b38940322d90448cd3b695cc38f72d91e7c43e72196cfe",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r52_finite_workflow_state.py": {
       "lines": 139,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "4371764eb0356f3389a7c170bd83421de644478677423c5dc0ebdca46ef530f1",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r54_packaging_surface.py": {
       "lines": 60,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "1e030c27ae144242be1e9165793fe4b9d553e2e9898c1e8265cb91b405042d99",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r57_device_normalization.py": {
       "lines": 281,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6b406e7c02d28bba73f0cfb6f88aa1a9201517c2e60329797f71c148ca7e62c2",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc5_r59_pressure_postcondition_errors.py": {
       "lines": 193,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "ad96a86ed59df50bbaa8777d614a5b7412524d847949184664883ec8e3546fd9",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc6_2_pressure_floor_contract.py": {
       "lines": 252,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "68a91dd64b74e9b3ac2c086718c94329f9b2597fb45b660019855390bd9b0b0a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc6_3_compile_preflight_contract.py": {
       "lines": 361,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "3a16e1a7fb60702d71fb2b4dc0f9f5054d51ee9e3fa03086a2d01a7eb15ba269",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_rc6_pressure_smoke_contract_correction.py": {
       "lines": 55,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "4cf647b105126611a45f92897c572e191af17dcd7a1847f8ac5fea57ae1e9a14",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_smoke_periodic_fast_path_default.py": {
       "lines": 49,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6c86c3bd2b2dfaaa1d30023036e0fb865f5d9da97d0bfe670df4b7e5b3747306",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_snapshots.py": {
       "lines": 400,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "f180608b9bdf88ac66d6da1035c6b51ef4aa88f73632e52c5ddba3115b88f6f2",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_solver_dtype.py": {
       "lines": 148,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d0530653f5ffed5f10fc5db9f1e64339ae1502f2ef1950e73444ca99d6b2b015",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_static_inverse_transform.py": {
       "lines": 99,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "894a37b4daddb19b814c8e5d50f340cfbb036f81ad08d3134e62611add4b0c9d",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_transform_facade_contract.py": {
       "lines": 454,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "a21a6ed649151c116e19f77ea54d1f9fb10d9e03f14291763c62e692141d2756",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_2_0_checkpoint_fixtures.py": {
       "lines": 278,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6c54031da34488051fcd384cc58db9d86764b2628224f89a6ed984b1d402949a",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_3_s03_exception_compatibility.py": {
       "lines": 267,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6c5c8a176b266bb19de4bcacc3e0f761f9f591b0392ad79bf5bbd6e3ee2f51b0",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_3_s05_checkpoint_metadata_integrity.py": {
       "lines": 426,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "35907ff722ed7c3a9b564caac5ddf9e09ac57ec8bd00cfaa737a101b03a9acf5",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_3_s06_pressure_and_pickle.py": {
       "lines": 330,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "d6893d3062e68b68bdf6cb95b35d448827c93e87f47b6e7bb700b68ca79c3c12",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_3_s07_public_compilation_real_paths.py": {
       "lines": 68,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "105cc2dd512f4606441be41f458491c2d9092b278b644d785d5717800726bb95",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_4_s18_r4_shared_step_progress.py": {
       "lines": 186,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "38c644c6183b1f7046d4fe7f2576a1b1242ff06423f97d00cf483bec0e5ccfe5",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_5_s23_baselines.py": {
       "lines": 122,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "6b78b2d81be3c0616c60ee5cffb2a704e1c548f8f804d4f93d4b25d86627ba74",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_5_s23_identity_scaffold.py": {
       "lines": 39,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "8e11080fa4334f34765c235ec999432bb677bf7e8ad186dedef7b007f3495763",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_5_s23_references.py": {
       "lines": 78,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "c32677c82d1c631fb3a1d5bd9b986fe21e45574bb77745eaabd84af66a7df6d2",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_v0_5_s23_sampling.py": {
       "lines": 115,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "29a3d985b0465481556c6468afac2e54f3044bb81227d19d830e811eb86fb5d2",
+      "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
+    },
+    "tests/test_v3_initialization_protocol.py": {
+      "lines": 268,
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
+      "sha256": "2f8f2b1f1f7db8f302921e62796a5ee15eb5d49094a4cc8c8f7b83e28ce5c8f5",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     },
     "tests/test_validate_beris_edwards_outputs.py": {
       "lines": 447,
-      "reason": "r2.1 retirement or exact historical test disposition; read accepted Git bytes.",
+      "reason": "r2.2 retirement or exact historical test disposition; read accepted Git bytes.",
       "sha256": "8160e86156636e0b0414a06bda3a166b4429e3bca33f211644a330750930d7ac",
       "source_commit": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802"
     }

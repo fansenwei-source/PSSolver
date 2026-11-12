@@ -9,7 +9,20 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from pssolver import Simulation, compile_simulation
+from pssolver import (
+    GeneratedInitialCondition,
+    Output,
+    PublicCompilationRejectionCode,
+    PublicSimulationCompilationError,
+    SemiImplicitEuler,
+    ShendrukPlaneBerisEdwards,
+    Simulation,
+    SpectralNumerics,
+    TorchSpectralExecution,
+    compile_simulation,
+    free_slip_velocity,
+    neumann_pressure_compatibility,
+)
 from pssolver.core.boundary import BoundarySide, StaticRobinCoefficients
 from pssolver.experimental.finite_q_anchoring_declarations import (
     apply_plane_finite_q_anchoring_pilot,
@@ -22,10 +35,6 @@ from pssolver.functional.legacy_declarations.plane_beris_edwards import (
 )
 from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
-)
-from pssolver.functional.legacy_declarations.public_simulation_runner import (
-    PublicCompilationRejectionCode,
-    PublicSimulationCompilationError,
 )
 from pssolver.functional.legacy_declarations.robin import validate_public_robin_impedance_support
 from pssolver.models.active_nematics import (
@@ -72,18 +81,23 @@ def _base_simulation(tmp_path: Path):
     )
 
 
-def _public_simulation(specification) -> Simulation:
+def _public_simulation(specification, q_policy, directory) -> Simulation:
     return Simulation(
-        model=specification.equation_system,
+        model=ShendrukPlaneBerisEdwards(activity_number=18.0),
         geometry=specification.geometry,
-        boundaries=specification.boundaries,
-        numerics=specification.numerics,
-        time=specification.time_integration,
-        initial_condition=specification.initial_condition,
-        execution=specification.execution,
-        output=specification.workflow,
-        discretization=specification.discretization_parameters,
-        invocation=specification.invocation,
+        boundaries={
+            "Q": q_policy,
+            "velocity": free_slip_velocity(),
+            "pressure": neumann_pressure_compatibility(),
+        },
+        numerics=SpectralNumerics(dtype="float64", spectral_storage="full_complex"),
+        time=SemiImplicitEuler(0.01),
+        initial_condition=GeneratedInitialCondition("extruded_defect_gas"),
+        execution=TorchSpectralExecution(),
+        output=Output(
+            directory=directory, steps=2, save_interval=1, diagnostic_interval=1,
+            save_start_step=0, diagnostics=False, save_hydrodynamics=False,
+        ),
     )
 
 
@@ -273,18 +287,23 @@ def test_public_above_bound_rejects_before_output_or_root_materialization(
         "pssolver.planning.robin._positive_robin_roots",
         forbidden_root_materialization,
     )
-    with pytest.raises(PublicSimulationCompilationError) as caught:
-        compile_simulation(_public_simulation(source))
-
-    assert caught.value.code is PublicCompilationRejectionCode.BOUNDARY_CONTRACT
-    context = caught.value.context["robin_impedance"]
+    with pytest.raises(ValueError) as legacy:
+        validate_public_robin_impedance_support(source)
+    context = legacy.value.context
     assert context["axis"] == 2
     assert context["side"] == "lower"
     assert context["dimensionless_impedance"] > 1.0e14
     assert context["qualified_upper_inclusive"] == 1.0e14
-    assert caught.value.__cause__.__class__.__name__ == (
-        "RobinImpedanceSupportError"
-    )
+    assert type(legacy.value).__name__ == "RobinImpedanceSupportError"
+
+    with pytest.raises(PublicSimulationCompilationError) as caught:
+        compile_simulation(
+            _public_simulation(source, anchoring.to_robin_policy(), tmp_path / "must_not_materialize")
+        )
+
+    assert caught.value.code is PublicCompilationRejectionCode.ROBIN_OR_ANCHORING
+    assert caught.value.kind == "scope"
+    assert caught.value.opens_in == "0.6"
     assert called is False
     assert not (tmp_path / "must_not_materialize").exists()
 

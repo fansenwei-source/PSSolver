@@ -37,13 +37,26 @@ A_NAMES = {
 def test_public_catalog_contains_only_the_three_retained_combinations():
     catalog = pssolver.capability_catalog()
     assert {
-        (row.equation_variant, row.geometry_name): tuple(row.runtime_paths)
+        (row.equation_variant, row.geometry_name, row.boundary_policies)
         for row in catalog.qualified_combinations
     } == {
-        ("complete_stress_beris_edwards", "plane_slab"): ("legacy_production", "compiled_v2"),
-        ("complete_stress_beris_edwards", "periodic_box"): ("periodic_spectral",),
-        ("complete_stress_beris_edwards", "rectangular_channel"): ("channel_complete_stress",),
+        ("complete_stress_beris_edwards", "plane_slab", (
+            "neumann_q", "free_slip_velocity", "neumann_pressure_compatibility",
+        )),
+        ("complete_stress_beris_edwards", "periodic_box", (
+            "neumann_q", "free_slip_velocity", "neumann_pressure_compatibility",
+        )),
+        ("complete_stress_beris_edwards", "periodic_box", (
+            "neumann_q", "no_slip_velocity", "neumann_pressure_compatibility",
+        )),
+        ("complete_stress_beris_edwards", "rectangular_channel", (
+            "neumann_q", "no_slip_velocity", "neumann_pressure_compatibility",
+        )),
+        ("shendruk_plane_beris_edwards", "plane_slab", (
+            "neumann_q", "free_slip_velocity", "neumann_pressure_compatibility",
+        )),
     }
+    assert all(row.qualified for row in catalog.qualified_combinations)
 
 
 def test_missing_historical_git_is_an_explicit_prerequisite_failure(tmp_path, monkeypatch):

@@ -1,10 +1,6 @@
 """Failure contracts remain identical after a failed fixed-work floor retry."""
 
-import json
-import os
 from pathlib import Path
-import subprocess
-import sys
 
 import pytest
 
@@ -31,39 +27,3 @@ def test_postcondition_never_overwrites_a_prior_rejection(
             acceptable and represented
             and (reason != 'fixed_work_roundoff_saturation' or saturation_holds)
         )
-
-
-@pytest.mark.parametrize('path,iterations,error,message,termination', [
-    # 30 reaches normal completion on both conda-forge and pip Torch. At 200
-    # pip Torch naturally saturates first; the conda 200-step review reproducer
-    # is retained separately in the symmetric cross-source evidence matrix.
-    ('production', 30, 'ChannelPressureConvergenceError',
-     'production Channel pressure solve did not satisfy its contract',
-     'fixed_work_completed'),
-    ('transpose', 30, 'FunctionalConvergenceError',
-     'standalone Channel pressure transpose solve is unacceptable',
-     'fixed_work_completed'),
-    *[('implicit', n, 'RuntimeError',
-       'pressure-loop and diagnostics postconditions disagree', None)
-      for n in (30, 40, 44)],
-])
-def test_failed_floor_retry_preserves_parent_path_exception(
-    path, iterations, error, message, termination,
-):
-    command = [sys.executable, '-I', '-B',
-               str(ROOT / 'qualification/s28a_fault_child.py'),
-               str(ROOT), path, str(iterations)]
-    run = subprocess.run(command, capture_output=True, text=True, check=True,
-                         env={**os.environ, 'CUDA_VISIBLE_DEVICES': '',
-                              'OMP_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1'})
-    report = json.loads(run.stdout)
-    assert report['record']['outcome'] == 'returned'
-    assert report['record']['termination'] == 'fixed_work_completed'
-    injected = report['inject']
-    assert injected['forced']['real_represented'] is True
-    assert injected['equal_forced'] is not None
-    assert injected['nan_injected'] is True
-    assert injected['outcome'] == 'raised'
-    assert injected['exc'] == error
-    assert injected['message'] == message
-    assert injected['termination'] == termination

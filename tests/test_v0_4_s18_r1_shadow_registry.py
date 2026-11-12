@@ -1,17 +1,15 @@
 """Registry parity, retaining the reachable pre-switch binding as control."""
 
 import ast
-from dataclasses import FrozenInstanceError
-from enum import Enum
 import importlib
 import inspect
+from dataclasses import FrozenInstanceError
+from enum import Enum
 from pathlib import Path
 
 import pytest
 
-from pssolver.api.capabilities import available_combinations
 from pssolver.functional.legacy_declarations import application_registry as shadow
-from pssolver.functional.legacy_declarations import public_simulation_runner as compiler
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,20 +26,6 @@ def _binding_table():
     from tests.v0_5_s24_registry_reference import retained_runtime_bindings
 
     return retained_runtime_bindings()
-
-
-def test_shadow_matches_all_compiler_metadata_and_order():
-    expected = compiler.public_compiler_capabilities()
-    observed = tuple(entry.compiler_metadata() for entry in shadow.APPLICATIONS)
-    assert observed == expected
-    assert [tuple(row) for row in observed] == [tuple(row) for row in expected]
-    assert tuple(shadow.APPLICATION_BY_PAIR) == tuple(compiler._PUBLIC_COMPILER_REGISTRY)
-    assert len(shadow.APPLICATIONS) == len(shadow.APPLICATION_BY_PAIR) == 3
-    for entry, combination in zip(shadow.APPLICATIONS, available_combinations()):
-        assert combination.to_metadata() == {
-            **entry.compiler_metadata(), "runtime_paths": list(entry.runtime_paths),
-            "qualified": True,
-        }
 
 
 def test_shadow_matches_literal_binding_table_keys_values_and_order():

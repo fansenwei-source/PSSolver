@@ -13,6 +13,7 @@ from benchmarks.analyze_rc4_plane_nyquist_qualification import (
     PAIRED_RATIO_LIMIT,
     TRIALS,
 )
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,7 +60,7 @@ def test_rc412_plan_binds_versioned_support_files():
             and registration["historical_sha256"] == expected
         ):
             expected = registration["current_sha256"]
-        assert _sha256(path) == expected
+        assert _sha256(path) == resolve_s03_successor(support[name], expected)
 
 
 def test_rc412_plan_freezes_inputs_and_profile_matrix():

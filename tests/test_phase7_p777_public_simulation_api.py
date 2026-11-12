@@ -3,22 +3,28 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError, replace
 import hashlib
 import inspect
 import json
+from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 
 import pytest
 
-import pssolver
-from pssolver.functional.legacy_declarations import Simulation
-from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
-from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, WorkflowSpec
 from pssolver.core.domain import DomainSpec
+from pssolver.functional.legacy_declarations import Simulation
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    create_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.simulation import ExecutionSpec, WorkflowSpec
 from pssolver.geometries import PlaneSlab
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,14 +79,6 @@ def _identity_hashes(value: Simulation) -> dict[str, str]:
         name: record["sha256"]
         for name, record in value.identity_metadata().items()
     }
-
-
-def test_public_root_retains_the_p777_declaration_identity():
-    from pssolver.functional.legacy_declarations import Simulation as ApiSimulation
-
-    assert Simulation is ApiSimulation
-    assert pssolver.Simulation is Simulation
-    assert "Simulation" in pssolver.__all__
 
 
 def test_constructor_signature_freezes_field_ownership_and_order():
@@ -213,6 +211,6 @@ def test_machine_record_freezes_scope_and_source_identity():
     assert record["runtime_construction_connected"] is False
     assert record["phase_8_authorized"] is False
     assert record["production_default_changed"] is False
-    assert record["source_sha256"]["pssolver/api/simulation.py"] == _sha256(
-        API_SOURCE
-    )
+    assert resolve_s03_successor(
+        "pssolver/api/simulation.py", record["source_sha256"]["pssolver/api/simulation.py"]
+    ) == _sha256(API_SOURCE)

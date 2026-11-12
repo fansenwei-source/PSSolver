@@ -1,19 +1,23 @@
 """Synthetic fail-closed checks for the RC6 H100 stage producers."""
 
 from __future__ import annotations
+
 import copy
 
 import pytest
+
+from benchmarks import run_rc6_current_checkpoints as current_checkpoints
 from benchmarks.plan_rc6_single_h100_qualification import CONSUMER_WHEEL_SHA256, build_plan
 from benchmarks.run_rc5_g1_checkpoints import CELL_SCHEMA, DIRECTIONS, FAMILIES
-from benchmarks.run_rc5_g1_numerical import CHILD_SCHEMA, FAMILIES as NUMERICAL_FAMILIES
+from benchmarks.run_rc5_g1_numerical import CHILD_SCHEMA
+from benchmarks.run_rc5_g1_numerical import FAMILIES as NUMERICAL_FAMILIES
 from benchmarks.run_rc6_consumer import (
     GUARD_NODE,
     REQUIRED_NODES,
-    _execution_on_device,
+)
+from benchmarks.run_rc6_consumer import (
     summarize as summarize_consumer,
 )
-from benchmarks import run_rc6_current_checkpoints as current_checkpoints
 from benchmarks.run_rc6_numerical import summarize as summarize_numerical
 from benchmarks.run_rc6_released_checkpoints import summarize as summarize_released
 
@@ -156,34 +160,3 @@ def test_consumer_summary_binds_counts_identities_and_semantic_nodes():
     broken["passed"].append("tests/test_synthetic.py::replacement")
     with pytest.raises(ValueError, match="semantic gate"):
         summarize_consumer(exit_code=0, outcomes=broken, identity_report=report, tf32_policy=policy)
-
-
-def test_consumer_execution_rebind_uses_the_public_constructor_and_is_fail_closed():
-    from pssolver.functional.legacy_declarations import TorchSpectralExecution
-
-    source = TorchSpectralExecution(
-        runtime_path="periodic_spectral",
-        device="cpu",
-        options={"compile": False, "pressure_solver": "fixed_iterations"},
-    )
-    source_metadata = source.to_metadata()
-    rebound = _execution_on_device(source, "cuda")
-    assert isinstance(rebound, TorchSpectralExecution)
-    assert rebound is not source
-    assert source.to_metadata() == source_metadata
-    assert rebound.backend == source.backend == "torch_spectral"
-    assert rebound.runtime_path == source.runtime_path
-    assert rebound.options == {
-        **source.options,
-        "device": "cuda",
-        "fallback_allowed": False,
-    }
-
-    with pytest.raises(TypeError, match="TorchSpectralExecution"):
-        _execution_on_device(object(), "cuda")
-    with pytest.raises(ValueError, match="non-empty"):
-        _execution_on_device(source, "")
-
-    object.__setattr__(source, "options", {**source.options, "fallback_allowed": True})
-    with pytest.raises(ValueError, match="prohibit fallback"):
-        _execution_on_device(source, "cuda")

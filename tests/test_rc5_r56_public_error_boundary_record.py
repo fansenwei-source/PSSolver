@@ -6,12 +6,10 @@ import hashlib
 import json
 from pathlib import Path
 
-from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 import pssolver
-import pssolver.api
-from pssolver.functional.legacy_declarations.public_simulation_runner import PublicCompilationRejectionCode, PublicSimulationCompilationError
+from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+from pssolver.api.errors import PublicCompilationRejectionCode, PublicSimulationCompilationError
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -143,13 +141,15 @@ def test_r56_exports_public_error_types_from_both_public_surfaces():
     assert pssolver.PublicSimulationCompilationError is (
         PublicSimulationCompilationError
     )
-    assert pssolver.api.PublicSimulationCompilationError is (
+    assert not hasattr(pssolver.api, "PublicSimulationCompilationError")
+    assert pssolver.api.errors.PublicSimulationCompilationError is (
         PublicSimulationCompilationError
     )
     assert pssolver.PublicCompilationRejectionCode is (
         PublicCompilationRejectionCode
     )
-    assert pssolver.api.PublicCompilationRejectionCode is (
+    assert not hasattr(pssolver.api, "PublicCompilationRejectionCode")
+    assert pssolver.api.errors.PublicCompilationRejectionCode is (
         PublicCompilationRejectionCode
     )
 

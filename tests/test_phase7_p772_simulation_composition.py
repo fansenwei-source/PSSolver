@@ -1,19 +1,31 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError, replace
 import hashlib
 import json
-from pathlib import Path
 import subprocess
+from dataclasses import FrozenInstanceError, replace
+from pathlib import Path
 
 import pytest
 
-from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import compose_plane_beris_edwards_simulation
-from pssolver.functional.legacy_declarations.plane_beris_edwards import create_plane_beris_edwards_run_spec
-from pssolver.functional.legacy_declarations.plane_beris_edwards_components import decompose_plane_beris_edwards_run_spec
-from pssolver.core.boundary import BoundaryAssignment, BoundaryKind, BoundarySemantic, BoundarySide, HomogeneousDirichletBC
+from pssolver.core.boundary import (
+    BoundaryAssignment,
+    BoundaryKind,
+    BoundarySemantic,
+    BoundarySide,
+    HomogeneousDirichletBC,
+)
 from pssolver.core.domain import DomainSpec
+from pssolver.functional.legacy_declarations.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards import (
+    create_plane_beris_edwards_run_spec,
+)
+from pssolver.functional.legacy_declarations.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
 from pssolver.geometries import PlaneSlab
 
 
@@ -24,14 +36,15 @@ BOUNDARY_DECLARATIONS = ROOT / "pssolver" / "core" / "boundary.py"
 
 
 SIMULATION_DECLARATIONS = (
-    ROOT / "pssolver" / "configuration" / "simulation.py"
+    ROOT / "pssolver" / "functional" / "legacy_declarations" / "simulation.py"
 )
 
 
 ADAPTERS = (
     ROOT
     / "pssolver"
-    / "configuration"
+    / "functional"
+    / "legacy_declarations"
     / "active_nematics_simulation_adapters.py"
 )
 

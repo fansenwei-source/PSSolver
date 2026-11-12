@@ -1,10 +1,12 @@
 """CPU qualification for Stage N.1 generation-local representation reuse."""
 
 from __future__ import annotations
+
 from pathlib import Path
 
 import pssolver
 from pssolver.core import BoundarySet, HomogeneousNeumannBC, PeriodicBC
+from tests.v0_3_s03_successor import read_registered_source
 
 
 P = PeriodicBC()
@@ -26,6 +28,6 @@ def test_stage_n1_remains_outside_production_and_generic_solver_paths():
         "pssolver/solver.py",
         "pssolver/plane.py",
     ):
-        text = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+        text = read_registered_source(relative).decode("utf-8")
         assert "enable_algebraic_representation_reuse" not in text
         assert "AlgebraicRepresentationCache" not in text

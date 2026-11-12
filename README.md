@@ -32,6 +32,8 @@ The package-root API exposes `Simulation`, `compile_simulation` and
 shared Engine and Runner execute that Plan; callers no longer choose a
 runtime implementation with `runtime_path`.
 
+The qualified executable combinations in 0.5 are derived by `capability_catalog()`:
+
 ```python
 from pssolver import capability_catalog
 

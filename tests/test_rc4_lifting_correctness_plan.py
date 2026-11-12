@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
+
+from tests.v0_3_s03_successor import registered_source_sha256
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,7 +15,7 @@ def _plan() -> dict[str, object]:
 
 
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return registered_source_sha256(path.relative_to(ROOT).as_posix())
 
 
 def test_rc430_plan_starts_from_the_rc42_closure_commit_and_evidence():

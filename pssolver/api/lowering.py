@@ -321,6 +321,20 @@ def _validate_initial_condition(simulation, kind):
                 Code.INITIAL_CONDITION_CONTRACT,
                 "Plane requires generated extruded_defect_gas initial data",
             )
+        p = initial.parameters
+        nz = simulation.geometry.domain.shape[2]
+        modes = tuple(p.get("twist_modes", ()))
+        for bad, text in (
+            (p.get("initial_s", 1) <= 0, "--initial-s must be positive"),
+            (p.get("num_defect_pairs", 1) <= 0, "--num-defect-pairs must be positive"),
+            (p.get("defect_min_separation", 1) <= 0, "--defect-min-separation must be positive"),
+            (p.get("defect_core_radius", 1) <= 0, "--defect-core-radius must be positive"),
+            (p.get("twist_amplitude", 0) < 0, "--twist-amplitude must be non-negative"),
+            (len(set(modes)) != len(modes), "--twist-modes must be unique"),
+            (any(m <= 0 or m >= nz for m in modes), "--twist-modes must satisfy 1 <= mode < nz"),
+        ):
+            if bad:
+                raise PublicSimulationCompilationError(Code.INITIAL_CONDITION_CONTRACT, text)
         return
     stage = "P8.2" if kind == "periodic_box" else "P8.3"
     if not isinstance(initial, SnapshotInitialCondition):
