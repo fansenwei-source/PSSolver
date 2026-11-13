@@ -64,7 +64,36 @@ def _plan_digest(metadata):
     )
 
 
-def read_header(directory, *, plan_identity_sha256, dtype, batch):
+def _reject_test_integrator(metadata, *, validate_seal=False):
+    if validate_seal:
+        if (
+            metadata.get("format_kind") != "engine_state"
+            or type(metadata.get("format_version")) is not int
+            or metadata["format_version"] != 1
+        ):
+            return
+        try:
+            verify_checkpoint_metadata(metadata, required=True, operation=_OP)
+            require_exact_checkpoint_keys(
+                metadata, required=_KEYS, optional={"solver_scalars"},
+                description="engine state", operation=_OP,
+            )
+        except CheckpointIntegrityError:
+            # Dry runs historically ignore other invalid or absent restart headers.
+            return
+    plan = metadata.get("plan")
+    integrator = plan.get("integrator") if isinstance(plan, dict) else None
+    scheme = integrator.get("scheme") if isinstance(integrator, dict) else None
+    length = metadata.get("history_length")
+    if (type(length) is int and length >= 1) or (
+        isinstance(scheme, str) and scheme != "semi_implicit_euler"
+    ):
+        raise _compatibility_error(
+            "engine checkpoint requires the public Euler integrator with empty history"
+        )
+
+
+def read_header(directory, *, plan_identity_sha256, dtype, batch, _reference=None):
     """Validate all header contracts before inspecting or loading any tensor."""
     metadata = read_checkpoint_json(Path(directory) / "checkpoint.json", operation=_OP)
     if (
@@ -81,6 +110,20 @@ def read_header(directory, *, plan_identity_sha256, dtype, batch):
         description="engine state",
         operation=_OP,
     )
+    if _reference is None:
+        _reject_test_integrator(metadata)
+    else:
+        scheme, dt = _reference
+        plan = metadata["plan"]
+        integrator = plan.get("integrator") if isinstance(plan, dict) else None
+        if (
+            not isinstance(integrator, dict)
+            or integrator.get("scheme") != scheme
+            or scheme != "sbdf2_test"
+        ):
+            raise _compatibility_error("engine checkpoint reference scheme does not match target")
+        if integrator.get("dt") != dt:
+            raise _compatibility_error("SBDF2 history requires unchanged dt")
     if (
         metadata["plan_identity_sha256"] != plan_identity_sha256
         or _plan_digest(metadata["plan"]) != plan_identity_sha256
@@ -93,6 +136,8 @@ def read_header(directory, *, plan_identity_sha256, dtype, batch):
     for key in ("completed_steps", "history_length"):
         if type(metadata[key]) is not int or metadata[key] < 0:
             raise _compatibility_error(f"engine checkpoint {key} must be non-negative")
+    if _reference is not None and metadata["history_length"] != int(metadata["completed_steps"] > 0):
+        raise _compatibility_error("engine checkpoint reference history length is invalid")
     phase = metadata["refresh_phase"]
     if (
         not isinstance(phase, list)
@@ -161,6 +206,14 @@ def read_header(directory, *, plan_identity_sha256, dtype, batch):
             description=f"engine tensor {name}",
             operation=_OP,
         )
+    if _reference is not None and metadata["history_length"]:
+        spectrum, history = files["spectral"], files["history_0"]
+        if (
+            not isinstance(spectrum["shape"], list)
+            or history["shape"] != [2, *spectrum["shape"]]
+            or history["dtype"] != spectrum["dtype"]
+        ):
+            raise _compatibility_error("engine checkpoint reference history shape or dtype is invalid")
     return metadata
 
 
@@ -222,12 +275,15 @@ def write(
     return target
 
 
-def read(directory, *, plan_identity_sha256, dtype, batch, device):
+def read(directory, *, plan_identity_sha256, dtype, batch, device, _reference=None):
     """Read a state only after header validation; map tensors to the caller's device."""
     root = Path(directory)
     metadata = read_header(
-        root, plan_identity_sha256=plan_identity_sha256, dtype=dtype, batch=batch
+        root, plan_identity_sha256=plan_identity_sha256, dtype=dtype, batch=batch,
+        _reference=_reference,
     )
+    if _reference is not None and metadata["device_kind"] != torch.device(device).type:
+        raise _compatibility_error("engine checkpoint reference device does not match target")
     tensors = {}
     for name, record in metadata["tensor_files"].items():
         if record is None:

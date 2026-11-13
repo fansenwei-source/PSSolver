@@ -20,7 +20,7 @@ from pssolver.engine.execution_device import (
     scoped_tf32_execution,
 )
 from pssolver.io import engine_state
-from pssolver.io.checkpoint import read_checkpoint_json
+from pssolver.io.checkpoint import CheckpointError, read_checkpoint_json
 from pssolver.io.initial_snapshot import load_q_snapshot
 from pssolver.models.active_nematics.beris_edwards import (
     POINTWISE_COMPILE_BACKEND,
@@ -852,6 +852,15 @@ def run_assembled_simulation(
     """Run the already compiled Plan without compiling a second time."""
     construction = compiled._run.construction
     if compiled._run.output.dry_run:
+        path = compiled._run.output.restart_from
+        if path is not None:
+            try:
+                header = read_checkpoint_json(
+                    path / "checkpoint.json", operation="engine_state_import",
+                )
+            except CheckpointError:
+                header = {}
+            engine_state._reject_test_integrator(header, validate_seal=True)
         metadata = build_run_metadata(compiled)
         if emit_metadata:
             print(json.dumps(metadata, indent=2, sort_keys=True))

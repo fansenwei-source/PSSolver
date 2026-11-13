@@ -15,10 +15,11 @@ from pssolver.planning.engine_plan import Plan
 
 from . import members, program
 from .constraints import ChannelStokesConstraint, PeriodicStokesConstraint, PlaneStokesConstraint
+from .derivatives import StepDerivativeTable
 from .field_view import FieldView
 from .groups import _transform_group_indexer
-from .imex import SemiImplicitEuler
-from .linear import DiagonalOperator
+from .imex import ImexScheme, SemiImplicitEuler
+from .linear import DiagonalOperator, LinearSolve
 from .progress import _refresh_counters_from_completed_steps
 from .state import State
 
@@ -48,6 +49,36 @@ class Engine:
     """One immutable execution configuration, reusable by independent states."""
 
     def __init__(self, plan: Plan, *, device, dtype, batch=1, kernels=None):
+        self._initialize(plan, device=device, dtype=dtype, batch=batch, kernels=kernels)
+
+    @classmethod
+    def _for_reference(
+        cls, plan: Plan, *, device, dtype, linear_factory, scheme: ImexScheme, kernels=None,
+    ):
+        """Bind private in-memory reference objects without adding an assembly route."""
+        if not isinstance(plan, Plan) or (
+            torch.device(device).type != "cpu"
+            or plan.geometry.kind != "periodic_box"
+            or plan.constraints
+            or plan.integrator.refresh_interval is not None
+            or plan.boundary_data
+            or (plan.integrator.scheme, plan.integrator.history_length) not in {
+                ("semi_implicit_euler", 0), ("sbdf2_test", 1)
+            }
+            or scheme.history_length != plan.integrator.history_length
+            or any(item.tier not in {"diagonal", "modal_block_test", "matrix_free_test"}
+                   for item in plan.linear)
+            or not callable(linear_factory)
+        ):
+            raise ValueError("unsupported private engine reference plan")
+        engine = cls.__new__(cls)
+        engine._initialize(
+            plan, device=device, dtype=dtype, batch=1, kernels=kernels,
+            reference=(linear_factory, scheme),
+        )
+        return engine
+
+    def _initialize(self, plan, *, device, dtype, batch, kernels, reference=None):
         if not isinstance(plan, Plan) or plan.schema_version != 1:
             raise ValueError("unsupported engine plan")
         if dtype not in (torch.float32, torch.float64):
@@ -67,8 +98,14 @@ class Engine:
         if (
             plan.geometry.kind not in {"periodic_box", "plane_slab", "rectangular_channel"}
             or len(plan.constraints) > 1
-            or plan.integrator.scheme != "semi_implicit_euler"
-            or plan.integrator.history_length != 0
+            or (
+                reference is None
+                and (
+                    plan.integrator.scheme != "semi_implicit_euler"
+                    or plan.integrator.history_length != 0
+                    or any(item.tier != "diagonal" for item in plan.linear)
+                )
+            )
             or (
                 plan.geometry.kind in {"periodic_box", "rectangular_channel"}
                 and plan.integrator.refresh_interval is not None
@@ -100,6 +137,7 @@ class Engine:
             ]
         )
         self.plan = plan
+        self._reference = reference is not None
         self.device = torch.device(device)
         self.dtype = dtype
         self.batch = batch
@@ -158,9 +196,15 @@ class Engine:
             # Fields.build adds the batch dimension before stacking components.
             linear = linear.unsqueeze(0).expand(batch, *linear.shape)
             self.linear = DiagonalOperator(torch.stack([linear] * self.evolved_count), self.dt)
-        else:
+        elif reference is None:
             self.linear = self._generic_linear(linear_capabilities)
-        self.scheme = SemiImplicitEuler()
+        if reference is None:
+            self.scheme = SemiImplicitEuler()
+        else:
+            factory, self.scheme = reference
+            self.linear = factory(self)
+            if not callable(getattr(self.linear, "solve", None)):
+                raise TypeError("private linear operator must implement solve")
         if self._beris_edwards:
             self.explicit = _resolve(explicit_capabilities[0])(self.projector, plan.explicit[0])
             factory = _resolve(constraint_capabilities[0])
@@ -193,7 +237,7 @@ class Engine:
         )
         self._materialize_transform_caches()
 
-    def _generic_linear(self, capabilities):
+    def _generic_linear(self, capabilities) -> LinearSolve:
         symbols = {}
         for item, capability in zip(self.plan.linear, capabilities, strict=True):
             recipe = _resolve(capability)
@@ -220,17 +264,23 @@ class Engine:
 
         def evaluate(view, controls, *, completed_steps):
             values = {}
-            for item, term in terms:
-                value = term(view, controls, completed_steps=completed_steps)
-                values[item.target] = value if item.target not in values else values[item.target] + value
-            result = []
-            for field in self.plan.fields:
-                if field.role == "evolved":
-                    value = values.get(field.name)
-                    if value is None:
-                        value = torch.zeros_like(view.spectral[self._observable_slices[field.name]])
-                    result.append(value)
-            return torch.cat(result)
+            derivatives = StepDerivativeTable()
+            try:
+                for item, term in terms:
+                    value = term(
+                        view, controls, completed_steps=completed_steps, derivatives=derivatives,
+                    )
+                    values[item.target] = value if item.target not in values else values[item.target] + value
+                result = []
+                for field in self.plan.fields:
+                    if field.role == "evolved":
+                        value = values.get(field.name)
+                        if value is None:
+                            value = torch.zeros_like(view.spectral[self._observable_slices[field.name]])
+                        result.append(value)
+                return torch.cat(result)
+            finally:
+                derivatives.clear()
 
         return evaluate
 

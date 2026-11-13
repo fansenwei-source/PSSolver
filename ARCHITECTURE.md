@@ -159,7 +159,16 @@ solution. `observe` refuses a state whose constraints are not current.
 2. small dense blocks per mode;
 3. general matrix-free solves.
 
-Tiers 2 and 3 are reference implementations in 0.5.
+All three tiers use the same `advance → linear.solve` call. The production
+diagonal implementation keeps the original Euler denominator and division
+order. Tier 2 is a private modal-block reference; tier 3 defines a private
+matrix-free protocol with caller-owned diagnostics. Its CG example lives in
+tests, not in the library. Public assembly selects only the diagonal tier.
+
+Generic model terms share a table of physical derivatives keyed by field, axis
+orders and basis. The table is owned by one explicit evaluation and emptied
+even when evaluation raises. The protected Beris–Edwards paths retain their
+separate, existing Q-gradient reuse contract.
 
 **Constraint solvers** are keyed by `(operator kind, basis signature)`. Each:
 - provides `solve` and `solve_transpose`;
@@ -186,14 +195,16 @@ in 0.5.
 
 ### 4.3 Time schemes
 
-`integrators` defines an IMEX scheme protocol:
+`engine.imex` defines the engine's IMEX scheme protocol:
 - implicit denominator;
+- implicit shift;
 - explicit update;
 - history length;
 - startup policy.
 
 0.5 ships semi-implicit Euler, whose operation order is part of the numerical
-contract. History is part of `State` and of checkpoints.
+contract. History is part of `State` and of checkpoints. Test-only SBDF2 uses
+the same step program and starts with Euler; it is not a public integrator.
 
 ### 4.4 Runner and checkpoints
 
@@ -205,6 +216,8 @@ contract. History is part of `State` and of checkpoints.
 
 `io` writes one checkpoint family, `engine_state`: a directory of `.npy` files
 plus `checkpoint.json`, with a metadata hash and a layered identity.
+Public readers reject checkpoints with integrator history or an explicit
+non-Euler scheme before touching any tensor payload.
 
 `io/legacy/` contains:
 - read-only importers for older formats;

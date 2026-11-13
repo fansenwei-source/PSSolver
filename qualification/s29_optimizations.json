@@ -1,0 +1,74 @@
+{
+  "compiled_v2": {
+    "state": "retired_S27",
+    "reference": "v0.4 Plane legacy_production",
+    "implementation": "v0.4 Plane compiled_v2 (history only; no current execution route)",
+    "relation": "Retired; --runtime-path is rejected by the current CLI.",
+    "default_source": [],
+    "switch_source": [{"path": "pssolver/cli/plane.py", "token": "--runtime-path"}],
+    "assertion_source": [],
+    "collected_nodes": ["tests/test_v0_5_s29_registry.py::test_retired_compiled_v2_cli_switch"]
+  },
+  "pointwise_compile": {
+    "state": "active",
+    "reference": "Seven eager BerisEdwardsPointwiseKernels",
+    "implementation": "Production Inductor/default/fullgraph/static constructors; no fallback",
+    "relation": "T2 per-output float64 ratio (not a trajectory tolerance), checked in s29_t2.py.",
+    "default_source": [
+      {"path": "pssolver/api/lowering.py", "name": "_EXECUTION_DEFAULTS", "key": "pointwise_execution", "value": "eager"},
+      {"path": "pssolver/models/active_nematics/beris_edwards.py", "name": "DEFAULT_POINTWISE_EXECUTION", "value": "compile"}
+    ],
+    "switch_source": [{"path": "pssolver/api/lowering.py", "token": "pointwise_execution"}],
+    "assertion_source": [{"path": "qualification/s29_t2.py", "name": "compare", "values": [16]}],
+    "collected_nodes": ["tests/test_v0_5_s29_registry.py::test_t2_gate_raw_ratio_and_matrix"]
+  },
+  "projected_truncation": {
+    "state": "active",
+    "reference": "Full projected transforms",
+    "implementation": "Truncated projected transforms; no-projector full branch preserved",
+    "relation": "The original projected-transform and gradient tolerances.",
+    "default_source": [{"path": "pssolver/core/numerics.py", "name": "DEFAULT_PROJECTED_TRANSFORM_EXECUTION", "value": "truncated"}],
+    "switch_source": [{"path": "pssolver/core/numerics.py", "token": "projected_transform_execution"}],
+    "assertion_source": [
+      {"path": "tests/test_projected_transform_truncation.py", "name": "_tolerances", "values": [5e-13, 3e-5]},
+      {"path": "tests/test_projected_transform_truncation.py", "name": "test_truncated_projected_gradient_matches_full_path", "values": [6e-13]}
+    ],
+    "collected_nodes": [
+      "tests/test_projected_transform_truncation.py::test_truncated_forward_and_inverse_match_full_projected_path",
+      "tests/test_projected_transform_truncation.py::test_truncated_projected_gradient_matches_full_path"
+    ]
+  },
+  "q_gradient_reuse": {
+    "state": "active",
+    "reference": "Recompute Q gradients",
+    "implementation": "Single-use BerisEdwardsQGradientCache; no cross-step reuse",
+    "relation": "Bitwise state and observations, including restart.",
+    "default_source": [{"path": "pssolver/api/lowering.py", "name": "_EXECUTION_DEFAULTS", "key": "disable_q_gradient_reuse", "value": false}],
+    "switch_source": [{"path": "pssolver/api/lowering.py", "token": "disable_q_gradient_reuse"}],
+    "assertion_source": [],
+    "collected_nodes": ["tests/test_v0_5_s29_derivatives.py::test_q_reuse_equivalence"]
+  },
+  "tf32": {
+    "state": "active",
+    "reference": "TF32 off",
+    "implementation": "Opt-in Torch policy for CUDA float32 only",
+    "relation": "No numerical equivalence claimed.",
+    "default_source": [{"path": "pssolver/api/lowering.py", "name": "_EXECUTION_DEFAULTS", "key": "tf32", "value": "off"}],
+    "switch_source": [{"path": "pssolver/api/lowering.py", "token": "tf32"}],
+    "assertion_source": [],
+    "collected_nodes": ["tests/test_v0_5_s29_registry.py::test_tf32_scope_without_device_initialization"]
+  },
+  "closed_form_2x2": {
+    "state": "private_reference",
+    "reference": "torch_linalg_reference",
+    "implementation": "closed_form_2x2",
+    "relation": "P4.4 existing tolerance. The private n×n path is separately compared at n=2.",
+    "default_source": [],
+    "switch_source": [{"path": "pssolver/operators/modal_block.py", "token": "implementation"}],
+    "assertion_source": [{"path": "tests/test_phase4_modal_block_operator.py", "name": "test_closed_form_matches_cpu_linalg_reference_and_residual", "values": [2e-15]}],
+    "collected_nodes": [
+      "tests/test_phase4_modal_block_operator.py::test_closed_form_matches_cpu_linalg_reference_and_residual",
+      "tests/test_v0_5_s29_linear_imex.py::test_modal_two_matches_p44_reference"
+    ]
+  }
+}

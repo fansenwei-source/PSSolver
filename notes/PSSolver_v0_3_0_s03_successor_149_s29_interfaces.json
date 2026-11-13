@@ -1,0 +1,127 @@
+{
+  "basis_commit": "7267dcd00d58c11069a1ee205c181fa3f62ba745",
+  "classification": "s29_interface_proof_candidate",
+  "decisions": [
+    "D-0058",
+    "D-0070"
+  ],
+  "design_check": "R-0127",
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "ARCHITECTURE.md": {
+      "current_sha256": "d2f847414461b4956cd75ed32760bd6f240f00091e495cc8e69d45443194997e",
+      "historical_sha256": "50bb7a368d4da4370de0ea11ac9807eb6d4c104fc25c17be8dc7a6c155a05ced",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/engine/derivatives.py": {
+      "current_sha256": "204eef14efe86a42b45369fff5a754d9f0d8c6df683f0e431c9657b5e3dd1898",
+      "historical_sha256": "7a04b1d80eaf8c3487acfeb689b078a0b45523f39d7b3ae7a68e50887ed716ea",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/engine/engine.py": {
+      "current_sha256": "7a43465c67f885a40e7681b758148e25133b906ac75fec7adfc6b2732864e8b7",
+      "historical_sha256": "9e2ff516175f10decbd0b6be4b9206a14318c0f8bf46a13dba7ff9ee19954166",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/engine/imex.py": {
+      "current_sha256": "ba45a72f0ed4699f20f16d4e1f661d4403e5b2390655c4aa8dd95902c5d31fc8",
+      "historical_sha256": "f297fdae1dd10b358065b2d9ffeeee0b838b48804d9f7b4dedf676f4d85f04ad",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/engine/linear.py": {
+      "current_sha256": "eed361702a6bc8af6959c055609b3f38559edb7f3fdc11fa3b9dad9b897c7385",
+      "historical_sha256": "b8c3b1d99ae720050d7420d5221bf7e399038544a616ef485838d24b2f56e0e8",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/engine/program.py": {
+      "current_sha256": "6032685f7f7191702682a036d960f4ec0ea9620de6e64833ef3a7c846f15a196",
+      "historical_sha256": "86b355427b48406f1629906544b703915e7f0d66b5c96d95682eecd42667fc1a",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/engine/terms.py": {
+      "current_sha256": "a39d079513a59d535571e365ece441ff883fe1b7fb2112e8504f5b66b9a21398",
+      "historical_sha256": "4ef4ed3744400f094d3a4df1f9081010213828264abed6d111e348537f2d5689",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/experimental/representations.py": {
+      "current_sha256": "711c632a5afee47e86cdc25aadfa12b8bfad5c64756e1f291edd79def3b3d5f6",
+      "historical_sha256": "aa101a9a2a1ad95543f33be2faeab42a0eccbd39b1ff142616b2a394497251d1",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/io/engine_state.py": {
+      "current_sha256": "5dd07a7d6ebaa0774b8ab768a641be9e0058e4a1278bf0001434c75c4530d62e",
+      "historical_sha256": "8dcaadb2dc46a50824822b5020c1ff129a4cc3b87127f4f19aee63df24c93dc4",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/planning/engine_plan.py": {
+      "current_sha256": "ef70f81657006166be646ea37885854485ce78c89ad5f169b7471c194e31fdc9",
+      "historical_sha256": "2a5b9ba95cfcda86b92bd43f7b940df080d032b9dbf599503cd2693bcc37bf48",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "pssolver/runtime/simulation_run.py": {
+      "current_sha256": "abd5b37e1e778fc4e8f551d8b1edf6890c6bc8db7b760722fa9f1db5aadde050",
+      "historical_sha256": "30d785e6ced772ce147f29868a4b5d6adc9967eb72d4a25804b246968e8caccd",
+      "reason": "S-29 implementation and exact forward record binding."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "1cfcb79c94c2fad4961f3f468e451262793cef8a153909d6a5b77eeaabf205e1",
+      "historical_sha256": "dd96da177b8833f4859b211eb267a254ff45a2461e813766e7fb09087998c8c4",
+      "reason": "S-29 implementation and exact forward record binding."
+    }
+  },
+  "introduced_sources": {
+    "qualification/s29_authority.json": "370254d810f474b64b33e030ab15e7ae0884c172c4f8c9f564c24328834e3342",
+    "qualification/s29_compare.py": "53a2142deefa79ee07e8d54faebfbcb718ffef02f62ef1f7b68ff8d71804c1f6",
+    "qualification/s29_guard.py": "764d2c44bfba171bb21a7f3a92a11f9ffd50b9b44931c4cd87dbea5d066b1504",
+    "qualification/s29_k2.py": "388baa9721b78f058136b324f4d647064c7ea1e5e8eba0f6c04b17819e4e7baa",
+    "qualification/s29_optimizations.json": "7d9c2cba22dc054eb99e639b434748d3fb5933ccc2f0852989c02f6dfb4592a3",
+    "qualification/s29_preflight.py": "99267cc0ec29109ae6a7d529ff486ce42ee96e0f1383e13123d4db44e40e452c",
+    "qualification/s29_t2.py": "32ede44bcce1a2fd0981f7955e66379a9b0c4786a500a59802bd508c61f62a6d",
+    "qualification/s29_trial.py": "37875c1facbbed396ea0b17f27374f43da6dbacbfee9c082a453fe773efe7580",
+    "tests/oracles/s29_diffusion.py": "8a19ff5be7b76ed8db4ae2bbccd7059bdb789f0d25c0805e545b2ebf0513fa07",
+    "tests/s29_reference.py": "a6650d401d5b1e28e53a78836595dc35ad3366ffa77f6e41d5c57332cead1a95",
+    "tests/test_v0_5_s29_boundary.py": "c854ea7dcfa55af3132557ac01604951b586031f07e123cca65fe4065b41d9ba",
+    "tests/test_v0_5_s29_derivatives.py": "0325ec233d50e9d19d69d7a82b652f6b92ca45916a5e76b344c232de779962ae",
+    "tests/test_v0_5_s29_linear_imex.py": "687717791d8c47a61e7d166124ef71efb07c7726978e80aeb20d2549174946ef",
+    "tests/test_v0_5_s29_registry.py": "a0e0e78cc0bc05212cec55e15595f567521e749e2c733637e61002275f8e66fe"
+  },
+  "retired_units": [
+    {
+      "current_contracts": [
+        "tests/test_v0_5_s29_derivatives.py::test_generic_derivatives_once",
+        "tests/test_v0_5_s29_derivatives.py::test_no_derivative_lease_after_step"
+      ],
+      "historical_contracts": [
+        "test_cache_requires_exact_unmodified_aliases_and_drops_references",
+        "test_cache_rejects_nested_generations_and_mismatched_seeds",
+        "test_representation_reuse_is_opt_in_generation_local_and_auditable"
+      ],
+      "historical_executor": "tests/test_v0_5_s24_historical_stages.py::test_frozen_v040_stage_audits",
+      "reason": "Retire the unused mutation-version cache; keep N.2 and N.3 unchanged.",
+      "source": "pssolver/experimental/representations.py",
+      "source_commit": "7267dcd00d58c11069a1ee205c181fa3f62ba745",
+      "source_sha256": "aa101a9a2a1ad95543f33be2faeab42a0eccbd39b1ff142616b2a394497251d1",
+      "units": [
+        "_RepresentationPair",
+        "_tensor_version",
+        "AlgebraicRepresentationCache"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "test_disposition": {
+    "deleted": [],
+    "existing": "unchanged",
+    "historical": [
+      "tests/test_v0_5_s24_historical_stages.py::test_frozen_v040_stage_audits"
+    ],
+    "moved": [],
+    "new": {
+      "tests/test_v0_5_s29_boundary.py": "functional",
+      "tests/test_v0_5_s29_derivatives.py": "numerical",
+      "tests/test_v0_5_s29_linear_imex.py": "numerical",
+      "tests/test_v0_5_s29_registry.py": "functional"
+    },
+    "new_exceptions": []
+  }
+}

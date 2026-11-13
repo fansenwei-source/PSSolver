@@ -5,6 +5,8 @@
 # PSSOLVER_INSTALLED_PYTHON. Ordinary/numerical source tests use the active CPU environment.
 [categories]
 functional = [
+  "tests/test_v0_5_s29_boundary.py",
+  "tests/test_v0_5_s29_registry.py",
   "tests/test_v0_5_s28a_solver_state.py",
   "tests/test_v0_5_s28b_legacy_restart.py",
   "tests/test_v0_5_s28b_public_frontend.py",
@@ -74,6 +76,8 @@ functional = [
   "tests/test_verify_v0_4_s16_numerical_equivalence.py",
 ]
 numerical = [
+  "tests/test_v0_5_s29_derivatives.py",
+  "tests/test_v0_5_s29_linear_imex.py",
   "tests/test_v0_5_s27_members.py",
   "tests/test_v0_5_s27_engine.py",
   "tests/test_v0_5_s26_allen_cahn.py",

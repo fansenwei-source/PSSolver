@@ -38,7 +38,14 @@ def pointwise_explicit_term(engine, plan_term, kernel):
     target = engine._observable_slices[plan_term.target]
     expected = (target.stop - target.start, engine.batch, *engine.shape)
 
-    def evaluate(view, controls, *, completed_steps):
+    def derivative(view, item):
+        spectral = view.spectral[engine._observable_slices[item[1]]]
+        basis = engine.boundaries
+        for _ in range(item[3]):
+            spectral, basis = engine.transform_backend.gradient_hat(spectral, basis, item[2])
+        return engine.projector.inverse_transform(spectral, basis)
+
+    def evaluate(view, controls, *, completed_steps, derivatives=None):
         values = []
         for item in inputs:
             if item[0] == "coordinates":
@@ -47,14 +54,12 @@ def pointwise_explicit_term(engine, plan_term, kernel):
                 value = completed_steps * engine.dt
             elif item[0] == "field":
                 value = view.spatial[engine._observable_slices[item[1]]]
+            elif derivatives is None:
+                value = derivative(view, item)
             else:
-                spectral = view.spectral[engine._observable_slices[item[1]]]
-                basis = engine.boundaries
-                for _ in range(item[3]):
-                    spectral, basis = engine.transform_backend.gradient_hat(
-                        spectral, basis, item[2]
-                    )
-                value = engine.projector.inverse_transform(spectral, basis)
+                orders = tuple(item[3] if axis == item[2] else 0 for axis in range(3))
+                key = (item[1], orders, engine.boundaries)
+                value = derivatives.resolve(key, lambda item=item: derivative(view, item))
             values.append(value)
         result = kernel(*values)
         if not isinstance(result, torch.Tensor) or tuple(result.shape) != expected:

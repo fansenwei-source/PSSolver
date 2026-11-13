@@ -62,7 +62,7 @@ class TransformGroup:
 @dataclass(frozen=True, slots=True)
 class LinearTermPlan:
     target: str
-    tier: Literal["diagonal"]
+    tier: Literal["diagonal", "modal_block_test", "matrix_free_test"]
     recipe: str
     arguments: Mapping[str, object]
 
@@ -105,7 +105,7 @@ class DealiasPlan:
 
 @dataclass(frozen=True, slots=True)
 class IntegratorPlan:
-    scheme: Literal["semi_implicit_euler"]
+    scheme: Literal["semi_implicit_euler", "sbdf2_test"]
     dt: float
     history_length: int
     refresh_interval: int | None

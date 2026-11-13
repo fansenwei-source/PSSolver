@@ -136,6 +136,12 @@ def _mark_constraints_current(out):
 
 
 def advance(engine, state, view, controls, *, out=None, diagnostics=None):
+    history = state.history
+    shift = (
+        engine.scheme.implicit_shift(history, engine.dt)
+        if engine._reference or not history
+        else 1.0  # Keep the original production Euler rejection in explicit_update.
+    )
     current = prepare(engine, state, view, controls, out=out, diagnostics=diagnostics)
     explicit = engine._explicit_at(current.completed_steps)
     rhs = explicit(view, controls)
@@ -146,18 +152,20 @@ def advance(engine, state, view, controls, *, out=None, diagnostics=None):
         else current.spectral[:evolved]
     )
     target = source if out is not None else None
+    next_history = engine.scheme.next_history(source, rhs, history)
     spectral = engine.scheme.explicit_update(
         source,
         rhs,
-        current.history,
+        history,
         engine.dt,
         out=target,
     )
+    spectral = engine.linear.solve(
+        spectral, shift=shift, dt=engine.dt, out=target, diagnostics=diagnostics,
+    )
     if out is None:
-        spectral = spectral / engine.linear.denominator
         spectral = _evolved_transform(engine, spectral, "project_real_spectrum")
     else:
-        spectral.div_(engine.linear.denominator)
         _evolved_transform(engine, spectral, "project_real_spectrum_", inplace=True)
     physical = _evolved_transform(engine, spectral, "inverse_transform")
     interval = engine.plan.integrator.refresh_interval
@@ -179,16 +187,21 @@ def advance(engine, state, view, controls, *, out=None, diagnostics=None):
         refreshed=refreshed,
     )
     if out is None:
+        # The private unconstrained program has no independent constraint
+        # consumers. Its whole packed tensors retain the pure autograd graph.
+        pure_evolved = None if engine._reference else (physical, spectral)
         return replace(
             current,
             spectral=torch.cat((spectral, current.spectral[evolved:])),
             spatial=torch.cat((physical, current.spatial[evolved:])),
-            pure_evolved=(physical, spectral),
+            pure_evolved=pure_evolved,
+            history=next_history,
             completed_steps=steps,
             refresh_phase=(refresh_steps, refresh_count),
             constrained_current=False,
         )
     out.spatial[:evolved].copy_(physical)
+    out.history = next_history
     out.completed_steps = steps
     out.refresh_phase = (refresh_steps, refresh_count)
     out.constrained_current = False
