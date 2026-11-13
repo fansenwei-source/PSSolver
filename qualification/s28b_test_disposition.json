@@ -13572,7 +13572,7 @@
       "evidence": {
         "after": {
           "changed_module_references": [
-            "qualification.historical_stage_audit -> pssolver:82",
+            "qualification.historical_stage_audit -> pssolver:90",
             "tests.test_v0_5_s24_retirement -> literal pssolver:143",
             "tests.test_v0_5_s24_retirement -> pssolver.functional.legacy_declarations.legacy_plane.read_plane_checkpoint_header:18",
             "tests.test_v0_5_s24_retirement -> pssolver:17",
@@ -13817,7 +13817,7 @@
       "evidence": {
         "after": {
           "changed_module_references": [
-            "qualification.historical_stage_audit -> pssolver:82"
+            "qualification.historical_stage_audit -> pssolver:90"
           ],
           "sha256": "30af76279ced9d46eec6f0f627bef5f59045e0954bdd8d3a79a6a6217bddb0f9",
           "test_units": [
@@ -14024,7 +14024,7 @@
       "evidence": {
         "after": {
           "changed_module_references": [
-            "qualification.historical_s26_audit -> pssolver:132"
+            "qualification.historical_s26_audit -> pssolver:133"
           ],
           "sha256": "9a513be02bb979c18a59c4b97b2ec40e3d0735dd416f1d154edf11441e753ede",
           "test_units": [
@@ -14124,7 +14124,7 @@
       "evidence": {
         "after": {
           "changed_module_references": [
-            "qualification.historical_s27_audit -> pssolver:132"
+            "qualification.historical_s27_audit -> pssolver:133"
           ],
           "sha256": "e78d8a4e8f1103b58a2cc5024e2ab251c4652f2ff38169351d5e2ae4667373b8",
           "test_units": [
@@ -14317,7 +14317,7 @@
       "evidence": {
         "after": {
           "changed_module_references": [
-            "qualification.historical_s27_audit -> pssolver:132"
+            "qualification.historical_s27_audit -> pssolver:133"
           ],
           "sha256": "dc9073473f5c123cefb70f8f5afa177dbf4bcb200e09a87e4ec9e65f5917ce9a",
           "test_units": [
@@ -14491,7 +14491,7 @@
       "evidence": {
         "after": {
           "changed_module_references": [
-            "qualification.historical_s28b_audit -> pssolver:162"
+            "qualification.historical_s28b_audit -> pssolver:163"
           ],
           "sha256": "8f66bc8d6914821cdd45ff619e020a45e5b4f329bd814bed556fe4564f4c1c90",
           "test_units": [
@@ -14548,6 +14548,23 @@
             "test_public_declaration_and_plan_integrity_fail_closed",
             "test_public_checkpoint_does_not_change_final_state_and_can_resume",
             "test_root_and_catalog_do_not_import_tensor_dependencies"
+          ]
+        },
+        "before": null
+      },
+      "reason": "New r2.1 frontend, qualification or provenance coverage.",
+      "rule": "T6"
+    },
+    "tests/test_v0_5_s28b_successor_order.py": {
+      "evidence": {
+        "after": {
+          "changed_module_references": [],
+          "sha256": "adbb8e83d13c0e545790a4739e91668d1522d51ab5eaacc8d012b47668ba88e0",
+          "test_units": [
+            "test_live_resolver_sorts_even_when_directory_iteration_is_reversed",
+            "test_only_file_name_order_reaches_the_frozen_registry_bytes",
+            "test_historical_pin_rejects_unknown_resolver_before_importing_it",
+            "test_only_the_two_exact_historical_duplicate_groups_are_allowed"
           ]
         },
         "before": null

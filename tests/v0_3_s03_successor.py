@@ -16,11 +16,7 @@ SUCCESSOR_PATTERN = "PSSolver_v0_3_0_s03_successor_*.json"
 
 def _records() -> list[Path]:
     successors = list((ROOT / "notes").glob(SUCCESSOR_PATTERN))
-    successors.sort(
-        key=lambda path: int(
-            re.search(r"_successor_(\d+)", path.name).group(1)
-        )
-    )
+    successors.sort(key=lambda path: (int(re.search(r"_successor_(\d+)", path.name).group(1)), path.name))
     return [BASE_RECORD, *successors]
 
 

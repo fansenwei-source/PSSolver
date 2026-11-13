@@ -148,6 +148,7 @@ numerical = [
   "tests/test_v0_4_s19_self_compare.py",
 ]
 historical = [
+  "tests/test_v0_5_s28b_successor_order.py",
   "tests/test_v0_5_s28b_historical_tests.py",
   "tests/test_v0_5_s28a_m1.py",
   "tests/test_v0_5_s28a_historical_tests.py",

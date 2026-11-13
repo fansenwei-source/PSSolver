@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import subprocess
@@ -132,6 +133,13 @@ def _child(checkout: Path, output: Path, files: list[str], *, collect: bool) -> 
     import pssolver
 
     sys.path.insert(0, str(checkout))
+    # The historical checkout can shadow the current qualification package.
+    order_path = Path(__file__).with_name("historical_successor_order.py")
+    spec = importlib.util.spec_from_file_location("_historical_successor_order", order_path)
+    assert spec is not None and spec.loader is not None
+    order = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(order)
+    order.pin(checkout)
     import pytest
     import torch
 

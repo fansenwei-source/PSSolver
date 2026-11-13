@@ -6,7 +6,8 @@
     "R-0121",
     "R-0122",
     "R-0123",
-    "R-0124"
+    "R-0124",
+    "R-0125"
   ],
   "decisions": [
     "D-0058",
@@ -15,12 +16,12 @@
     "D-0068",
     "D-0069"
   ],
-  "design": "S-28b_public_frontend_r2.md r2.3",
+  "design": "S-28b_public_frontend_r2.md r2.4",
   "git_identity": {
+    "earlier_r23_trial": "ff7e8373920221a6627ec7109b096cf477982762",
     "earlier_reviewed_trial": "5f9b919105ab71e35d801437ade5ad0fd21c8d1d",
     "implementation_parent": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802",
-    "preflight_trial": "c3319b884d8085a008fe8e120a89dadfc2c227f8",
-    "reviewed_trial": "ff7e8373920221a6627ec7109b096cf477982762"
+    "reviewed_trial": "f6cd0114cf2ea3070ecd3ee93fb2acb1dcb2c6bf"
   },
   "historical_records_rewritten": false,
   "historical_successor_sources": {
@@ -182,6 +183,21 @@
       "historical_sha256": "9bc20a63734e9cdf085164304fd43fc7040b32bb8d9e1eb98f95051fe32d0eca",
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
+    "qualification/historical_s26_audit.py": {
+      "current_sha256": "7f31f71b04d6614c2a1547e277e0ff56b839475052d25126e002d5cac197ae58",
+      "historical_sha256": "bc56696d30e75604f3f758dbb58816a4fb8b99a7f66e9b9bf7c247134705b3fa",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "qualification/historical_s27_audit.py": {
+      "current_sha256": "e9608a45a425f9d486fe9095c898042e29d6a302f4061cf70f54b74e8681ac89",
+      "historical_sha256": "efb1d52bc23d08d46a8d0c22baac9f1814bdb347c4ed675cd1f4e3ba9ec5f05a",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
+    "qualification/historical_stage_audit.py": {
+      "current_sha256": "94150b5bb05e090cec6478aeeca3f76f5af4f18bd013c4949e599d9900511a13",
+      "historical_sha256": "427dd03b3c7311bc65c9249cd3aece9b21b640d3945e8f8753f387103757f70d",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
     "qualification/identity/sampling.py": {
       "current_sha256": "8e8203086533c1bfecd5ef7f1633a63d7d9456b8d89d524013d892c023d27f6a",
       "historical_sha256": "d56ba8498052efd127173bd74d69f6c6ec435d813e87fc3d3b4cb4bc54e3778d",
@@ -201,9 +217,10 @@
       "accepted_predecessor_sha256": [
         "345fbd68911e45325356f0cc57c8d5db80a7ad8d75c8a4e85a856980c1a628dc",
         "76e11c59289a4dc7ec449bf5dd2aa85d78e69d8e9fa0484ba725123df0338e87",
-        "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830"
+        "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830",
+        "a5895c71fadaf463a33284824db8c08b19d0ab6d3dd948f7ced83a78c0486581"
       ],
-      "current_sha256": "a5895c71fadaf463a33284824db8c08b19d0ab6d3dd948f7ced83a78c0486581",
+      "current_sha256": "dd96da177b8833f4859b211eb267a254ff45a2461e813766e7fb09087998c8c4",
       "historical_sha256": "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830",
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
@@ -889,6 +906,11 @@
       "historical_sha256": "e145f7d924423b63041fdbb49f0b23d3094c8b71c0c6fc54c5c7108be5e06600",
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
+    "tests/v0_3_s03_successor.py": {
+      "current_sha256": "4a6e550c68fc551cdb5da84fc0e88a93a0218edf52151a543c2d79e6a21cac88",
+      "historical_sha256": "87ad03ab32aa5f0fb313d1b85e80dc1a88820737299c2d22418f86a6e4a9e7c4",
+      "reason": "S-28b r2.2 public migration, test or engineering provenance."
+    },
     "tests/v0_5_s25_periodic_v04_checkpoint.py": {
       "current_sha256": "7e838324d3889de7d4525d4ae0f5c3861464694f1cfd265b4b0595a06f34ed1e",
       "historical_sha256": "c221fba74b49b6910743bfcb5b17abf8805d17163b8776f94649d114bda9911b",
@@ -969,7 +991,8 @@
     "pssolver/functional/legacy_declarations/systems_stokes.py": "ee3dced549c9fd1fab70cd784e46e73dc24aef7c1ee530ac2ba9ff7e61f5a828",
     "pssolver/io/initial_snapshot.py": "8ca84d6cd7fb7dc5b01f0004ea7903c7f856365d0a0e4939c66e7ebc06676f36",
     "pssolver/runtime/simulation_run.py": "30d785e6ced772ce147f29868a4b5d6adc9967eb72d4a25804b246968e8caccd",
-    "qualification/historical_s28b_audit.py": "ef18719284a1c9ceb145831abb2a2751ebcdaf006c56d504ab5ddbe5d7552b29",
+    "qualification/historical_s28b_audit.py": "5ae86fe2c31dba59835c486a8a90bd5ecf05eaec636947024bef8fa918dd8393",
+    "qualification/historical_successor_order.py": "413c038263ef3a42c3397c4eaf4f5dc7c4b7954f088074569e975046d9a393cb",
     "qualification/identity/scenes_v05.py": "b18865098ba49e0fa5e194c4133337e7865115ed84264083216d3ec41240d5ff",
     "qualification/s28b_downgrade_v04_canonical.json": "bae500fd92f0631f749b8e558e2690cc49487950cd94ec022144a185c92350b8",
     "qualification/s28b_frozen_callers.json": "12c33fa49aaa8e5ec953e225fbd6d039249ab5b249a245c6e00e2ca075c27063",
@@ -978,12 +1001,13 @@
     "qualification/s28b_import_delta.py": "a20b763d97709d62721f792ffe965eb59e089d8ea0329135021328a487544dfb",
     "qualification/s28b_tables.json": "ac6cd885aae20e846fb9ee50940aec5ab639a630094eaf38524bc9adcefcf759",
     "qualification/s28b_test_classify.py": "c6c9ce982d6117c543cb216cf2bd17d7facfeb89166bf61c2e5f7230694350d0",
-    "qualification/s28b_test_disposition.json": "2098e74a214044d72e42c5048ca38d694e6ddb4c274351aebc29dc2e0b966d3b",
+    "qualification/s28b_test_disposition.json": "61295321d6600a241623dbff32301ef0258f9d982342b7deaba32bf54ec9f954",
     "qualification/s28b_trajectory.py": "39ec2258fbc4d8c671fa83efe61683586a00eec2a41a58f282042adddc45ab8e",
     "qualification/s28b_units.json": "6ad441352983d2fbe3d5985fea7a980a1c6a9470db078daeb0dc2aaa796b7091",
     "tests/test_v0_5_s28b_historical_tests.py": "8f66bc8d6914821cdd45ff619e020a45e5b4f329bd814bed556fe4564f4c1c90",
     "tests/test_v0_5_s28b_legacy_restart.py": "5fbd85858bebbfd18a4501a1ad82644fc9c8f43c2833751bef748b781b5c7706",
     "tests/test_v0_5_s28b_public_frontend.py": "85bb62310c09c9fcc74dc022935814d05c6bea9b037ec1ded9ddd0bfd5c8f5b1",
+    "tests/test_v0_5_s28b_successor_order.py": "adbb8e83d13c0e545790a4739e91668d1522d51ab5eaacc8d012b47668ba88e0",
     "tests/test_v0_5_s28b_trajectory.py": "8fa763edad8575a7dbf18ee7ceb3376a64f1c76b5a0463d7a9b99401bcf3fc73"
   },
   "provenance_binding_order": "After code, test dispositions and import delta registration.",
