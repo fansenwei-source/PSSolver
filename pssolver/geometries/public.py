@@ -19,13 +19,9 @@ def _resolve_domain(
 ) -> DomainSpec:
     if domain is not None:
         if shape is not None or lengths is not None or axis_names is not None:
-            raise ValueError(
-                "domain cannot be combined with shape, lengths, or axis_names"
-            )
+            raise ValueError("domain cannot be combined with shape, lengths, or axis_names")
         if grid_placement is not GridPlacement.CELL_CENTERED:
-            raise ValueError(
-                "domain cannot be combined with a grid_placement override"
-            )
+            raise ValueError("domain cannot be combined with a grid_placement override")
         return domain
     if shape is None or lengths is None:
         raise TypeError("either domain or both shape and lengths are required")

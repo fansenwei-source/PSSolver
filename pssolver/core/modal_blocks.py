@@ -36,15 +36,10 @@ class TwoComponentModalOperatorSpec:
                 for name in self.component_order
             )
         ):
-            raise ValueError(
-                "component_order must contain exactly two unique identifiers"
-            )
+            raise ValueError("component_order must contain exactly two unique identifiers")
         if not isinstance(self.diffusion, tuple) or len(self.diffusion) != 2:
             raise ValueError("diffusion must contain exactly two values")
-        diffusion = tuple(
-            _finite(value, "diffusion coefficient")
-            for value in self.diffusion
-        )
+        diffusion = tuple(_finite(value, "diffusion coefficient") for value in self.diffusion)
         if any(value < 0.0 for value in diffusion):
             raise ValueError("diffusion coefficients must be non-negative")
         object.__setattr__(self, "diffusion", diffusion)
@@ -56,17 +51,14 @@ class TwoComponentModalOperatorSpec:
         ):
             raise ValueError("coupling must have exact shape (2, 2)")
         coupling = tuple(
-            tuple(_finite(value, "coupling coefficient") for value in row)
-            for row in self.coupling
+            tuple(_finite(value, "coupling coefficient") for value in row) for row in self.coupling
         )
         object.__setattr__(self, "coupling", coupling)
 
         if self.geometry_identity != "periodic_1d":
             raise ValueError("Phase 4 supports only geometry_identity='periodic_1d'")
         if self.basis_signature != ("periodic",):
-            raise ValueError(
-                "Phase 4 supports only basis_signature=('periodic',)"
-            )
+            raise ValueError("Phase 4 supports only basis_signature=('periodic',)")
 
     @property
     def block_size(self) -> int:

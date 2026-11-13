@@ -86,9 +86,7 @@ def _inventory_phase(
     allocator_segments = torch.cuda.memory_snapshot()
     torch.cuda.synchronize(device)
     allocator_after_block_snapshot = cuda_memory_snapshot(device)
-    device_index = (
-        device.index if device.index is not None else torch.cuda.current_device()
-    )
+    device_index = device.index if device.index is not None else torch.cuda.current_device()
     reconciliation = reconcile_tensor_inventory_with_cuda_allocator(
         verification_inventory,
         allocator_segments,
@@ -108,9 +106,7 @@ def _inventory_phase(
         "unique_storage_bytes": priming_inventory["unique_storage_bytes"],
         "truncated": priming_inventory["truncated"],
         "all_storages_reported": priming_inventory["all_storages_reported"],
-        "identical_to_measured_inventory": (
-            priming_inventory == measured_inventory
-        ),
+        "identical_to_measured_inventory": (priming_inventory == measured_inventory),
         "allocated_delta_bytes": (
             int(allocator_after_priming["allocated_bytes"])
             - int(allocator_before_priming["allocated_bytes"])
@@ -155,14 +151,9 @@ def _inventory_phase(
         "storage_identity_inventory_stable": (
             priming_summary["identical_to_measured_inventory"] is True
         ),
-        "storage_identity_set_stable": inventory_comparison[
-            "unique_storage_identity_equal"
-        ]
-        is True
+        "storage_identity_set_stable": inventory_comparison["unique_storage_identity_equal"] is True
         and repeated_comparison["unique_storage_identity_equal"] is True,
-        "storage_identity_post_priming_stable": repeated_comparison[
-            "full_inventory_identical"
-        ],
+        "storage_identity_post_priming_stable": repeated_comparison["full_inventory_identical"],
         "storage_identity_observer_effect_explained": (
             inventory_comparison["full_inventory_identical"] is True
             and repeated_comparison["full_inventory_identical"] is True
@@ -227,12 +218,8 @@ def _legacy_config(
         warmup_steps=warmup_steps,
         profile_steps=diagnostic_steps,
         spectral_refresh_interval=numerics["spectral_refresh_interval_steps"],
-        pressure_diagnostics=bool(
-            reference.metadata["numerics"]["pressure_residual_diagnostics"]
-        ),
-        reuse_q_gradients=bool(
-            reference.metadata["numerics"]["q_gradient_reuse"]["enabled"]
-        ),
+        pressure_diagnostics=bool(reference.metadata["numerics"]["pressure_residual_diagnostics"]),
+        reuse_q_gradients=bool(reference.metadata["numerics"]["q_gradient_reuse"]["enabled"]),
         molecular_field_linear_space=numerics["molecular_field_linear_space"],
         stress_divergence_sum_space=numerics["stress_divergence_sum_space"],
         pointwise_execution=numerics["pointwise_execution"],
@@ -348,13 +335,9 @@ def _canary_diagnostic(
             "dtype": signature["solver"]["real_dtype"],
             "dt": signature["solver"]["dt"],
             "dealias_rule": signature["numerics"]["dealias_rule"],
-            "projected_transform_execution": signature["numerics"][
-                "projected_transform_execution"
-            ],
+            "projected_transform_execution": signature["numerics"]["projected_transform_execution"],
             "spectral_storage": signature["solver"]["spectral_storage"],
-            "spectral_refresh_interval": signature["numerics"][
-                "spectral_refresh_interval_steps"
-            ],
+            "spectral_refresh_interval": signature["numerics"]["spectral_refresh_interval_steps"],
         },
         "configuration_comparison": comparison.to_metadata(),
         "semantic_regions": semantic_regions,

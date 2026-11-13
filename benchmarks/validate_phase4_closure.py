@@ -93,10 +93,7 @@ def _validate_memory(record: dict[str, Any], description: str) -> dict[str, floa
         "incremental_peak_allocated_bytes",
         "incremental_peak_reserved_bytes",
     )
-    parsed = {
-        key: _finite(memory.get(key), f"{description}.memory.{key}")
-        for key in keys
-    }
+    parsed = {key: _finite(memory.get(key), f"{description}.memory.{key}") for key in keys}
     if any(value < 0.0 for value in parsed.values()):
         raise ClosureEvidenceError(f"{description}.memory contains negative bytes")
     _close(
@@ -156,9 +153,7 @@ def _validate_aggregate(
     expected = {
         "mean_milliseconds_per_step": statistics.fmean(timings),
         "median_milliseconds_per_step": statistics.median(timings),
-        "sample_standard_deviation_milliseconds_per_step": statistics.stdev(
-            timings
-        ),
+        "sample_standard_deviation_milliseconds_per_step": statistics.stdev(timings),
     }
     _exact(aggregate.get("trials"), 3, f"aggregate.{variant}.trials")
     for key, value in expected.items():
@@ -222,9 +217,7 @@ def _validate_row(
     )
     expected_paired = [
         rebound / continuous
-        for continuous, rebound in zip(
-            timings[CONTINUOUS], timings[REBOUND], strict=True
-        )
+        for continuous, rebound in zip(timings[CONTINUOUS], timings[REBOUND], strict=True)
     ]
     if len(paired) != 3:
         raise ClosureEvidenceError("paired ratios must contain three trials")
@@ -235,12 +228,12 @@ def _validate_row(
             "paired ratio",
         )
 
-    allocated_ratio = max(
-        memory["peak_allocated_bytes"] for memory in memories[REBOUND]
-    ) / max(memory["peak_allocated_bytes"] for memory in memories[CONTINUOUS])
-    reserved_ratio = max(
-        memory["peak_reserved_bytes"] for memory in memories[REBOUND]
-    ) / max(memory["peak_reserved_bytes"] for memory in memories[CONTINUOUS])
+    allocated_ratio = max(memory["peak_allocated_bytes"] for memory in memories[REBOUND]) / max(
+        memory["peak_allocated_bytes"] for memory in memories[CONTINUOUS]
+    )
+    reserved_ratio = max(memory["peak_reserved_bytes"] for memory in memories[REBOUND]) / max(
+        memory["peak_reserved_bytes"] for memory in memories[CONTINUOUS]
+    )
     if allocated_ratio > maximum_memory_ratio or reserved_ratio > maximum_memory_ratio:
         raise ClosureEvidenceError("rebound memory exceeds the closure gate")
     return {
@@ -339,9 +332,7 @@ def validate_evidence(
     if minimum_order < 1.8:
         raise ClosureEvidenceError("SBDF2 convergence order is below 1.8")
     orders = _list(convergence.get("pairwise_l2_orders"), "pairwise orders")
-    if len(orders) != 3 or any(
-        _finite(value, "pairwise order") < 1.8 for value in orders
-    ):
+    if len(orders) != 3 or any(_finite(value, "pairwise order") < 1.8 for value in orders):
         raise ClosureEvidenceError("pairwise convergence orders are invalid")
 
     eligibility = _mapping(payload.get("eligibility"), "eligibility")

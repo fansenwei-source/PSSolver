@@ -76,10 +76,7 @@ CHAPTERS = [
                 12.5,
             ),
             math(r"M=Q+\frac{I}{3},\qquad \beta\alpha=-\zeta"),
-            paragraph(
-                "代码取 β=−1、α=ζ，因此 βαQ=−ζQ。ζ>0 对应 extensile，ζ<0 "
-                "对应 contractile。"
-            ),
+            paragraph("代码取 β=−1、α=ζ，因此 βαQ=−ζQ。ζ>0 对应 extensile，ζ<0 对应 contractile。"),
         ],
     ),
     (
@@ -90,9 +87,7 @@ CHAPTERS = [
                 r"=q\left(n_i n_j-\frac{\delta_{ij}}{3}\right),\quad q=\frac{3S}{2}",
                 12.5,
             ),
-            paragraph(
-                "Q 为对称无迹张量。Shendruk 有序区 S_eq=1/3，所以 q_eq=1/2。"
-            ),
+            paragraph("Q 为对称无迹张量。Shendruk 有序区 S_eq=1/3，所以 q_eq=1/2。"),
             math(
                 r"W_{ij}=\partial_j u_i,\qquad E=\frac{W+W^T}{2},"
                 r"\qquad \Omega=\frac{W-W^T}{2}"
@@ -161,9 +156,7 @@ CHAPTERS = [
                 r"-(QH-HQ):\Omega",
                 12.4,
             ),
-            math(
-                r"\Pi^R=2\lambda M(Q:H)-\lambda(HM+MH)+QH-HQ"
-            ),
+            math(r"\Pi^R=2\lambda M(Q:H)-\lambda(HM+MH)+QH-HQ"),
             math(
                 r"\Pi^R:W=\left[2\lambda M(Q:H)-\lambda(HM+MH)\right]:E"
                 r"+(QH-HQ):\Omega",
@@ -185,9 +178,7 @@ CHAPTERS = [
                 r"\Pi^d_{ij}=-\partial_iQ_{kl}"
                 r"\frac{\partial f}{\partial(\partial_jQ_{kl})}"
             ),
-            math(
-                r"f_{\rm el}=\frac{L_1}{2}(\partial_mQ_{kl})(\partial_mQ_{kl})"
-            ),
+            math(r"f_{\rm el}=\frac{L_1}{2}(\partial_mQ_{kl})(\partial_mQ_{kl})"),
             math(
                 r"\frac{\partial f_{\rm el}}{\partial(\partial_jQ_{kl})}"
                 r"=L_1\partial_jQ_{kl}"
@@ -238,22 +229,12 @@ CHAPTERS = [
     (
         "五分量表示与代码代数核验",
         [
-            math(
-                r"(Q_{xx},Q_{xy},Q_{xz},Q_{yy},Q_{yz}),\qquad Q_{zz}=-Q_{xx}-Q_{yy}"
-            ),
-            math(
-                r"Q:H=Q_{xx}H_{xx}+Q_{yy}H_{yy}+Q_{zz}H_{zz}"
-            ),
-            math(
-                r"\qquad +2(Q_{xy}H_{xy}+Q_{xz}H_{xz}+Q_{yz}H_{yz})"
-            ),
+            math(r"(Q_{xx},Q_{xy},Q_{xz},Q_{yy},Q_{yz}),\qquad Q_{zz}=-Q_{xx}-Q_{yy}"),
+            math(r"Q:H=Q_{xx}H_{xx}+Q_{yy}H_{yy}+Q_{zz}H_{zz}"),
+            math(r"\qquad +2(Q_{xy}H_{xy}+Q_{xz}H_{xz}+Q_{yz}H_{yz})"),
             paragraph("梯度双缩并也必须给三个非对角分量权重 2；当前 helper 正确。"),
-            math(
-                r"2\lambda M(Q:H)+(1-\lambda)MH-(1+\lambda)HM"
-            ),
-            math(
-                r"=2\lambda M(Q:H)-\lambda(MH+HM)+(MH-HM)"
-            ),
+            math(r"2\lambda M(Q:H)+(1-\lambda)MH-(1+\lambda)HM"),
+            math(r"=2\lambda M(Q:H)-\lambda(MH+HM)+(MH-HM)"),
             math(r"MH-HM=QH-HQ"),
             paragraph("最后一个等号来自 M=Q+I/3，且 I/3 与 H 对易。"),
             subhead("散度指标"),
@@ -296,7 +277,9 @@ CHAPTERS = [
             bullet("仅实现 L2=L3=0，不能覆盖 twist/bend/splay 各向异性。"),
             bullet("谱方法、初始化和时间推进与论文的 hybrid LB/FD 不相同。"),
             bullet("8 项测试覆盖张量、Q RHS 和 adapter，但缺完整混合基 Stokes manufactured test。"),
-            bullet("共享 helper 已接入当前 Plane_beris_edwards_stokes.py；中间参考脚本仍保留旧展开。"),
+            bullet(
+                "共享 helper 已接入当前 Plane_beris_edwards_stokes.py；中间参考脚本仍保留旧展开。"
+            ),
             bullet("保存的 p 是吸收各向同性应力后的有效压力。"),
             paragraph("下面给出最重要三个问题的数学原因。"),
         ],
@@ -369,9 +352,7 @@ CHAPTERS = [
                 r"f_{\rm el}=\frac{L_1}{2}\partial_kQ_{ij}\partial_kQ_{ij}"
                 r"+\frac{L_2}{2}(\partial_kQ_{kj})(\partial_iQ_{ij})"
             ),
-            math(
-                r"\qquad +\frac{L_3}{2}Q_{ki}(\partial_kQ_{jl})(\partial_iQ_{jl})"
-            ),
+            math(r"\qquad +\frac{L_3}{2}Q_{ki}(\partial_kQ_{jl})(\partial_iQ_{jl})"),
             math(
                 r"\Pi^d_{ij}=-\partial_iQ_{kl}"
                 r"\frac{\partial f_{\rm el}}{\partial(\partial_jQ_{kl})}"
@@ -381,13 +362,19 @@ CHAPTERS = [
                 " L1 替换成一个有效常数。"
             ),
             subhead("数值与测试"),
-            bullet("论文为 hybrid lattice-Boltzmann/finite difference；当前为 FFT/DCT/DST 谱方法。"),
+            bullet(
+                "论文为 hybrid lattice-Boltzmann/finite difference；当前为 FFT/DCT/DST 谱方法。"
+            ),
             bullet("需验证网格、时间步、初始化和去混叠对临界活性数及缺陷统计的影响。"),
             bullet("应增加完整应力散度、Schur 压力、墙面奇偶基和零模的 manufactured tests。"),
             bullet("默认 cubic_half 去掉最高 DST 边缘模；dealias=none 仍需单独测试。"),
             subhead("共享 helper 与实际 Plane 路径"),
-            bullet("当前支持的 Plane_beris_edwards_stokes.py 已直接使用共享 Q adapter 与应力 helper。"),
-            bullet("20 组随机张量验证了中间脚本旧展开与共享实现一致；应继续用回归测试和实现哈希防止漂移。输出 p 是有效压力，不能直接和 LB 压力逐点比较。"),
+            bullet(
+                "当前支持的 Plane_beris_edwards_stokes.py 已直接使用共享 Q adapter 与应力 helper。"
+            ),
+            bullet(
+                "20 组随机张量验证了中间脚本旧展开与共享实现一致；应继续用回归测试和实现哈希防止漂移。输出 p 是有效压力，不能直接和 LB 压力逐点比较。"
+            ),
         ],
     ),
     (
@@ -396,7 +383,9 @@ CHAPTERS = [
             bullet("P0：严格复现时保留惯性，或至少显式演化两个切向平均动量。"),
             bullet("P0：明确目标 Fig. 4 曲线，分别实现 strong/free anchoring 与 no/free slip。"),
             bullet("P1：建立 manufactured solutions 和逐项功率/能量预算。"),
-            bullet("P1：保持 Plane_beris_edwards_stokes.py 使用共享 adapter/helper，并保留 provenance 与回归测试。"),
+            bullet(
+                "P1：保持 Plane_beris_edwards_stokes.py 使用共享 adapter/helper，并保留 provenance 与回归测试。"
+            ),
             bullet("P2：完成 one-constant 后，再实现 L2、L3 对 H 和形变应力的贡献。"),
             paragraph(
                 "若目标仅为自洽的低 Reynolds 数 one-constant 谱模型，当前应力可"
@@ -404,12 +393,18 @@ CHAPTERS = [
                 " free-slip，并明确 plug-mode convention。"
             ),
             subhead("主要来源"),
-            bullet("Shendruk et al., Phys. Rev. E 98, 010601 (2018), DOI: 10.1103/PhysRevE.98.010601"),
-            bullet("Marenduzzo et al., Phys. Rev. E 76, 031921 (2007), DOI: 10.1103/PhysRevE.76.031921"),
+            bullet(
+                "Shendruk et al., Phys. Rev. E 98, 010601 (2018), DOI: 10.1103/PhysRevE.98.010601"
+            ),
+            bullet(
+                "Marenduzzo et al., Phys. Rev. E 76, 031921 (2007), DOI: 10.1103/PhysRevE.76.031921"
+            ),
             bullet("Beris & Edwards, Thermodynamics of Flowing Systems (1994)."),
             bullet("Shendruk et al., Soft Matter 13, 3853 (2017), DOI: 10.1039/C6SM02310J"),
             subhead("对应代码"),
-            paragraph("Plane_beris_edwards_stokes.py；作为中间参考的 Plane_shendruk_stokes.py；pssolver/models/active_nematics/beris_edwards.py；tests/test_beris_edwards_stress.py；scripts_plane/run_beris_edwards_validation.py。"),
+            paragraph(
+                "Plane_beris_edwards_stokes.py；作为中间参考的 Plane_shendruk_stokes.py；pssolver/models/active_nematics/beris_edwards.py；tests/test_beris_edwards_stress.py；scripts_plane/run_beris_edwards_validation.py。"
+            ),
             paragraph("可编辑的完整规范源文件：docs/beris_edwards_stokes_derivation_zh.tex"),
         ],
     ),
@@ -453,7 +448,13 @@ class DocumentRenderer:
             va="top",
         )
         self.fig.lines.append(
-            plt.Line2D([0.075, 0.925], [0.925, 0.925], transform=self.fig.transFigure, color="#9CB6CE", lw=1.0)
+            plt.Line2D(
+                [0.075, 0.925],
+                [0.925, 0.925],
+                transform=self.fig.transFigure,
+                color="#9CB6CE",
+                lw=1.0,
+            )
         )
         self.y = 0.895
 
@@ -596,7 +597,9 @@ def main():
         metadata = pdf.infodict()
         metadata["Title"] = "Beris–Edwards 主动向列相应力与 Stokes 方程"
         metadata["Author"] = "Codex mathematical derivation and code audit"
-        metadata["Subject"] = "Shendruk/Beris–Edwards stress derivation and current model limitations"
+        metadata["Subject"] = (
+            "Shendruk/Beris–Edwards stress derivation and current model limitations"
+        )
         title_page(pdf)
         renderer = DocumentRenderer(pdf)
         for chapter, blocks in CHAPTERS:

@@ -190,8 +190,7 @@ def analyze(
             )
             for statistic in ("mean", "median"):
                 ratios[statistic].append(
-                    _profile_seconds(lifting, statistic)
-                    / _profile_seconds(control, statistic)
+                    _profile_seconds(lifting, statistic) / _profile_seconds(control, statistic)
                 )
             memory_names = ["peak_allocated_bytes", "peak_reserved_bytes"]
             if active_limit is not None:
@@ -205,11 +204,7 @@ def analyze(
         median_ratio = statistics.median(ratios["median"])
         allocated_ratio = max(ratios["peak_allocated_bytes"])
         reserved_ratio = max(ratios["peak_reserved_bytes"])
-        active_ratio = (
-            None
-            if active_limit is None
-            else max(ratios["peak_active_bytes"])
-        )
+        active_ratio = None if active_limit is None else max(ratios["peak_active_bytes"])
         _require(mean_ratio <= timestep_limit, "mean timestep non-regression failed")
         _require(
             median_ratio <= timestep_limit,
@@ -241,8 +236,7 @@ def analyze(
         "manufactured result is non-finite",
     )
     _require(
-        float(manufactured_report["minimum_rate"])
-        >= float(contract["manufactured_minimum_rate"]),
+        float(manufactured_report["minimum_rate"]) >= float(contract["manufactured_minimum_rate"]),
         "manufactured convergence rate failed",
     )
     restart = restarts[0]
@@ -254,8 +248,7 @@ def analyze(
     _require(restart.get("finite") is True, "restart state is non-finite")
     _require(restart.get("all_byte_identical") is True, "restart is not exact")
     _require(
-        restart.get("continuous_physical_sha256")
-        == restart.get("resumed_physical_sha256"),
+        restart.get("continuous_physical_sha256") == restart.get("resumed_physical_sha256"),
         "restart physical-state identities differ",
     )
     lifting_restart = restart.get("lifting_restart")
@@ -274,8 +267,7 @@ def analyze(
             "cross-version comparison did not exercise compiled execution",
         )
         _require(
-            cross_version_equivalence.get("shape")
-            == contract["cross_version_shape"],
+            cross_version_equivalence.get("shape") == contract["cross_version_shape"],
             "cross-version shape mismatch",
         )
         _require(
@@ -315,9 +307,7 @@ def analyze(
             "cross-version Linf tolerance mismatch",
         )
         _require(
-            cross_version_equivalence.get(
-                "same_runtime_restart_byte_identity_required_separately"
-            )
+            cross_version_equivalence.get("same_runtime_restart_byte_identity_required_separately")
             is True,
             "same-runtime restart identity requirement is missing",
         )
@@ -339,9 +329,7 @@ def analyze(
         "qualification_complete": True,
         "expected_commit": expected_commit,
         "installed_package_root": str(package_root),
-        "report_count": (
-            len(profiles) + len(manufactured) + len(restarts) + len(cross_version)
-        ),
+        "report_count": (len(profiles) + len(manufactured) + len(restarts) + len(cross_version)),
         "performance": performance,
         "wall_residual_passed": True,
         "manufactured_convergence_passed": True,

@@ -856,7 +856,8 @@ def run_assembled_simulation(
         if path is not None:
             try:
                 header = read_checkpoint_json(
-                    path / "checkpoint.json", operation="engine_state_import",
+                    path / "checkpoint.json",
+                    operation="engine_state_import",
                 )
             except CheckpointError:
                 header = {}

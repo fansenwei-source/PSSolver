@@ -11,8 +11,7 @@ def _smooth_interval(coordinate, start, stop, width):
     if width <= 0:
         return ((coordinate >= start) & (coordinate < stop)).to(coordinate.dtype)
     return 0.5 * (
-        torch.tanh((coordinate - start) / width)
-        - torch.tanh((coordinate - stop) / width)
+        torch.tanh((coordinate - start) / width) - torch.tanh((coordinate - stop) / width)
     )
 
 
@@ -93,16 +92,26 @@ def partition_mask_along_axis(
         )
 
     spacing = (stop - start) / num_masks
-    centers = start + (torch.arange(
-        num_masks,
-        device=mask.device,
-        dtype=mask.dtype,
-    ) + 0.5) * spacing
-    coordinate = torch.arange(
-        mask.shape[axis],
-        device=mask.device,
-        dtype=mask.dtype,
-    ) + 0.5
+    centers = (
+        start
+        + (
+            torch.arange(
+                num_masks,
+                device=mask.device,
+                dtype=mask.dtype,
+            )
+            + 0.5
+        )
+        * spacing
+    )
+    coordinate = (
+        torch.arange(
+            mask.shape[axis],
+            device=mask.device,
+            dtype=mask.dtype,
+        )
+        + 0.5
+    )
     distance = coordinate.unsqueeze(0) - centers.unsqueeze(1)
     if periodic:
         period = float(mask.shape[axis])
@@ -161,13 +170,11 @@ def partition_mask_rbf(
     ):
         start, stop = interval
         if not 0 <= start < stop <= size:
-            raise ValueError(
-                f"Axis {axis} bounds {(start, stop)} must lie inside [0, {size}]."
-            )
+            raise ValueError(f"Axis {axis} bounds {(start, stop)} must lie inside [0, {size}].")
         spacing = (stop - start) / count
-        centers = start + (
-            torch.arange(count, device=mask.device, dtype=mask.dtype) + 0.5
-        ) * spacing
+        centers = (
+            start + (torch.arange(count, device=mask.device, dtype=mask.dtype) + 0.5) * spacing
+        )
         coordinate = torch.arange(size, device=mask.device, dtype=mask.dtype) + 0.5
         distance = coordinate.unsqueeze(0) - centers.unsqueeze(1)
         if is_periodic:
@@ -178,9 +185,7 @@ def partition_mask_rbf(
         view_shape[axis] = count
         view_shape[ndim + axis] = size
         axis_log_weight = axis_log_weight.reshape(view_shape)
-        log_weights = (
-            axis_log_weight if log_weights is None else log_weights + axis_log_weight
-        )
+        log_weights = axis_log_weight if log_weights is None else log_weights + axis_log_weight
 
     num_masks = math.prod(counts)
     weights = torch.softmax(log_weights.reshape(num_masks, *mask.shape), dim=0)
@@ -250,9 +255,7 @@ class TemporalMaskControl(torch.nn.Module):
     def set_amplitudes(self, amplitudes):
         """Replace all time-block amplitudes while preserving the bounded parameterization."""
 
-        amplitudes = torch.as_tensor(
-            amplitudes, device=self.logits.device, dtype=self.logits.dtype
-        )
+        amplitudes = torch.as_tensor(amplitudes, device=self.logits.device, dtype=self.logits.dtype)
         if amplitudes.shape != self.logits.shape:
             raise ValueError(
                 f"Expected amplitudes with shape {tuple(self.logits.shape)}, "

@@ -29,8 +29,7 @@ def _segment_matches_device(
     if raw is None:
         if visible_device_count != 1:
             raise ValueError(
-                "allocator segments without device identity require exactly "
-                "one visible CUDA device"
+                "allocator segments without device identity require exactly one visible CUDA device"
             )
         return True
     if isinstance(raw, str):
@@ -63,28 +62,18 @@ def _allocator_blocks(
         ):
             continue
         selected_segments += 1
-        segment_start = _nonnegative_integer(
-            segment.get("address"), "allocator segment address"
-        )
-        segment_size = _nonnegative_integer(
-            segment.get("total_size"), "allocator segment size"
-        )
+        segment_start = _nonnegative_integer(segment.get("address"), "allocator segment address")
+        segment_size = _nonnegative_integer(segment.get("total_size"), "allocator segment size")
         selected_segment_bytes += segment_size
         cursor = segment_start
         raw_blocks = segment.get("blocks")
-        if not isinstance(raw_blocks, Sequence) or isinstance(
-            raw_blocks, (str, bytes, bytearray)
-        ):
+        if not isinstance(raw_blocks, Sequence) or isinstance(raw_blocks, (str, bytes, bytearray)):
             raise TypeError("allocator segment blocks must be a sequence")
         for block_index, block in enumerate(raw_blocks):
             if not isinstance(block, Mapping):
                 raise TypeError("allocator blocks must be mappings")
-            start = _nonnegative_integer(
-                block.get("address", cursor), "allocator block address"
-            )
-            size = _nonnegative_integer(
-                block.get("size"), "allocator block size"
-            )
+            start = _nonnegative_integer(block.get("address", cursor), "allocator block address")
+            size = _nonnegative_integer(block.get("size"), "allocator block size")
             requested = _nonnegative_integer(
                 block.get("requested_size", size),
                 "allocator block requested size",
@@ -145,13 +134,9 @@ def reconcile_tensor_inventory_with_cuda_allocator(
         raise TypeError("inventory must be a mapping")
     if inventory.get("all_storages_reported") is not True:
         raise ValueError("allocator reconciliation requires all storages")
-    allocated = _nonnegative_integer(
-        allocator_allocated_bytes, "allocator allocated bytes"
-    )
+    allocated = _nonnegative_integer(allocator_allocated_bytes, "allocator allocated bytes")
     device_index = _nonnegative_integer(device_index, "device index")
-    visible_device_count = _nonnegative_integer(
-        visible_device_count, "visible device count"
-    )
+    visible_device_count = _nonnegative_integer(visible_device_count, "visible device count")
     if visible_device_count <= 0 or device_index >= visible_device_count:
         raise ValueError("CUDA device identity is inconsistent")
     maximum_reported_unmatched_storages = _nonnegative_integer(
@@ -170,18 +155,12 @@ def reconcile_tensor_inventory_with_cuda_allocator(
         device_index=device_index,
         visible_device_count=visible_device_count,
     )
-    active_blocks = [
-        block for block in blocks if block["state"] == _ACTIVE_ALLOCATED
-    ]
+    active_blocks = [block for block in blocks if block["state"] == _ACTIVE_ALLOCATED]
     active_block_bytes = sum(int(block["size"]) for block in active_blocks)
-    active_requested_bytes = sum(
-        int(block["requested_size"]) for block in active_blocks
-    )
+    active_requested_bytes = sum(int(block["requested_size"]) for block in active_blocks)
 
     raw_storages = inventory.get("storages")
-    if not isinstance(raw_storages, Sequence) or isinstance(
-        raw_storages, (str, bytes, bytearray)
-    ):
+    if not isinstance(raw_storages, Sequence) or isinstance(raw_storages, (str, bytes, bytearray)):
         raise TypeError("inventory storages must be a sequence")
     expected_count = _nonnegative_integer(
         inventory.get("unique_storage_count"), "inventory storage count"
@@ -211,8 +190,7 @@ def reconcile_tensor_inventory_with_cuda_allocator(
         containing = [
             block
             for block in blocks
-            if start >= int(block["address"])
-            and end <= int(block["address"]) + int(block["size"])
+            if start >= int(block["address"]) and end <= int(block["address"]) + int(block["size"])
         ]
         if len(containing) == 1:
             block = containing[0]
@@ -228,8 +206,7 @@ def reconcile_tensor_inventory_with_cuda_allocator(
         intersecting = [
             block
             for block in blocks
-            if start < int(block["address"]) + int(block["size"])
-            and end > int(block["address"])
+            if start < int(block["address"]) + int(block["size"]) and end > int(block["address"])
         ]
         unmatched.append(
             {
@@ -249,9 +226,7 @@ def reconcile_tensor_inventory_with_cuda_allocator(
             }
         )
 
-    active_inventory_bytes = int(
-        matched_by_state_bytes.get(_ACTIVE_ALLOCATED, 0)
-    )
+    active_inventory_bytes = int(matched_by_state_bytes.get(_ACTIVE_ALLOCATED, 0))
     bytes_outside_active = positive_storage_bytes - active_inventory_bytes
     referenced_active_block_ids = set(active_coverage)
     referenced_active_block_bytes = sum(
@@ -259,9 +234,7 @@ def reconcile_tensor_inventory_with_cuda_allocator(
         for block in active_blocks
         if int(block["block_id"]) in referenced_active_block_ids
     )
-    covered_active_block_bytes = sum(
-        _covered_bytes(ranges) for ranges in active_coverage.values()
-    )
+    covered_active_block_bytes = sum(_covered_bytes(ranges) for ranges in active_coverage.values())
     counter_matches_blocks = active_block_bytes == allocated
     all_inside_active = bytes_outside_active == 0 and ambiguous_count == 0
     reconciled = counter_matches_blocks and all_inside_active
@@ -291,41 +264,27 @@ def reconcile_tensor_inventory_with_cuda_allocator(
         "inventory_positive_storage_bytes": positive_storage_bytes,
         "inventory_storage_count": expected_count,
         "zero_sized_storage_count": zero_sized_count,
-        "matched_storage_count_by_allocator_state": dict(
-            sorted(matched_by_state_count.items())
-        ),
-        "matched_storage_bytes_by_allocator_state": dict(
-            sorted(matched_by_state_bytes.items())
-        ),
+        "matched_storage_count_by_allocator_state": dict(sorted(matched_by_state_count.items())),
+        "matched_storage_bytes_by_allocator_state": dict(sorted(matched_by_state_bytes.items())),
         "inventory_bytes_inside_active_allocator_blocks": active_inventory_bytes,
         "inventory_bytes_outside_active_allocator_blocks": bytes_outside_active,
         "ambiguous_storage_count": ambiguous_count,
         "ambiguous_storage_bytes": ambiguous_bytes,
-        "referenced_active_allocator_block_count": len(
-            referenced_active_block_ids
-        ),
+        "referenced_active_allocator_block_count": len(referenced_active_block_ids),
         "referenced_active_allocator_block_bytes": referenced_active_block_bytes,
-        "covered_bytes_within_referenced_active_blocks": (
-            covered_active_block_bytes
-        ),
+        "covered_bytes_within_referenced_active_blocks": (covered_active_block_bytes),
         "uncovered_bytes_within_referenced_active_blocks": (
             referenced_active_block_bytes - covered_active_block_bytes
         ),
         "unreferenced_active_allocator_block_bytes": (
             active_block_bytes - referenced_active_block_bytes
         ),
-        "all_inventory_storages_within_active_allocator_blocks": (
-            all_inside_active
-        ),
+        "all_inventory_storages_within_active_allocator_blocks": (all_inside_active),
         "accounting_reconciled": reconciled,
         "unmatched_storage_count": len(unmatched),
-        "unmatched_storage_bytes": sum(
-            int(item["storage_bytes"]) for item in unmatched
-        ),
+        "unmatched_storage_bytes": sum(int(item["storage_bytes"]) for item in unmatched),
         "unmatched_storages": unmatched[:maximum_reported_unmatched_storages],
-        "all_unmatched_storages_reported": (
-            len(unmatched) <= maximum_reported_unmatched_storages
-        ),
+        "all_unmatched_storages_reported": (len(unmatched) <= maximum_reported_unmatched_storages),
     }
 
 

@@ -71,12 +71,8 @@ class DiscreteAdjointLoop:
                     checkpoints[index] = self._checkpoint(q)
 
             cost += float(self.objective.terminal_cost(q).item())
-            cost += float(
-                self.control.temporal_regularization(self.temporal_control_weight).item()
-            )
-            cost += float(
-                self.control.spatial_regularization(self.spatial_control_weight).item()
-            )
+            cost += float(self.control.temporal_regularization(self.temporal_control_weight).item())
+            cost += float(self.control.spatial_regularization(self.spatial_control_weight).item())
 
         boundaries = sorted(checkpoints)
         return ForwardRecord(cost=cost, checkpoints=checkpoints, boundaries=boundaries)
@@ -144,9 +140,8 @@ class DiscreteAdjointLoop:
                 regularization_cost = self.control.temporal_regularization(
                     self.temporal_control_weight
                 )
-                regularization_cost = (
-                    regularization_cost
-                    + self.control.spatial_regularization(self.spatial_control_weight)
+                regularization_cost = regularization_cost + self.control.spatial_regularization(
+                    self.spatial_control_weight
                 )
                 regularization_gradient = torch.autograd.grad(
                     regularization_cost,
@@ -184,13 +179,9 @@ class DiscreteAdjointLoop:
         if direction_method == "steepest_descent":
             direction = -gradient
         elif direction_method == "lbfgs":
-            direction = self._lbfgs_direction(
-                original, gradient, history_size=lbfgs_history_size
-            )
+            direction = self._lbfgs_direction(original, gradient, history_size=lbfgs_history_size)
         else:
-            raise ValueError(
-                "direction_method must be 'steepest_descent' or 'lbfgs'."
-            )
+            raise ValueError("direction_method must be 'steepest_descent' or 'lbfgs'.")
         if normalize_direction:
             direction = direction / torch.linalg.vector_norm(direction).clamp_min(1e-30)
         directional_derivative = float(torch.sum(gradient * direction).item())
@@ -200,10 +191,7 @@ class DiscreteAdjointLoop:
             with torch.no_grad():
                 self.control.logits.copy_(original + step_size * direction)
             trial_record = self.forward(initial_q)
-            threshold = (
-                base_record.cost
-                + sufficient_decrease * step_size * directional_derivative
-            )
+            threshold = base_record.cost + sufficient_decrease * step_size * directional_derivative
             if trial_record.cost <= threshold:
                 self.last_accepted_record = trial_record
                 return DALResult(
@@ -245,9 +233,7 @@ class DiscreteAdjointLoop:
         value = gradient.detach().clone()
         coefficients = []
         inverse_curvatures = []
-        for s, y in zip(
-            reversed(self._lbfgs_s_history), reversed(self._lbfgs_y_history)
-        ):
+        for s, y in zip(reversed(self._lbfgs_s_history), reversed(self._lbfgs_y_history)):
             inverse_curvature = 1.0 / torch.sum(s * y).clamp_min(1e-30)
             coefficient = inverse_curvature * torch.sum(s * value)
             value = value - coefficient * y
@@ -256,9 +242,7 @@ class DiscreteAdjointLoop:
         if self._lbfgs_s_history:
             last_s = self._lbfgs_s_history[-1]
             last_y = self._lbfgs_y_history[-1]
-            initial_scale = torch.sum(last_s * last_y) / torch.sum(last_y * last_y).clamp_min(
-                1e-30
-            )
+            initial_scale = torch.sum(last_s * last_y) / torch.sum(last_y * last_y).clamp_min(1e-30)
             value = initial_scale * value
         for s, y, coefficient, inverse_curvature in zip(
             self._lbfgs_s_history,

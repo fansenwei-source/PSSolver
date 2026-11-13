@@ -43,20 +43,12 @@ class IntegratorSpec:
             self.startup_scheme,
             IntegratorScheme,
         ):
-            raise TypeError(
-                "startup_scheme must be an IntegratorScheme or None"
-            )
+            raise TypeError("startup_scheme must be an IntegratorScheme or None")
         if self.scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER:
             if self.startup_scheme is not None:
-                raise ValueError(
-                    "projected semi-implicit Euler has no startup scheme"
-                )
-        elif self.startup_scheme is not (
-            IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
-        ):
-            raise ValueError(
-                "SBDF2 requires projected semi-implicit Euler startup"
-            )
+                raise ValueError("projected semi-implicit Euler has no startup scheme")
+        elif self.startup_scheme is not (IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER):
+            raise ValueError("SBDF2 requires projected semi-implicit Euler startup")
 
     @classmethod
     def projected_semi_implicit_euler(cls, *, dt: float) -> "IntegratorSpec":
@@ -74,9 +66,7 @@ class IntegratorSpec:
         return cls(
             scheme=IntegratorScheme.SBDF2,
             dt=dt,
-            startup_scheme=(
-                IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
-            ),
+            startup_scheme=(IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER),
         )
 
     @property
@@ -111,11 +101,7 @@ class IntegratorSpec:
             "formal_order": self.formal_order,
             "history_depth": self.history_depth,
             "constant_step": self.constant_step,
-            "startup_scheme": (
-                None
-                if self.startup_scheme is None
-                else self.startup_scheme.value
-            ),
+            "startup_scheme": (None if self.startup_scheme is None else self.startup_scheme.value),
         }
 
 

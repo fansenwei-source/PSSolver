@@ -36,11 +36,7 @@ class PrescribedFaceValue:
     def __post_init__(self) -> None:
         if not isinstance(self.component, str) or not self.component.isidentifier():
             raise ValueError("prescribed component must be a Python identifier")
-        if (
-            not isinstance(self.axis, int)
-            or isinstance(self.axis, bool)
-            or self.axis < 0
-        ):
+        if not isinstance(self.axis, int) or isinstance(self.axis, bool) or self.axis < 0:
             raise ValueError("prescribed face axis must be a non-negative integer")
         object.__setattr__(self, "side", _side(self.side))
         if not isinstance(self.value, StaticConstantBoundaryValue):
@@ -123,8 +119,7 @@ class StaticPrescribedDirichletPolicy:
 def prescribed_dirichlet(
     field_name: str,
     face_values: (
-        Mapping[tuple[str, int, BoundarySide | str], Real]
-        | Iterable[PrescribedFaceValue]
+        Mapping[tuple[str, int, BoundarySide | str], Real] | Iterable[PrescribedFaceValue]
     ),
 ) -> StaticPrescribedDirichletPolicy:
     """Construct a static prescribed-Dirichlet field policy.

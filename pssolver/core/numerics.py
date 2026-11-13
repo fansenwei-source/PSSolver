@@ -46,12 +46,8 @@ class SpectralStorage(str, Enum):
 # configuration composition roots import these exact objects rather than
 # depending on one another's compatibility facades.
 DEFAULT_DEALIAS_RULE = DealiasRule.CUBIC_HALF.value
-DEFAULT_PROJECTED_TRANSFORM_EXECUTION = (
-    ProjectedTransformExecution.TRUNCATED.value
-)
-PROJECTED_TRANSFORM_EXECUTION_MODES = tuple(
-    value.value for value in ProjectedTransformExecution
-)
+DEFAULT_PROJECTED_TRANSFORM_EXECUTION = ProjectedTransformExecution.TRUNCATED.value
+PROJECTED_TRANSFORM_EXECUTION_MODES = tuple(value.value for value in ProjectedTransformExecution)
 DEALIAS_RULE_FRACTIONS = {
     DealiasRule.NONE.value: None,
     DealiasRule.TWO_THIRDS.value: 2.0 / 3.0,
@@ -99,8 +95,7 @@ class NumericsConfig:
                 raise TypeError(f"{name} must be a {enum_type.__name__}")
 
         if (
-            self.projected_transform_execution
-            is ProjectedTransformExecution.TRUNCATED
+            self.projected_transform_execution is ProjectedTransformExecution.TRUNCATED
             and self.dealias_rule is DealiasRule.NONE
         ):
             raise ValueError("truncated projected transforms require dealiasing")
@@ -113,13 +108,9 @@ class NumericsConfig:
                 or isinstance(self.hermitian_axis, bool)
                 or self.hermitian_axis < 0
             ):
-                raise ValueError(
-                    "Hermitian storage requires a non-negative integer axis"
-                )
+                raise ValueError("Hermitian storage requires a non-negative integer axis")
         elif self.hermitian_axis is not None:
-            raise ValueError(
-                "hermitian_axis must be None for full-complex storage"
-            )
+            raise ValueError("hermitian_axis must be None for full-complex storage")
 
     def to_metadata(self) -> dict[str, object]:
         """Return a JSON-compatible numerical configuration."""
@@ -128,9 +119,7 @@ class NumericsConfig:
             "precision": self.precision.value,
             "dealias_rule": self.dealias_rule.value,
             "transform_execution_order": self.transform_execution_order.value,
-            "projected_transform_execution": (
-                self.projected_transform_execution.value
-            ),
+            "projected_transform_execution": (self.projected_transform_execution.value),
             "spectral_storage": self.spectral_storage.value,
             "hermitian_axis": self.hermitian_axis,
         }

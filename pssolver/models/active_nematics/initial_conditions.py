@@ -17,10 +17,7 @@ InitialCondition = Callable[..., dict[str, torch.Tensor]]
 
 def _validate_dtype(dtype: torch.dtype) -> torch.dtype:
     if dtype not in (torch.float32, torch.float64):
-        raise ValueError(
-            "dtype must be torch.float32 or torch.float64, "
-            f"got {dtype}"
-        )
+        raise ValueError(f"dtype must be torch.float32 or torch.float64, got {dtype}")
     return dtype
 
 
@@ -73,10 +70,7 @@ def _as_Q_2d_components(
             f"Q_2d array has shape {tuple(values.shape)}; expected "
             f"{expected_array_shape} or {(*expected_shape, 1, len(Q_COMPONENTS))}"
         )
-    return {
-        name: values[..., component]
-        for component, name in enumerate(Q_COMPONENTS)
-    }
+    return {name: values[..., component] for component, name in enumerate(Q_COMPONENTS)}
 
 
 def _validate_2d_geometry(
@@ -84,15 +78,9 @@ def _validate_2d_geometry(
     lengths: tuple[float, float],
 ) -> tuple[int, int, float, float]:
     if len(shape) != 2 or any(int(size) != size or size < 4 for size in shape):
-        raise ValueError(
-            f"shape must contain two integer sizes of at least four, got {shape!r}"
-        )
-    if len(lengths) != 2 or any(
-        not np.isfinite(length) or length <= 0 for length in lengths
-    ):
-        raise ValueError(
-            f"lengths must contain two positive finite values, got {lengths!r}"
-        )
+        raise ValueError(f"shape must contain two integer sizes of at least four, got {shape!r}")
+    if len(lengths) != 2 or any(not np.isfinite(length) or length <= 0 for length in lengths):
+        raise ValueError(f"lengths must contain two positive finite values, got {lengths!r}")
     return int(shape[0]), int(shape[1]), float(lengths[0]), float(lengths[1])
 
 
@@ -114,34 +102,22 @@ def sample_periodic_neutral_defects_2d(
     max_placement_attempts: int = 100_000,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Sample a reproducible, charge-neutral configuration on a 2D torus."""
-    if len(lengths) != 2 or any(
-        not np.isfinite(length) or length <= 0 for length in lengths
-    ):
-        raise ValueError(
-            f"lengths must contain two positive finite values, got {lengths!r}"
-        )
+    if len(lengths) != 2 or any(not np.isfinite(length) or length <= 0 for length in lengths):
+        raise ValueError(f"lengths must contain two positive finite values, got {lengths!r}")
     lengths_array = np.asarray(lengths, dtype=float)
     if int(num_defect_pairs) != num_defect_pairs or num_defect_pairs <= 0:
-        raise ValueError(
-            f"num_defect_pairs must be a positive integer, got {num_defect_pairs!r}"
-        )
+        raise ValueError(f"num_defect_pairs must be a positive integer, got {num_defect_pairs!r}")
     pair_count = int(num_defect_pairs)
     if not np.isfinite(min_separation) or min_separation <= 0:
-        raise ValueError(
-            f"min_separation must be positive and finite, got {min_separation!r}"
-        )
+        raise ValueError(f"min_separation must be positive and finite, got {min_separation!r}")
     if min_separation > 0.5 * np.linalg.norm(lengths_array):
         raise ValueError(
             "min_separation exceeds the largest possible minimum-image "
             f"distance for lengths={tuple(lengths_array)}"
         )
-    if (
-        int(max_placement_attempts) != max_placement_attempts
-        or max_placement_attempts <= 0
-    ):
+    if int(max_placement_attempts) != max_placement_attempts or max_placement_attempts <= 0:
         raise ValueError(
-            "max_placement_attempts must be a positive integer, got "
-            f"{max_placement_attempts!r}"
+            f"max_placement_attempts must be a positive integer, got {max_placement_attempts!r}"
         )
 
     rng = np.random.default_rng(seed)
@@ -189,9 +165,7 @@ def _jacobi_theta1_centered(
     """Evaluate theta_1 after reducing both arguments to a centered cell."""
     if not (0.0 < nome <= math.exp(-math.pi) * (1.0 + 1e-12)):
         raise ValueError(f"unexpected theta nome {nome}")
-    argument = math.pi * (
-        real_argument + 1j * aspect_ratio * imaginary_argument
-    )
+    argument = math.pi * (real_argument + 1j * aspect_ratio * imaginary_argument)
     result = np.zeros(argument.shape, dtype=np.complex128)
     leading_coefficient = nome**0.25
     for mode in range(64):
@@ -220,9 +194,7 @@ def _periodic_nematic_phase_2d(
     if positions.ndim != 2 or positions.shape[1] != 2:
         raise ValueError(f"positions must have shape (N, 2), got {positions.shape}")
     if charges.shape != (len(positions),):
-        raise ValueError(
-            f"charges must have shape ({len(positions)},), got {charges.shape}"
-        )
+        raise ValueError(f"charges must have shape ({len(positions)},), got {charges.shape}")
     doubled_charges = 2.0 * charges
     integer_charges = np.rint(doubled_charges).astype(int)
     if not np.allclose(doubled_charges, integer_charges) or not np.all(
@@ -262,9 +234,7 @@ def _periodic_nematic_phase_2d(
         delta_primary = primary - position_primary
         delta_secondary = secondary - position_secondary
         primary_shift = np.floor(delta_primary / primary_length + 0.5).astype(int)
-        secondary_shift = np.floor(
-            delta_secondary / secondary_length + 0.5
-        ).astype(int)
+        secondary_shift = np.floor(delta_secondary / secondary_length + 0.5).astype(int)
         centered_primary = delta_primary / primary_length - primary_shift
         centered_secondary = delta_secondary / secondary_length - secondary_shift
         theta_value = _jacobi_theta1_centered(
@@ -281,13 +251,7 @@ def _periodic_nematic_phase_2d(
         phase_angle += charge * theta_phase
 
     primary_dipole = float(np.sum(integer_charges * primary_positions))
-    phase_angle -= (
-        2.0
-        * math.pi
-        * secondary
-        * primary_dipole
-        / (primary_length * secondary_length)
-    )
+    phase_angle -= 2.0 * math.pi * secondary * primary_dipole / (primary_length * secondary_length)
     return np.exp(1j * phase_angle)
 
 
@@ -314,17 +278,11 @@ def analytic_periodic_defect_gas_2d(
     numpy_dtype = _numpy_dtype(dtype)
     nx, ny, lx, ly = _validate_2d_geometry(shape, lengths)
     if not np.isfinite(core_radius) or core_radius <= 0:
-        raise ValueError(
-            f"core_radius must be positive and finite, got {core_radius!r}"
-        )
+        raise ValueError(f"core_radius must be positive and finite, got {core_radius!r}")
     if not np.isfinite(S_initial) or S_initial <= 0:
-        raise ValueError(
-            f"S_initial must be positive and finite, got {S_initial!r}"
-        )
+        raise ValueError(f"S_initial must be positive and finite, got {S_initial!r}")
     if not np.isfinite(background_angle):
-        raise ValueError(
-            f"background_angle must be finite, got {background_angle!r}"
-        )
+        raise ValueError(f"background_angle must be finite, got {background_angle!r}")
 
     positions, charges = sample_periodic_neutral_defects_2d(
         lengths=(lx, ly),
@@ -379,9 +337,7 @@ def neumann_twist_profile(
         raise ValueError(f"nz must be an integer greater than one, got {nz}")
     nz = int(nz)
     if not math.isfinite(amplitude) or amplitude < 0:
-        raise ValueError(
-            f"amplitude must be non-negative and finite, got {amplitude}"
-        )
+        raise ValueError(f"amplitude must be non-negative and finite, got {amplitude}")
     modes = tuple(int(mode) for mode in modes)
     if not modes:
         raise ValueError("modes must contain at least one positive DCT mode")
@@ -389,9 +345,7 @@ def neumann_twist_profile(
         raise ValueError(f"modes must be unique, got {modes!r}")
     invalid = [mode for mode in modes if mode <= 0 or mode >= nz]
     if invalid:
-        raise ValueError(
-            f"twist modes must satisfy 1 <= mode < nz={nz}; got {invalid}"
-        )
+        raise ValueError(f"twist modes must satisfy 1 <= mode < nz={nz}; got {invalid}")
 
     # Keep the historical float32 initializer reproducible: coefficients and
     # the profile were generated in float64 and only then rounded to float32.
@@ -501,13 +455,9 @@ def aligned_x_band_limited_noise_2d(
     numpy_dtype = _numpy_dtype(dtype)
     nx, ny, _, _ = _validate_2d_geometry(shape, (1.0, 1.0))
     if not np.isfinite(S_initial) or S_initial <= 0:
-        raise ValueError(
-            f"S_initial must be positive and finite, got {S_initial!r}"
-        )
+        raise ValueError(f"S_initial must be positive and finite, got {S_initial!r}")
     if not math.isfinite(angle_rms) or angle_rms < 0:
-        raise ValueError(
-            f"angle_rms must be non-negative and finite, got {angle_rms!r}"
-        )
+        raise ValueError(f"angle_rms must be non-negative and finite, got {angle_rms!r}")
     for name, value, size in (
         ("max_mode_x", max_mode_x, nx),
         ("max_mode_y", max_mode_y, ny),
@@ -515,9 +465,7 @@ def aligned_x_band_limited_noise_2d(
         if int(value) != value or value < 0:
             raise ValueError(f"{name} must be a non-negative integer, got {value!r}")
         if value > size // 2:
-            raise ValueError(
-                f"{name}={value} exceeds the resolved periodic limit {size // 2}"
-            )
+            raise ValueError(f"{name}={value} exceeds the resolved periodic limit {size // 2}")
     max_mode_x = int(max_mode_x)
     max_mode_y = int(max_mode_y)
     if angle_rms > 0 and max_mode_x == 0 and max_mode_y == 0:
@@ -538,9 +486,7 @@ def aligned_x_band_limited_noise_2d(
     for mode_x, mode_y in modes:
         phase = rng.uniform(0.0, 2.0 * math.pi)
         coefficient = rng.normal()
-        angle += coefficient * np.cos(
-            2.0 * math.pi * (mode_x * x + mode_y * y) + phase
-        )
+        angle += coefficient * np.cos(2.0 * math.pi * (mode_x * x + mode_y * y) + phase)
     angle -= float(angle.mean())
     raw_rms = float(np.sqrt(np.mean(angle * angle)))
     if angle_rms == 0:
@@ -579,10 +525,7 @@ def _v3_rotation_vector_field(
     dtype = _validate_dtype(dtype)
     nx, ny, nz = _validate_shape(shape)
     if not math.isfinite(rotation_rms) or rotation_rms < 0:
-        raise ValueError(
-            "rotation_rms must be non-negative and finite, got "
-            f"{rotation_rms!r}"
-        )
+        raise ValueError(f"rotation_rms must be non-negative and finite, got {rotation_rms!r}")
     for name, value, size in (
         ("max_mode_x", max_mode_x, nx),
         ("max_mode_y", max_mode_y, ny),
@@ -590,9 +533,7 @@ def _v3_rotation_vector_field(
         if int(value) != value or value < 0:
             raise ValueError(f"{name} must be a non-negative integer, got {value!r}")
         if value > size // 2:
-            raise ValueError(
-                f"{name}={value} exceeds the resolved periodic limit {size // 2}"
-            )
+            raise ValueError(f"{name}={value} exceeds the resolved periodic limit {size // 2}")
     max_mode_x = int(max_mode_x)
     max_mode_y = int(max_mode_y)
     modes = tuple(int(mode) for mode in z_modes)
@@ -629,9 +570,7 @@ def _v3_rotation_vector_field(
             for mode_x, mode_y in in_plane_modes:
                 phase = rng.uniform(0.0, 2.0 * math.pi)
                 coefficient = rng.normal()
-                xy_profile = np.cos(
-                    2.0 * math.pi * (mode_x * x + mode_y * y) + phase
-                )
+                xy_profile = np.cos(2.0 * math.pi * (mode_x * x + mode_y * y) + phase)
                 omega[..., component] += coefficient * xy_profile * z_profile
 
     # Normalize each rotation axis equally so all three generators are
@@ -722,9 +661,15 @@ def extruded_2d_unbiased_rotation(
     Qzz = -(Qxx + Qyy)
     full_Q = torch.stack(
         (
-            Qxx, Qxy, Qxz,
-            Qxy, Qyy, Qyz,
-            Qxz, Qyz, Qzz,
+            Qxx,
+            Qxy,
+            Qxz,
+            Qxy,
+            Qyy,
+            Qyz,
+            Qxz,
+            Qyz,
+            Qzz,
         ),
         dim=-1,
     ).reshape(nx, ny, nz, 3, 3)
@@ -777,9 +722,7 @@ def aligned_x_smooth_noise(
             f"noise_theta={noise_theta}, noise_phi={noise_phi}"
         )
     if not np.isfinite(S_initial) or S_initial <= 0:
-        raise ValueError(
-            f"S_initial must be positive and finite, got {S_initial!r}"
-        )
+        raise ValueError(f"S_initial must be positive and finite, got {S_initial!r}")
     sigmas = (sigma_x, sigma_y, sigma_z)
     if any(not math.isfinite(sigma) or sigma <= 0 for sigma in sigmas):
         raise ValueError(
@@ -791,8 +734,7 @@ def aligned_x_smooth_noise(
         from scipy.ndimage import gaussian_filter1d
     except ImportError as error:
         raise ImportError(
-            "aligned_x_smooth_noise requires scipy; install it with "
-            "`python -m pip install scipy`"
+            "aligned_x_smooth_noise requires scipy; install it with `python -m pip install scipy`"
         ) from error
 
     rng = np.random.default_rng(seed)
@@ -829,9 +771,7 @@ def aligned_x_smooth_noise(
         return smoothed_extension[tuple(original_domain)]
 
     for values in (delta_theta, delta_phi):
-        for axis, (sigma, boundary_condition) in enumerate(
-            zip(sigmas, boundary_conditions)
-        ):
+        for axis, (sigma, boundary_condition) in enumerate(zip(sigmas, boundary_conditions)):
             values[:] = smooth_axis(
                 values,
                 sigma=sigma,
@@ -892,8 +832,7 @@ def create_initial_condition(
     except KeyError as error:
         available = ", ".join(available_initial_conditions())
         raise ValueError(
-            f"unknown active-nematic initial condition {name!r}; "
-            f"available: {available}"
+            f"unknown active-nematic initial condition {name!r}; available: {available}"
         ) from error
 
     fields = initializer(shape, **kwargs)

@@ -48,9 +48,7 @@ def periodic_translate_axis(
     frequencies = np.fft.fftfreq(values.shape[axis], d=period / values.shape[axis])
     phase_shape = [1] * values.ndim
     phase_shape[axis] = values.shape[axis]
-    phase = np.exp(-2j * np.pi * frequencies * float(displacement)).reshape(
-        phase_shape
-    )
+    phase = np.exp(-2j * np.pi * frequencies * float(displacement)).reshape(phase_shape)
     translated = np.fft.ifft(np.fft.fft(values, axis=axis) * phase, axis=axis)
     if np.isrealobj(values):
         translated = translated.real

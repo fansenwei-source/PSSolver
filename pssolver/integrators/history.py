@@ -31,13 +31,9 @@ class SBDF2History:
         spectrum = self.previous_evolved_native_spectrum
         rhs = self.previous_explicit_native_spectral_rhs
         if not isinstance(spectrum, torch.Tensor):
-            raise TypeError(
-                "previous_evolved_native_spectrum must be a tensor"
-            )
+            raise TypeError("previous_evolved_native_spectrum must be a tensor")
         if not isinstance(rhs, torch.Tensor):
-            raise TypeError(
-                "previous_explicit_native_spectral_rhs must be a tensor"
-            )
+            raise TypeError("previous_explicit_native_spectral_rhs must be a tensor")
         if spectrum.ndim < 1 or spectrum.numel() == 0:
             raise ValueError("SBDF2 history tensors must be nonempty")
         if (
@@ -45,9 +41,7 @@ class SBDF2History:
             or spectrum.dtype != rhs.dtype
             or spectrum.device != rhs.device
         ):
-            raise ValueError(
-                "SBDF2 state and RHS history storage must match"
-            )
+            raise ValueError("SBDF2 state and RHS history storage must match")
         if spectrum is rhs or _storage_identity(spectrum) == _storage_identity(rhs):
             raise ValueError("SBDF2 state and RHS history must not share storage")
         if (
@@ -55,9 +49,7 @@ class SBDF2History:
             or isinstance(self.source_completed_steps, bool)
             or self.source_completed_steps < 0
         ):
-            raise ValueError(
-                "source_completed_steps must be a non-negative integer"
-            )
+            raise ValueError("source_completed_steps must be a non-negative integer")
         if (
             not isinstance(self.dt, (int, float))
             or isinstance(self.dt, bool)
@@ -79,12 +71,9 @@ class SBDF2History:
         if not isinstance(current_native_spectrum, torch.Tensor):
             raise TypeError("current_native_spectrum must be a tensor")
         if (
-            current_native_spectrum.shape
-            != self.previous_evolved_native_spectrum.shape
-            or current_native_spectrum.dtype
-            != self.previous_evolved_native_spectrum.dtype
-            or current_native_spectrum.device
-            != self.previous_evolved_native_spectrum.device
+            current_native_spectrum.shape != self.previous_evolved_native_spectrum.shape
+            or current_native_spectrum.dtype != self.previous_evolved_native_spectrum.dtype
+            or current_native_spectrum.device != self.previous_evolved_native_spectrum.device
         ):
             raise ValueError("current spectrum is incompatible with history")
         if (

@@ -71,8 +71,7 @@ class TensorProductTransformBackend:
     ):
         if execution_order not in self._execution_orders:
             raise ValueError(
-                f"execution_order must be one of {self._execution_orders}, "
-                f"got {execution_order!r}"
+                f"execution_order must be one of {self._execution_orders}, got {execution_order!r}"
             )
         if spectral_storage not in SPECTRAL_STORAGE_MODES:
             raise ValueError(
@@ -92,13 +91,9 @@ class TensorProductTransformBackend:
             ):
                 raise TypeError("hermitian_axis must be an integer")
             if hermitian_axis < 0 or hermitian_axis >= len(shape):
-                raise ValueError(
-                    "hermitian_axis is outside the transform dimension"
-                )
+                raise ValueError("hermitian_axis is outside the transform dimension")
             if execution_order != "real_first":
-                raise ValueError(
-                    "hermitian_half storage requires real_first execution"
-                )
+                raise ValueError("hermitian_half storage requires real_first execution")
         self.shape = tuple(shape)
         self.lengths = tuple(self._normalize_length(length) for length in lengths)
         self.device = device
@@ -112,9 +107,7 @@ class TensorProductTransformBackend:
         self.dim = len(self.shape)
         spectral_shape = list(self.shape)
         if self.spectral_storage == "hermitian_half":
-            spectral_shape[self.hermitian_axis] = (
-                self.shape[self.hermitian_axis] // 2 + 1
-            )
+            spectral_shape[self.hermitian_axis] = self.shape[self.hermitian_axis] // 2 + 1
         self.spectral_shape = tuple(spectral_shape)
 
         self._matrix_cache = {}
@@ -217,9 +210,7 @@ class TensorProductTransformBackend:
         real_transforms = [item for item in indexed if item[1] != "fft"]
         periodic_transforms = [item for item in indexed if item[1] == "fft"]
         if inverse:
-            return list(reversed(periodic_transforms)) + list(
-                reversed(real_transforms)
-            )
+            return list(reversed(periodic_transforms)) + list(reversed(real_transforms))
         return real_transforms + periodic_transforms
 
     def _periodic_axes(self, transform_kinds, tensor_ndim):
@@ -249,15 +240,10 @@ class TensorProductTransformBackend:
         """Describe the requested and effective periodic transform policy."""
         transform_kinds = self.get_metadata(boundary_conditions).transform_kinds
         effective = (
-            "multidim"
-            if self._uses_multidim_periodic_transform(transform_kinds)
-            else "axiswise"
+            "multidim" if self._uses_multidim_periodic_transform(transform_kinds) else "axiswise"
         )
         fallback_reason = None
-        if (
-            self.periodic_transform_execution == "multidim"
-            and effective == "axiswise"
-        ):
+        if self.periodic_transform_execution == "multidim" and effective == "axiswise":
             periodic_count = sum(kind == "fft" for kind in transform_kinds)
             if periodic_count < 2:
                 fallback_reason = "fewer_than_two_periodic_axes"
@@ -285,8 +271,7 @@ class TensorProductTransformBackend:
             if bc == "periodic":
                 frequency = (
                     torch.fft.rfftfreq
-                    if self.spectral_storage == "hermitian_half"
-                    and axis == self.hermitian_axis
+                    if self.spectral_storage == "hermitian_half" and axis == self.hermitian_axis
                     else torch.fft.fftfreq
                 )
                 modes = frequency(
@@ -296,14 +281,12 @@ class TensorProductTransformBackend:
                     dtype=self.real_dtype,
                 ) * (2.0 * math.pi)
             elif bc == "dirichlet":
-                modes = (
-                    torch.arange(1, n + 1, device=self.device, dtype=self.real_dtype)
-                    * (math.pi / length)
+                modes = torch.arange(1, n + 1, device=self.device, dtype=self.real_dtype) * (
+                    math.pi / length
                 )
             elif bc == "neumann":
-                modes = (
-                    torch.arange(n, device=self.device, dtype=self.real_dtype)
-                    * (math.pi / length)
+                modes = torch.arange(n, device=self.device, dtype=self.real_dtype) * (
+                    math.pi / length
                 )
             else:
                 raise ValueError(f"Unsupported boundary condition '{bc}'.")
@@ -352,32 +335,20 @@ class TensorProductTransformBackend:
         try:
             counts = tuple(retained_axis_counts)
         except TypeError as exc:
-            raise TypeError(
-                "retained_axis_counts must be an iterable of integers."
-            ) from exc
+            raise TypeError("retained_axis_counts must be an iterable of integers.") from exc
         if len(counts) != self.dim:
-            raise ValueError(
-                "retained_axis_counts must match the transform dimension."
-            )
+            raise ValueError("retained_axis_counts must match the transform dimension.")
         for axis, (count, kind) in enumerate(zip(counts, transform_kinds)):
-            size = (
-                self.spectral_shape[axis]
-                if kind == "fft"
-                else self.shape[axis]
-            )
+            size = self.spectral_shape[axis] if kind == "fft" else self.shape[axis]
             if not isinstance(count, int) or isinstance(count, bool):
-                raise TypeError(
-                    "retained_axis_counts must contain integers."
-                )
+                raise TypeError("retained_axis_counts must contain integers.")
             if count < 0 or count > size:
                 raise ValueError(
-                    f"Retained count {count} is invalid for axis {axis} "
-                    f"with size {size}."
+                    f"Retained count {count} is invalid for axis {axis} with size {size}."
                 )
             if kind == "fft" and count != size:
                 raise ValueError(
-                    "Periodic FFT axes cannot use contiguous retained-mode "
-                    "truncation."
+                    "Periodic FFT axes cannot use contiguous retained-mode truncation."
                 )
         return counts
 
@@ -439,18 +410,14 @@ class TensorProductTransformBackend:
                     output,
                     kind,
                     local_axis,
-                    self.shape[local_axis]
-                    if counts is None
-                    else counts[local_axis],
+                    self.shape[local_axis] if counts is None else counts[local_axis],
                     inverse=False,
                 )
             periodic_axes = self._periodic_axes(
                 metadata.transform_kinds,
                 output.ndim,
             )
-            return torch.fft.fftn(output, dim=periodic_axes).to(
-                self.spectral_dtype
-            )
+            return torch.fft.fftn(output, dim=periodic_axes).to(self.spectral_dtype)
 
         for local_axis, kind in self._ordered_axis_transforms(
             metadata.transform_kinds,
@@ -495,9 +462,7 @@ class TensorProductTransformBackend:
             trailing_shape = tuple(spectral.shape[-self.dim :])
             if trailing_shape != self.spectral_shape:
                 raise ValueError(
-                    "Expected trailing spectral shape "
-                    f"{self.spectral_shape}, got "
-                    f"{trailing_shape}."
+                    f"Expected trailing spectral shape {self.spectral_shape}, got {trailing_shape}."
                 )
             slices = [slice(None)] * spectral.ndim
             for local_axis, kind in enumerate(metadata.transform_kinds):
@@ -531,9 +496,7 @@ class TensorProductTransformBackend:
                     output,
                     kind,
                     local_axis,
-                    self.shape[local_axis]
-                    if counts is None
-                    else counts[local_axis],
+                    self.shape[local_axis] if counts is None else counts[local_axis],
                     inverse=True,
                 )
             return output.real
@@ -542,11 +505,7 @@ class TensorProductTransformBackend:
             metadata.transform_kinds,
             inverse=True,
         ):
-            if (
-                self.execution_order == "real_first"
-                and kind != "fft"
-                and output.is_complex()
-            ):
+            if self.execution_order == "real_first" and kind != "fft" and output.is_complex():
                 # Real basis matrices commute with taking the real part. For
                 # physical Hermitian spectra the imaginary component is only
                 # roundoff; for arbitrary spectra inverse() has always
@@ -573,9 +532,7 @@ class TensorProductTransformBackend:
     def _validate_hermitian_boundary_conditions(self, boundary_conditions):
         boundary_conditions = tuple(boundary_conditions)
         if len(boundary_conditions) != self.dim:
-            raise ValueError(
-                "Boundary-condition count must match the transform dimension."
-            )
+            raise ValueError("Boundary-condition count must match the transform dimension.")
         if boundary_conditions[self.hermitian_axis] != "periodic":
             raise ValueError(
                 "hermitian_half storage requires a periodic boundary "
@@ -584,9 +541,7 @@ class TensorProductTransformBackend:
         return boundary_conditions
 
     def _hermitian_periodic_axes(self, transform_kinds, tensor_ndim):
-        periodic_axes = [
-            axis for axis, kind in enumerate(transform_kinds) if kind == "fft"
-        ]
+        periodic_axes = [axis for axis, kind in enumerate(transform_kinds) if kind == "fft"]
         periodic_axes.remove(self.hermitian_axis)
         periodic_axes.append(self.hermitian_axis)
         return tuple(tensor_ndim - self.dim + axis for axis in periodic_axes)
@@ -598,9 +553,7 @@ class TensorProductTransformBackend:
         *,
         retained_axis_counts=None,
     ):
-        boundary_conditions = self._validate_hermitian_boundary_conditions(
-            boundary_conditions
-        )
+        boundary_conditions = self._validate_hermitian_boundary_conditions(boundary_conditions)
         metadata = self.get_metadata(boundary_conditions)
         output = tensor
         for local_axis, kind in enumerate(metadata.transform_kinds):
@@ -636,39 +589,28 @@ class TensorProductTransformBackend:
         *,
         retained_axis_counts=None,
     ):
-        boundary_conditions = self._validate_hermitian_boundary_conditions(
-            boundary_conditions
-        )
+        boundary_conditions = self._validate_hermitian_boundary_conditions(boundary_conditions)
         trailing_shape = tuple(spectral.shape[-self.dim :])
         expected_shape = (
-            self.spectral_shape
-            if retained_axis_counts is None
-            else tuple(retained_axis_counts)
+            self.spectral_shape if retained_axis_counts is None else tuple(retained_axis_counts)
         )
         if trailing_shape != expected_shape:
             raise ValueError(
-                f"Expected trailing spectral shape {expected_shape}, "
-                f"got {trailing_shape}."
+                f"Expected trailing spectral shape {expected_shape}, got {trailing_shape}."
             )
         metadata = self.get_metadata(boundary_conditions)
         periodic_axes = self._hermitian_periodic_axes(
             metadata.transform_kinds,
             spectral.ndim,
         )
-        local_periodic_axes = tuple(
-            axis - (spectral.ndim - self.dim) for axis in periodic_axes
-        )
-        physical_sizes = tuple(
-            self.shape[axis] for axis in local_periodic_axes
-        )
+        local_periodic_axes = tuple(axis - (spectral.ndim - self.dim) for axis in periodic_axes)
+        physical_sizes = tuple(self.shape[axis] for axis in local_periodic_axes)
         output = torch.fft.irfftn(
             spectral,
             s=physical_sizes,
             dim=periodic_axes,
         )
-        for local_axis, kind in reversed(
-            tuple(enumerate(metadata.transform_kinds))
-        ):
+        for local_axis, kind in reversed(tuple(enumerate(metadata.transform_kinds))):
             if kind == "fft":
                 continue
             axis = output.ndim - self.dim + local_axis
@@ -711,10 +653,7 @@ class TensorProductTransformBackend:
 
         metadata = self.get_metadata(boundary_conditions)
         modes = metadata.axis_modes[axis]
-        if (
-            self.spectral_storage == "hermitian_half"
-            and self.shape[axis] % 2 == 0
-        ):
+        if self.spectral_storage == "hermitian_half" and self.shape[axis] % 2 == 0:
             # A first derivative of an even-grid Nyquist mode has no
             # real-valued collocation-grid representation. Cache the exact
             # zeroed multiplier instead of cloning and mutating the mode

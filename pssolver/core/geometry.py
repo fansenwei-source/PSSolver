@@ -76,9 +76,7 @@ class GeometrySpec:
         return {
             "name": self.name,
             "domain": self.domain.to_metadata(),
-            "axis_topologies": [
-                topology.value for topology in self.axis_topologies
-            ],
+            "axis_topologies": [topology.value for topology in self.axis_topologies],
             "periodic_axes": list(self.periodic_axes),
             "bounded_axes": list(self.bounded_axes),
         }

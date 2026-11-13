@@ -20,9 +20,7 @@ def _normalize_axis(axis: int, ndim: int, description: str) -> int:
     if not isinstance(axis, int) or isinstance(axis, bool):
         raise TypeError(f"{description} must be an integer")
     if axis < 0 or axis >= ndim:
-        raise ValueError(
-            f"{description} must be in [0, {ndim}), got {axis}"
-        )
+        raise ValueError(f"{description} must be in [0, {ndim}), got {axis}")
     return axis
 
 
@@ -123,9 +121,7 @@ class RectangularChannel(GeometrySpec):
         """
         domain = _require_domain(domain)
         if domain.ndim < 2:
-            raise ValueError(
-                "a RectangularChannel requires at least two dimensions"
-            )
+            raise ValueError("a RectangularChannel requires at least two dimensions")
         streamwise_axis = _normalize_axis(
             streamwise_axis,
             domain.ndim,

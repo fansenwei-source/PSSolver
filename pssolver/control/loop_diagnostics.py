@@ -97,9 +97,7 @@ def soft_core_density(
     threshold = threshold_fraction * S_bulk
     transition = transition_fraction * S_bulk
     density = 1.0 / (1.0 + np.exp((magnitude - threshold) / transition))
-    bulk_density = 1.0 / (
-        1.0 + np.exp((S_bulk - threshold) / transition)
-    )
+    bulk_density = 1.0 / (1.0 + np.exp((S_bulk - threshold) / transition))
     normalized = (density - bulk_density) / (1.0 - bulk_density)
     return np.maximum(normalized, 0.0) ** 2
 
@@ -153,8 +151,7 @@ def _periodic_unwrapped_coordinates(
     center_x: float,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     axes = [
-        (np.arange(size, dtype=float) + 0.5) * length / size
-        for size, length in zip(shape, lengths)
+        (np.arange(size, dtype=float) + 0.5) * length / size for size, length in zip(shape, lengths)
     ]
     x = center_x + _periodic_delta(axes[0], center_x, lengths[0])
     return np.meshgrid(x, axes[1], axes[2], indexing="ij", sparse=True)
@@ -213,9 +210,7 @@ def core_centerline_geometry(
     coordinates = np.stack(np.broadcast_arrays(x, y, z), axis=-1)
     centered = coordinates - soft_center
     mass = float(np.sum(density))
-    covariance = np.einsum(
-        "...,...i,...j->ij", density, centered, centered, optimize=True
-    ) / mass
+    covariance = np.einsum("...,...i,...j->ij", density, centered, centered, optimize=True) / mass
     eigenvalues, eigenvectors = np.linalg.eigh(covariance)
     normal = eigenvectors[:, 0]
     axis_u = eigenvectors[:, 2]
@@ -224,9 +219,7 @@ def core_centerline_geometry(
     projected_u = centered @ axis_u
     projected_v = centered @ axis_v
     angle = np.arctan2(projected_v, projected_u)
-    radial_rms = float(
-        np.sqrt(np.sum(density * (projected_u**2 + projected_v**2)) / mass)
-    )
+    radial_rms = float(np.sqrt(np.sum(density * (projected_u**2 + projected_v**2)) / mass))
     if num_samples is None:
         in_plane_spacing = max(float(np.min(spacing)), np.finfo(float).eps)
         num_samples = int(np.clip(np.ceil(2.0 * np.pi * radial_rms / in_plane_spacing), 16, 64))
@@ -269,9 +262,7 @@ def core_centerline_geometry(
         )
     )
     arc_unwrapped = unwrapped - arc_center
-    arc_unwrapped[:, 0] = _periodic_delta(
-        unwrapped[:, 0], arc_center[0], lengths[0]
-    )
+    arc_unwrapped[:, 0] = _periodic_delta(unwrapped[:, 0], arc_center[0], lengths[0])
     line_covariance = arc_unwrapped.T @ arc_unwrapped / num_samples
     line_values, line_vectors = np.linalg.eigh(line_covariance)
     line_normal = line_vectors[:, 0]
@@ -290,8 +281,10 @@ def core_centerline_geometry(
         * np.linalg.norm(following, axis=1)
         * np.linalg.norm(chord, axis=1)
     )
-    curvature = 2.0 * np.linalg.norm(np.cross(previous, following), axis=1) / np.maximum(
-        curvature_denominator, np.finfo(float).eps
+    curvature = (
+        2.0
+        * np.linalg.norm(np.cross(previous, following), axis=1)
+        / np.maximum(curvature_denominator, np.finfo(float).eps)
     )
     if np.dot(line_normal, normal) < 0:
         line_normal = -line_normal
@@ -382,8 +375,7 @@ def loop_core_metrics(
 
     shape = q5.shape[:3]
     axes = [
-        (np.arange(size, dtype=float) + 0.5) * length / size
-        for size, length in zip(shape, lengths)
+        (np.arange(size, dtype=float) + 0.5) * length / size for size, length in zip(shape, lengths)
     ]
     x, y, z = axes
     weight_x = np.sum(weights, axis=(1, 2))
@@ -442,9 +434,7 @@ def periodic_profile_shift(
     if reference_norm == 0 or current_norm == 0:
         return {"shift_indices": float("nan"), "shift_physical": float("nan"), "correlation": 0.0}
 
-    correlation = np.fft.ifft(
-        np.conj(np.fft.fft(reference)) * np.fft.fft(current)
-    ).real
+    correlation = np.fft.ifft(np.conj(np.fft.fft(reference)) * np.fft.fft(current)).real
     peak = int(np.argmax(correlation))
     previous_value = float(correlation[(peak - 1) % correlation.size])
     peak_value = float(correlation[peak])

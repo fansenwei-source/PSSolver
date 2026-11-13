@@ -30,9 +30,7 @@ class HomogeneousBoundaryPolicy:
 
 
 BoundaryPolicy = (
-    HomogeneousBoundaryPolicy
-    | StaticPrescribedDirichletPolicy
-    | StaticRobinBoundaryPolicy
+    HomogeneousBoundaryPolicy | StaticPrescribedDirichletPolicy | StaticRobinBoundaryPolicy
 )
 
 

@@ -119,10 +119,7 @@ def measure_temporal_convergence(
         stepper = ScalarPeriodicReferenceStepper(model=model, spec=spec)
         state = stepper.run(steps=steps)
         difference = state.physical - exact
-        l2_error = float(
-            torch.linalg.vector_norm(difference)
-            / math.sqrt(difference.numel())
-        )
+        l2_error = float(torch.linalg.vector_norm(difference) / math.sqrt(difference.numel()))
         linf_error = float(torch.max(torch.abs(difference)))
         finite = math.isfinite(l2_error) and math.isfinite(linf_error)
         samples.append(
@@ -140,11 +137,7 @@ def measure_temporal_convergence(
         math.log(coarse.l2_error / fine.l2_error, 2.0)
         for coarse, fine in zip(samples[:-1], samples[1:], strict=True)
     )
-    required = (
-        0.9
-        if scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
-        else 1.8
-    )
+    required = 0.9 if scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER else 1.8
     passed = (
         all(sample.finite for sample in samples)
         and all(sample.l2_error > 0.0 for sample in samples)

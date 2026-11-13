@@ -66,9 +66,7 @@ class PeriodicModalStokesSolver(torch.nn.Module):
             index[axis] = nyquist_index
             nyquist_mask[tuple(index)] = True
         wave_numbers = torch.meshgrid(*axis_modes, indexing="ij")
-        k_components = tuple(
-            value.to(dtype=backend.spectral_dtype) for value in wave_numbers
-        )
+        k_components = tuple(value.to(dtype=backend.spectral_dtype) for value in wave_numbers)
         k2 = sum(value.square() for value in wave_numbers)
         uniform_mask = torch.zeros_like(k2, dtype=torch.bool)
         uniform_mask[(0,) * backend.dim] = True
@@ -157,17 +155,13 @@ class PeriodicModalStokesSolver(torch.nn.Module):
             residual_norm = diagnostics["residual_norm"].item()
             force_norm = diagnostics["force_norm"].item()
             self.last_pressure_residual = residual_norm
-            self.last_pressure_relative_residual = (
-                residual_norm / force_norm if force_norm else 0.0
-            )
+            self.last_pressure_relative_residual = residual_norm / force_norm if force_norm else 0.0
         else:
             self.last_pressure_residual = math.nan
             self.last_pressure_relative_residual = math.nan
         return result
 
-    def solve_force_hats_with_diagnostics(
-        self, fx_hat, fy_hat, fz_hat, *, pressure_diagnostics
-    ):
+    def solve_force_hats_with_diagnostics(self, fx_hat, fy_hat, fz_hat, *, pressure_diagnostics):
         """Return the same spectra and caller-owned tensor diagnostics.
 
         No module attributes are assigned and no tensor is converted to a host
@@ -186,9 +180,7 @@ class PeriodicModalStokesSolver(torch.nn.Module):
         if self.zero_mode_policy == "zero_mean":
             force = force.masked_fill(uniform_mask.unsqueeze(0), 0)
         divergence_force = (ik * force).sum(dim=0)
-        pressure_hat = self._project_pressure_gauge(
-            -divergence_force / k2_safe
-        )
+        pressure_hat = self._project_pressure_gauge(-divergence_force / k2_safe)
         gradient = ik * pressure_hat.unsqueeze(0)
         velocity = (force - gradient) * inverse.unsqueeze(0)
 

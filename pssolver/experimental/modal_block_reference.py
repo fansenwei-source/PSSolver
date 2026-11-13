@@ -80,9 +80,7 @@ class TwoComponentSBDF2CanaryModel:
             self.implicit_model,
             TwoComponentPeriodicReactionDiffusionReference,
         ):
-            raise TypeError(
-                "implicit_model must be a two-component reference model"
-            )
+            raise TypeError("implicit_model must be a two-component reference model")
         object.__setattr__(
             self,
             "explicit_growth_rate",
@@ -182,10 +180,7 @@ class TwoComponentReferenceState:
             if self.physical.dtype is torch.float64
             else None
         )
-        if (
-            expected_spectral is None
-            or self.native_spectrum.dtype is not expected_spectral
-        ):
+        if expected_spectral is None or self.native_spectrum.dtype is not expected_spectral:
             raise ValueError("physical and spectral dtypes are incompatible")
         if self.physical.device != self.native_spectrum.device:
             raise ValueError("physical and spectral devices differ")
@@ -198,8 +193,7 @@ class TwoComponentReferenceState:
                 raise ValueError(f"{name} must be a non-negative integer")
         if self.refresh_interval is None:
             valid_clock = (
-                self.refresh_count == 0
-                and self.refresh_step_count == self.completed_steps
+                self.refresh_count == 0 and self.refresh_step_count == self.completed_steps
             )
         else:
             if (
@@ -210,8 +204,7 @@ class TwoComponentReferenceState:
                 raise ValueError("refresh_interval must be positive or None")
             valid_clock = (
                 self.refresh_step_count < self.refresh_interval
-                and self.refresh_count * self.refresh_interval
-                + self.refresh_step_count
+                and self.refresh_count * self.refresh_interval + self.refresh_step_count
                 == self.completed_steps
             )
         if not valid_clock:
@@ -221,12 +214,8 @@ class TwoComponentReferenceState:
                 raise TypeError("history must be SBDF2History or None")
             identities = {
                 _storage_identity(self.native_spectrum),
-                _storage_identity(
-                    self.history.previous_evolved_native_spectrum
-                ),
-                _storage_identity(
-                    self.history.previous_explicit_native_spectral_rhs
-                ),
+                _storage_identity(self.history.previous_evolved_native_spectrum),
+                _storage_identity(self.history.previous_explicit_native_spectral_rhs),
             }
             if len(identities) != 3:
                 raise ValueError("current state and history must own distinct storage")
@@ -283,12 +272,9 @@ class TwoComponentSBDF2Workspace:
         ):
             raise TypeError("SBDF2 workspace entries must be tensors")
         if (
-            self.current_explicit_rhs.shape
-            != self.assembled_implicit_rhs.shape
-            or self.current_explicit_rhs.dtype
-            != self.assembled_implicit_rhs.dtype
-            or self.current_explicit_rhs.device
-            != self.assembled_implicit_rhs.device
+            self.current_explicit_rhs.shape != self.assembled_implicit_rhs.shape
+            or self.current_explicit_rhs.dtype != self.assembled_implicit_rhs.dtype
+            or self.current_explicit_rhs.device != self.assembled_implicit_rhs.device
         ):
             raise ValueError("SBDF2 workspace tensor layouts differ")
         if self.current_explicit_rhs.shape[-1] != 2:
@@ -315,9 +301,7 @@ class TwoComponentSBDF2Workspace:
             "bounded": True,
             "allocated_tensor_count": self.allocated_tensor_count,
             "current_explicit_rhs_shape": list(self.current_explicit_rhs.shape),
-            "assembled_implicit_rhs_shape": list(
-                self.assembled_implicit_rhs.shape
-            ),
+            "assembled_implicit_rhs_shape": list(self.assembled_implicit_rhs.shape),
             "modal_solve": self.modal_solve.to_metadata(),
         }
 
@@ -441,10 +425,7 @@ class TwoComponentSBDF2ReferenceStepper:
             2,
         ):
             raise ValueError("spectral state shape does not match model")
-        if (
-            state.physical.dtype is not self._dtype
-            or state.physical.device != self._device
-        ):
+        if state.physical.dtype is not self._dtype or state.physical.device != self._device:
             raise ValueError("state dtype or device does not match stepper")
         if state.completed_steps == 0:
             if state.history is not None:
@@ -474,11 +455,7 @@ class TwoComponentSBDF2ReferenceStepper:
         self._mark("require_current_state_and_history", operations, stage_observer)
 
         startup = state.completed_steps == 0
-        alpha = (
-            1.0 / self._spec.dt
-            if startup
-            else 3.0 / (2.0 * self._spec.dt)
-        )
+        alpha = 1.0 / self._spec.dt if startup else 3.0 / (2.0 * self._spec.dt)
         self._mark("prepare_algebraic", operations, stage_observer)
         if pre_update_callback is not None:
             pre_update_callback()
@@ -584,11 +561,7 @@ class TwoComponentSBDF2ReferenceStepper:
             raise ValueError("steps must be a non-negative integer")
         if state is not None and refresh_interval is not None:
             raise ValueError("refresh_interval is only valid for a fresh run")
-        current = (
-            self.initial_state(refresh_interval=refresh_interval)
-            if state is None
-            else state
-        )
+        current = self.initial_state(refresh_interval=refresh_interval) if state is None else state
         for _ in range(steps):
             current = self.step(current).state
         return current

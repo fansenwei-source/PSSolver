@@ -117,9 +117,8 @@ class ScalarPeriodicReactionDiffusion:
         return self.reaction_rate - self.diffusivity * wave_number**2
 
     def coordinates(self, *, dtype: torch.dtype, device: torch.device) -> torch.Tensor:
-        return (
-            torch.arange(self.point_count, dtype=dtype, device=device)
-            * (self.length / self.point_count)
+        return torch.arange(self.point_count, dtype=dtype, device=device) * (
+            self.length / self.point_count
         )
 
     def initial_physical(
@@ -218,8 +217,7 @@ class ScalarReferenceState:
                 raise ValueError(f"{description} must be a non-negative integer")
         if self.refresh_interval is None:
             valid_clock = (
-                self.refresh_count == 0
-                and self.refresh_step_count == self.completed_steps
+                self.refresh_count == 0 and self.refresh_step_count == self.completed_steps
             )
         else:
             if (
@@ -230,8 +228,7 @@ class ScalarReferenceState:
                 raise ValueError("refresh_interval must be positive or None")
             valid_clock = (
                 self.refresh_step_count < self.refresh_interval
-                and self.refresh_count * self.refresh_interval
-                + self.refresh_step_count
+                and self.refresh_count * self.refresh_interval + self.refresh_step_count
                 == self.completed_steps
             )
         if not valid_clock:
@@ -417,21 +414,13 @@ class ScalarPeriodicReferenceStepper:
             stage_observer,
         )
 
-        startup = (
-            self._spec.scheme is IntegratorScheme.SBDF2
-            and state.completed_steps == 0
-        )
-        use_euler = (
-            self._spec.scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
-            or startup
-        )
+        startup = self._spec.scheme is IntegratorScheme.SBDF2 and state.completed_steps == 0
+        use_euler = self._spec.scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER or startup
         if use_euler:
             denominator = 1.0 - self._spec.dt * self._linear_eigenvalues
         else:
             denominator = 3.0 / (2.0 * self._spec.dt) - self._linear_eigenvalues
-        if not bool(torch.isfinite(denominator).all()) or bool(
-            torch.any(denominator == 0.0)
-        ):
+        if not bool(torch.isfinite(denominator).all()) or bool(torch.any(denominator == 0.0)):
             raise RuntimeError("implicit scalar denominator is invalid")
         self._mark("prepare_algebraic", operations, stage_observer)
 
@@ -439,9 +428,7 @@ class ScalarPeriodicReferenceStepper:
             pre_update_callback()
         self._mark("pre_update_callback", operations, stage_observer)
 
-        current_rhs = self._model.explicit_native_spectral_rhs(
-            state.native_spectrum
-        )
+        current_rhs = self._model.explicit_native_spectral_rhs(state.native_spectrum)
         if not bool(torch.isfinite(current_rhs).all()):
             raise RuntimeError("explicit spectral RHS is non-finite")
         self._mark(
@@ -451,9 +438,7 @@ class ScalarPeriodicReferenceStepper:
         )
 
         if use_euler:
-            assembled_rhs = (
-                state.native_spectrum + self._spec.dt * current_rhs
-            )
+            assembled_rhs = state.native_spectrum + self._spec.dt * current_rhs
             assembly_operation = "assemble_euler_implicit_rhs"
         else:
             history = state.history
@@ -461,8 +446,7 @@ class ScalarPeriodicReferenceStepper:
                 raise RuntimeError("SBDF2 history disappeared after validation")
             assembled_rhs = (
                 2.0 / self._spec.dt * state.native_spectrum
-                - 0.5 / self._spec.dt
-                * history.previous_evolved_native_spectrum
+                - 0.5 / self._spec.dt * history.previous_evolved_native_spectrum
                 + 2.0 * current_rhs
                 - history.previous_explicit_native_spectral_rhs
             )
@@ -487,9 +471,7 @@ class ScalarPeriodicReferenceStepper:
 
         refreshed = state.refresh_due_after_next_step
         if refreshed:
-            candidate_spectrum = self._project(
-                torch.fft.rfft(candidate_physical)
-            )
+            candidate_spectrum = self._project(torch.fft.rfft(candidate_physical))
         self._mark(
             "scheduled_spectral_refresh",
             operations,
@@ -528,9 +510,7 @@ class ScalarPeriodicReferenceStepper:
             history=history_for_next,
         )
         scheme_used = (
-            IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
-            if use_euler
-            else IntegratorScheme.SBDF2
+            IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER if use_euler else IntegratorScheme.SBDF2
         )
         return ScalarReferenceStepResult(
             state=next_state,
@@ -551,11 +531,7 @@ class ScalarPeriodicReferenceStepper:
             raise ValueError("steps must be a non-negative integer")
         if state is not None and refresh_interval is not None:
             raise ValueError("refresh_interval is only valid for a fresh run")
-        current = (
-            self.initial_state(refresh_interval=refresh_interval)
-            if state is None
-            else state
-        )
+        current = self.initial_state(refresh_interval=refresh_interval) if state is None else state
         for _ in range(steps):
             current = self.step(current).state
         return current

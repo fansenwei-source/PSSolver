@@ -56,18 +56,12 @@ class TwoComponentPeriodicReactionDiffusionReference:
             or self.initial_mode >= self.point_count // 2
         ):
             raise ValueError("initial_mode must be a retained non-Nyquist mode")
-        if (
-            not isinstance(self.initial_amplitudes, tuple)
-            or len(self.initial_amplitudes) != 2
-        ):
+        if not isinstance(self.initial_amplitudes, tuple) or len(self.initial_amplitudes) != 2:
             raise ValueError("initial_amplitudes must contain exactly two values")
         object.__setattr__(
             self,
             "initial_amplitudes",
-            tuple(
-                _finite(value, "initial amplitude")
-                for value in self.initial_amplitudes
-            ),
+            tuple(_finite(value, "initial amplitude") for value in self.initial_amplitudes),
         )
 
     @property
@@ -80,9 +74,8 @@ class TwoComponentPeriodicReactionDiffusionReference:
         dtype: torch.dtype,
         device: torch.device,
     ) -> torch.Tensor:
-        return (
-            torch.arange(self.point_count, dtype=dtype, device=device)
-            * (self.length / self.point_count)
+        return torch.arange(self.point_count, dtype=dtype, device=device) * (
+            self.length / self.point_count
         )
 
     def laplacian_eigenvalues(
@@ -167,9 +160,7 @@ class TwoComponentPeriodicReactionDiffusionReference:
         normalized_device = torch.device(device)
         if dtype not in (torch.float32, torch.float64):
             raise ValueError("reference real dtype must be float32 or float64")
-        spectral_dtype = (
-            torch.complex64 if dtype is torch.float32 else torch.complex128
-        )
+        spectral_dtype = torch.complex64 if dtype is torch.float32 else torch.complex128
         return bind_two_component_modal_operator(
             self.operator_spec,
             self.laplacian_eigenvalues(

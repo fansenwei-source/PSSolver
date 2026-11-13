@@ -33,21 +33,12 @@ class BatchedPhysicalMaterialization:
             or not isinstance(value, torch.Tensor)
             for name, value in values.items()
         ):
-            raise ValueError(
-                "materialized values must map identifiers to tensors"
-            )
+            raise ValueError("materialized values must map identifiers to tensors")
         sizes = tuple(self.transform_batch_sizes)
-        if any(
-            not isinstance(size, int)
-            or isinstance(size, bool)
-            or size <= 0
-            for size in sizes
-        ):
+        if any(not isinstance(size, int) or isinstance(size, bool) or size <= 0 for size in sizes):
             raise ValueError("transform batch sizes must be positive integers")
         if sum(sizes) > len(values):
-            raise ValueError(
-                "transform batches cannot contain more values than returned"
-            )
+            raise ValueError("transform batches cannot contain more values than returned")
         object.__setattr__(self, "values", MappingProxyType(values))
         object.__setattr__(self, "transform_batch_sizes", sizes)
 
@@ -77,11 +68,7 @@ class AlgebraicGenerationState:
         ]
         | None = None,
     ) -> None:
-        if (
-            not isinstance(generation, int)
-            or isinstance(generation, bool)
-            or generation <= 0
-        ):
+        if not isinstance(generation, int) or isinstance(generation, bool) or generation <= 0:
             raise ValueError("generation must be a positive integer")
         if not isinstance(physical, Mapping) or not isinstance(spectral, Mapping):
             raise TypeError("generation representations must be mappings")
@@ -181,12 +168,9 @@ class AlgebraicGenerationState:
             raise TypeError("physical-island names must be an iterable")
         names = tuple(names)
         if len(set(names)) != len(names) or any(
-            not isinstance(name, str) or not name.isidentifier()
-            for name in names
+            not isinstance(name, str) or not name.isidentifier() for name in names
         ):
-            raise ValueError(
-                "physical-island names must be unique identifiers"
-            )
+            raise ValueError("physical-island names must be unique identifiers")
         unknown = tuple(name for name in names if name not in self._spectral)
         if unknown:
             raise KeyError(f"unknown physical-island components: {unknown!r}")
@@ -204,14 +188,10 @@ class AlgebraicGenerationState:
             tuple(self._spectral[name] for name in missing),
         )
         if not isinstance(result, BatchedPhysicalMaterialization):
-            raise TypeError(
-                "materialize_many must return BatchedPhysicalMaterialization"
-            )
+            raise TypeError("materialize_many must return BatchedPhysicalMaterialization")
         values = dict(result.values)
         if set(values) != set(missing):
-            raise ValueError(
-                "batched materialization returned the wrong components"
-            )
+            raise ValueError("batched materialization returned the wrong components")
         for name in missing:
             value = values[name]
             if not isinstance(value, torch.Tensor):
@@ -294,8 +274,7 @@ class AlgebraicPhysicalStateView(Mapping[str, torch.Tensor]):
             raise TypeError("component names must be an iterable, not a string")
         names = tuple(names)
         if len(set(names)) != len(names) or any(
-            not isinstance(name, str) or not name.isidentifier()
-            for name in names
+            not isinstance(name, str) or not name.isidentifier() for name in names
         ):
             raise ValueError("component names must be unique identifiers")
         self._generation_state = generation_state

@@ -41,12 +41,8 @@ _CURRENT_TENSORS = {
     "native_spectrum": "native_spectrum.npy",
 }
 _HISTORY_TENSORS = {
-    "previous_evolved_native_spectrum": (
-        "previous_evolved_native_spectrum.npy"
-    ),
-    "previous_explicit_native_spectral_rhs": (
-        "previous_explicit_native_spectral_rhs.npy"
-    ),
+    "previous_evolved_native_spectrum": ("previous_evolved_native_spectrum.npy"),
+    "previous_explicit_native_spectral_rhs": ("previous_explicit_native_spectral_rhs.npy"),
 }
 
 
@@ -110,13 +106,9 @@ def save_scalar_reference_checkpoint(
             "format": FORMAT_IDENTITY,
             "schema_version": SCHEMA_VERSION,
             "integrator": integrator_identity,
-            "integrator_identity_sha256": _identity_sha256(
-                integrator_identity
-            ),
+            "integrator_identity_sha256": _identity_sha256(integrator_identity),
             "model_discretization": model_identity,
-            "model_discretization_identity_sha256": _identity_sha256(
-                model_identity
-            ),
+            "model_discretization_identity_sha256": _identity_sha256(model_identity),
             "runtime": {
                 "completed_steps": state.completed_steps,
                 "time": state.time(stepper.spec.dt),
@@ -172,9 +164,7 @@ def _read_manifest(root: Path) -> dict[str, Any]:
     complete_path = root / COMPLETE_NAME
     if not complete_path.is_file():
         raise ValueError("checkpoint COMPLETE marker is missing")
-    expected_complete = (
-        f"manifest_sha256={_sha256_file(manifest_path)}\n"
-    )
+    expected_complete = f"manifest_sha256={_sha256_file(manifest_path)}\n"
     if complete_path.read_text(encoding="utf-8") != expected_complete:
         raise ValueError("checkpoint manifest identity does not match COMPLETE")
     return manifest
@@ -222,23 +212,16 @@ def load_scalar_reference_checkpoint(
         raise ValueError("checkpoint tensor record set is incomplete")
 
     tensors = {
-        name: _read_tensor(root, name, tensor_records[name])
-        for name in sorted(required_names)
+        name: _read_tensor(root, name, tensor_records[name]) for name in sorted(required_names)
     }
     history = None
     if history_present:
         if history_record.get("depth") != 1:
             raise ValueError("checkpoint history depth is invalid")
         history = SBDF2History(
-            previous_evolved_native_spectrum=tensors[
-                "previous_evolved_native_spectrum"
-            ],
-            previous_explicit_native_spectral_rhs=tensors[
-                "previous_explicit_native_spectral_rhs"
-            ],
-            source_completed_steps=history_record.get(
-                "source_completed_steps"
-            ),
+            previous_evolved_native_spectrum=tensors["previous_evolved_native_spectrum"],
+            previous_explicit_native_spectral_rhs=tensors["previous_explicit_native_spectral_rhs"],
+            source_completed_steps=history_record.get("source_completed_steps"),
             dt=history_record.get("dt"),
         )
     elif history_record != {

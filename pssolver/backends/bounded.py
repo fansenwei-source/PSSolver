@@ -33,10 +33,7 @@ class BoundedAxisPlanKey:
 
     def __post_init__(self) -> None:
         if self.kind not in BOUNDED_TRANSFORM_KINDS:
-            raise ValueError(
-                f"kind must be one of {BOUNDED_TRANSFORM_KINDS}, "
-                f"got {self.kind!r}"
-            )
+            raise ValueError(f"kind must be one of {BOUNDED_TRANSFORM_KINDS}, got {self.kind!r}")
         if (
             not isinstance(self.physical_size, int)
             or isinstance(self.physical_size, bool)
@@ -48,18 +45,14 @@ class BoundedAxisPlanKey:
             or isinstance(self.retained_count, bool)
             or not 0 <= self.retained_count <= self.physical_size
         ):
-            raise ValueError(
-                "retained_count must be an integer in "
-                "[0, physical_size]"
-            )
+            raise ValueError("retained_count must be an integer in [0, physical_size]")
         if not isinstance(self.device, torch.device):
             raise TypeError("device must be a torch.device")
         if self.real_dtype not in (torch.float32, torch.float64):
             raise ValueError("real_dtype must be torch.float32 or torch.float64")
         if self.value_type not in BOUNDED_VALUE_TYPES:
             raise ValueError(
-                f"value_type must be one of {BOUNDED_VALUE_TYPES}, "
-                f"got {self.value_type!r}"
+                f"value_type must be one of {BOUNDED_VALUE_TYPES}, got {self.value_type!r}"
             )
 
 
@@ -92,8 +85,7 @@ class DenseBoundedAxisExecutionPlan:
         expected_shape = (self.key.retained_count, self.key.physical_size)
         if tuple(self.matrix.shape) != expected_shape:
             raise ValueError(
-                f"matrix shape must be {expected_shape}, "
-                f"got {tuple(self.matrix.shape)}"
+                f"matrix shape must be {expected_shape}, got {tuple(self.matrix.shape)}"
             )
         if self.matrix.device != self.key.device:
             raise ValueError("matrix device does not match the plan key")

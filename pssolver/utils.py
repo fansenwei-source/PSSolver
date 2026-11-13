@@ -1,5 +1,6 @@
 import torch
 
+
 def fft(field: torch.Tensor, dim: int) -> torch.Tensor:
     """
     Computes the batched periodic N-dimensional FFT along the last `dim` dimensions.
@@ -50,7 +51,7 @@ def visualize2D(data, filename="output.mp4", fps=60, cmap="viridis"):
     axes = axes.flatten()
     ims = []
     for i in range(batchsize):
-        im = axes[i].imshow(data[i][0], cmap=cmap, origin='lower')
+        im = axes[i].imshow(data[i][0], cmap=cmap, origin="lower")
         plt.colorbar(im, ax=axes[i])
         ims.append(im)
 
@@ -61,14 +62,12 @@ def visualize2D(data, filename="output.mp4", fps=60, cmap="viridis"):
         fig.canvas.draw_idle()
         return ims
 
-    ani = animation.FuncAnimation(
-        fig, update, frames=data.shape[1], interval=1000/fps, blit=True
-    )
-    ani.save(filename, writer='ffmpeg', fps=fps)
+    ani = animation.FuncAnimation(fig, update, frames=data.shape[1], interval=1000 / fps, blit=True)
+    ani.save(filename, writer="ffmpeg", fps=fps)
     plt.show()
     plt.close(fig)
-        
-        
+
+
 def visualize1D(data, filename="output.png", cmap="viridis"):
     import matplotlib.pyplot as plt
     import numpy as np
@@ -84,11 +83,11 @@ def visualize1D(data, filename="output.png", cmap="viridis"):
     axes = axes.flatten()
 
     for i in range(batchsize):
-        im = axes[i].imshow(data[i].T, aspect='auto', cmap=cmap, origin='lower')
+        im = axes[i].imshow(data[i].T, aspect="auto", cmap=cmap, origin="lower")
         axes[i].set_xlabel("Time")
         axes[i].set_ylabel("Spatial Position")
         plt.colorbar(im, ax=axes[i], label="Value")
-        axes[i].set_title(f"Batch {i+1}")
+        axes[i].set_title(f"Batch {i + 1}")
 
     plt.tight_layout()
     plt.savefig(filename)

@@ -33,9 +33,7 @@ def _inverse_spectral_gradient(
 
 def _validate_divergence_sum_space(sum_space):
     if sum_space not in {"physical", "spectral"}:
-        raise ValueError(
-            "sum_space must be 'physical' or 'spectral'."
-        )
+        raise ValueError("sum_space must be 'physical' or 'spectral'.")
 
 
 def _spectral_gradient(backend, spectral, boundary_conditions, axis):
@@ -110,9 +108,7 @@ def projected_common_basis_stress_divergence(
         axis=1,
     )
     if derivative_x_bcs != derivative_y_bcs:
-        raise RuntimeError(
-            "The x/y stress derivatives must share one spectral basis."
-        )
+        raise RuntimeError("The x/y stress derivatives must share one spectral basis.")
     derivative_xy = _inverse_projected(
         backend,
         projector,
@@ -149,12 +145,8 @@ def projected_distortion_stress_divergence(
     _validate_divergence_sum_space(sum_space)
     even_boundary_conditions = tuple(even_boundary_conditions)
     odd_boundary_conditions = tuple(odd_boundary_conditions)
-    even_components = torch.stack(
-        tuple(stress_components[index] for index in (0, 1, 3, 4, 8))
-    )
-    odd_components = torch.stack(
-        tuple(stress_components[index] for index in (2, 5, 6, 7))
-    )
+    even_components = torch.stack(tuple(stress_components[index] for index in (0, 1, 3, 4, 8)))
+    odd_components = torch.stack(tuple(stress_components[index] for index in (2, 5, 6, 7)))
     even_hat = _forward_projected(
         backend,
         projector,
@@ -231,9 +223,7 @@ def projected_distortion_stress_divergence(
         backend, odd_tangential, odd_boundary_conditions, axis=2
     )
     if not (even_x_bcs == even_y_bcs == odd_z_bcs):
-        raise RuntimeError(
-            "Tangential distortion-force terms must share one spectral basis."
-        )
+        raise RuntimeError("Tangential distortion-force terms must share one spectral basis.")
     tangential = _inverse_projected(
         backend,
         projector,
@@ -241,19 +231,13 @@ def projected_distortion_stress_divergence(
         even_x_bcs,
     )
 
-    odd_x_hat, odd_x_bcs = _spectral_gradient(
-        backend, odd_hat[2], odd_boundary_conditions, axis=0
-    )
-    odd_y_hat, odd_y_bcs = _spectral_gradient(
-        backend, odd_hat[3], odd_boundary_conditions, axis=1
-    )
+    odd_x_hat, odd_x_bcs = _spectral_gradient(backend, odd_hat[2], odd_boundary_conditions, axis=0)
+    odd_y_hat, odd_y_bcs = _spectral_gradient(backend, odd_hat[3], odd_boundary_conditions, axis=1)
     even_z_hat, even_z_bcs = _spectral_gradient(
         backend, even_hat[4], even_boundary_conditions, axis=2
     )
     if not (odd_x_bcs == odd_y_bcs == even_z_bcs):
-        raise RuntimeError(
-            "Normal distortion-force terms must share one spectral basis."
-        )
+        raise RuntimeError("Normal distortion-force terms must share one spectral basis.")
     normal = _inverse_projected(
         backend,
         projector,
@@ -287,17 +271,11 @@ def projected_component_basis_stress_divergence(
 
     if len(stress_components) != 9:
         raise ValueError("A three-dimensional stress requires nine components.")
-    component_boundary_conditions = tuple(
-        tuple(value) for value in component_boundary_conditions
-    )
+    component_boundary_conditions = tuple(tuple(value) for value in component_boundary_conditions)
     if len(component_boundary_conditions) != 9:
-        raise ValueError(
-            "component_boundary_conditions must contain nine basis tuples."
-        )
+        raise ValueError("component_boundary_conditions must contain nine basis tuples.")
     ndim = len(tuple(output_boundary_conditions))
-    if ndim != 3 or any(
-        len(value) != ndim for value in component_boundary_conditions
-    ):
+    if ndim != 3 or any(len(value) != ndim for value in component_boundary_conditions):
         raise ValueError("stress and output bases must be three-dimensional.")
 
     rows = []

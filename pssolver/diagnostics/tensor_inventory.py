@@ -40,10 +40,7 @@ def _owner_category(path: str) -> str:
         return "solver_fields"
     if any(token in lowered for token in (".qx", ".qy", ".q2", "laplacian")):
         return "spectral_operators"
-    if any(
-        token in lowered
-        for token in ("representation", "generation_state", "transient_cache")
-    ):
+    if any(token in lowered for token in ("representation", "generation_state", "transient_cache")):
         return "algebraic_representations"
     if "scheduler" in lowered or "execution_plan" in lowered:
         return "scheduler_and_plans"
@@ -134,16 +131,12 @@ def _coalesce_storage_ranges(
                 and previous["device"] == record["device"]
                 and start < previous_end
             ):
-                previous["storage_bytes"] = max(previous_end, start + size) - (
-                    previous_start
-                )
+                previous["storage_bytes"] = max(previous_end, start + size) - (previous_start)
                 previous["paths"].update(record["paths"])
                 previous["categories"].update(record["categories"])
                 previous["dtypes"].update(record["dtypes"])
                 previous["tensor_references"] += int(record["tensor_references"])
-                previous["source_storage_ranges"].update(
-                    record["source_storage_ranges"]
-                )
+                previous["source_storage_ranges"].update(record["source_storage_ranges"])
                 continue
         merged.append(record)
     return merged
@@ -268,9 +261,7 @@ def build_tensor_inventory(
     category_unique = defaultdict(int)
     category_shared = defaultdict(int)
     dtype_unique = defaultdict(int)
-    raw_storage_bytes = sum(
-        int(storage["storage_bytes"]) for storage in storage_records.values()
-    )
+    raw_storage_bytes = sum(int(storage["storage_bytes"]) for storage in storage_records.values())
     coalesced = _coalesce_storage_ranges(list(storage_records.values()))
     for storage in coalesced:
         paths = sorted(set(storage["paths"]))
@@ -295,19 +286,13 @@ def build_tensor_inventory(
                 "tensor_references": int(storage["tensor_references"]),
                 "source_storage_ranges": [
                     {"data_ptr": pointer, "storage_bytes": storage_bytes}
-                    for pointer, storage_bytes in sorted(
-                        storage["source_storage_ranges"]
-                    )
+                    for pointer, storage_bytes in sorted(storage["source_storage_ranges"])
                 ],
                 "source_storage_range_count": len(storage["source_storage_ranges"]),
             }
         )
-    normalized_storages.sort(
-        key=lambda item: (-int(item["storage_bytes"]), item["paths"][0])
-    )
-    unique_storage_bytes = sum(
-        int(item["storage_bytes"]) for item in normalized_storages
-    )
+    normalized_storages.sort(key=lambda item: (-int(item["storage_bytes"]), item["paths"][0]))
+    unique_storage_bytes = sum(int(item["storage_bytes"]) for item in normalized_storages)
     return {
         "schema_version": 1,
         "scope": "explicit_runtime_object_graph",
@@ -316,9 +301,7 @@ def build_tensor_inventory(
         "visited_object_count": object_count,
         "tensor_reference_count": len(tensor_records),
         "unique_storage_count": len(normalized_storages),
-        "logical_tensor_bytes": sum(
-            int(item["logical_bytes"]) for item in tensor_records
-        ),
+        "logical_tensor_bytes": sum(int(item["logical_bytes"]) for item in tensor_records),
         "unique_storage_bytes": unique_storage_bytes,
         "raw_storage_range_count": len(storage_records),
         "raw_storage_bytes_before_overlap_coalescing": raw_storage_bytes,
@@ -331,12 +314,8 @@ def build_tensor_inventory(
         "unique_storage_bytes_by_dtype": dict(sorted(dtype_unique.items())),
         "tensor_references": tensor_records,
         "storages": normalized_storages[:maximum_reported_storages],
-        "reported_storage_count": min(
-            len(normalized_storages), maximum_reported_storages
-        ),
-        "all_storages_reported": (
-            len(normalized_storages) <= maximum_reported_storages
-        ),
+        "reported_storage_count": min(len(normalized_storages), maximum_reported_storages),
+        "all_storages_reported": (len(normalized_storages) <= maximum_reported_storages),
     }
 
 
@@ -375,10 +354,7 @@ def _storage_owner_records(
             "data_ptr": storage["data_ptr"],
             "storage_bytes": storage["storage_bytes"],
         }
-        records.extend(
-            {**identity, "path": path}
-            for path in storage["paths"]
-        )
+        records.extend({**identity, "path": path} for path in storage["paths"])
     return sorted(
         records,
         key=lambda item: (
@@ -415,14 +391,8 @@ def _counter_diff(
     before: list[dict[str, object]],
     after: list[dict[str, object]],
 ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
-    before_by_json = Counter(
-        canonical_json(item)
-        for item in before
-    )
-    after_by_json = Counter(
-        canonical_json(item)
-        for item in after
-    )
+    before_by_json = Counter(canonical_json(item) for item in before)
+    after_by_json = Counter(canonical_json(item) for item in after)
 
     def expand(counter: Counter[str]) -> list[dict[str, object]]:
         return [
@@ -431,9 +401,7 @@ def _counter_diff(
             for _ in range(counter[serialized])
         ]
 
-    return expand(after_by_json - before_by_json), expand(
-        before_by_json - after_by_json
-    )
+    return expand(after_by_json - before_by_json), expand(before_by_json - after_by_json)
 
 
 def compare_tensor_inventories(
@@ -488,14 +456,8 @@ def compare_tensor_inventories(
         and not removed_owners
         and not removed_references
         and bool(added_references)
-        and all(
-            "transient_cache" in str(item["path"]).lower()
-            for item in added_references
-        )
-        and all(
-            "transient_cache" in str(item["path"]).lower()
-            for item in added_owners
-        )
+        and all("transient_cache" in str(item["path"]).lower() for item in added_references)
+        and all("transient_cache" in str(item["path"]).lower() for item in added_owners)
     )
     if full_identical:
         classification = "identical"
@@ -554,18 +516,14 @@ def compare_tensor_inventories(
             "full_inventory_sha256": _canonical_sha256(before),
             "unique_storage_identity_sha256": _canonical_sha256(before_storage),
             "storage_owner_paths_sha256": _canonical_sha256(before_owners),
-            "storage_reference_multiplicity_sha256": _canonical_sha256(
-                before_multiplicity
-            ),
+            "storage_reference_multiplicity_sha256": _canonical_sha256(before_multiplicity),
             "tensor_references_sha256": _canonical_sha256(before_references),
         },
         "after_hashes": {
             "full_inventory_sha256": _canonical_sha256(after),
             "unique_storage_identity_sha256": _canonical_sha256(after_storage),
             "storage_owner_paths_sha256": _canonical_sha256(after_owners),
-            "storage_reference_multiplicity_sha256": _canonical_sha256(
-                after_multiplicity
-            ),
+            "storage_reference_multiplicity_sha256": _canonical_sha256(after_multiplicity),
             "tensor_references_sha256": _canonical_sha256(after_references),
         },
         "field_differences": field_differences,
@@ -585,8 +543,7 @@ def compare_tensor_inventories(
         "added_tensor_references": bounded(added_references),
         "removed_tensor_references": bounded(removed_references),
         "all_differences_reported": all(
-            len(values) <= maximum_reported_differences
-            for values in difference_groups
+            len(values) <= maximum_reported_differences for values in difference_groups
         ),
         "maximum_reported_differences": maximum_reported_differences,
     }

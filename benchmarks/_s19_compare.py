@@ -16,14 +16,17 @@ class HardQualificationError(RuntimeError):
 
 
 # D-0022: exact records, not a dtype/path/name pattern or numerical tolerance.
-KNOWN_NONFINITE_PCG_RECORDS = frozenset({
-    ("fixed_float32_roundoff_floor", "oracle", "gradient"),
-    ("fixed_float32_floor_crossing", "oracle", "gradient"),
-})
+KNOWN_NONFINITE_PCG_RECORDS = frozenset(
+    {
+        ("fixed_float32_roundoff_floor", "oracle", "gradient"),
+        ("fixed_float32_floor_crossing", "oracle", "gradient"),
+    }
+)
 
 
 def require_finite_payload(array, *, pcg_record=None) -> bool:
     import numpy as np
+
     finite = bool(np.isfinite(array).all())
     if not finite and pcg_record not in KNOWN_NONFINITE_PCG_RECORDS:
         raise HardQualificationError(f"non-finite output tensor: {pcg_record}")
@@ -41,9 +44,13 @@ def require_execution(observed: dict[str, Any], expected: dict[str, Any]) -> Non
     exceptions = observed.get("nonfinite_records", [])
     exact = [tuple(row) for row in exceptions]
     if observed.get("finite") is not True:
-        if (observed.get("finite") is not False or observed.get("kind") != "pcg"
-                or not exact or len(set(exact)) != len(exact)
-                or not set(exact) <= KNOWN_NONFINITE_PCG_RECORDS):
+        if (
+            observed.get("finite") is not False
+            or observed.get("kind") != "pcg"
+            or not exact
+            or len(set(exact)) != len(exact)
+            or not set(exact) <= KNOWN_NONFINITE_PCG_RECORDS
+        ):
             raise HardQualificationError("execution gate failed: finite")
     elif exact:
         raise HardQualificationError("inconsistent finite/exceptions report")
@@ -59,7 +66,9 @@ def _json_number(value: float) -> float | str:
     return value if math.isfinite(value) else "Infinity"
 
 
-def compare_field(left: Any, right: Any, *, field: str, step: int, pcg_record=None) -> dict[str, Any]:
+def compare_field(
+    left: Any, right: Any, *, field: str, step: int, pcg_record=None
+) -> dict[str, Any]:
     """Compare every stored field, including signed-zero and payload bytes."""
     import numpy as np
 
@@ -75,11 +84,19 @@ def compare_field(left: Any, right: Any, *, field: str, step: int, pcg_record=No
         # Raw bytes include NaN payload/sign, signed infinity and positions.
         # Arithmetic maxima over nonfinite entries are undefined, not zero.
         return {
-            "field": field, "step": step, "shape": list(left.shape), "dtype": str(left.dtype),
-            "bitwise_equal": identical, "classification": "PASS" if identical else "N",
-            "decision": "D-0022", "pcg_record": list(pcg_record), "tolerance": 0,
+            "field": field,
+            "step": step,
+            "shape": list(left.shape),
+            "dtype": str(left.dtype),
+            "bitwise_equal": identical,
+            "classification": "PASS" if identical else "N",
+            "decision": "D-0022",
+            "pcg_record": list(pcg_record),
+            "tolerance": 0,
             "nonfinite_elements": [int((~np.isfinite(x)).sum()) for x in (left, right)],
-            "nonfinite_positions_equal": bool(np.array_equal(np.isfinite(left), np.isfinite(right))),
+            "nonfinite_positions_equal": bool(
+                np.array_equal(np.isfinite(left), np.isfinite(right))
+            ),
             "max_absolute_difference": "undefined_for_nonfinite_record",
             "max_relative_difference": "undefined_for_nonfinite_record",
             "comparison": "entire raw tensor bytes, including nonfinite locations and bit patterns",
@@ -140,9 +157,9 @@ def final_verdict(stages: list[dict[str, Any]], *, formal_h100: bool) -> dict[st
     numerical = any(row["classification"] == "N" for row in stages)
     passed = not (hard or numerical)
     return {
-        "classification": ("FAIL_H" if hard else "FAIL_N") if not passed else (
-            "PASS_S19_H100" if formal_h100 else "PASS_CPU_REHEARSAL_ONLY"
-        ),
+        "classification": ("FAIL_H" if hard else "FAIL_N")
+        if not passed
+        else ("PASS_S19_H100" if formal_h100 else "PASS_CPU_REHEARSAL_ONLY"),
         "qualification_passed": passed and formal_h100,
         "cpu_rehearsal_passed": passed and not formal_h100,
         "formal_h100_contract": formal_h100,

@@ -130,8 +130,9 @@ class SpectralNumerics(NumericsConfig):
             hermitian_axis=hermitian_axis,
         )
         object.__setattr__(
-            self, "pressure_solver",
-            None if pressure_solver is None else _mapping(pressure_solver, "pressure_solver")
+            self,
+            "pressure_solver",
+            None if pressure_solver is None else _mapping(pressure_solver, "pressure_solver"),
         )
 
     def __setattr__(self, name, value):
@@ -235,7 +236,9 @@ class GeneratedInitialCondition:
     def __post_init__(self):
         if not isinstance(self.family, str) or not self.family.isidentifier():
             raise ValueError("initial condition family must be a Python identifier")
-        object.__setattr__(self, "parameters", _mapping(self.parameters, "initial condition parameters"))
+        object.__setattr__(
+            self, "parameters", _mapping(self.parameters, "initial condition parameters")
+        )
 
     def to_metadata(self) -> dict[str, object]:
         """Serialize the generated initial-field request.

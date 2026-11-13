@@ -39,7 +39,15 @@ class PublicSimulationCompilationError(ValueError):
         opens_in: Optional version or step in which scope may open.
     """
 
-    def __init__(self, code: str | PublicCompilationRejectionCode, reason: str, *, kind: str = "mathematical", source: str | None = None, opens_in: str | None = None) -> None:
+    def __init__(
+        self,
+        code: str | PublicCompilationRejectionCode,
+        reason: str,
+        *,
+        kind: str = "mathematical",
+        source: str | None = None,
+        opens_in: str | None = None,
+    ) -> None:
         """Store a public compilation rejection and its structured context.
 
         Args:

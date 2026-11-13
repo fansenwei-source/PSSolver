@@ -26,9 +26,7 @@ def _full_Q_numpy(Q: np.ndarray) -> np.ndarray:
         raise ValueError("Q must contain only finite values")
     if values.ndim >= 2 and values.shape[-2:] == (3, 3):
         scale = np.max(np.abs(values), axis=(-2, -1))
-        tolerance = (
-            8.0 * np.finfo(values.dtype).eps * scale + 1.0e-12
-        )
+        tolerance = 8.0 * np.finfo(values.dtype).eps * scale + 1.0e-12
         symmetry_error = np.max(
             np.abs(values - np.swapaxes(values, -2, -1)),
             axis=(-2, -1),
@@ -40,10 +38,7 @@ def _full_Q_numpy(Q: np.ndarray) -> np.ndarray:
             raise ValueError("full Q tensors must be traceless")
         return values
     if values.ndim < 1 or values.shape[-1] != 5:
-        raise ValueError(
-            "Q must have shape (..., 5) or (..., 3, 3), "
-            f"got {values.shape}"
-        )
+        raise ValueError(f"Q must have shape (..., 5) or (..., 3, 3), got {values.shape}")
     Qxx, Qxy, Qxz, Qyy, Qyz = np.moveaxis(values, -1, 0)
     Qzz = -(Qxx + Qyy)
     return np.stack(
@@ -98,13 +93,9 @@ def q_field_object_from_Q(
     canonical_S, canonical_director = S_and_director_from_Q(values)
     try:
         n3d = import_module("nematics3d")
-        InputQ = import_module(
-            "nematics3d.classes.q_field_object"
-        ).InputQ
+        InputQ = import_module("nematics3d.classes.q_field_object").InputQ
     except ImportError as exc:  # pragma: no cover - environment dependent
-        raise ImportError(
-            "Nematics3D is required to construct a QFieldObject"
-        ) from exc
+        raise ImportError("Nematics3D is required to construct a QFieldObject") from exc
 
     is_detect_defects = bool(kwargs.pop("is_detect_defects", True))
     is_classify_lines = bool(kwargs.pop("is_classify_lines", True))

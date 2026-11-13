@@ -122,10 +122,7 @@ def analyze(
         len(reports) == expected_count,
         f"expected {expected_count} reports, found {len(reports)}",
     )
-    case_plans = {
-        value["case_id"]: value
-        for value in plan.get("cases", [])
-    }
+    case_plans = {value["case_id"]: value for value in plan.get("cases", [])}
     _require(len(case_plans) == 4, "plan must contain four unique cases")
     indexed: dict[tuple[str, str, int, str], dict[str, object]] = {}
     for report in reports:
@@ -190,30 +187,16 @@ def analyze(
             f"mean timestep non-regression failed for {case_id}",
         )
         _require(
-            median_ratio
-            <= float(
-                performance_plan[
-                    "public_over_direct_median_timestep_ratio_max"
-                ]
-            ),
+            median_ratio <= float(performance_plan["public_over_direct_median_timestep_ratio_max"]),
             f"median timestep non-regression failed for {case_id}",
         )
         _require(
             allocated_ratio
-            <= float(
-                performance_plan[
-                    "public_over_direct_peak_allocated_ratio_max"
-                ]
-            ),
+            <= float(performance_plan["public_over_direct_peak_allocated_ratio_max"]),
             f"allocated-memory non-regression failed for {case_id}",
         )
         _require(
-            reserved_ratio
-            <= float(
-                performance_plan[
-                    "public_over_direct_peak_reserved_ratio_max"
-                ]
-            ),
+            reserved_ratio <= float(performance_plan["public_over_direct_peak_reserved_ratio_max"]),
             f"reserved-memory non-regression failed for {case_id}",
         )
         performance_summary[case_id] = {
@@ -238,9 +221,7 @@ def analyze(
         _require(segment["result"]["start_step"] == 0, "segment did not start at zero")
         _require(segment["result"]["final_step"] == segment_step, "segment final step mismatch")
         _require(str(segment_step) in segment["checkpoints"], "segment checkpoint is absent")
-        continuous_artifacts = _artifact_identity(
-            indexed[(case_id, "performance", 1, "public")]
-        )
+        continuous_artifacts = _artifact_identity(indexed[(case_id, "performance", 1, "public")])
         for entry, resumed in (("direct", direct_resume), ("public", public_resume)):
             _require(
                 resumed["result"]["start_step"] == segment_step,

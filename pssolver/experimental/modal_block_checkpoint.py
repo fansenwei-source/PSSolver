@@ -34,12 +34,8 @@ COMPLETE_NAME = "COMPLETE"
 _TENSOR_FILES = {
     "physical": "physical.npy",
     "native_spectrum": "native_spectrum.npy",
-    "previous_evolved_native_spectrum": (
-        "previous_evolved_native_spectrum.npy"
-    ),
-    "previous_explicit_native_spectral_rhs": (
-        "previous_explicit_native_spectral_rhs.npy"
-    ),
+    "previous_evolved_native_spectrum": ("previous_evolved_native_spectrum.npy"),
+    "previous_explicit_native_spectral_rhs": ("previous_explicit_native_spectral_rhs.npy"),
 }
 
 
@@ -85,9 +81,7 @@ def save_two_component_reference_checkpoint(
         values = {
             "physical": state.physical,
             "native_spectrum": state.native_spectrum,
-            "previous_evolved_native_spectrum": (
-                state.history.previous_evolved_native_spectrum
-            ),
+            "previous_evolved_native_spectrum": (state.history.previous_evolved_native_spectrum),
             "previous_explicit_native_spectral_rhs": (
                 state.history.previous_explicit_native_spectral_rhs
             ),
@@ -120,9 +114,7 @@ def save_two_component_reference_checkpoint(
             "history": {
                 "present": True,
                 "depth": 1,
-                "source_completed_steps": (
-                    state.history.source_completed_steps
-                ),
+                "source_completed_steps": (state.history.source_completed_steps),
                 "dt": state.history.dt,
             },
             "tensors": tensors,
@@ -193,17 +185,10 @@ def load_two_component_reference_checkpoint(
         raise ValueError("checkpoint tensor record set is incomplete")
     if history_record.get("present") is not True or history_record.get("depth") != 1:
         raise ValueError("checkpoint history metadata is invalid")
-    tensors = {
-        name: _read_tensor(root, name, records[name])
-        for name in sorted(_TENSOR_FILES)
-    }
+    tensors = {name: _read_tensor(root, name, records[name]) for name in sorted(_TENSOR_FILES)}
     history = SBDF2History(
-        previous_evolved_native_spectrum=tensors[
-            "previous_evolved_native_spectrum"
-        ],
-        previous_explicit_native_spectral_rhs=tensors[
-            "previous_explicit_native_spectral_rhs"
-        ],
+        previous_evolved_native_spectrum=tensors["previous_evolved_native_spectrum"],
+        previous_explicit_native_spectral_rhs=tensors["previous_explicit_native_spectral_rhs"],
         source_completed_steps=history_record.get("source_completed_steps"),
         dt=history_record.get("dt"),
     )

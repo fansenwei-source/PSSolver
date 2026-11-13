@@ -22,8 +22,7 @@ VELOCITY_FIELD_NAMES = ("ux", "uy", "uz")
 SNAPSHOT_MODES = ("resume", "branch")
 _EXPECTED_S_BULK_UNSET = object()
 REPRESENTATIVE_ORDERED_S_DEFINITION = (
-    "median(S=lambda_max(Q)) over points with Q_magnitude at or above "
-    "the field's 75th percentile"
+    "median(S=lambda_max(Q)) over points with Q_magnitude at or above the field's 75th percentile"
 )
 
 
@@ -85,9 +84,7 @@ def _run_application_identity(metadata: Mapping[str, Any]) -> str:
     script = metadata.get("script")
     if isinstance(script, str) and script:
         return _LEGACY_PLANE_SCRIPT_APPLICATIONS.get(script, script)
-    raise ValueError(
-        "resume metadata is missing a nonempty application identity"
-    )
+    raise ValueError("resume metadata is missing a nonempty application identity")
 
 
 def _continuation_signature(metadata: Mapping[str, Any]) -> dict[str, Any]:
@@ -128,9 +125,7 @@ def _continuation_signature(metadata: Mapping[str, Any]) -> dict[str, Any]:
     try:
         return json.loads(json.dumps(signature, sort_keys=True))
     except (TypeError, ValueError) as error:
-        raise ValueError(
-            "trajectory-defining resume metadata must be JSON serializable"
-        ) from error
+        raise ValueError("trajectory-defining resume metadata must be JSON serializable") from error
 
 
 def validate_resume_compatibility(
@@ -148,15 +143,13 @@ def validate_resume_compatibility(
         source_signature = _continuation_signature(source.metadata)
     except ValueError as error:
         raise ValueError(
-            f"{source.path} cannot use metadata-compatible resume: {error}. "
-            "Use mode='branch'."
+            f"{source.path} cannot use metadata-compatible resume: {error}. Use mode='branch'."
         ) from error
     try:
         current_signature = _continuation_signature(current_metadata)
     except ValueError as error:
         raise ValueError(
-            f"current run cannot use metadata-compatible resume: {error}. "
-            "Use mode='branch'."
+            f"current run cannot use metadata-compatible resume: {error}. Use mode='branch'."
         ) from error
     if source_signature != current_signature:
         differing = [
@@ -173,9 +166,7 @@ def validate_resume_compatibility(
 
 def _positive_finite_parameter(value, *, name: str, metadata_path: Path) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError(
-            f"{metadata_path} has non-numeric model.parameters.{name}={value!r}."
-        )
+        raise ValueError(f"{metadata_path} has non-numeric model.parameters.{name}={value!r}.")
     result = float(value)
     if not np.isfinite(result) or result <= 0.0:
         raise ValueError(
@@ -210,17 +201,13 @@ def validate_active_nematic_q_source(
         raise ValueError(f"{metadata_path} must contain a JSON object.")
 
     if metadata.get("schema_version") not in {1, 2}:
-        raise ValueError(
-            f"{metadata_path} must declare supported schema_version 1 or 2."
-        )
+        raise ValueError(f"{metadata_path} must declare supported schema_version 1 or 2.")
 
     model = metadata.get("model")
     if not isinstance(model, dict):
         raise ValueError(f"{metadata_path} is missing model metadata.")
     if model.get("name") != "active_nematics":
-        raise ValueError(
-            f"{metadata_path} must declare model.name='active_nematics'."
-        )
+        raise ValueError(f"{metadata_path} must declare model.name='active_nematics'.")
     expected_convention = Q_convention_metadata()
     if model.get("Q_convention") != expected_convention:
         raise ValueError(
@@ -245,9 +232,7 @@ def validate_active_nematic_q_source(
     raw_S_initial = parameters.get("S_initial", _EXPECTED_S_BULK_UNSET)
     if raw_S_initial is _EXPECTED_S_BULK_UNSET:
         if require_S_initial:
-            raise ValueError(
-                f"{metadata_path} is missing model.parameters.S_initial."
-            )
+            raise ValueError(f"{metadata_path} is missing model.parameters.S_initial.")
         S_initial = None
     else:
         S_initial = _positive_finite_parameter(
@@ -296,9 +281,7 @@ def _load_floating_array(path: Path) -> np.ndarray:
 
     values = np.load(path, allow_pickle=False)
     if not np.issubdtype(values.dtype, np.floating):
-        raise TypeError(
-            f"snapshot array must use a floating dtype, got {values.dtype} in {path}"
-        )
+        raise TypeError(f"snapshot array must use a floating dtype, got {values.dtype} in {path}")
     if not np.isfinite(values).all():
         raise ValueError(f"snapshot array contains NaN or Inf values: {path}")
     return np.ascontiguousarray(values, dtype=np.float32)
@@ -318,9 +301,7 @@ def representative_ordered_S(values) -> float:
     ordered = S_values[magnitudes >= cutoff]
     result = float(np.median(ordered))
     if not np.isfinite(result) or result <= 0.0:
-        raise ValueError(
-            "Q snapshot must have a positive finite ordered-region median S"
-        )
+        raise ValueError("Q snapshot must have a positive finite ordered-region median S")
     return result
 
 
@@ -351,14 +332,11 @@ def load_q_snapshot(
     )
     values = _load_floating_array(path)
     if values.ndim != 4 or values.shape[-1] != len(Q_FIELD_NAMES):
-        raise ValueError(
-            f"{path.name} must have shape (Nx, Ny, Nz, 5), got {values.shape}"
-        )
+        raise ValueError(f"{path.name} must have shape (Nx, Ny, Nz, 5), got {values.shape}")
     shape = tuple(values.shape[:-1])
     if expected_shape is not None and shape != tuple(expected_shape):
         raise ValueError(
-            f"snapshot spatial shape {shape} does not match solver shape "
-            f"{tuple(expected_shape)}"
+            f"snapshot spatial shape {shape} does not match solver shape {tuple(expected_shape)}"
         )
     return QTensorSnapshot(
         directory=directory,
@@ -396,13 +374,9 @@ def load_snapshot(
     shape = q_snapshot.shape
     expected_u_shape = (*shape, len(VELOCITY_FIELD_NAMES))
     if u_values.shape != expected_u_shape:
-        raise ValueError(
-            f"u_{step}.npy must have shape {expected_u_shape}, got {u_values.shape}"
-        )
+        raise ValueError(f"u_{step}.npy must have shape {expected_u_shape}, got {u_values.shape}")
     if p_values.shape != shape:
-        raise ValueError(
-            f"p_{step}.npy must have shape {shape}, got {p_values.shape}"
-        )
+        raise ValueError(f"p_{step}.npy must have shape {shape}, got {p_values.shape}")
 
     return SimulationSnapshot(
         directory=directory,
@@ -496,9 +470,7 @@ def apply_snapshot_to_solver(
                 torch.linalg.vector_norm(computed),
                 torch.linalg.vector_norm(saved),
             )
-            relative_error = (
-                difference_norm / reference_norm.clamp_min(resume_static_atol)
-            ).item()
+            relative_error = (difference_norm / reference_norm.clamp_min(resume_static_atol)).item()
             maximum_error = (computed - saved).abs().max().item()
             if relative_error > resume_static_rtol and maximum_error > resume_static_atol:
                 inconsistent_fields.append(
@@ -517,9 +489,7 @@ def apply_snapshot_to_solver(
 
     static_model = solver.model.static_model
     if not hasattr(static_model, "pressure_guess"):
-        raise TypeError(
-            "resume mode requires a static model with a pressure_guess attribute"
-        )
+        raise TypeError("resume mode requires a static model with a pressure_guess attribute")
     pressure_hat = fields["p.hat"].detach().clone()
     static_model.pressure_guess = pressure_hat
     if hasattr(static_model, "last_pressure_hat"):
@@ -540,8 +510,7 @@ def require_distinct_output_directory(
     output_directory = Path(output_directory).expanduser().resolve()
     if output_directory == snapshot.directory:
         raise ValueError(
-            "snapshot output directory must differ from the source directory: "
-            f"{output_directory}"
+            f"snapshot output directory must differ from the source directory: {output_directory}"
         )
     return output_directory
 

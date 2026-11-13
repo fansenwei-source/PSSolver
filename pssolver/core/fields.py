@@ -104,7 +104,5 @@ class FieldSpec:
         return {
             "name": self.name,
             "role": self.role.value,
-            "components": [
-                component.to_metadata() for component in self.components
-            ],
+            "components": [component.to_metadata() for component in self.components],
         }

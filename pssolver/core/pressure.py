@@ -24,9 +24,7 @@ def channel_pressure_minimum_relative_tolerance_for_precision(
     try:
         epsilon = _REAL_DTYPE_EPSILON[precision]
     except KeyError as exc:
-        raise TypeError(
-            f"unsupported Channel pressure precision: {precision}"
-        ) from exc
+        raise TypeError(f"unsupported Channel pressure precision: {precision}") from exc
     return 8.0 * epsilon
 
 

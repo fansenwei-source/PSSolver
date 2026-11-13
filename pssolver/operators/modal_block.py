@@ -119,9 +119,7 @@ class BoundTwoComponentModalOperator:
         if not bool(torch.isfinite(self.coefficients).all()):
             raise ValueError("bound coefficients must be finite")
         if self.implementation not in MODAL_BLOCK_IMPLEMENTATIONS:
-            raise ValueError(
-                f"implementation must be one of {MODAL_BLOCK_IMPLEMENTATIONS}"
-            )
+            raise ValueError(f"implementation must be one of {MODAL_BLOCK_IMPLEMENTATIONS}")
         if (
             self.implementation == "torch_linalg_reference"
             and self.coefficients.device.type != "cpu"
@@ -214,9 +212,13 @@ class BoundTwoComponentModalOperator:
                 coefficient[..., 1, 0].abs(),
             ),
         )
-        tolerance = 64.0 * torch.finfo(self.dtype).eps * torch.maximum(
-            torch.ones((), dtype=scale.dtype, device=scale.device),
-            scale.square(),
+        tolerance = (
+            64.0
+            * torch.finfo(self.dtype).eps
+            * torch.maximum(
+                torch.ones((), dtype=scale.dtype, device=scale.device),
+                scale.square(),
+            )
         )
         if bool(torch.any(workspace.determinant.abs() <= tolerance)):
             raise ValueError("modal block matrix is singular or numerically rejected")
@@ -310,33 +312,23 @@ def bind_two_component_modal_operator(
         raise ValueError("laplacian_eigenvalues must be nonempty")
     if spectral_dtype not in (torch.complex64, torch.complex128):
         raise ValueError("spectral_dtype must be complex64 or complex128")
-    expected_real_dtype = (
-        torch.float32 if spectral_dtype is torch.complex64 else torch.float64
-    )
+    expected_real_dtype = torch.float32 if spectral_dtype is torch.complex64 else torch.float64
     if laplacian_eigenvalues.dtype is not expected_real_dtype:
         raise ValueError("Laplacian dtype is incompatible with spectral dtype")
     if not bool(torch.isfinite(laplacian_eigenvalues).all()):
         raise ValueError("laplacian_eigenvalues must be finite")
     if implementation not in MODAL_BLOCK_IMPLEMENTATIONS:
-        raise ValueError(
-            f"implementation must be one of {MODAL_BLOCK_IMPLEMENTATIONS}"
-        )
+        raise ValueError(f"implementation must be one of {MODAL_BLOCK_IMPLEMENTATIONS}")
 
     coefficients = torch.empty(
         (*laplacian_eigenvalues.shape, 2, 2),
         dtype=spectral_dtype,
         device=laplacian_eigenvalues.device,
     )
-    coefficients[..., 0, 0] = (
-        spec.coupling[0][0]
-        + spec.diffusion[0] * laplacian_eigenvalues
-    )
+    coefficients[..., 0, 0] = spec.coupling[0][0] + spec.diffusion[0] * laplacian_eigenvalues
     coefficients[..., 0, 1] = spec.coupling[0][1]
     coefficients[..., 1, 0] = spec.coupling[1][0]
-    coefficients[..., 1, 1] = (
-        spec.coupling[1][1]
-        + spec.diffusion[1] * laplacian_eigenvalues
-    )
+    coefficients[..., 1, 1] = spec.coupling[1][1] + spec.diffusion[1] * laplacian_eigenvalues
     return BoundTwoComponentModalOperator(
         spec=spec,
         coefficients=coefficients,

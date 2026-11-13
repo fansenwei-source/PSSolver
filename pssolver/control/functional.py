@@ -53,12 +53,18 @@ class FunctionalSemiImplicitStep:
 
     def _dynamic_forward_transform(self, q):
         return torch.stack(
-            [self.fields.forward_transform(index, tensor=q[index]) for index in range(self.dyn_count)]
+            [
+                self.fields.forward_transform(index, tensor=q[index])
+                for index in range(self.dyn_count)
+            ]
         )
 
     def _dynamic_inverse_transform(self, q_hat):
         return torch.stack(
-            [self.fields.inverse_transform(index, spectral=q_hat[index]) for index in range(self.dyn_count)]
+            [
+                self.fields.inverse_transform(index, spectral=q_hat[index])
+                for index in range(self.dyn_count)
+            ]
         )
 
     def _static_inverse_transform(self, static_hat):

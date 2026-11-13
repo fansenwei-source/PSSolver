@@ -50,9 +50,7 @@ class ProblemSpec:
         try:
             parameter_metadata_json = canonical_json(dict(parameter_metadata))
         except (TypeError, ValueError) as exc:
-            raise ValueError(
-                "model parameter metadata must be finite and JSON-compatible"
-            ) from exc
+            raise ValueError("model parameter metadata must be finite and JSON-compatible") from exc
 
         try:
             field_specs = tuple(self.model.field_specs())
@@ -67,18 +65,14 @@ class ProblemSpec:
         if len(set(field_names)) != len(field_names):
             raise ValueError("logical field names must be unique")
         component_names = tuple(
-            component.name
-            for spec in field_specs
-            for component in spec.components
+            component.name for spec in field_specs for component in spec.components
         )
         if len(set(component_names)) != len(component_names):
             raise ValueError("component names must be globally unique")
 
         for spec in field_specs:
             if spec.ndim != self.geometry.domain.ndim:
-                raise ValueError(
-                    f"field '{spec.name}' dimension does not match geometry"
-                )
+                raise ValueError(f"field '{spec.name}' dimension does not match geometry")
             self._validate_boundaries(spec)
 
         hermitian_axis = self.numerics.hermitian_axis

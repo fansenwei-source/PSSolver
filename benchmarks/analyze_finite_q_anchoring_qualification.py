@@ -105,12 +105,7 @@ def analyze(
 
     shapes = ((128, 128, 32), (320, 320, 80))
     modes = ("scalar_reference", "aggregate_runtime")
-    expected = {
-        (shape, trial, mode)
-        for shape in shapes
-        for trial in (1, 2, 3)
-        for mode in modes
-    }
+    expected = {(shape, trial, mode) for shape in shapes for trial in (1, 2, 3) for mode in modes}
     _require(set(index) == expected, "profile matrix is incomplete")
     performance = {}
     for shape in shapes:
@@ -123,20 +118,15 @@ def analyze(
             reference = index[(shape, trial, "scalar_reference")]
             aggregate = index[(shape, trial, "aggregate_runtime")]
             _require(
-                reference["initial_q_sha256"]
-                == aggregate["initial_q_sha256"],
+                reference["initial_q_sha256"] == aggregate["initial_q_sha256"],
                 "paired initial Q identity differs",
             )
             _require(
                 reference["final_q_sha256"] == aggregate["final_q_sha256"],
                 "paired final Q identity differs",
             )
-            mean_ratios.append(
-                _seconds(aggregate, "mean") / _seconds(reference, "mean")
-            )
-            median_ratios.append(
-                _seconds(aggregate, "median") / _seconds(reference, "median")
-            )
+            mean_ratios.append(_seconds(aggregate, "mean") / _seconds(reference, "mean"))
+            median_ratios.append(_seconds(aggregate, "median") / _seconds(reference, "median"))
             reference_memory = reference["memory"]
             aggregate_memory = aggregate["memory"]
             for values, name in (
