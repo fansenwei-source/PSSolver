@@ -4,7 +4,8 @@
   "correction_source": [
     "R-0120",
     "R-0121",
-    "R-0122"
+    "R-0122",
+    "R-0123"
   ],
   "decisions": [
     "D-0058",
@@ -15,8 +16,9 @@
   ],
   "design": "S-28b_public_frontend_r2.md r2.2",
   "git_identity": {
+    "earlier_reviewed_trial": "5f9b919105ab71e35d801437ade5ad0fd21c8d1d",
     "implementation_parent": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802",
-    "reviewed_trial": "5f9b919105ab71e35d801437ade5ad0fd21c8d1d"
+    "reviewed_trial": "0affc6a7fae1677611cb19a272799b201b67135b"
   },
   "historical_records_rewritten": false,
   "historical_successor_sources": {
@@ -826,7 +828,11 @@
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s25_disposition.py": {
-      "current_sha256": "94ef8150629c421aadbfe7dba4dca1eeb6592b2bc7fa63a4d15100d9845579c7",
+      "accepted_predecessor_sha256": [
+        "53f03fbd41d1432c6d64d1c5e3144ac9c73251c3685473534b1ded255b418eca",
+        "94ef8150629c421aadbfe7dba4dca1eeb6592b2bc7fa63a4d15100d9845579c7"
+      ],
+      "current_sha256": "903390826fe05109a4403525ff6e53f1e10aabf87b256db512ea4bd47ce2b381",
       "historical_sha256": "53f03fbd41d1432c6d64d1c5e3144ac9c73251c3685473534b1ded255b418eca",
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
@@ -972,7 +978,7 @@
     "qualification/s28b_import_delta.py": "a20b763d97709d62721f792ffe965eb59e089d8ea0329135021328a487544dfb",
     "qualification/s28b_tables.json": "a2184e6e888590470c446960f1fbae3c541df6f081721ad708f1b47b6effdb01",
     "qualification/s28b_test_classify.py": "c6c9ce982d6117c543cb216cf2bd17d7facfeb89166bf61c2e5f7230694350d0",
-    "qualification/s28b_test_disposition.json": "eebbeca1fa42d6a54eeeba6f75ef1bd9a9920a61e720d159edab0429623f51b9",
+    "qualification/s28b_test_disposition.json": "236875f4fec9dd507f9d2e2b9cd8878084cd04d5ae576265598ce1ffb0cd4af8",
     "qualification/s28b_trajectory.py": "39ec2258fbc4d8c671fa83efe61683586a00eec2a41a58f282042adddc45ab8e",
     "qualification/s28b_units.json": "6ad441352983d2fbe3d5985fea7a980a1c6a9470db078daeb0dc2aaa796b7091",
     "tests/test_v0_5_s28b_historical_tests.py": "8f66bc8d6914821cdd45ff619e020a45e5b4f329bd814bed556fe4564f4c1c90",

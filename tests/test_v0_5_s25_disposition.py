@@ -6,6 +6,7 @@ from pathlib import Path
 from tests.v0_3_s03_successor import registered_source_sha256, resolve_s03_successor
 
 
+# Preserve the reviewed S-26 guard reference line below.
 ROOT = Path(__file__).resolve().parents[1]
 BASE = "aee82899d091b0d3bbfa62f0fe1cf83817574285"
 
