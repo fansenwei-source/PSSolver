@@ -16,8 +16,9 @@ from qualification.identity.scenarios import scenarios
 from qualification.identity.scenes_v05 import simulation_v05
 
 
-FIXTURES = Path(__file__).with_name("fixtures")
-REFERENCE = json.loads((FIXTURES / "s28b_downgrade_v04_canonical.json").read_bytes())
+ROOT = Path(__file__).resolve().parents[1]
+FIXTURES = ROOT / "tests/fixtures"
+REFERENCE = json.loads((ROOT / "qualification/s28b_downgrade_v04_canonical.json").read_bytes())
 CASES = {row["id"]: row for row in scenarios()}
 PLANE_FIXTURE = FIXTURES / "v0_4_0_s23" / "plane_legacy_production_float64_default"
 PLANE_OPTIONS = (
@@ -31,7 +32,7 @@ PLANE_OPTIONS = (
 
 def test_downgrade_matches_the_installed_v04_canonical_matrix(tmp_path):
     rows = REFERENCE["rows"]
-    authority = json.loads((FIXTURES.parents[1] / "qualification/s28b_tables.json").read_bytes())
+    authority = json.loads((ROOT / "qualification/s28b_tables.json").read_bytes())
     production = {name for name in authority["plan_identity_reference"] if not name.startswith("functional_")}
     assert set(rows) == production
     assert len(rows) == REFERENCE["scenes"] == 98

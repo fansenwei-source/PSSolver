@@ -14518,7 +14518,7 @@
             "tests.test_v0_5_s28b_legacy_restart -> pssolver.cli.plane.main:13",
             "tests.test_v0_5_s28b_legacy_restart -> pssolver:11"
           ],
-          "sha256": "14398de932757e0fffbaddd80926c8dab1deaea0e1bcd8fe2d37e6a1648904e7",
+          "sha256": "5fbd85858bebbfd18a4501a1ad82644fc9c8f43c2833751bef748b781b5c7706",
           "test_units": [
             "test_downgrade_matches_the_installed_v04_canonical_matrix",
             "test_downgrade_preserves_true_dry_run_digest_and_checkpoint_path",
