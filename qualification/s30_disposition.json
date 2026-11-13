@@ -1,0 +1,4098 @@
+{
+  "basis": "7161608913809466b0f9dc85e419fe9f3fec5a9e",
+  "counts": {
+    "delete": 106,
+    "historical": 96
+  },
+  "historical_literals_not_executed": {
+    "tests/test_architecture_stage_l.py:149": "Uncalled helper; the active shadow run uses the historical v0.4 checkout.",
+    "tests/test_fig4_numerics_cli.py:9": "All 16 calls explicitly pass the retained Plane CLI; the unused default never runs."
+  },
+  "legacy_cli_options": [
+    "--activity-number",
+    "--background-angle",
+    "--beta",
+    "--checkpoint-interval",
+    "--coefficient-max",
+    "--coefficient-min",
+    "--dealias-rule",
+    "--defect-core-radius",
+    "--defect-min-separation",
+    "--device",
+    "--diagnostic-interval",
+    "--diagnostics",
+    "--disable-q-gradient-reuse",
+    "--disable-spectral-refresh",
+    "--dry-run",
+    "--dt",
+    "--dtype",
+    "--eta",
+    "--flow-alignment",
+    "--frank-k",
+    "--friction-mode-fric",
+    "--gamma",
+    "--height",
+    "--help",
+    "--initial-s",
+    "--ldg-a",
+    "--ldg-b",
+    "--ldg-c",
+    "--lx",
+    "--ly",
+    "--molecular-field-linear-space",
+    "--num-defect-pairs",
+    "--nx",
+    "--ny",
+    "--nz",
+    "--output-dir",
+    "--parameterization",
+    "--pointwise-execution",
+    "--projected-transform-execution",
+    "--restart-from",
+    "--runtime-path",
+    "--save-hydrodynamics",
+    "--save-interval",
+    "--save-start-step",
+    "--seed",
+    "--spectral-refresh-steps",
+    "--spectral-refresh-time",
+    "--spectral-storage",
+    "--steps",
+    "--stress-divergence-sum-space",
+    "--tf32",
+    "--transform-execution-order",
+    "--twist-amplitude",
+    "--twist-modes",
+    "--validation-config-sha256",
+    "--zero-mode-policy",
+    "-h"
+  ],
+  "moved_or_rewritten_examples": [],
+  "new_test_files": [
+    "tests/test_v0_5_s30_closeout.py"
+  ],
+  "paths": {
+    "Channel.py": {
+      "blob": "0aaf48c9e4a98d3a77c7ca27c16b5d8fe35d9958",
+      "consumer_scan": [
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          204,
+          "module_literal"
+        ],
+        [
+          "pssolver/functional/legacy_declarations/legacy_channel.py",
+          914,
+          "module_literal"
+        ],
+        [
+          "pssolver/runtime/simulation_run.py",
+          628,
+          "module_literal"
+        ],
+        [
+          "pssolver/runtime/simulation_run.py",
+          776,
+          "module_literal"
+        ],
+        [
+          "tests/test_phase7_channel_run_spec.py",
+          25,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "tests/test_phase7_channel_run_spec.py::test_p71_preserves_the_historical_oracle_source_identities:25",
+        "direct SHA-256"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2"
+    },
+    "Channel_control.py": {
+      "blob": "6e92ca00e93cdb6e0b7cfe384b8584ec31a62831",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "8ec43543b29c2f97cb06ee346477eb0961b56ed5122b16efea636e0bda2684a3"
+    },
+    "Channel_control_box.py": {
+      "blob": "5e93e48aeb9bc658479f221d61e6b7ff200f84a4",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c62304c32bcc72973be13175435d8c3592f5f2cdcdc782f530eed93ba62ece0f"
+    },
+    "Channel_control_box_high_temporal_resolution.py": {
+      "blob": "e0933411994757430ef23c06fa8dd6a8970b46b3",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c40f4a6ea4079639d62a56398644567bfaf9c98b6804662fe1a183c9dcf09910"
+    },
+    "Channel_dal.py": {
+      "blob": "654fe042b1cce400072cad6389bf224d4ebfb556",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c68389060e48c082b6078f470ff22f77d2327c87e1ad362a5e875f7880bb96db"
+    },
+    "Channel_optimal_control.py": {
+      "blob": "45e518bf1f0e3d438b53ac9dfff1609263cd6501",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e256d6fa3a7f3f0bfd7466296df4935f613922f51e8e99a68ec35e3c510d58fc"
+    },
+    "Periodic.py": {
+      "blob": "1caa70c1eaa27e49cecc099d310719b1611782ce",
+      "consumer_scan": [
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          204,
+          "module_literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "Periodic is only a family label in the S-16 equivalence harness.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "49cbb26dd9c2670b060dc183e16c1fc05cfcf4cd9ff5bae130d3bb5246e195c6"
+    },
+    "Plane.py": {
+      "blob": "89e0e6944339b632b4a572686f9d34986c7c1ece",
+      "consumer_scan": [
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          204,
+          "module_literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "Plane is only a family label in the S-16 equivalence harness.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "83f6b56062c1b6d074ec3fee89ec262cddc9b2e58a1ba017f23c13331bc12fbf"
+    },
+    "Plane_H15_twist_evolution.py": {
+      "blob": "29d96c3c8b98a6fc78059521eb818d6d267bccc0",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "46f16b8c3f3d69cf66f6d8fd506f4736feaffe091d747176ce4b007ab10d60ce"
+    },
+    "Plane_beris_edwards_navier_stokes.py": {
+      "blob": "db495a0b709051bd7d818f51fbaf44af710dad0c",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "a0ce0f877096a0def4b9dec35426d4e98a056bea86236d25d53873286be65489"
+    },
+    "Plane_beris_edwards_shadow.py": {
+      "blob": "be51ec006fee464add035e5547fd57faf920df89",
+      "consumer_scan": [
+        [
+          "tests/test_architecture_stage_l.py",
+          149,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "Only called by the 4c12228 historical test; the live helper has no caller.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "5f63dee3dce7e0e97a2f286c6ab889b4a546d10dfaa492b130a69a4e64f11e3c"
+    },
+    "Plane_beris_edwards_shadow_h100.py": {
+      "blob": "5dbed31c166ef79bac76c69dbc9cad187d89ce6c",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_m_plan.py",
+          95,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_m_plan.py:95",
+        "literal command argv in the Stage M plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "a4243797cff07291d3ac40e283faa501662a1e6e9577d4cc6b3e3f66d4899bae"
+    },
+    "Plane_beris_edwards_shadow_stage_n1.py": {
+      "blob": "4adb3edb17c421d3ebd4caef4d03e97ac95a6ae5",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n1_plan.py",
+          71,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n1_plan.py:71",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "9d50759fe305e7b0347c9227cbe05dac92b714454c1fd888c95a0dcfcdde50ef"
+    },
+    "Plane_beris_edwards_shadow_stage_n2.py": {
+      "blob": "37add50abacbbd6197c02ed10d6bb044b82786cd",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n2_plan.py",
+          59,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n2_plan.py:59",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "f4506a5c64d3ebaa4d45e309b44381cc612422b8c6d39bdac11f82695c08bfd3"
+    },
+    "Plane_beris_edwards_shadow_stage_n3.py": {
+      "blob": "223f9f89429818872ec6106ad8240b6b0a9b79e2",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n3_plan.py",
+          59,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n3_plan.py:59",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "6aaea1156def392d5fc3ac8858b1f8c0df5b13862c0379deac63cd51985392f5"
+    },
+    "Plane_beris_edwards_shadow_stage_n4.py": {
+      "blob": "dff091bf7a3ca6bb1495d03270c8463102b6e38a",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n4_plan.py",
+          68,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n4_plan.py:68",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "38abfdd2ef04074cc11e3ad50029bf5d70840fef23caea4a353784cdae0100a5"
+    },
+    "Plane_beris_edwards_stokes.py": {
+      "blob": "75957232756fd7612d0624132aabb8a068b2ace6",
+      "consumer_scan": [
+        [
+          "MANIFEST.in",
+          8,
+          "text"
+        ],
+        [
+          "benchmarks/analyze_phase8_cumulative_closure.py",
+          252,
+          "literal"
+        ],
+        [
+          "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py",
+          1,
+          "literal"
+        ],
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          281,
+          "literal"
+        ],
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          299,
+          "literal"
+        ],
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          389,
+          "literal"
+        ],
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          399,
+          "literal"
+        ],
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          412,
+          "literal"
+        ],
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          574,
+          "literal"
+        ],
+        [
+          "pssolver/snapshots.py",
+          75,
+          "literal"
+        ],
+        [
+          "qualification/s28b_import_delta.py",
+          26,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_m_plan.py",
+          62,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o41_plan.py",
+          65,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o4_plan.py",
+          47,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o_migration.py",
+          260,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o_migration.py",
+          400,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o_migration.py",
+          629,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          63,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          75,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          194,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          227,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          138,
+          "literal"
+        ],
+        [
+          "scripts_plane/run_beris_edwards_validation.py",
+          2,
+          "literal"
+        ],
+        [
+          "scripts_plane/run_beris_edwards_validation.py",
+          37,
+          "literal"
+        ],
+        [
+          "scripts_plane/validate_beris_edwards_outputs.py",
+          495,
+          "literal"
+        ],
+        [
+          "setup.py",
+          50,
+          "module_literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          130,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          158,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          163,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          183,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_l.py",
+          28,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_l.py",
+          170,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_n1.py",
+          27,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_n2.py",
+          65,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_n3.py",
+          73,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_o43.py",
+          15,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_o432.py",
+          17,
+          "literal"
+        ],
+        [
+          "tests/test_architecture_stage_o434.py",
+          15,
+          "literal"
+        ],
+        [
+          "tests/test_fig4_numerics_cli.py",
+          10,
+          "literal"
+        ],
+        [
+          "tests/test_phase3_canary_connection.py",
+          18,
+          "literal"
+        ],
+        [
+          "tests/test_rc5_r54_packaging_record.py",
+          60,
+          "module_literal"
+        ],
+        [
+          "tests/test_v0_3_s07_packaging_metadata_docs.py",
+          160,
+          "literal"
+        ],
+        [
+          "tests/test_v0_5_foundation.py",
+          46,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "framework frozen CLI entry",
+      "sha256": "99f38f639ba1d3b23a40a7647570b5efeeb83d407a3f55eb120e1e967ee2914f"
+    },
+    "Plane_fig4_benchmark.py": {
+      "blob": "23c53e3fe308d1c7376ce7f3f278315ddc6249ea",
+      "consumer_scan": [
+        [
+          "Plane_shendruk_stokes.py",
+          1,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          62,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          137,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          206,
+          "literal"
+        ],
+        [
+          "scripts_plane/run_fig4_scan.sh",
+          5,
+          "text"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          249,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          253,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          280,
+          "literal"
+        ],
+        [
+          "tests/test_fig4_numerics_cli.py",
+          9,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Metadata labels and an unused test-helper default; the old sweep is retired with it.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e1935a282b17795ab8cc7630e6376eb5724bd926fa35cfb7528982f1f3a5df96"
+    },
+    "Plane_free_slip.py": {
+      "blob": "82e2ab9d45e53838871970d266a3f84582014e70",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "6d44fd05f8540db5fe75db4d523aedf88100f5446d87e025a2c5b7ac79ef750d"
+    },
+    "Plane_free_slip_dealiased.py": {
+      "blob": "a356bef5f24254def791e9d8fbaa7df1b18e9b5a",
+      "consumer_scan": [
+        [
+          "Plane_fig4_benchmark.py",
+          1,
+          "literal"
+        ],
+        [
+          "Plane_shendruk_stokes.py",
+          1,
+          "literal"
+        ],
+        [
+          "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py",
+          1,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Docstring attribution and self-reported script name; the old sweep is also retired.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "0a03eb7d5fe2a6fdd76b6242ee5f859c1eff616865f3d011f0ef809ca050f4cb"
+    },
+    "Plane_shendruk_stokes.py": {
+      "blob": "37daadecf96bcaf012d79f23733a00c93a493954",
+      "consumer_scan": [
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          412,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          167,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          259,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Only a metadata label, rejection fixture, or historical attribution.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "783cf9b884ce237015a1ddd7d0a79f759df5c57db6d5f66279c5dc0210e32840"
+    },
+    "benchmarks/analyze_periodic_hermitian_profiles.py": {
+      "blob": "7a8e5d6489b4b543757603007dc8b1688ce48d33",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107"
+    },
+    "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": {
+      "blob": "6a34ceaaede9f1e7b9fc21fe63de7b8e2c454f0e",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588"
+    },
+    "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": {
+      "blob": "aacfe7d65342d6f04ff49cc8e745b1e6f8be1078",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c"
+    },
+    "benchmarks/analyze_rc2_g5_installed_smokes.py": {
+      "blob": "8d6816f80ed04a77d87b913e1888c3d435a87a98",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593"
+    },
+    "benchmarks/analyze_rc437_lifting_h100.py": {
+      "blob": "6ced614275e3c2a36f0d00196a4cd2594c38c1de",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908"
+    },
+    "benchmarks/analyze_rc437_lifting_h100_recovery.py": {
+      "blob": "72bd3858ccfa36ded077fbeba74e16289780582b",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "56340ecb934a5ed68506b13ab88b6544b8e3a431dd0d2ba522b30dd0179897dd"
+    },
+    "benchmarks/analyze_rc458_reserved_memory_recovery.py": {
+      "blob": "50803ea36a089a54c9a39ccc25c36227b1065fe0",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "3d732f5972589fbad3198cb7bc3baf4c93a7a848889a67624a5746e8a2701087"
+    },
+    "benchmarks/analyze_rc458_tf32_h100.py": {
+      "blob": "6f941164d07c4fcba5307ed4404a5b7804c88a0c",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951"
+    },
+    "benchmarks/analyze_rc458_transform_counter_recovery.py": {
+      "blob": "27591c66e42aec8a624ae922d226e4673f0c9c52",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "1e096655363c3824b03911c340964cffd92c52c3393b1d5fd0cbe75af856a319"
+    },
+    "benchmarks/analyze_rc5_g1_cumulative_closure.py": {
+      "blob": "b386ad8bb5ca4d3a18e237bd2beb3aeb73f385af",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "6eb46b0471ebe2a3f27f0c3d448bc966eee8c1ff2da5648aff6311ac9827fa51"
+    },
+    "benchmarks/analyze_rc5_g1_focused_performance_h100.py": {
+      "blob": "f46dd0b1e38b84b413f8c4d54afe2ff3a160cf2a",
+      "consumer_scan": [
+        [
+          "benchmarks/analyze_rc5_g1_paired_block_replay.py",
+          238,
+          "import"
+        ],
+        [
+          "benchmarks/plan_rc5_g1_measurement_window_recovery.py",
+          198,
+          "literal"
+        ],
+        [
+          "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+          13,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88"
+    },
+    "benchmarks/analyze_rc5_g1_h100.py": {
+      "blob": "b8963dabff5282c9f2ccbc711fcf49539a629995",
+      "consumer_scan": [
+        [
+          "benchmarks/run_rc5_g1_stage_plan.py",
+          13,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "6e0453958165ed7239602fefdc7f4c0f23cbdd11efdd1419d14b6b3a8498e994"
+    },
+    "benchmarks/analyze_rc5_g1_measurement_window_h100.py": {
+      "blob": "51130fb3ffb5f19073b750583b84ff00388cdde7",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "22d9c21bbc44782fbcf88b3cca1d9762299c7404e08c4b4bc847f3a1151510bc"
+    },
+    "benchmarks/analyze_rc5_g1_timing_instrumentation.py": {
+      "blob": "e2faf66b43e6f13d370a6740b28c2f7c9904e501",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc"
+    },
+    "benchmarks/analyze_rc6_single_h100.py": {
+      "blob": "8e837d1b5a691ee2da2958d235b173d52fd39a6e",
+      "consumer_scan": [
+        [
+          "benchmarks/run_rc6_single_h100_stage_plan.py",
+          13,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8"
+    },
+    "benchmarks/assemble_rc5_g1_auxiliary.py": {
+      "blob": "455ff3ce5340b86362e4750e52e3a8fb3df1aead",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670"
+    },
+    "benchmarks/assemble_rc6_h100_auxiliary.py": {
+      "blob": "05137c30cd9e2badb71e4204c3928b3fc849cda7",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "62b24f4d2870c001d3477f30026a5b293e4c495addc02e524cb586c82ddec973"
+    },
+    "benchmarks/benchmark_periodic_fast_path.py": {
+      "blob": "e47b70b818892e6999f56d0728d089a738195d76",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a"
+    },
+    "benchmarks/benchmark_stokes_pressure_diagnostics.py": {
+      "blob": "e11c52af2960c8dc814c10f1825d99eae3e3bd2a",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0"
+    },
+    "benchmarks/benchmark_transform_backend.py": {
+      "blob": "26a1785cc3876c00acbb7ed7e90a6f4771c19108",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56"
+    },
+    "benchmarks/build_rc6_single_h100_stage_plan.py": {
+      "blob": "9d01543110ccdf93d6f79f9dad2763a21fabb538",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "1732c639efcf36bf3d46b759e4eaef9c189f6ecdcaedddb2d8b380600dbce2e3"
+    },
+    "benchmarks/capture_beris_edwards_nsys.py": {
+      "blob": "b14eae3d8179fdbefb64aebfb6761ce448bf5a3e",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "b79cadeef16f14bbe925707dc06652c09676075ab937c5103cba1efce8a032b2"
+    },
+    "benchmarks/check_periodic_hermitian_stability.py": {
+      "blob": "9f1b1c978632d42bd78b729d91cb4b3bb7a4b73f",
+      "consumer_scan": [
+        [
+          "benchmarks/run_rc5_g1_numerical.py",
+          191,
+          "import"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_long_horizon.py",
+          95,
+          "import"
+        ],
+        [
+          "benchmarks/run_v0_4_s19_stage.py",
+          102,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "a328aaced2cb6a23a049b64e94f6791c20fc1dfb875a8d1c310238b8af02df99"
+    },
+    "benchmarks/diagnose_channel_pressure_contract.py": {
+      "blob": "9a21ef37e0571c0e2f82624e9824358e2b8f9ea8",
+      "consumer_scan": [
+        [
+          "tests/test_rc4_pressure_adjudication.py",
+          13,
+          "literal"
+        ],
+        [
+          "tests/test_rc4_pressure_adjudication.py",
+          41,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "de2e050ea2ed07380763ff1d458c9de1c0afd6a2c55088e2a1bab3f200253635"
+    },
+    "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": {
+      "blob": "f14b0827b08a8f182ce9ddaafdf10bba84fdee98",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696"
+    },
+    "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": {
+      "blob": "04e0d48c38fb5af8c30b846646ea56a79ee09485",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c"
+    },
+    "benchmarks/diagnose_plane_nyquist_storage.py": {
+      "blob": "c50f6b5ba7265847e2e3581fa53d0fbba35fe585",
+      "consumer_scan": [
+        [
+          "benchmarks/capture_rc4_h100_preflight.py",
+          145,
+          "module_literal"
+        ],
+        [
+          "benchmarks/plan_rc447_pressure_h100.py",
+          32,
+          "literal"
+        ],
+        [
+          "tests/test_capture_rc4_h100_preflight.py",
+          66,
+          "literal_basename"
+        ],
+        [
+          "tests/test_rc4_plane_nyquist_cuda.py",
+          35,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "b97586570210a057b5a793b38302489146273c2296871fc1c91ceb09be8b9b07"
+    },
+    "benchmarks/diagnose_plane_static_lifting_recovery.py": {
+      "blob": "cd7c2ae2369c7594902b3bd87e075e767d53e26c",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f"
+    },
+    "benchmarks/diagnose_rc451_cross_runtime_residuals.py": {
+      "blob": "fd3754cbc91edebc6802e44e3570625fe9400fd0",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "c214e485f459d31296dc58fd9531cbb444636c7f4cf701d5e15405a3f0141d3c"
+    },
+    "benchmarks/diagnose_rc4_lifting_correctness.py": {
+      "blob": "e5393155445378ba592f8ceda16fce6a2a2baec3",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "4e50626e4009090d82cfb489cc21da0e876b162dffc19b84546d8c91cf352339"
+    },
+    "benchmarks/diagnose_rc5_g1_timing_instrumentation.py": {
+      "blob": "1d08e0f5da16271c7f5c89afffebf748826677d2",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1"
+    },
+    "benchmarks/profile_beris_edwards_timestep.py": {
+      "blob": "ae2ec111bc282359c3494e13d636ba3f0c1a3230",
+      "consumer_scan": [
+        [
+          "benchmarks/plan_rc447_pressure_h100.py",
+          33,
+          "literal"
+        ],
+        [
+          "benchmarks/profile_channel_runtime_timestep.py",
+          23,
+          "import"
+        ],
+        [
+          "benchmarks/profile_plane_runtime_timestep.py",
+          19,
+          "import"
+        ],
+        [
+          "benchmarks/profile_plane_stage_p.py",
+          20,
+          "import"
+        ],
+        [
+          "benchmarks/profile_rc447_channel_pressure.py",
+          26,
+          "import"
+        ],
+        [
+          "benchmarks/profile_rc458_runtime_family.py",
+          33,
+          "import"
+        ],
+        [
+          "benchmarks/qualify_plane_static_lifting.py",
+          27,
+          "import"
+        ],
+        [
+          "benchmarks/stage_o42_runtime.py",
+          15,
+          "import"
+        ],
+        [
+          "qualification/stages/stage_m_plan.py",
+          140,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o41_plan.py",
+          66,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o4_plan.py",
+          268,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7b4b2eb287284832dc000edb0efdaf9c36876f49df6d8ed8a05afbcf60b17681"
+    },
+    "benchmarks/profile_channel_runtime_timestep.py": {
+      "blob": "9e8bb9fd6a76e9ebe1d7b6c81682c31a4073a27a",
+      "consumer_scan": [
+        [
+          "benchmarks/plan_rc447_pressure_h100.py",
+          34,
+          "literal"
+        ],
+        [
+          "benchmarks/profile_rc447_channel_pressure.py",
+          33,
+          "import"
+        ],
+        [
+          "tests/test_phase7_channel_h100_support.py",
+          101,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7b89c9a4bed3fd3c833eb25f8a836331449c7d8059baf968db20c84294fa8ba2"
+    },
+    "benchmarks/profile_finite_q_anchoring.py": {
+      "blob": "10daf34162ccef22f35bee4dd0bfeed6d5481580",
+      "consumer_scan": [
+        [
+          "benchmarks/plan_rc447_pressure_h100.py",
+          35,
+          "literal"
+        ],
+        [
+          "tests/test_phase8_p856_finite_q_h100_qualification.py",
+          24,
+          "import"
+        ],
+        [
+          "tests/test_phase8_p856_finite_q_h100_qualification.py",
+          117,
+          "import"
+        ],
+        [
+          "tests/test_phase8_p856_finite_q_h100_qualification.py",
+          144,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "59d798bd41fc8efb99dda33b17786454203aea1c8273811d440147c9d09f6776"
+    },
+    "benchmarks/profile_periodic_functional.py": {
+      "blob": "ab78a39434322efa4944100bafd7fdebb8d352f9",
+      "consumer_scan": [
+        [
+          "benchmarks/run_phase9_p95_h100_qualification.py",
+          76,
+          "module_literal"
+        ],
+        [
+          "tests/test_run_phase9_p95_h100_qualification.py",
+          87,
+          "module_literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "d03c6abff91d7f20f08b7eda7d3b567b2ecc7e823a9a5bc4c3d1bc49024901a8"
+    },
+    "benchmarks/profile_periodic_hermitian_qualification.py": {
+      "blob": "55169c61542d3e85de1ac41346f3bb487674df01",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d"
+    },
+    "benchmarks/profile_plane_runtime_timestep.py": {
+      "blob": "0371cbd2de21c1295c9f1068b9df2af38886f586",
+      "consumer_scan": [
+        [
+          "benchmarks/plan_rc447_pressure_h100.py",
+          36,
+          "literal"
+        ],
+        [
+          "benchmarks/profile_rc458_runtime_family.py",
+          39,
+          "import"
+        ],
+        [
+          "benchmarks/qualify_plane_static_lifting.py",
+          34,
+          "import"
+        ],
+        [
+          "tests/test_phase6_h100_qualification_support.py",
+          36,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "aa682428089be0c00903c3f863ae12b1f565bf3ccdec5a97866068214c39d658"
+    },
+    "benchmarks/profile_plane_stage_p.py": {
+      "blob": "ce92872d82a796a308d852db95861afd01b7e11e",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_p_plan.py",
+          52,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "ab3b6f9b94ef5bae6b9a895da1b48654f24bbee7fb8cf79f2232a70152e619f5"
+    },
+    "benchmarks/profile_rc437_plane_runtime.py": {
+      "blob": "bf6f43a748f0352604d4036469dc6ff2d6c207a9",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "a5a0e0e50ab8c29822415b452f2c1bb868f1c8fd3ce4e64a3649ef9e39d93aa5"
+    },
+    "benchmarks/profile_rc458_runtime_family.py": {
+      "blob": "05af71f7ccfcafab1578972db8e96a9d62279cd4",
+      "consumer_scan": [
+        [
+          "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+          15,
+          "import"
+        ],
+        [
+          "benchmarks/analyze_rc5_g1_h100.py",
+          23,
+          "import"
+        ],
+        [
+          "benchmarks/analyze_rc6_single_h100.py",
+          22,
+          "import"
+        ],
+        [
+          "benchmarks/plan_rc5_g1_measurement_window_recovery.py",
+          190,
+          "literal"
+        ],
+        [
+          "benchmarks/profile_rc5_g1_runtime_family.py",
+          8,
+          "import"
+        ],
+        [
+          "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
+          25,
+          "import"
+        ],
+        [
+          "benchmarks/qualify_rc458_tf32_scope.py",
+          15,
+          "import"
+        ],
+        [
+          "benchmarks/run_rc458_profile_matrix.py",
+          58,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc458_profile_matrix.py",
+          139,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc5_g1_numerical.py",
+          116,
+          "import"
+        ],
+        [
+          "benchmarks/run_rc5_g1_numerical.py",
+          147,
+          "import"
+        ],
+        [
+          "benchmarks/run_rc5_g1_numerical.py",
+          192,
+          "import"
+        ],
+        [
+          "benchmarks/run_rc6_profile_child.py",
+          14,
+          "import"
+        ],
+        [
+          "benchmarks/run_rc6_profile_matrix.py",
+          70,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc6_profile_matrix.py",
+          138,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc6_profile_matrix.py",
+          145,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
+          26,
+          "import"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+          20,
+          "import"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_numerical.py",
+          28,
+          "import"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_profile_matrix.py",
+          70,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_profile_matrix.py",
+          138,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_profile_matrix.py",
+          145,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_4_s19_self_compare.py",
+          181,
+          "import"
+        ],
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          61,
+          "import"
+        ],
+        [
+          "benchmarks/verify_v0_4_s18_r4_step_equivalence.py",
+          91,
+          "import"
+        ],
+        [
+          "tests/test_rc5_g1_timing_variability_analysis.py",
+          21,
+          "literal"
+        ],
+        [
+          "tests/test_rc6_qualification_support.py",
+          228,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "b0d4b3d3efab3248eee3328c7f1eaa31d3bfcf30d365a58ae9186404c6670e04"
+    },
+    "benchmarks/profile_rc5_g1_runtime_family.py": {
+      "blob": "27ab997c1def4a57483fa7ead6286fdb4f83179e",
+      "consumer_scan": [
+        [
+          "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py",
+          37,
+          "literal"
+        ],
+        [
+          "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+          68,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+          147,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc5_g1_paired_block_profile_matrix.py",
+          42,
+          "literal"
+        ],
+        [
+          "benchmarks/run_rc5_g1_profile_matrix.py",
+          62,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc5_g1_profile_matrix.py",
+          136,
+          "literal_basename"
+        ],
+        [
+          "tests/test_plan_rc5_g1_h100.py",
+          147,
+          "literal_basename"
+        ],
+        [
+          "tests/test_plan_rc5_g1_h100.py",
+          169,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "040b04fe92456f083e038a4b9fe593a64f5587759dc799a0bf5c4a286ab38b2c"
+    },
+    "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py": {
+      "blob": "6e8ccc8ef930653d33b3ac76f22845a281f98614",
+      "consumer_scan": [
+        [
+          "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py",
+          133,
+          "literal"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
+          14,
+          "import"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+          21,
+          "import"
+        ],
+        [
+          "tests/test_v0_3_s09_r0028_candidate.py",
+          45,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0029_candidate.py",
+          50,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0030_candidate.py",
+          43,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9"
+    },
+    "benchmarks/qualify_plane_static_lifting.py": {
+      "blob": "46335b994c309faa266ae0815eda79deda42a19d",
+      "consumer_scan": [
+        [
+          "benchmarks/plan_rc447_pressure_h100.py",
+          38,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7c463932a7f4cc1f9eef4d1c337b3bf6c1b20e6743f7389d2fe07448b27d534a"
+    },
+    "benchmarks/qualify_rc437_lifting_cuda.py": {
+      "blob": "fecbeb10a52eb0e95ceb0b26bc04fd7c7bb3b9df",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5"
+    },
+    "benchmarks/qualify_rc437_lifting_cuda_recovery.py": {
+      "blob": "fa3629ac998aca4a7004b9d73c3159a243de4ca3",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "7bc54dc13b78c8a07ef289d2eb7a9d81582a0e21aa1f70c04345402eb3bb60c9"
+    },
+    "benchmarks/qualify_rc458_tf32_scope.py": {
+      "blob": "1da46f702487f2c32b3e464b07b1c6190fad66ee",
+      "consumer_scan": [
+        [
+          "tests/test_rc5_r55_tf32_state_restore.py",
+          166,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c"
+    },
+    "benchmarks/qualify_v0_3_s07_installed_wheel.py": {
+      "blob": "2ddea5fae133397a90c8658c0171e7d14516579b",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "03967ee4444e29a82eba6bb87eed873507abbee5d2527488616bb8b02b2ee21f"
+    },
+    "benchmarks/run_periodic_hermitian_profile_matrix.py": {
+      "blob": "60f95ffe8e962320c6abcf1c918f4c9de955f698",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056"
+    },
+    "benchmarks/run_phase9_p95_gradient_diagnostic.py": {
+      "blob": "0596092d5b0ad010a4263339fc7aa5ba0c38893c",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "9aba2b6c0daa8d3f3d3861d0a4e9c222baa7fcc82ae1ea43a6f4bc772766c27d"
+    },
+    "benchmarks/run_phase9_p95_gradient_validator_v2.py": {
+      "blob": "ca4d6a3ca0eadb5cb7a09c667c6e789c5a8b8b40",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "44930fe16019e318c86493029141b6b9575a2078551395c6399c6ad22d51a137"
+    },
+    "benchmarks/run_public_simulation_h100_case.py": {
+      "blob": "3d64a11e77cb0ac99065fa005a465a522479b262",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb"
+    },
+    "benchmarks/run_rc2_g5_installed_smoke.py": {
+      "blob": "85e426db5ae508b3d78a222d0a7356a512a85623",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4"
+    },
+    "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py": {
+      "blob": "c36a6bda31ad2fdd6fae0bc91605fdf34bb0fdaf",
+      "consumer_scan": [
+        [
+          "tests/test_rc5_g1_balanced_crossover_qualification.py",
+          117,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "acaecf9b570a4525f993de3d683a46252ce07b74112ba10ad56e457ddbc70381"
+    },
+    "benchmarks/run_rc5_g1_focused_profile_matrix.py": {
+      "blob": "17c04f0d3b9047bca3cc5af56bd00e877c5c33b8",
+      "consumer_scan": [
+        [
+          "benchmarks/plan_rc5_g1_measurement_window_recovery.py",
+          195,
+          "literal"
+        ],
+        [
+          "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py",
+          23,
+          "import"
+        ],
+        [
+          "benchmarks/run_rc5_g1_paired_block_profile_matrix.py",
+          28,
+          "import"
+        ],
+        [
+          "tests/test_rc5_g1_focused_performance_h100.py",
+          196,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe"
+    },
+    "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py": {
+      "blob": "611bd625def392a29fa7f4df3a0eb66c63e6b1b1",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "478cfcc315939141f59bfb743a31a6a62f7d2e625a655a4755a1d0453090417e"
+    },
+    "benchmarks/run_rc5_g1_paired_block_profile_matrix.py": {
+      "blob": "00e9221b39a8c2e635162ba681c38ec9a435aea9",
+      "consumer_scan": [
+        [
+          "tests/test_rc5_g1_paired_block_contract.py",
+          349,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256"
+    },
+    "benchmarks/run_rc5_g1_stage_plan.py": {
+      "blob": "60eea6194651aca7c6515d5162d8f70f3f45a152",
+      "consumer_scan": [
+        [
+          "tests/test_plan_rc5_g1_h100.py",
+          160,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "97923baed48737246f68348be0b78fc4c869c6d1b53b726070f35a3f175563f7"
+    },
+    "benchmarks/run_rc5_g1_timing_instrumentation.py": {
+      "blob": "7a3759389d93a0a90833b1894666672167208ef7",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661"
+    },
+    "benchmarks/run_rc6_profile_child.py": {
+      "blob": "39381776519a343cb7f06c629306e6b23fd170ed",
+      "consumer_scan": [
+        [
+          "benchmarks/run_rc6_profile_matrix.py",
+          69,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc6_profile_matrix.py",
+          138,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_rc6_profile_matrix.py",
+          143,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_profile_matrix.py",
+          69,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_profile_matrix.py",
+          138,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/run_v0_3_s09_profile_matrix.py",
+          143,
+          "literal_basename"
+        ],
+        [
+          "tests/test_rc6_qualification_support.py",
+          226,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "e7967f5e7e6055e40de5124199924580cd8e83baa68509b12b16f9810bf26951"
+    },
+    "benchmarks/run_rc6_single_h100_stage_plan.py": {
+      "blob": "5332006d2eaf04f0df5c53478d1b93779b60d8f9",
+      "consumer_scan": [
+        [
+          "benchmarks/prepare_rc6_recovery_bootstrap.py",
+          17,
+          "literal_basename"
+        ],
+        [
+          "benchmarks/validate_rc6_recovery_bootstrap.py",
+          22,
+          "literal_basename"
+        ],
+        [
+          "tests/test_diagnose_rc6_pressure_floor_h100.py",
+          160,
+          "literal_basename"
+        ],
+        [
+          "tests/test_rc6_profile_child_tf32_recovery_record.py",
+          57,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "28a4cb97fa5324d9f035596c63149e1352f348772eb18a717f6b23f55e4d6551"
+    },
+    "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py": {
+      "blob": "4776abec7615bf4eb338f68a516c6395c8c56bc1",
+      "consumer_scan": [
+        [
+          "tests/test_v0_3_s09_r0029_candidate.py",
+          51,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0030_candidate.py",
+          48,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "697267a42521e5599799399d1556ef1073b083fcc77a48335bd7f66e704cb793"
+    },
+    "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py": {
+      "blob": "6e851bbc55819d237c05a1c6f7c1eb32bd09953c",
+      "consumer_scan": [
+        [
+          "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py",
+          132,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0028_candidate.py",
+          46,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0029_candidate.py",
+          53,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0030_candidate.py",
+          45,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716"
+    },
+    "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py": {
+      "blob": "b1a47071d727a2ddbe89bde50a1f9e9da8918c77",
+      "consumer_scan": [
+        [
+          "tests/test_v0_3_s09_ap_cache_diagnostic.py",
+          208,
+          "literal_basename"
+        ],
+        [
+          "tests/test_v0_3_s09_r0029_candidate.py",
+          54,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0030_candidate.py",
+          46,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "0b8a1244cf0d07262540ce9ff70e2d7fd5419677d4bf905ee596f33ef7e6a744"
+    },
+    "benchmarks/run_v0_3_s09_numerical.py": {
+      "blob": "eefa71577c32904f690ed71c5717337db29e4f4b",
+      "consumer_scan": [
+        [
+          "benchmarks/run_v0_3_s09_cpu_rehearsal.py",
+          295,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_h100_support.py",
+          29,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "3e2f95312b271e686ac42ed0c8c3f54f521f3dd5bf17685d8caf9b334c539b9c"
+    },
+    "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py": {
+      "blob": "c03de1212731cad6a86924a4e4999bf5720be398",
+      "consumer_scan": [
+        [
+          "benchmarks/shendruk_v1_dynamic_velocity/fig4_workflow.py",
+          32,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "6812002e4a721eebaa5c96196377bf0fc3eb825c234d989f30e2a710d66d4948"
+    },
+    "benchmarks/smoke_periodic_fast_path_default.py": {
+      "blob": "9759658dd2555c63f4bffd14e9c7f4ded8df1992",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "f10271c79a942a108846c58d47f680a674bc032addcc0f99dde510c80546a1de"
+    },
+    "benchmarks/v0_2_0_checkpoint_fixtures.py": {
+      "blob": "7132167d8f1a737ed7fcacde4175d6a083582ae9",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_v55_rework.py",
+          56,
+          "literal"
+        ],
+        [
+          "tests/test_v0_4_s16_v55_rework.py",
+          67,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "8ac1e229a07c82a606c5e5c9bae2f15f6de4dba778f38c2876b2316183681bce"
+    },
+    "benchmarks/verify_v0_3_s10_build_fingerprints.py": {
+      "blob": "3bc41e663ebc046f1c3ee146f15bee597a0e0ab6",
+      "consumer_scan": [],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s25_expected_unimportable.json",
+        "qualification/s27_expected_unimportable.json",
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "670476ec175e894f93c7735a0b9325d792333a205fc30c6a2d9edcc7ef16591d"
+    },
+    "compare_dealias_100k.py": {
+      "blob": "930987bbb1db0187623c312513dbb59ac4f995cd",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2c976ed346f7a3211abcd4ef9d45c9e4ca8ffd2070b17a060489f283e3471fd0"
+    },
+    "compare_dealias_final_spectra.py": {
+      "blob": "ba2f8194d5a8dd49d8c591f10b1f3f40a4a67798",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "7d6e6c4b5ba2d2ff447a7330fac3a56ae566a48f421b896ea08f92e298c59d34"
+    },
+    "jobs/rc426_cross_device_checkpoint_h100.sbatch": {
+      "blob": "63063a3e11e15e41a3a480e621a9a0f96406cfc2",
+      "consumer_scan": [
+        [
+          "tests/test_rc426_cross_device_checkpoint_harness.py",
+          193,
+          "literal_basename"
+        ],
+        [
+          "tests/test_rc426_cross_device_checkpoint_harness.py",
+          358,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "17c9263c0d06f897800e13d62c303a372fa3ebbbacbfc6f3341dc1cf177f859e"
+    },
+    "jobs/rc5_g1_balanced_crossover_h100.sbatch": {
+      "blob": "82022d21dccbef69c6530f7ea8e43d61b7a27937",
+      "consumer_scan": [
+        [
+          "tests/test_rc5_g1_balanced_crossover_qualification.py",
+          110,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "fe3733acc997a2831e68a15fb4d0518126b0007f4835caec0bc380ffaeb07f34"
+    },
+    "jobs/rc5_g1_focused_performance_h100.sbatch": {
+      "blob": "841f532b9b163fa81f58fd2643fc5c0a11c18bcb",
+      "consumer_scan": [
+        [
+          "tests/test_rc5_g1_focused_performance_h100.py",
+          186,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "944eff6cd23d6e5b9282be1b26021c05a6275efce3687dcb1102013b8065f124"
+    },
+    "jobs/rc5_g1_paired_block_h100.sbatch": {
+      "blob": "733c30f9bb170768d3ad7087f03d58bab25c0a30",
+      "consumer_scan": [
+        [
+          "tests/test_rc5_g1_paired_block_contract.py",
+          342,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "fbbd1e440c7c731984dd211534656f089ffdbaad9c324944203971d0f5a8db08"
+    },
+    "jobs/rc5_g1_single_h100.sbatch": {
+      "blob": "e4883629ebe80a28fb250a31db5f03fb276b8024",
+      "consumer_scan": [
+        [
+          "tests/test_plan_rc5_g1_h100.py",
+          154,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "31f99a4906a39bd0361ef3ab3001d76b3507b19a5f6331c92a83019b7915481b"
+    },
+    "jobs/rc6_consumer_rebind_recovery_v6.sbatch": {
+      "blob": "ba7bb2aa103daba9f71879739832881cf4cc0c24",
+      "consumer_scan": [
+        [
+          "tests/test_rc6_recovery_bootstrap.py",
+          19,
+          "literal"
+        ],
+        [
+          "tests/test_rc6_recovery_bootstrap_record.py",
+          39,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "4410fa972b5cec93a867128ed43fcca358410dcaf97ace5a0271c35bd49b26d2"
+    },
+    "jobs/rc6_pressure_component_diagnostic_h100.sbatch": {
+      "blob": "507f23e2313fe23096922373d2dd6b8f2646fd0f",
+      "consumer_scan": [
+        [
+          "tests/test_diagnose_rc6_pressure_floor_h100.py",
+          148,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "5ed11f36a4ec762ab8e2b8322128f45e26ca0830d80f636b2c75744421fb01c3"
+    },
+    "jobs/rc6_profile_tf32_recovery_v7.sbatch": {
+      "blob": "10c9d2c9486a552d15ceef3a013682bb9de7e0cd",
+      "consumer_scan": [
+        [
+          "tests/test_rc6_profile_child_tf32_recovery_record.py",
+          50,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "70be1c50533d5dbd37853284ad66ac613310f1872e37f1cef02317081924d5e5"
+    },
+    "jobs/rc6_single_h100_qualification.sbatch": {
+      "blob": "e720c48fe18f1843f5aa69d131ddc08905fc4370",
+      "consumer_scan": [
+        [
+          "tests/test_rc6_cuda_toolkit_preflight.py",
+          121,
+          "literal"
+        ],
+        [
+          "tests/test_rc6_nvcc_bootstrap_recovery_record.py",
+          54,
+          "literal"
+        ],
+        [
+          "tests/test_rc6_nvcc_bootstrap_recovery_record.py",
+          55,
+          "literal"
+        ],
+        [
+          "tests/test_rc6_nvcc_bootstrap_recovery_record.py",
+          58,
+          "literal"
+        ],
+        [
+          "tests/test_rc6_nvcc_bootstrap_recovery_record.py",
+          61,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "0fcf703eb4ccbde7db20eda4a1e94ef71dcb9757e77870054bb22e8f87095f53"
+    },
+    "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch": {
+      "blob": "a1f3d813b9dfea38ad75b8098b049f45cab8d1ec",
+      "consumer_scan": [
+        [
+          "tests/test_v0_3_s09_ap_cache_diagnostic.py",
+          196,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0028_candidate.py",
+          49,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0029_candidate.py",
+          56,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0030_candidate.py",
+          51,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "2483755f7a783e8c97eb6da533e0817d8ee63e5a299c0bdecb771426e675a964"
+    },
+    "jobs/v0_3_s09_single_h100.sbatch": {
+      "blob": "f39a7957c166f99eb1eeb63ece66c152c89ec0f1",
+      "consumer_scan": [
+        [
+          "tests/test_v0_3_s09_cpu_rehearsal.py",
+          67,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_final_support.py",
+          42,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_final_support.py",
+          43,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_h100_support.py",
+          15,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0023_candidate.py",
+          80,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0023_candidate.py",
+          81,
+          "literal"
+        ],
+        [
+          "tests/test_v0_3_s09_r0026_candidate.py",
+          69,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "f9431b8b6d64536f2ed29afaa3894404eb743a91dbb053d69e62a8c5ab3f7098"
+    },
+    "jobs/v0_4_s19_single_h100.sbatch": {
+      "blob": "260c9729430bb004efdab27402d7fabf08de4643",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s19_deployment.py",
+          83,
+          "literal"
+        ],
+        [
+          "tests/test_v0_4_s19_login_command_boundary.py",
+          9,
+          "literal"
+        ],
+        [
+          "tests/test_v0_4_s19_retry_successor.py",
+          27,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "560ef68fb86836dc914fb46a8045c42c9726cf27ebe8d0011384bc6b4b5ebc63"
+    },
+    "qualification/generate_s24_retired_fixtures.py": {
+      "blob": "4cecffbb6f51c84a436cbdef02d925655188cb44",
+      "consumer_scan": [
+        [
+          "qualification/s28b_import_delta.py",
+          36,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s27_expected_unimportable.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "49060a6dbd3be140d7d90a366d26cb43e54bd00804517f47e045e0e9e369c7c7"
+    },
+    "run_dealias_100k_remaining.sh": {
+      "blob": "48585d1742723b5fc615beebc64f5a930fbd569f",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "afbd5313f11599b0f41cb4322c513a63a5834afbd3bde3aea3643df8a35cf755"
+    },
+    "scripts_channel/analyze_loop.py": {
+      "blob": "9e310926f3e4fffc6479e22058120b530d7c8a4f",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "acfb1b6f34ef38d5ad7a8c8d1db974635af742f02202e1e63a2d6fab8c003574"
+    },
+    "scripts_channel/analyze_phase7_channel_qualification.py": {
+      "blob": "d0a51515d32be912f12f73de0f1d96ffd8038860",
+      "consumer_scan": [
+        [
+          "tests/test_phase7_channel_h100_support.py",
+          10,
+          "import"
+        ],
+        [
+          "tests/test_phase7_channel_h100_support.py",
+          103,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "2dbbecf4a18e02c92ff175618c8c0ef6285c1eaddd9e4012ee00e12cec9595ce"
+    },
+    "scripts_channel/calibrate_pure_splay_forward.py": {
+      "blob": "beb055fa7bb24276da8c6af890f753566791d3ca",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "a934950b1b690184b069bf96b63c505ef068ebfb938f70bb3d909c61b9d11705"
+    },
+    "scripts_channel/check_pressure_bc.py": {
+      "blob": "87f08bd3dc2d495d0b488265e5ebfbf6670bdc85",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "6d9f072f2d3763933a79643e588c69f845b11d9b7c6d0dabd2c7a38cf5a52d64"
+    },
+    "scripts_channel/compare_channel_runtime_outputs.py": {
+      "blob": "4f76cd95773c7ef08c3bb75672e4f607491ef9b7",
+      "consumer_scan": [
+        [
+          "tests/test_phase7_channel_h100_support.py",
+          104,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "9ad8c7f29c3e1ec8e4206932bda9fcedce439c9dc2090b93b785caf8865fa05b"
+    },
+    "scripts_channel/compare_dal_initial_alpha.py": {
+      "blob": "627789cfbe81d53dcb883852553fa088f714d5bc",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "6b67575aa36ce8dfbba41621bef248bde5a0f0dbd2016cda72d41722be1dd363"
+    },
+    "scripts_channel/compare_dal_moment_runs.py": {
+      "blob": "25b63ae48cf7567801c0d3f44f9c81a3bfc1ac7d",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "19c85095d43be7d43d30ce393432b173d772a7c00b7ef42ed16af786f715b238"
+    },
+    "scripts_channel/compare_dal_resolution_convergence.py": {
+      "blob": "b769117cf6ac3ddf3cecd3559a912fd7292280d5",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "66ad23312a6f8a3f92fdd30b459458b72ceeaaaf5176b1f70fda5d54f3742fed"
+    },
+    "scripts_channel/compare_dal_shape_runs.py": {
+      "blob": "d68566547365ba635f7dfff278157e6083df9806",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "9032d8af722d5e91b5deae3fef4c17d63f3ba15522e80f000da091cf5e60d70e"
+    },
+    "scripts_channel/compose_beta_3steps.py": {
+      "blob": "7f26106878797c854aa3d84bf9c3b8308c25066c",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "915587873c11972f340416e99386336ff4f1aa7d5243d66fae652da7efe37ce4"
+    },
+    "scripts_channel/compose_beta_channel.py": {
+      "blob": "a4ef496e1f1da7bff94ed0e2cbc36476a2f5a93e",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "ad0612f13e4c51ddefdf20118033ae7648d4a33c12c36628ea7a410e6bd81df0"
+    },
+    "scripts_channel/compose_loop_summary.py": {
+      "blob": "628a6ccb5d93acbaadf0b8385f8fb27b85fc4659",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "ba5db8a3a9b65d899cd35ec983d2b66ed65136964355b2efd0b125a738f0b0d5"
+    },
+    "scripts_channel/defect_histogram.py": {
+      "blob": "a384a59992f8f5c1363eeff3632eb6e1fe558f4e",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "55771e46dcf15e0ee6bf529d587be01c03621b7cb3258fe60890b8e99bb4df7f"
+    },
+    "scripts_channel/generate_pure_splay_loop.py": {
+      "blob": "aea073f8c128c03f4e839ef30b43184f47413ca5",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2ad730d926f1e1727991ef61abb6a9bd49494ffbdba2ec964a8eef5fae6ac73d"
+    },
+    "scripts_channel/plot_loop_radius.py": {
+      "blob": "f58aea1943f1ed5486188f5d7847cb886020544a",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "fdeaccc741f1f50f9f36986b92d115c249f96236acac7f27e8c8f793c00aa2e3"
+    },
+    "scripts_channel/reconstruct_loop.py": {
+      "blob": "53960dd3b7a1d916e7c9f1ab3ba5daddeb7fffc3",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "d3cc7cc6415554f82c173aef291319a0835f8c5cfc0184a25cdd07d7ee0ef91d"
+    },
+    "scripts_channel/render_alpha_beta_movie.py": {
+      "blob": "e76e57e3be3ec46f5167c5f339b46a3b6b27b845",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "9d1a694be2edd323ef2d72c07630920b4e60aab77985460e4694347566024512"
+    },
+    "scripts_channel/render_alpha_geometry.py": {
+      "blob": "a7afc2a06730f31b8897b1a8141c0ddba716ee6a",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "05880bcef7da8f625f0098d2b4113f934a61587e56a97a101ad4cbf1731ab52d"
+    },
+    "scripts_channel/render_beta_3steps.py": {
+      "blob": "37c5e1e5b0a6f9421a01a8f9da60e12781a9b639",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "d2835b391d157d254a821f0bd43af0ed3b996dadb95a9fea79cee15fd42cfe5d"
+    },
+    "scripts_channel/render_beta_frame.py": {
+      "blob": "fd16d6fb697808793bbf84e977db82317d5166a0",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "9a9c876af996f2c8078aebbe5aff1e0eec978375516aa116f4534c1f1d1e8b9d"
+    },
+    "scripts_channel/render_channel_geometry.py": {
+      "blob": "b0ca397a784c6fe156168a1bbfbb467bb8c30533",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "d78fe7551ce1fa81ec3f1a55ee17545d8c7a16a12deb43a0d1efa6ea2866d8f1"
+    },
+    "scripts_channel/render_channel_movie.sh": {
+      "blob": "3f7b142bdc3179739ec635a97ac7952facd225ff",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "dcef206bc4af28d5381126715c7f85f89d1197db22f0c02ce7905e12364a7fbc"
+    },
+    "scripts_channel/render_dal_initial_target.py": {
+      "blob": "6f5d5f3f2bb6d9aa00d86cd2cece9c0334137699",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "939110a6c25bb1a90e7567d6fdc2fa8cf0eb04508e2760b649de28e86f5ace21"
+    },
+    "scripts_channel/render_loop_3steps.py": {
+      "blob": "e3557fddb4419802baa5512d881a4bae980285dd",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e573b67ff6962cd33befc4c5d35a25492f8fbd840642dd97cf14d747855a8d5a"
+    },
+    "scripts_channel/render_loop_5steps.py": {
+      "blob": "d19e64e936f6799d922b106558d9ea9ca629e36b",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c282e07e611a84e0b546f7ba723a931a41c608fefd2debe3fef0366cf4dfaca5"
+    },
+    "scripts_channel/run_dal_resolution_convergence.py": {
+      "blob": "4323876e9cdaa9b3e3196f843e40e3769c114124",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "21e21f504dc1a463abb490ac0048b9a3f3167211009ea1e4df7fba8141d5e70b"
+    },
+    "scripts_channel/run_dal_shape_comparison.py": {
+      "blob": "aca39eaffc19a8d86f1659c12c6c995d904db6f0",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "530f1f959bb8476a7e66467522139d2a2e3cb0c6d8d74c95ee2c954b846bb4ae"
+    },
+    "scripts_channel/validate_dal_core_geometry.py": {
+      "blob": "3d6c7b4cd9b5493474615a51c511bdf89a6bde9f",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "595bfd0e41c035a1efeeb6025be17a5130c261e83ad438da147bb27ec9c7b362"
+    },
+    "scripts_channel/validate_dal_forward.py": {
+      "blob": "7a48bca4305883fc711f25ceb62d2729b10fa592",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "02e18568aaa41f062adc1065afd169bdbd03fc05f3bc5c5a255424a5d86b5ca1"
+    },
+    "scripts_channel/velocity_correlation.py": {
+      "blob": "e6a2bfb2b1c824848c6e2e6a0441456d2b4e6529",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "0329acab7772cd9120a2cac6331ccf38a24f3b108783d31fa14720515036e330"
+    },
+    "scripts_channel/velocity_spectrum.py": {
+      "blob": "46c4cb8d983f0ed2b76a9408b973d474e204e187",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "0397ecfef8311334a114ab73ebc0be67a4e3a50c2d5308abc82bf4c4c0fcce5c"
+    },
+    "scripts_channel/velocity_stats.py": {
+      "blob": "91c057d56e4a206c8d170c9bd1e239bfa3698b2e",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "65412d7bd634883f588972a5f6ed56f7128fb041300702bb99219c648d9e742b"
+    },
+    "scripts_channel/visualize_dal_activity_mechanism.py": {
+      "blob": "0bc74024fe9368ab8eff279f73b8c4a306dc2613",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "49caaab3a206d3c49269df0889bda4bf8e2dbdce154a362bd80f80d928cefb34"
+    },
+    "scripts_channel/visualize_dal_result.py": {
+      "blob": "65a797b98e4cdf39b1bb2a2b782dad300c2481c6",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "ebfea8cf0f3a7c3b6a03474b2d7319f6728fb6d5600d086c3277dc4824185f0b"
+    },
+    "scripts_plane/analyze_beris_edwards_stationarity.py": {
+      "blob": "c3a5a5e4e5392aa04a55ab776b39546190b014e9",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "3ab44c45927954c8c34d090a731b71a16f384707567af372a527877840143f8e"
+    },
+    "scripts_plane/analyze_fig4_convergence.py": {
+      "blob": "75da3ddbe0ae99df562601fb650561f8aecdc367",
+      "consumer_scan": [
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          54,
+          "import"
+        ],
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          4242,
+          "literal_basename"
+        ],
+        [
+          "scripts_plane/run_beris_edwards_validation.py",
+          38,
+          "literal_basename"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          8,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "ef32faa884c4dc643c79b16aeeb4ee24fdef0891a007e37b91449a7b96b23cd4"
+    },
+    "scripts_plane/analyze_fig4_defect_core_convergence.py": {
+      "blob": "778ae78852fb3e9bd19a179e574fdbc9b9f075d9",
+      "consumer_scan": [
+        [
+          "scripts_plane/run_beris_edwards_validation.py",
+          40,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "9755efdfb3ac88b85491eda44d273fdf756bb2d2ee861e3a367e915a14e0f91b"
+    },
+    "scripts_plane/analyze_fig4_sigma.py": {
+      "blob": "f9f4e2104aa3dc1a397973f91199cf45a8f25c50",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "bf267d8db7d00408f3b343dcb90ea90794bb2e8c3ca17c86b0b93990b6459a83"
+    },
+    "scripts_plane/analyze_h15_twist_sigma.py": {
+      "blob": "6534dac07961993cdd9b96cecbd764bdc5d6967c",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c6690898a6ab6e5c56201208aa09300e91dc181346bc1b2319848823d3d69a64"
+    },
+    "scripts_plane/analyze_phase6_compiled_v2_qualification.py": {
+      "blob": "3fe414775d2674f4ab7d677ac4341a4fcb776a20",
+      "consumer_scan": [
+        [
+          "tests/test_analyze_phase6_compiled_v2_qualification.py",
+          10,
+          "import"
+        ],
+        [
+          "tests/test_phase6_h100_qualification_support.py",
+          40,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "e901d2a6e11e97d64c1922bc30a1135d560a3eb2fb944db4d049a17d8eadddbb"
+    },
+    "scripts_plane/analyze_phase6_long_run_equivalence.py": {
+      "blob": "5a2ce123e1f38113e51344b89d117e6adcc22284",
+      "consumer_scan": [
+        [
+          "tests/test_analyze_phase6_long_run_equivalence.py",
+          12,
+          "import"
+        ],
+        [
+          "tests/test_phase6_h100_qualification_support.py",
+          106,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7fd09b47062c09924f4e489a1210851712e4a934dad6470ba758875d2ccfdc32"
+    },
+    "scripts_plane/analyze_plane_shadow_h100_qualification.py": {
+      "blob": "6cee8c84db45ccc9cb2e452bcc928179148c9809",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_m_plan.py",
+          170,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7c135630c82a715f7d979600ddef0fbda1743a5c4dc6b13340a4120f4b22f8f3"
+    },
+    "scripts_plane/analyze_plane_shadow_stage_n.py": {
+      "blob": "d7d2732c658cfaa010b4d0378218a46902a0fd53",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n_plan.py",
+          90,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "261d78b7718752200fd775d8ce0ce04a4c76dd68a23dbbb25914f84f69ad6a20"
+    },
+    "scripts_plane/analyze_plane_shadow_stage_n1.py": {
+      "blob": "cd925614f4374fb5ed478857ed7352da470c38c3",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n1_plan.py",
+          139,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "3ea175410522e34fc076f976025db330723ad4c1b7d002c4f1aca464b4a29570"
+    },
+    "scripts_plane/analyze_plane_shadow_stage_n2.py": {
+      "blob": "c55ed194d48788ff291ba00bd96bf7b3bbcea1f4",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n2_plan.py",
+          123,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "e5c73d71483109e4095aad9f5ff8f1aba38c09ffe982d566a2665e9ea1c5fc1e"
+    },
+    "scripts_plane/analyze_plane_shadow_stage_n3.py": {
+      "blob": "9123fb502af6ac8a1f0ebb2f47f034fc266b5bfa",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n3_plan.py",
+          123,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "928e4e8fbc95ebae6ba58ae8f3852bdd5fa6916e66bafed5c786f3a74211aa2b"
+    },
+    "scripts_plane/analyze_plane_shadow_stage_n4.py": {
+      "blob": "ef2bcb4f6dcef93bd7abc4042296effd401bd97d",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n4_plan.py",
+          152,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "5802cf5575bf493e4456f6605165f3bce2a1cd271249a8aec94e21a49ac8ba9b"
+    },
+    "scripts_plane/analyze_plane_stage_o41_qualification.py": {
+      "blob": "c5195c3d6f291eb1f5d8fa963497cf1b1fc85482",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o41_plan.py",
+          68,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "fad6b68787b3d307af49d01cfa451a13ccef885a36674016ab9d8bb2c52f8079"
+    },
+    "scripts_plane/analyze_plane_stage_o42_diagnostics.py": {
+      "blob": "07e895d3c5497415485ad0c3211df9c3497c5846",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o42_plan.py",
+          47,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "059bd58008956c9b2b8335f306942a33a01aec67dd75ba7c8ac5c11d82a266c3"
+    },
+    "scripts_plane/analyze_plane_stage_o431_qualification.py": {
+      "blob": "7602e49ece5ab23c8e296416aefdc8296449f113",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o431_plan.py",
+          85,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_o433_plan.py",
+          61,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "53045bf8bc303fa781585cf02d9d4502dc552c39f10dc832a6257ca27d5ea9b6"
+    },
+    "scripts_plane/analyze_plane_stage_o433_qualification.py": {
+      "blob": "254f50b777ee7f5ca3be131a8ce671773cc8582f",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o433_plan.py",
+          63,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "4096c60ddde91123fa543bdc924087096a2ba126d17b4e18cec20a1587f5ed4a"
+    },
+    "scripts_plane/analyze_plane_stage_o434_diagnostic.py": {
+      "blob": "f04c6c66e423f9ddd51b05517d5fa7f74d77871f",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o434_plan.py",
+          47,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "3b52125b4d62951c03c76cd3c8a380834fe3780155ab13bc20f132c77e4435ec"
+    },
+    "scripts_plane/analyze_plane_stage_o43_qualification.py": {
+      "blob": "80e12dd3605ca35c29446072428524f52e3b6de6",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o43_plan.py",
+          73,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "7d16e8f05383b7cd551827f7c6a49f589d10b6697f77ee15046173aa3271874a"
+    },
+    "scripts_plane/analyze_plane_stage_o4_qualification.py": {
+      "blob": "9741cbc6091a6db72c818ded2ebbd20f93bdbb8c",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o4_plan.py",
+          333,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "790b0d3125f60322e2b3a9ebd31ecfe1b224f7ea3ad3513feebaee9cd417f1a2"
+    },
+    "scripts_plane/analyze_plane_stage_p.py": {
+      "blob": "62cf5cfcbaedb25b49a2b5d676fea38660748b78",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_p_plan.py",
+          53,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "0314ca334f8502af51d34907a33156bb5196a220857b768993a89a86d119c2bd"
+    },
+    "scripts_plane/analyze_plane_stage_q2.py": {
+      "blob": "528be630c3139fb8191c560178d59eac1d37b347",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "98b325fd4de2cd128c3d86b0ac9c3efce65b777086e5a0dec30e3cdd9feee658"
+    },
+    "scripts_plane/analyze_plane_stage_q3.py": {
+      "blob": "2f5c5e98e40541e267ef2e15bc3e38326fffe979",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e43a9ed51cb36d9f5a2d89aac406c3f425dac1a81eb96d10c935da4397dc36d7"
+    },
+    "scripts_plane/analyze_plane_stage_q4.py": {
+      "blob": "2ce6763fbea81151a0e45ba02fcb552467c40857",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_q4_plan.py",
+          58,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "5e6941587ca0d549eb2ec193a4c7707d44030f905a3fc184c81ec991167dc4d4"
+    },
+    "scripts_plane/analyze_plane_stage_q5.py": {
+      "blob": "ff5332946f7c9e5f9314f2a1c5894938c70088e3",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e15cef4bc8a8b85fde90e7e024a245542069684e799081362f2ff76a07849174"
+    },
+    "scripts_plane/analyze_plane_stage_q6.py": {
+      "blob": "d823042917197aaa28fc6337a4d4d8911edf892d",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "221cde5d4fa13a9a43f8423cacbcc792a9ded87f507cd69b116a001e11f14ed8"
+    },
+    "scripts_plane/analyze_plane_stage_q61.py": {
+      "blob": "ca5ae2418f91da43da631cbfdd364cbd03af82d6",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "9102cf13c81d7b0685b89865f0835c71238ce27ada948bd8879a073cc5f1ca26"
+    },
+    "scripts_plane/check_pressure_bc.py": {
+      "blob": "87f08bd3dc2d495d0b488265e5ebfbf6670bdc85",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "6d9f072f2d3763933a79643e588c69f845b11d9b7c6d0dabd2c7a38cf5a52d64"
+    },
+    "scripts_plane/close_plane_stage_o.py": {
+      "blob": "9146a5ddcf86b8dafb62c3e372dd7e4a51635091",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "f4772a3fc7637d57666528fa1f7e0322260be7dfe4026478d99477d43d1fc85a"
+    },
+    "scripts_plane/compare_plane_beris_edwards_shadow.py": {
+      "blob": "cee52fef20a3829c19c19128dd5ca21418efffea",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_m_plan.py",
+          103,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_n1_plan.py",
+          83,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_n2_plan.py",
+          71,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_n3_plan.py",
+          71,
+          "literal"
+        ],
+        [
+          "qualification/stages/stage_n4_plan.py",
+          80,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "90010eb82d3b81374974165efdff0d325ac97e7231b14c8237bcec1edc9306c1"
+    },
+    "scripts_plane/compare_plane_stage_o4_workflows.py": {
+      "blob": "c4d2344ebd311adc666262ebb35d5b7deae3154d",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_o4_plan.py",
+          48,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "4d88273eb80094494c17c6279980de1c3badf5b8656bf6a7f46c01cde6f71060"
+    },
+    "scripts_plane/create_v3_mother_manifest.py": {
+      "blob": "720901c6425bb24fde23b496c7b0cbd8d224c722",
+      "consumer_scan": [
+        [
+          "tests/test_create_v3_mother_manifest.py",
+          8,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "d796a235242d4fc3e86daa06553087c4ae076ebd1abf29e37e262b23ab9dee8a"
+    },
+    "scripts_plane/defect_histogram.py": {
+      "blob": "2a1b9e2f8c7e6a6fda303d558f5b7d8717e8b816",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c14bd1dfec7db99f0635f742002f0b120ec7ad6664bf92edfe33deef0daed11f"
+    },
+    "scripts_plane/plan_plane_shadow_h100_qualification.py": {
+      "blob": "5910c9706aa6e6738511a75153f5987d99532095",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "801947d4e62726ef226e57eca98356dd326b2ab0658e8e89e47916ddd1a714fd"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n1.py": {
+      "blob": "eb02736a87d1dfed241dc5697598c3bbb77b01f6",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "91be376b35a385745cfe1c2eb5ee61f3156669009e523480ad8df1d9d32edd2d"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n2.py": {
+      "blob": "263aecfb03e4c9070fadcb03e97250ebe4ba3c22",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2442bff116e638cab71671710486d5ae945e138d26eded3b104c36add82f1ad6"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n3.py": {
+      "blob": "8cb8eaaec56e7eed6e1392ebdccfcd93a760aead",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "95c94040b3c5cd3e580843d97cf00d9683bb5a9fb43bc62f2153ea72e8ac199a"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n4.py": {
+      "blob": "73c931fd8b4c2b6896276924e2de05914c525370",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "489d88d99d20c27a5579eb1c6bf0387e7b9b5f2ca1e6efdbb0c3c1a4c7fa9128"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n_diagnostics.py": {
+      "blob": "e501089ae0b892c8f656d6d3268c2782178a1f59",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "84bbd807091f1e5f1aeda4ac6782881612919505a11213b8d24a84495df9f74b"
+    },
+    "scripts_plane/plan_plane_stage_o41_qualification.py": {
+      "blob": "48d6b81f645460390c9073acfc93b8a10886bcdc",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c4f48ca3dc0f16629d9d75d8e1beb0344ceedcbd700daebb1b2f5ca0e28c34e1"
+    },
+    "scripts_plane/plan_plane_stage_o42_diagnostics.py": {
+      "blob": "04dbfb0a47947fa58ee38a104dd2481ca77d9138",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2d4f6c8dfa55cd73a2a33e41a86b282484517b5b0b0cb72b2c1a241fee4ae66b"
+    },
+    "scripts_plane/plan_plane_stage_o431_qualification.py": {
+      "blob": "ee79dca21e210cacd5e44a44492e32d3d8ad9440",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "8c1207320ad6f16c7be1eb1a1aa432be6b4ee7c5e67ce1479e1be49b503ac820"
+    },
+    "scripts_plane/plan_plane_stage_o433_qualification.py": {
+      "blob": "1679bf182761fe69171bc12e639502b9662afc17",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "014596ed9ca74c6fff0f53c09fa56ef1072333b260937181a509571bdf6fb40b"
+    },
+    "scripts_plane/plan_plane_stage_o434_diagnostic.py": {
+      "blob": "b789409bad44fa8340ee6defc7c3012bf39066c1",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "940f61ec96535db0892e18a780955d87d803bbf850eea0670fefe877d003b611"
+    },
+    "scripts_plane/plan_plane_stage_o43_qualification.py": {
+      "blob": "d74f05dbd4b6af518e54dc938d45cdf85fa30f0d",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "33819cf15a37bb65b67cc5ef9846e9e8916871bb689543fb43241ea38f97f309"
+    },
+    "scripts_plane/plan_plane_stage_o4_qualification.py": {
+      "blob": "06688fb179f23309f12e5b942a297fc1a0f3498d",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e81ce4b67c565072b0b66fd75362cf1906c0979e0ecebb550dcddf11088664c6"
+    },
+    "scripts_plane/plan_plane_stage_o_migration.py": {
+      "blob": "106ac32aae15fca63bf66b76093f51ace56916da",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "83505a44000c7ed9b2c971d522dfe640632999438dfbdd739b89e7615880582f"
+    },
+    "scripts_plane/plan_plane_stage_p.py": {
+      "blob": "0a1c988e91cc75b44a7c6522d75bfb10d51a84bf",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "bf5cb93b6ef8b2363cf58fb195ca674c58bafc477ea844bb434a335a58ce0fc4"
+    },
+    "scripts_plane/plan_plane_stage_q4.py": {
+      "blob": "ce710f97cc4e1ab112d9812049b8ccceb56b34e9",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "7a4fd4ad112167f4cdfc1f8a2ee6acc293540eb1e5b434449e6be0338d869dfe"
+    },
+    "scripts_plane/plot_velocity_stats.py": {
+      "blob": "cae581257d1f5d95676a8a36d566fa3b3f270e48",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "bfeda6977eb0aa568ed05903044d5062037ce53416e172f976eb76597dd233b7"
+    },
+    "scripts_plane/qualify_v3_2d_mother.py": {
+      "blob": "b2ca69349f79b547341f04bc7d9cf86bf8e15302",
+      "consumer_scan": [
+        [
+          "tests/test_qualify_v3_2d_mother.py",
+          3,
+          "import"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "aa15a09491a492e10fc57729d9e87a521d44c43b1080a582dab36cf45ad61f12"
+    },
+    "scripts_plane/render_nematics3d_movie.sh": {
+      "blob": "a549b29be4805c81c6f2748cfea4cb3fb4075519",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "263a8d891dd3c5b798c65ac944632ec36c8493d10d6fde9077c87020660070df"
+    },
+    "scripts_plane/run_beris_edwards_validation.py": {
+      "blob": "4fcdfee9107261c30ffd8edb982794d9b338e1cf",
+      "consumer_scan": [
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          412,
+          "literal"
+        ],
+        [
+          "scripts_plane/validate_beris_edwards_outputs.py",
+          27,
+          "literal_basename"
+        ],
+        [
+          "scripts_plane/validate_beris_edwards_outputs.py",
+          33,
+          "import"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "No surviving executable consumer; imports the retired configuration package.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "54080284731062defea6d47466b35b035b0370a770c669e572e1abcf4b019f88"
+    },
+    "scripts_plane/run_fig4_reproduction.sh": {
+      "blob": "9efb5bafba49d096f7ecbf0ec5dd806b10fda12b",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "8992f33ae9851fafc798e835c3d80095b5bb2e081b742e3ddd105024bd7f88fe"
+    },
+    "scripts_plane/run_fig4_scan.sh": {
+      "blob": "44f184a3a7c28949d6b1babe6b1ca74e40417f04",
+      "consumer_scan": [
+        [
+          "Plane_fig4_benchmark.py",
+          1,
+          "literal"
+        ],
+        [
+          "Plane_fig4_benchmark.py",
+          75,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "Only executable callers belong to the retired Fig. 4 sweep.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "1398b21be6fc7146a5ec7ac3f224910deac18581c5a92b348b96ee4aae39301f"
+    },
+    "scripts_plane/run_plane_stage_q4_trajectory.py": {
+      "blob": "207281ea0cc9b9b3f6613fca82e809782e03fdad",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_q4_plan.py",
+          56,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "685d105ba203dab1418d1f381d96a69c3a8dfa68ece8ca97b8ca4dcf22dddd44"
+    },
+    "scripts_plane/v3_plane_beris_edwards_stokes.py": {
+      "blob": "eccbe0a6ca5f9752c4d5ab408eab8ef1ef50d4f0",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "76f48f59d1a9928976fa9c3b5b1193659f2263061dfece235008311c5f0086e9"
+    },
+    "scripts_plane/validate_beris_edwards_outputs.py": {
+      "blob": "3cd42883ad1524c504b8fe23bdeac68520d36199",
+      "consumer_scan": [
+        [
+          "scripts_plane/run_beris_edwards_validation.py",
+          43,
+          "literal_basename"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Only executable consumers are also retired.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "1346fdf879889aff25ceee9259931c5a03f823f0ac32dffb1d174f6a8ae5f9fe"
+    },
+    "scripts_plane/velocity_correlation.py": {
+      "blob": "3cdc79b291be41de65d4569387456a185c3b56dc",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "db8b58e33c7b1bc0200579f5677b65a7c981959039ac5a7aa2fb33aedd5a3f8c"
+    },
+    "scripts_plane/velocity_spectrum.py": {
+      "blob": "46c4cb8d983f0ed2b76a9408b973d474e204e187",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "0397ecfef8311334a114ab73ebc0be67a4e3a50c2d5308abc82bf4c4c0fcce5c"
+    },
+    "visualize_nematics3d_snapshot.py": {
+      "blob": "a35b253f3570f1a9c25c7cc9894fd37c463cb585",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be"
+    },
+    "visualize_nematics3d_snapshot_channel.py": {
+      "blob": "81126246c0fcf1bcf2c186a921f7785e68c81b90",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "a3b952b0c0a112c9f3cbbbb91b0417f528c0946fb83ff69b1fa5639cf842ddb8"
+    },
+    "visualize_nematics3d_snapshot_plane.py": {
+      "blob": "a35b253f3570f1a9c25c7cc9894fd37c463cb585",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be"
+    }
+  },
+  "removed_test_ids": [],
+  "root": {
+    "Channel.py": {
+      "blob": "0aaf48c9e4a98d3a77c7ca27c16b5d8fe35d9958",
+      "consumer_scan": [
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          204,
+          "module_literal"
+        ],
+        [
+          "pssolver/functional/legacy_declarations/legacy_channel.py",
+          914,
+          "module_literal"
+        ],
+        [
+          "pssolver/runtime/simulation_run.py",
+          628,
+          "module_literal"
+        ],
+        [
+          "pssolver/runtime/simulation_run.py",
+          776,
+          "module_literal"
+        ],
+        [
+          "tests/test_phase7_channel_run_spec.py",
+          25,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "tests/test_phase7_channel_run_spec.py::test_p71_preserves_the_historical_oracle_source_identities:25",
+        "direct SHA-256"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2"
+    },
+    "Channel_control.py": {
+      "blob": "6e92ca00e93cdb6e0b7cfe384b8584ec31a62831",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "8ec43543b29c2f97cb06ee346477eb0961b56ed5122b16efea636e0bda2684a3"
+    },
+    "Channel_control_box.py": {
+      "blob": "5e93e48aeb9bc658479f221d61e6b7ff200f84a4",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c62304c32bcc72973be13175435d8c3592f5f2cdcdc782f530eed93ba62ece0f"
+    },
+    "Channel_control_box_high_temporal_resolution.py": {
+      "blob": "e0933411994757430ef23c06fa8dd6a8970b46b3",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c40f4a6ea4079639d62a56398644567bfaf9c98b6804662fe1a183c9dcf09910"
+    },
+    "Channel_dal.py": {
+      "blob": "654fe042b1cce400072cad6389bf224d4ebfb556",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "c68389060e48c082b6078f470ff22f77d2327c87e1ad362a5e875f7880bb96db"
+    },
+    "Channel_optimal_control.py": {
+      "blob": "45e518bf1f0e3d438b53ac9dfff1609263cd6501",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e256d6fa3a7f3f0bfd7466296df4935f613922f51e8e99a68ec35e3c510d58fc"
+    },
+    "Periodic.py": {
+      "blob": "1caa70c1eaa27e49cecc099d310719b1611782ce",
+      "consumer_scan": [
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          204,
+          "module_literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "Periodic is only a family label in the S-16 equivalence harness.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "49cbb26dd9c2670b060dc183e16c1fc05cfcf4cd9ff5bae130d3bb5246e195c6"
+    },
+    "Plane.py": {
+      "blob": "89e0e6944339b632b4a572686f9d34986c7c1ece",
+      "consumer_scan": [
+        [
+          "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+          204,
+          "module_literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "Plane is only a family label in the S-16 equivalence harness.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "83f6b56062c1b6d074ec3fee89ec262cddc9b2e58a1ba017f23c13331bc12fbf"
+    },
+    "Plane_H15_twist_evolution.py": {
+      "blob": "29d96c3c8b98a6fc78059521eb818d6d267bccc0",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "46f16b8c3f3d69cf66f6d8fd506f4736feaffe091d747176ce4b007ab10d60ce"
+    },
+    "Plane_beris_edwards_navier_stokes.py": {
+      "blob": "db495a0b709051bd7d818f51fbaf44af710dad0c",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "a0ce0f877096a0def4b9dec35426d4e98a056bea86236d25d53873286be65489"
+    },
+    "Plane_beris_edwards_shadow.py": {
+      "blob": "be51ec006fee464add035e5547fd57faf920df89",
+      "consumer_scan": [
+        [
+          "tests/test_architecture_stage_l.py",
+          149,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "Only called by the 4c12228 historical test; the live helper has no caller.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "5f63dee3dce7e0e97a2f286c6ab889b4a546d10dfaa492b130a69a4e64f11e3c"
+    },
+    "Plane_beris_edwards_shadow_h100.py": {
+      "blob": "5dbed31c166ef79bac76c69dbc9cad187d89ce6c",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_m_plan.py",
+          95,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_m_plan.py:95",
+        "literal command argv in the Stage M plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "a4243797cff07291d3ac40e283faa501662a1e6e9577d4cc6b3e3f66d4899bae"
+    },
+    "Plane_beris_edwards_shadow_stage_n1.py": {
+      "blob": "4adb3edb17c421d3ebd4caef4d03e97ac95a6ae5",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n1_plan.py",
+          71,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n1_plan.py:71",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "9d50759fe305e7b0347c9227cbe05dac92b714454c1fd888c95a0dcfcdde50ef"
+    },
+    "Plane_beris_edwards_shadow_stage_n2.py": {
+      "blob": "37add50abacbbd6197c02ed10d6bb044b82786cd",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n2_plan.py",
+          59,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n2_plan.py:59",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "f4506a5c64d3ebaa4d45e309b44381cc612422b8c6d39bdac11f82695c08bfd3"
+    },
+    "Plane_beris_edwards_shadow_stage_n3.py": {
+      "blob": "223f9f89429818872ec6106ad8240b6b0a9b79e2",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n3_plan.py",
+          59,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n3_plan.py:59",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "6aaea1156def392d5fc3ac8858b1f8c0df5b13862c0379deac63cd51985392f5"
+    },
+    "Plane_beris_edwards_shadow_stage_n4.py": {
+      "blob": "dff091bf7a3ca6bb1495d03270c8463102b6e38a",
+      "consumer_scan": [
+        [
+          "qualification/stages/stage_n4_plan.py",
+          68,
+          "literal"
+        ]
+      ],
+      "disposition": "historical",
+      "live_consumer": [
+        "qualification/stages/stage_n4_plan.py:68",
+        "literal command argv in the frozen plan"
+      ],
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "38abfdd2ef04074cc11e3ad50029bf5d70840fef23caea4a353784cdae0100a5"
+    },
+    "Plane_fig4_benchmark.py": {
+      "blob": "23c53e3fe308d1c7376ce7f3f278315ddc6249ea",
+      "consumer_scan": [
+        [
+          "Plane_shendruk_stokes.py",
+          1,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          62,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          137,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_defect_core_convergence.py",
+          206,
+          "literal"
+        ],
+        [
+          "scripts_plane/run_fig4_scan.sh",
+          5,
+          "text"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          249,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          253,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          280,
+          "literal"
+        ],
+        [
+          "tests/test_fig4_numerics_cli.py",
+          9,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Metadata labels and an unused test-helper default; the old sweep is retired with it.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "e1935a282b17795ab8cc7630e6376eb5724bd926fa35cfb7528982f1f3a5df96"
+    },
+    "Plane_free_slip.py": {
+      "blob": "82e2ab9d45e53838871970d266a3f84582014e70",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "6d44fd05f8540db5fe75db4d523aedf88100f5446d87e025a2c5b7ac79ef750d"
+    },
+    "Plane_free_slip_dealiased.py": {
+      "blob": "a356bef5f24254def791e9d8fbaa7df1b18e9b5a",
+      "consumer_scan": [
+        [
+          "Plane_fig4_benchmark.py",
+          1,
+          "literal"
+        ],
+        [
+          "Plane_shendruk_stokes.py",
+          1,
+          "literal"
+        ],
+        [
+          "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py",
+          1,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Docstring attribution and self-reported script name; the old sweep is also retired.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "0a03eb7d5fe2a6fdd76b6242ee5f859c1eff616865f3d011f0ef809ca050f4cb"
+    },
+    "Plane_shendruk_stokes.py": {
+      "blob": "37daadecf96bcaf012d79f23733a00c93a493954",
+      "consumer_scan": [
+        [
+          "docs/render_beris_edwards_stokes_pdf.py",
+          412,
+          "literal"
+        ],
+        [
+          "scripts_plane/analyze_fig4_convergence.py",
+          167,
+          "literal"
+        ],
+        [
+          "tests/test_analyze_fig4_convergence.py",
+          259,
+          "literal"
+        ]
+      ],
+      "disposition": "delete",
+      "marked_by": [
+        "qualification/s28b_frozen_callers.json"
+      ],
+      "mode": "100644",
+      "reason": "Only a metadata label, rejection fixture, or historical attribution.",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "783cf9b884ce237015a1ddd7d0a79f759df5c57db6d5f66279c5dc0210e32840"
+    },
+    "compare_dealias_100k.py": {
+      "blob": "930987bbb1db0187623c312513dbb59ac4f995cd",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2c976ed346f7a3211abcd4ef9d45c9e4ca8ffd2070b17a060489f283e3471fd0"
+    },
+    "compare_dealias_final_spectra.py": {
+      "blob": "ba2f8194d5a8dd49d8c591f10b1f3f40a4a67798",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "7d6e6c4b5ba2d2ff447a7330fac3a56ae566a48f421b896ea08f92e298c59d34"
+    },
+    "run_dealias_100k_remaining.sh": {
+      "blob": "48585d1742723b5fc615beebc64f5a930fbd569f",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100755",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "afbd5313f11599b0f41cb4322c513a63a5834afbd3bde3aea3643df8a35cf755"
+    },
+    "visualize_nematics3d_snapshot.py": {
+      "blob": "a35b253f3570f1a9c25c7cc9894fd37c463cb585",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be"
+    },
+    "visualize_nematics3d_snapshot_channel.py": {
+      "blob": "81126246c0fcf1bcf2c186a921f7785e68c81b90",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "a3b952b0c0a112c9f3cbbbb91b0417f528c0946fb83ff69b1fa5639cf842ddb8"
+    },
+    "visualize_nematics3d_snapshot_plane.py": {
+      "blob": "a35b253f3570f1a9c25c7cc9894fd37c463cb585",
+      "consumer_scan": [],
+      "disposition": "delete",
+      "marked_by": [],
+      "mode": "100644",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be"
+    }
+  },
+  "root_whitelist": [
+    "setup.py",
+    "pyproject.toml",
+    "MANIFEST.in",
+    "README.md",
+    "ARCHITECTURE.md",
+    "CHANGELOG.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    ".gitignore",
+    ".gitattributes",
+    "Plane_beris_edwards_stokes.py"
+  ],
+  "test_disposition": {
+    "previous_census_sha256": "c6625680bdc52094285ee44940568e68966a32c7361b47069f90e6ea527c6ba9",
+    "retained_test_byte_policy": "all existing tests kept byte-for-byte",
+    "retired_test_thresholds": []
+  }
+}

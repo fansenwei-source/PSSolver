@@ -212,6 +212,16 @@ def legacy_destinations(parsed):
     }
 
 
+def is_facade_dispatch(use, node):
+    return (
+        use.owner == PILOT_RESOLVER
+        and use.target == "importlib.import_module"
+        and len(node.args) == 1
+        and simple_name(node.args[0]) == "module_name"
+        and not node.keywords
+    )
+
+
 def resolve_call(use, node, parsed, facades):
     owner = use.owner
     module = owner.partition(":")[0]
@@ -238,7 +248,7 @@ def resolve_call(use, node, parsed, facades):
         and simple_name(first) == "module"
     ):
         return legacy_destinations(parsed)
-    if owner in {PILOT_RESOLVER} and simple_name(first) == "module_name":
+    if is_facade_dispatch(use, node):
         return set().union(*(names for _, names in facades.values()))
     if (
         module in {"pssolver.operators", "pssolver.functional", "pssolver.runtime"}
@@ -285,6 +295,7 @@ def import_contract(root: Path, replacements=None):
     }
     graph = {module: set() for module in paths}
     violations, dynamic, legacy, observed = [], [], [], set()
+    facade_calls = [0, 0]
     if config["architecture-facades"] != expected_facades:
         violations.append("changed facade authorization")
     try:
@@ -295,6 +306,10 @@ def import_contract(root: Path, replacements=None):
     for module, path in paths.items():
         for use, call in uses(parsed[module], module, path.name == "__init__.py", paths):
             if call is not None:
+                if use.owner == PILOT_OWNER and use.target == PILOT_RESOLVER.replace(":", "."):
+                    facade_calls[0] += 1
+                if is_facade_dispatch(use, call):
+                    facade_calls[1] += 1
                 try:
                     targets = resolve_call(use, call, parsed, facades)
                     if not targets:
@@ -320,7 +335,7 @@ def import_contract(root: Path, replacements=None):
                 # The generic resolver is not a second owner of the dependencies.
                 # Its possible destinations are enumerated above; the actual
                 # edge is checked independently at each facade's call site.
-                if call is not None and use.owner == PILOT_RESOLVER:
+                if call is not None and is_facade_dispatch(use, call):
                     continue
                 if (
                     call is not None
@@ -332,6 +347,8 @@ def import_contract(root: Path, replacements=None):
                 ):
                     continue
                 violations.append(f"{use.owner}:{use.line}: forbidden {target}")
+    if facade_calls != [1, 1]:
+        violations.append(f"changed facade dispatch counts: {facade_calls}")
     frozen_cycles, active_cycles = [], []
     for group in cycles(graph):
         (

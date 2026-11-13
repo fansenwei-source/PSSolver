@@ -47,3 +47,8 @@ map every change must fit.
   agent, implementation by another, as assigned. These instructions grant no
   publishing, compute-job or delegation authority.
 - Commit only explicit paths; preserve unrelated edits.
+
+For a package-root export, keep its Google-style docstring and complete
+annotations with the actual definition. Describe accepted inputs and failure
+conditions without adding imports merely to resolve annotation names. A
+documentation change does not authorize a signature, default or behavior change.

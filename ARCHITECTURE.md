@@ -1,10 +1,8 @@
 # PSSolver architecture
 
-Status: first edition, written for the 0.5 unified-engine line (draft r2). The
-implementation lands step by step during 0.5, and this file is updated in the
-same commits. Every design note for a PSSolver change starts by citing the
-section of this file it touches. A change that alters a layer boundary updates
-this file in the same commit.
+This is the architecture of the 0.5 unified-engine line. Every design note for
+a PSSolver change starts by citing the section it touches. A change that alters
+a layer boundary updates this file in the same commit.
 
 ## 1. What PSSolver is
 
@@ -19,46 +17,26 @@ numerics, initial condition and output. Presets are recipes of components. Fast
 paths are optimized implementations of the same mathematics, not separate
 drivers.
 
-## 2. Current layering (v0.4.0) and where each part goes
+## 2. From declaration to execution
 
-v0.4.0 runs four hand-wired combinations on one old engine:
-- `solver.SpectralSolver`, `PDEmodel.PDEModel` and `Field.Fields`, stepped by
-  `integrator.SemiImplicitEulerIntegrator` and its projected subclasses;
-- each combination has its own compiler, application, runtime, workflow and
-  checkpoint module.
+`pssolver.api.runner.compile_simulation` validates a `Simulation` and calls
+`pssolver.planning.assemble.assemble`. The resulting immutable
+`pssolver.planning.engine_plan.Plan` is the executable, tensor-free contract.
+`pssolver.engine.engine.Engine` materializes it on the requested device.
+`pssolver.runtime.runner.Runner` drives the engine and publishes observations,
+diagnostics and checkpoints. `pssolver.io.engine_state` owns the native
+checkpoint format. Periodic, Plane and Channel use this same route.
 
-| v0.4.0 package or module | Role today | 0.5 destination |
-|---|---|---|
-| `api/` | public `Simulation`, `run_simulation`, results, capability catalog (hand-maintained) | kept; catalog derived from the capability table; new `Simulation` from the S-28 switch |
-| `configuration/` | declaration types, per-combination compilers, lowering, registry | removed; validation moves to `planning/`; the declaration types needed by functional API 1.1 are frozen into `functional/legacy_declarations/` |
-| `planning/` | lowering plans (mostly hashed, not executed), old assembler attempt | becomes the assembler and the executed `Plan` |
-| `execution/` | `RuntimeState`, workspace (used); canary-only contracts | state and workspace merge into `engine/`; the rest is removed |
-| `applications/`, `workflows/`, `runtime/` (per combination), `adapters/`, `systems/` | per-combination wiring, time loops, checkpoints | removed; replaced by `planning/`, `engine/`, `runtime/runner.py`, `io/` |
-| `solver.py`, `PDEmodel.py`, `Field.py`, `integrator.py`, `plane.py`, `channel.py`, `transforms.py` | old engine and facades | removed at S-28; `engine/` replaces them |
-| `integrators/` | state-backed Euler step program; scalar SBDF2 reference | IMEX scheme protocol and Euler; the reference stays as a test oracle |
-| `models/active_nematics/` | Beris–Edwards kernels (`beris_edwards.py`, `q_tensor.py` are frozen in 0.5), Stokes coupling | kept; wrapped by the preset; called through `engine.FieldView` and the shared projector |
-| `backends/`, `operators/`, `linear_solvers/` | transforms, projector, spectral operators, Stokes solvers (four Channel PCG loops) | kept; the Channel solver gains `solve_transpose` and becomes the single PCG |
-| `functional/` | functional API 1.1 with its own step rewrite | kept as a facade over the engine; inputs and identity unchanged |
-| `io/` | checkpoint primitives, identity, legacy identity registry | kept; one new family `engine_state`, plus `io/legacy/` readers and the compatibility map |
-| `experimental/` | `stage_*` process artifacts, canary, boundary pilots | process artifacts move to `qualification/`; the canary is removed; only boundary pilots remain |
+`pssolver.functional.api` keeps its 1.1 declaration identity and uses the same
+engine. Its Channel step uses zero-start pressure and a custom transpose VJP;
+the unrolled reference is not a production solver. The frozen legacy
+declarations preserve released input and checkpoint contracts without
+reintroducing the old execution drivers.
 
-## 3. Target layers and dependency direction (end of 0.5)
+For the historical v0.4 frontend and scripts, use the
+[migration guide](docs/migration_0_4_to_0_5.md).
 
-S-24 status: the legacy active-force Channel application and the separated
-canary connection are retired. The three complete-stress combinations remain
-on their existing engine. Thirty-five frozen stage artifacts now live outside
-the package in `qualification/stages/`; only the seven independent A-group
-plans have test-only old-name loading. Historical wiring audits run against a
-separate v0.4.0 Git checkout. Neither loader nor historical implementation is
-distributed. The shared pressure-policy declaration lives privately alongside
-the canonical Stokes solver. State/workspace, the old assembler and private
-lifting wiring remain for their explicitly scheduled later steps.
-
-S-28a routes the complete-stress Channel declaration through
-`configuration.legacy_channel` into `assemble()`, the shared Engine and Runner.
-The old Channel-specific application, workflow and runtime are retired. Its
-functional 1.1 step uses the same Engine with zero-start pressure and a custom
-transpose VJP; the legacy declaration and checkpoint identities still apply.
+## 3. Layers and dependency direction
 
 ```
 public       pssolver (top-level exports), api/     Simulation, run_simulation, results
@@ -243,10 +221,9 @@ plus `checkpoint.json`, with a metadata hash and a layered identity.
 Public readers reject checkpoints with integrator history or an explicit
 non-Euler scheme before touching any tensor payload.
 
-`io/legacy/` contains:
-- read-only importers for older formats;
-- the frozen v0.4 compatibility-identity function;
-- the compatibility map.
+`pssolver.io.legacy.periodic_workflow` contains the legacy Periodic checkpoint
+carrier and reader. The frozen v0.4 identity and declaration rules live under
+`pssolver.functional.legacy_declarations`, not in the Engine.
 
 A legacy checkpoint is resumed only if all of the following hold:
 - its identity type is whitelisted in the map;
@@ -275,16 +252,16 @@ Counts are of modules touched; the target is at most three.
 
 | Task | Where and how |
 |---|---|
-| Add a model | Write fields, parameters and terms in `models/` (see `docs/adding_a_model.md` and `examples/model_template/`). Derive manufactured solutions with SymPy in `tests/mms/`. Register the preset in `presets/__init__.py`. Two modules plus tests; `engine/` untouched. |
-| Add a geometry built from existing axis kinds | The geometry component in `geometries/`. Basis rules are per axis kind and boundary condition, so they need no change. If the geometry creates a new constraint basis signature: add one solver module in `linear_solvers/` and one entry in `planning/capabilities.py`. At most three modules. |
-| Add a new axis kind or basis | Not a geometry change. Basis rules in `planning/bases.py` plus the transform in `backends/`. Needs its own design. |
-| Add a boundary condition | Physical declaration in `boundaries/`; basis or lifting rule in `planning/`; lifting in `engine/` (from the boundary work onward). |
-| Add a constraint solver | Implement the `ConstraintSolver` protocol in `linear_solvers/`, with `solve_transpose` and a dot-product test. Add one entry in `planning/capabilities.py`. Each entry is a torch-free record: key, implementation reference and adjoint mode. A test validates every reference. |
-| Add an optimized implementation | Register it against its reference operator with an equivalence record: bitwise, or a tolerance defined before measurement and approved where a project rule requires it. Select it through `execution` options. |
-| Add a time scheme | Implement the IMEX protocol in `integrators/`; prove the order of time convergence. |
-| Add a run-metadata field | The single metadata builder in `runtime/`. |
-| Add a qualification or diagnostic script | `qualification/` at the repository root (not in the package, wheel or sdist). Historical import paths are served only by `qualification/_legacy_imports.py`, for tests and the qualification launcher. |
-| Reject an unsupported request | In `planning/`, before allocation. Either a mathematical reason (which operator, basis or solver is missing, or which data conflict), or a scope restriction naming the decision and the planned version. |
+| Add a model | Follow `docs/adding_a_model.md` and `examples/model_template/`; declare `pssolver.core.terms.PackageTerm` records and provide a preset such as `pssolver.presets.shendruk.resolve_shendruk_plane_preset`. Derive manufactured solutions independently. The step program stays untouched. |
+| Add a geometry built from existing axis kinds | Follow `pssolver.geometries.tensor_product.PeriodicBox`. If it introduces a new constraint signature, register it using `pssolver.planning.capabilities.basis_signature` and `pssolver.planning.capabilities.Capability`. |
+| Add a new axis kind or basis | Needs its own design. `pssolver.planning.assemble._validate_basis` owns basis rejection, and `pssolver.engine.groups` owns transform-group construction. |
+| Add a boundary condition | Follow the physical declarations in `pssolver.boundaries.neumann_q`; basis validation stays in `pssolver.planning.assemble._validate_basis`. Lifting and unqualified boundary pilots are not added as production options here. |
+| Add a constraint solver | Follow `pssolver.linear_solvers.stokes.channel_no_slip.ChannelNoSlipModalStokesSolver.solve_transpose` for the adjoint and add a dot-product test. Register the solver with a torch-free `pssolver.planning.capabilities.Capability`. |
+| Add an optimized implementation | Use the existing selection in `pssolver.planning.assemble.assemble` and the declarations in `pssolver.planning.capabilities`. Bind the reference and equivalence evidence before making an implementation selectable. |
+| Add a time scheme | Implement `pssolver.engine.imex.ImexScheme` and prove time convergence order. |
+| Add a run-metadata field | Extend `pssolver.runtime.simulation_run.build_run_metadata`. |
+| Add a qualification or diagnostic script | Use `qualification/`, outside the distribution, and run it through `qualification/run.py`. `qualification/_legacy_imports.py` serves the approved historical imports for development tests only. |
+| Reject an unsupported request | Use `pssolver.planning.assemble.AssemblyRejection` before allocation. Identify the mathematical conflict or the governing scope decision. |
 
 ## 7. Verification contract
 
@@ -325,55 +302,6 @@ Counts are of modules touched; the target is at most three.
 - import cycles;
 - unimported modules.
 
-The numbers are tracked as trends, not gates. A regression is explained in the
-release design.
-# S-25 Periodic draft boundary
-
-The Periodic production and functional paths share `engine.Engine` and caller-owned
-`engine.State`. The torch-free `planning.periodic` produces a Plan. The v0.4 RunSpec,
-identity, upgrade and embedded-identity validation remain in
-`configuration.legacy_periodic` until S-28 (D-0051 A). `io.legacy.periodic_workflow`
-contains only the frozen carrier and its read/write operations. `runtime.legacy_entry`
-owns the declaration-to-Engine entrance; `runtime.runner` owns scheduling and output.
-Plane and Channel remain on their existing paths. The protected physics and Plane
-solver files are unchanged. No old Periodic adapter shell remains.
-
-Frozen benchmark consumers of deleted Periodic modules are not repaired here. Their
-original tests execute in the v0.4 historical checkout; exact non-importable chains
-are recorded in `qualification/s25_expected_unimportable.json` for S-30. S-24's test
-audit ends at aee8289; S-25 changes are audited independently by
-`qualification/s25_test_disposition.json`. This section describes an unqualified draft,
-not a claim that T1–T25 or K2 has passed.
-
-## S-27 Plane draft boundary
-
-Plane now uses the same assembler, Engine and Runner. Its legacy checkpoint carriers,
-identity and upgrade rules live in `configuration.legacy_plane` until S-28; they are
-not a second execution path. `runtime.plane_observations` captures caller-provided fields
-and diagnostics, and `cli.plane` delegates to `runtime.legacy_entry`. Channel remains
-on its existing path. Frozen transform and Stokes implementations are unchanged.
-
-For batch greater than one, `engine.members` runs complete singleton programs using
-one internal Engine and one reusable in-place State buffer. Pure calls concatenate
-member results; diagnostics are separate dictionaries per member. No backend kernel
-sees an enlarged batch problem. Singleton execution has no member Engine or buffer.
-The transform-only member adapter is retired, with its original tests retained in the
-S-27 historical runner. This is a draft boundary, not a qualification claim.
-
-## S-28a M1 intermediate boundary
-
-The production and functional Channel PCG entry points temporarily retain their
-existing call signatures and diagnostic owners, but execute one role-specialized
-PCG skeleton in `linear_solvers/stokes/channel_no_slip.py`. Its production,
-functional-primal and functional-transpose policies preserve each original
-operation sequence. The seven explicit adjoint operations now belong to that
-same solver. The independent unrolled test oracle is not folded into this loop.
-
-At this intermediate gate, the legacy functional wrappers supply their diagnostic
-callbacks and sequence context; the numerical layer does not import the facade.
-This context is not the final Engine solver-state representation. Explicit warm
-state threading, Channel Engine/Runner wiring, and removal of the nine legacy
-modules remain subsequent S-28a work after the predeclared M1 review. No public
-frontend or v1 Engine is retired by M1. The entry-to-mathematics route is the old
-entry point, `solve`/`solve_transpose`, and then `_solve_pcg`; there is no second PCG
-implementation behind the compatibility entry points.
+The numbers are tracked as trends, not gates. The release design explains
+regressions and records public documentation coverage and functions over 80
+lines alongside these metrics.

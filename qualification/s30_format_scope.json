@@ -1,0 +1,4095 @@
+{
+  "baseline_scope_sha256": "c398d415240b291b9f5cf52cdc36ef8847ae5346bb10d66528817aee0dde876e",
+  "basis_unmodified_suite_projection": {
+    "benchmarks/_s19_compare.py": {
+      "new": "2d7f35cc9f8441a6870fb5c8fe7d54eab02575fc0bd5be821a440cadba07db2b",
+      "old": "083e8f289f9a13484f0199085256fd881210edbae32c3e1c76d82c2a762a0df7"
+    },
+    "benchmarks/analyze_finite_q_anchoring_qualification.py": {
+      "new": "b2d16e0808220473d1b52c435434d85b70cf6c4ba4dc08e19a20a0334a197f75",
+      "old": "3e90ee3087ae884cbf5656a11a404b12c0a53b09c1b56756a994690bc79f4dbc"
+    },
+    "benchmarks/analyze_plane_static_lifting_qualification.py": {
+      "new": "fb43f85ca54dda8f764074e996868fc8b44cdb155fe30fa77af75fb746be6831",
+      "old": "e2ea71a1a6f2a8c54a6c6038c23d5d917d36f139d1b0e4cb6060ad987cfbd5f0"
+    },
+    "benchmarks/analyze_public_simulation_h100_qualification.py": {
+      "new": "84abc116990a04b110b1811e056ad22dbbd1f48cbc67a0a797ae2cdf29fb213e",
+      "old": "c8c6a22ee423322a0fdcf6213e245d18d887f32f7f6ad9cec8f4bc05c40bb8e0"
+    },
+    "benchmarks/run_v0_4_s19_environment.py": {
+      "new": "152f0bd5d9b3b8f96aa6a6af7ce207006403b9e532f756246894d7bcdbe283ba",
+      "old": "5d2e51358aadc4e5ceb7518e9cc6a24a3ff1a491e523d918e5a59d685290c744"
+    },
+    "benchmarks/stage_o42_runtime.py": {
+      "new": "47759eaf4cd044e564e7689c4ff2ae273065402f95f152a91e8b0975ca59ad6c",
+      "old": "8cdfe91cca52921640c190509faf94ed848648f2284e4698a479d4ead00199a4"
+    },
+    "benchmarks/validate_phase4_closure.py": {
+      "new": "a205877e860742e55939a661a412e8506f0b1281a68946581afa4270fd6be836",
+      "old": "d10965f728ccb4e06dd3ce7f9df57572110b5dddd9304966a479a8750a0b851c"
+    },
+    "docs/render_beris_edwards_stokes_pdf.py": {
+      "new": "602cfd3c7aa2c743ac621ea8033311249ff484b25431205537578afa6c25b062",
+      "old": "fe3702ca4ef8e2ad3ca0bbecd6af8f2de166a5854997baeae2c1cf7f0c6d2770"
+    },
+    "pssolver/api/declarations.py": {
+      "new": "911bb685df8e8772b2d26267ad963be7c60f0c168937e53be9b78b3121c865de",
+      "old": "d1a4897d2ce1833b9ce1612d915b25993adec932177fb4de001bb6e489d6c680"
+    },
+    "pssolver/backends/bounded.py": {
+      "new": "7d21ab4059b831e5620aa41f341bba230e93395b98407f254127c294d37591af",
+      "old": "6a7a69fde920c761584cb9bd1ebfa235af75ff1098388d48d6279f4d386bddb3"
+    },
+    "pssolver/backends/tensor_product.py": {
+      "new": "0fa434de077785b79310fbb33578d273bcc33517001ddac5fafcf32a68d038b6",
+      "old": "1821029222d5b3de4462686262faef5c6f6e06b9e3f4f29f2e26afa171e95b1b"
+    },
+    "pssolver/boundaries/homogeneous.py": {
+      "new": "796c1901b289b1561fd0169a70e4e1ac8af7efa19cbe0fecf7bdfd3368971347",
+      "old": "a98d6b87ceff3133a7895a849afeed59b0579bd4d8b4227ed27c980236fd96df"
+    },
+    "pssolver/boundaries/prescribed.py": {
+      "new": "51624255726b9cf5b10b501fd7437f75e01de7f44defb9574edf179b21963095",
+      "old": "115062358101b1b49343a4061f56b21472284ec23cde2d842af84899bbbe9fbd"
+    },
+    "pssolver/control/controls.py": {
+      "new": "9fcf32163a33885e2582f1cf008feac7d3e8afc79b40a63f2975b27f72beb18c",
+      "old": "706827dd82546df8a0b8e676c12488e0463da9c75fdf96ae9b32fd53b1794080"
+    },
+    "pssolver/control/dal.py": {
+      "new": "d7974f70020ea5823748d236b0cf7498804df11a30fb6fbbd4096d37b9f680b3",
+      "old": "517c3244664738bf8a8be4b2705ba8c7baddc4ceb1d36c15643549798eac3b0f"
+    },
+    "pssolver/control/functional.py": {
+      "new": "1255ceff83a7f0af9f98b21dceac0591b4ad9bc9b93cab3c07a3478a08f0df59",
+      "old": "276f9175184cd865ed92a3bffa55cbbaaef14e36fc878cf5061fb6ce4897605b"
+    },
+    "pssolver/control/grid_transfer.py": {
+      "new": "b2fcd265efcbdc7e33ca98275365a4667f16f20580484af21efe1151b34769ab",
+      "old": "e8042114904219b9d530571666d2aa8d67a33a0f4c955312b03cc9ece47d7b58"
+    },
+    "pssolver/control/loop_diagnostics.py": {
+      "new": "ba10a8ed9e52c2d33be24215aafab6a9fa635dcb473ec7d649ec932df6ac888b",
+      "old": "24d3142a40617dc2a05ffc000a7508ac3bdf59682e49b5e349913ddaae821862"
+    },
+    "pssolver/core/fields.py": {
+      "new": "1a7cd4bdc83c969926201f926022b1d47596144cda00a8543ed4e736901abeaa",
+      "old": "5458e8463cf0e31c994cc184d20bc4f50af52d30bf71c4657c7d6329b70ee5c7"
+    },
+    "pssolver/core/geometry.py": {
+      "new": "0303b80eaa062cba40eaacba88e868c6420efe307ea577a3d87220963b4a732a",
+      "old": "7710c5b2d8eef52f4ab6a3215646b0e0521b853e516f06d8cdfbc1970915a85d"
+    },
+    "pssolver/core/integrators.py": {
+      "new": "f74351cce5d3d115d883aec39326f3880b12174249299381b42dd18741e2c105",
+      "old": "ddc83a4f8e429f9c793b88fdab426276547b3aa1af736b239e1b30d927a4ee04"
+    },
+    "pssolver/core/modal_blocks.py": {
+      "new": "63b4076be47fbf3aa4f19f342c1a4b17cb1ef52df36ccfeb2ba6949e4eda7c3f",
+      "old": "85fab4dbe5a70eb005c1d70c4d248e752d9aabdc9ff7b73b4e560181c190217e"
+    },
+    "pssolver/core/numerics.py": {
+      "new": "dca2a64852b80dcae2d9cadadba17db6fe19b04ede6ded5e3834d57d99af816a",
+      "old": "69268ca5774a8bd8c2dc08bc38118c24e2ee74c9693b96caca4910880981e2af"
+    },
+    "pssolver/core/pressure.py": {
+      "new": "4021106893db050e68b3535ddfe58477dd813d7a63eb6a4375afe121e5e0a0b9",
+      "old": "adffd22a72c976b0c972127da5f93f7335aac3fed9dfd156cdd2dfa565305935"
+    },
+    "pssolver/core/problem.py": {
+      "new": "8e74da494ac685dd16ae3151979a09a810755f8a92f32ecda1e1d8c0a713d970",
+      "old": "474aa9388b44f791462606d7837a0fefb8590d24ec295740bd36e8ded1e5eae2"
+    },
+    "pssolver/diagnostics/allocator_reconciliation.py": {
+      "new": "36055538038d65c14f90d4521fd8274ac1b2fae7c1f0e983170cde98620d2fb8",
+      "old": "6a981da87dc41dc9b1f56301c22f8b86e85904a2d04b01a2818961b73727e963"
+    },
+    "pssolver/diagnostics/tensor_inventory.py": {
+      "new": "5c9f95bad72dece6eca6925ce09d996453d934c48e40d540d80eb4790d083cb1",
+      "old": "49221240655d0ec5e9645af5a16f904956a27e4286030fc8b4a341994744c310"
+    },
+    "pssolver/experimental/modal_block_checkpoint.py": {
+      "new": "ab2b62fb7e1e7aab8ecc18b03579c98c232fea45f41956fc11d55426ff39e70d",
+      "old": "0cf818429abe3ef8ae60e054061fb24baf85fb3002f60d53eb16c1870e50c820"
+    },
+    "pssolver/experimental/modal_block_reference.py": {
+      "new": "b9af80dbf79a32eca0da201356ba9569c1269668973984153930ac44bf4b2620",
+      "old": "4d08d755083dd5ce2f152455f2ce3d21028a87bc40903575121680ffb56b5e3c"
+    },
+    "pssolver/experimental/representations.py": {
+      "new": "9ed663cc37c5c0e15cb22a021b586c7dcf657e9e6ecec30239fdf05b298d4478",
+      "old": "711c632a5afee47e86cdc25aadfa12b8bfad5c64756e1f291edd79def3b3d5f6"
+    },
+    "pssolver/geometries/public.py": {
+      "new": "7c3a7092804eaed02d2f877f8c40b049d3b17a5a767fca9ec854681c57ff500c",
+      "old": "41a7e0ee7a72025b4a1bc9630fafa24281afcded595b17730c5d97b33288e7a4"
+    },
+    "pssolver/geometries/tensor_product.py": {
+      "new": "f748ef0dafed81ccb07871537071905805ee67db4ea2aa614c27c888b2f85268",
+      "old": "346932a45b4c6c83eceec233e61737b22506bbd4647f962c2020386ec06baa54"
+    },
+    "pssolver/integrators/history.py": {
+      "new": "2dff31fdbcb331fa953cbeee33c4cb01644caea22b2075a820b13ecbbbde1664",
+      "old": "05203eaf41c10cd7822326d6a6fd83ac5e35982fa76d6aca8d9d957aa3a53f72"
+    },
+    "pssolver/integrators/reference_checkpoint.py": {
+      "new": "32eb89021535a78dc8402e5b92a0a72c5a038bcdb20d88639d941083d2d862a0",
+      "old": "f38d2deeb47fd94401a49f96a81fc1cca6a0011f11c96de76f8527ce3c089c19"
+    },
+    "pssolver/integrators/reference_qualification.py": {
+      "new": "c8fac8277b2de861ec2fbdbeabe8655abd3b922f9acb47c008d9d000581e5ab0",
+      "old": "ebfc0dced803d34ed162d1f0c725ec78e421d98ee65fe6142b85b341dd5363d3"
+    },
+    "pssolver/integrators/scalar_reference.py": {
+      "new": "f70e119d825f2681671aa6fefd47caef8273ea85c8b6901acf299aec7e7f3c50",
+      "old": "2fb248d07a4125b72b76c8832923c050f5037e349fa561e816302a5e3143dd16"
+    },
+    "pssolver/linear_solvers/stokes/periodic.py": {
+      "new": "25d260b01b0d1be596a688eecf43a1b63b002c63108682ea2dbb151aff813b15",
+      "old": "d5d6cb4e05d47ccceba788a28352e43746116a81984e3457966cfad04939350c"
+    },
+    "pssolver/models/active_nematics/initial_conditions.py": {
+      "new": "f6efd0907e22e27cd87cc30f389ca53959dbbbb4aac3e1e3827ee46f837b59a5",
+      "old": "32a25c37c74835126945a2e2a9d72127d1e7929b375a1367145a0661caace1f8"
+    },
+    "pssolver/models/active_nematics/nematics3d_adapter.py": {
+      "new": "c3f360bb45ad8a762c0bb3a63f1de4b95c4cb883b724627d1d5226b9991a89b2",
+      "old": "b05482c5f5475826ab78cb77c663546980a7cf5d358e656803bd5d1148900c32"
+    },
+    "pssolver/models/active_nematics/stokes.py": {
+      "new": "b8312c6308ad768cacd2006b11b1f8981ed44df92d5497bc44f408eb273a2133",
+      "old": "d1f028b0d6f941454ddc31d362acf19a45050ef7f466564f7283d5e706a8a3a1"
+    },
+    "pssolver/operators/modal_block.py": {
+      "new": "129ba58af78450ef414bee05cde9823d58ad57e0ad74fdb7bc6a9e41a9c08b1c",
+      "old": "e6ab8ee536be34212a88fcacffa26527d5e018c3e7358f69450088696de11f28"
+    },
+    "pssolver/operators/modal_block_reference.py": {
+      "new": "dabb405650e8d02669608018c4f099357bf0f8814254a990626bbf5675fb7ab6",
+      "old": "036b1f71211ab042f9583a1674074355db6e4810fb95d6b4e83c32a47c4e9b69"
+    },
+    "pssolver/operators/tensor_divergence.py": {
+      "new": "f1c2fade392531f7802c7a3bf190bf03819de439f5480cba503ec7746c039290",
+      "old": "9973caaff7b08063f5ea5d1706a84d676ac47f0c5f2cc0da85e73417cafbf4f2"
+    },
+    "pssolver/runtime/simulation_run.py": {
+      "new": "685e08b76b31c4d4e66fdb7f9fc0aa89a0f76cab89a08a0b78368f30740c1caf",
+      "old": "abd5b37e1e778fc4e8f551d8b1edf6890c6bc8db7b760722fa9f1db5aadde050"
+    },
+    "pssolver/snapshots.py": {
+      "new": "cd91cfc3433b9cf21bc187288c4130360f690146f7f4298253917245ad6a191a",
+      "old": "da1baae35b8d7d1dae00ab94171369e8dd66e2f956a064a7107171e81af75180"
+    },
+    "pssolver/utils.py": {
+      "new": "3ab2fed9a14d22a75ca17c5ade35e09acdf720235015f48021181b71bf4a9b9f",
+      "old": "daad597a0cc2ed182715ba66aeb3378146cbf81b7f2d2102098889d14f1b5578"
+    }
+  },
+  "c8_commit": "88604c200f9915ccffc54200cd7229886600c50f",
+  "c8_only_new_format_path": "pssolver/api/errors.py",
+  "configuration_sha256": "f1e1c3840d7d3096efc8dcde4f95ce6dc7835d9b5d7e1bbd75ab4032bce0e6b4",
+  "eligible": [
+    "benchmarks/__init__.py",
+    "benchmarks/_s19_compare.py",
+    "benchmarks/analyze_finite_q_anchoring_qualification.py",
+    "benchmarks/analyze_plane_static_lifting_qualification.py",
+    "benchmarks/analyze_public_simulation_h100_qualification.py",
+    "benchmarks/diagnose_plane_stage_o42.py",
+    "benchmarks/profile_plane_shadow_stage_n.py",
+    "benchmarks/profile_plane_shadow_stage_n1.py",
+    "benchmarks/profile_plane_shadow_stage_n2.py",
+    "benchmarks/profile_plane_shadow_stage_n3.py",
+    "benchmarks/profile_plane_shadow_stage_n4.py",
+    "benchmarks/profile_plane_shadow_timestep.py",
+    "benchmarks/profile_plane_stage_o43.py",
+    "benchmarks/profile_plane_stage_o431.py",
+    "benchmarks/profile_plane_stage_o433.py",
+    "benchmarks/profile_plane_stage_o434.py",
+    "benchmarks/profile_plane_stage_q4.py",
+    "benchmarks/run_plane_stage_o431_trajectory.py",
+    "benchmarks/run_plane_stage_o433_trajectory.py",
+    "benchmarks/run_plane_stage_o43_trajectory.py",
+    "benchmarks/run_rc458_profile_matrix_venv_recovery.py",
+    "benchmarks/run_v0_4_s19_environment.py",
+    "benchmarks/stage_o42_runtime.py",
+    "benchmarks/validate_phase4_closure.py",
+    "benchmarks/verify_rc5_g1_cumulative_archive.py",
+    "docs/render_beris_edwards_stokes_pdf.py",
+    "examples/allen_cahn.py",
+    "examples/model_template/checks.py",
+    "examples/model_template/model.py",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py",
+    "pssolver/__init__.py",
+    "pssolver/_version.py",
+    "pssolver/api/__init__.py",
+    "pssolver/api/declarations.py",
+    "pssolver/api/errors.py",
+    "pssolver/api/legacy_checkpoints.py",
+    "pssolver/api/lowering.py",
+    "pssolver/api/models.py",
+    "pssolver/api/simulation.py",
+    "pssolver/api/snapshot_header.py",
+    "pssolver/backends/__init__.py",
+    "pssolver/backends/bounded.py",
+    "pssolver/backends/tensor_product.py",
+    "pssolver/boundaries/__init__.py",
+    "pssolver/boundaries/homogeneous.py",
+    "pssolver/boundaries/prescribed.py",
+    "pssolver/control/__init__.py",
+    "pssolver/control/active_force.py",
+    "pssolver/control/controls.py",
+    "pssolver/control/dal.py",
+    "pssolver/control/functional.py",
+    "pssolver/control/grid_transfer.py",
+    "pssolver/control/loop_diagnostics.py",
+    "pssolver/core/__init__.py",
+    "pssolver/core/_identifiers.py",
+    "pssolver/core/_validation.py",
+    "pssolver/core/errors.py",
+    "pssolver/core/fields.py",
+    "pssolver/core/geometry.py",
+    "pssolver/core/integrators.py",
+    "pssolver/core/modal_blocks.py",
+    "pssolver/core/model.py",
+    "pssolver/core/numerics.py",
+    "pssolver/core/pressure.py",
+    "pssolver/core/problem.py",
+    "pssolver/core/terms.py",
+    "pssolver/diagnostics/__init__.py",
+    "pssolver/diagnostics/allocator_reconciliation.py",
+    "pssolver/diagnostics/cuda_memory.py",
+    "pssolver/diagnostics/tensor_inventory.py",
+    "pssolver/errors.py",
+    "pssolver/experimental/__init__.py",
+    "pssolver/experimental/modal_block_checkpoint.py",
+    "pssolver/experimental/modal_block_reference.py",
+    "pssolver/experimental/representations.py",
+    "pssolver/geometries/__init__.py",
+    "pssolver/geometries/plane_numerics.py",
+    "pssolver/geometries/public.py",
+    "pssolver/geometries/tensor_product.py",
+    "pssolver/integrators/__init__.py",
+    "pssolver/integrators/history.py",
+    "pssolver/integrators/reference_checkpoint.py",
+    "pssolver/integrators/reference_qualification.py",
+    "pssolver/integrators/scalar_reference.py",
+    "pssolver/io/__init__.py",
+    "pssolver/io/_retired_checkpoint.py",
+    "pssolver/io/initial_snapshot.py",
+    "pssolver/linear_solvers/__init__.py",
+    "pssolver/linear_solvers/stokes/__init__.py",
+    "pssolver/linear_solvers/stokes/_pressure_policy.py",
+    "pssolver/linear_solvers/stokes/periodic.py",
+    "pssolver/loop_conventions.py",
+    "pssolver/models/__init__.py",
+    "pssolver/models/active_nematics/active_force.py",
+    "pssolver/models/active_nematics/initial_conditions.py",
+    "pssolver/models/active_nematics/nematics3d_adapter.py",
+    "pssolver/models/active_nematics/stokes.py",
+    "pssolver/operators/modal_block.py",
+    "pssolver/operators/modal_block_reference.py",
+    "pssolver/operators/tensor_divergence.py",
+    "pssolver/planning/__init__.py",
+    "pssolver/planning/term_analysis.py",
+    "pssolver/presets/__init__.py",
+    "pssolver/run_metadata.py",
+    "pssolver/runtime/simulation_run.py",
+    "pssolver/snapshots.py",
+    "pssolver/utils.py",
+    "tools/__init__.py",
+    "tools/_source.py"
+  ],
+  "excluded": {
+    "Channel.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test",
+      "C1 original-path history; bytes retained"
+    ],
+    "Channel_control.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Channel_control_box.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Channel_control_box_high_temporal_resolution.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Channel_dal.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Channel_optimal_control.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Periodic.py": [
+      "C1 retired from the source tree"
+    ],
+    "Plane.py": [
+      "C1 retired from the source tree"
+    ],
+    "Plane_H15_twist_evolution.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Plane_beris_edwards_navier_stokes.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Plane_beris_edwards_shadow.py": [
+      "C1 retired from the source tree"
+    ],
+    "Plane_beris_edwards_shadow_h100.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "Plane_beris_edwards_shadow_stage_n1.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "Plane_beris_edwards_shadow_stage_n2.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "Plane_beris_edwards_shadow_stage_n3.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "Plane_beris_edwards_shadow_stage_n4.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "Plane_beris_edwards_stokes.py": [
+      "C0.1 / Df7 frozen existing file",
+      "C1 original-path history; bytes retained"
+    ],
+    "Plane_fig4_benchmark.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 retired from the source tree"
+    ],
+    "Plane_free_slip.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "Plane_free_slip_dealiased.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 retired from the source tree"
+    ],
+    "Plane_shendruk_stokes.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/_artifact_io.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/_s19_consumer_attestation.py": [
+      "tests/test_v0_4_s19_retry_successor.py::test_retry_successor_is_support_only_and_forward_bound:20-22"
+    ],
+    "benchmarks/adjudicate_modal_block_crossover.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_periodic_hermitian_profiles.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/analyze_phase8_cumulative_closure.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/analyze_phase9_p95_functional_qualification.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/analyze_rc2_g5_installed_smokes.py": [
+      "direct current check or registered location",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/analyze_rc426_cross_device_checkpoint.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/analyze_rc437_lifting_h100.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc437_lifting_h100_recovery.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc447_pressure_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_rc458_reserved_memory_recovery.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc458_tf32_h100.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc458_transform_counter_recovery.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc4_plane_nyquist_qualification.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/analyze_rc5_g1_balanced_crossover_qualification.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_rc5_g1_balanced_crossover_replay.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_rc5_g1_cumulative_closure.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc5_g1_focused_performance_h100.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc5_g1_h100.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc5_g1_measurement_window_h100.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc5_g1_paired_block_replay.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_rc5_g1_timing_instrumentation.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_rc5_g1_timing_variability.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_rc5_g1_v13_failure.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/analyze_rc6_control_installed_cpu_review.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/analyze_rc6_single_h100.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test",
+      "tests/test_v0_3_s09_r0028_candidate.py::test_r0028_support_hashes_match_checked_in_files",
+      "tests/test_v0_3_s09_r0030_candidate.py::test_r0030_support_hashes_match_live_files"
+    ],
+    "benchmarks/analyze_v0_3_s09_cpu_6x60_stop.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/analyze_v0_3_s09_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/analyze_v0_4_s19_h100.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/assemble_rc5_g1_auxiliary.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/assemble_rc6_h100_auxiliary.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/assemble_v0_3_s09_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/benchmark_bounded_axis_applicability.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/benchmark_periodic_fast_path.py": [
+      "direct current check or registered location",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/benchmark_stokes_pressure_diagnostics.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/benchmark_transform_backend.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/benchmark_v0_3_s09_channel_cpu.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/benchmark_v0_3_s09_channel_cpu_frozen.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/build_rc6_single_h100_stage_plan.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/capture_beris_edwards_nsys.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/capture_rc4_h100_preflight.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/capture_v0_3_s09_local_environment.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/check_periodic_hermitian_stability.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/diagnose_channel_pressure_contract.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/diagnose_plane_nyquist_storage.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/diagnose_plane_static_lifting_recovery.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/diagnose_rc451_cross_runtime_residuals.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/diagnose_rc4_lifting_correctness.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/diagnose_rc5_g1_timing_instrumentation.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/diagnose_rc6_pressure_floor_h100.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/diagnose_v0_3_s09_functional_transient.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_rc447_pressure_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/plan_rc458_tf32_h100.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_rc5_g1_balanced_crossover_contract.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_rc5_g1_balanced_crossover_qualification.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/plan_rc5_g1_focused_performance_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/plan_rc5_g1_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/plan_rc5_g1_measurement_window_recovery.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_rc5_g1_paired_block_contract.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_rc5_g1_timing_instrumentation.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_rc6_single_h100_qualification.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test",
+      "tests/test_v0_3_s09_r0028_candidate.py::test_r0028_support_hashes_match_checked_in_files",
+      "tests/test_v0_3_s09_r0030_candidate.py::test_r0030_support_hashes_match_live_files"
+    ],
+    "benchmarks/plan_v0_3_s09_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/plan_v0_4_s19_h100.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/prepare_phase9_p95_inputs.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/prepare_rc6_recovery_bootstrap.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/probe_v0_4_s18_r5_postcondition.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "benchmarks/profile_beris_edwards_timestep.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_channel_runtime_timestep.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_combined_sbdf2_modal_block.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/profile_finite_q_anchoring.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_modal_block_crossover.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/profile_periodic_functional.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_periodic_hermitian_qualification.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/profile_plane_runtime_timestep.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_plane_stage_p.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_rc437_plane_runtime.py": [
+      "direct current check or registered location",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_rc447_channel_pressure.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/profile_rc458_runtime_family.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_rc5_g1_runtime_family.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/qualify_plane_static_lifting.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/qualify_rc437_lifting_cuda.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/qualify_rc437_lifting_cuda_recovery.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/qualify_rc447_pressure_cuda.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/qualify_rc458_tf32_scope.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/qualify_v022_checkpoint_forward_compat.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/qualify_v0_3_s07_installed_wheel.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/rc458_venv_identity.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/rc5_g1_cumulative_evidence.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/recover_public_simulation_h100_qualification.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_channel_runtime_trajectory.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_periodic_hermitian_profile_matrix.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/run_phase9_p95_gradient_diagnostic.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/run_phase9_p95_gradient_validator_v2.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/run_phase9_p95_h100_qualification.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_public_simulation_h100_case.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/run_rc2_g5_installed_smoke.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/run_rc425_installed_checkpoint_closure.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_rc426_cross_device_checkpoint.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "benchmarks/run_rc426_cuda_tests.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc436_installed_lifting_closure.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc445_installed_pressure_closure.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_rc447_cuda_tests.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc458_profile_matrix.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc5_g1_checkpoints.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "benchmarks/run_rc5_g1_consumer.py": [
+      "direct current check or registered location",
+      "tests/test_rc5_g1_hpcc_plan_freeze_record.py::test_g1_hpcc_plan_freeze_hashes_versioned_command_files",
+      "tests/test_rc5_g1_stage_producers_record.py::test_stage_producer_record_binds_all_five_missing_stages_and_hashes"
+    ],
+    "benchmarks/run_rc5_g1_cuda_only.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc5_g1_environment.py": [
+      "direct current check or registered location",
+      "tests/test_rc5_g1_hpcc_plan_freeze_record.py::test_g1_hpcc_plan_freeze_hashes_versioned_command_files",
+      "tests/test_rc5_g1_stage_producers_record.py::test_stage_producer_record_binds_all_five_missing_stages_and_hashes"
+    ],
+    "benchmarks/run_rc5_g1_focused_profile_matrix.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc5_g1_numerical.py": [
+      "direct current check or registered location",
+      "tests/test_rc5_g1_hpcc_plan_freeze_record.py::test_g1_hpcc_plan_freeze_hashes_versioned_command_files",
+      "tests/test_rc5_g1_stage_producers_record.py::test_stage_producer_record_binds_all_five_missing_stages_and_hashes"
+    ],
+    "benchmarks/run_rc5_g1_paired_block_profile_matrix.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc5_g1_profile_matrix.py": [
+      "direct current check or registered location",
+      "tests/test_rc5_g1_hpcc_plan_freeze_record.py::test_g1_hpcc_plan_freeze_hashes_versioned_command_files"
+    ],
+    "benchmarks/run_rc5_g1_stage_plan.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc5_g1_timing_instrumentation.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc6_checkpoint_cpu_qualification.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_consumer.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_contract_smokes.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_rc6_cuda_only.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_cuda_toolkit_preflight.py": [
+      "direct current check or registered location",
+      "tests/test_rc6_nvcc_bootstrap_recovery_record.py::test_recovery_record_preserves_history_and_binds_exact_successor_sources"
+    ],
+    "benchmarks/run_rc6_current_checkpoints.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_environment.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_numerical.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_profile_child.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_rc6_profile_matrix.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_rc6_provider_identity_review.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_rc6_released_checkpoints.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_rc6_single_h100_stage_plan.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py": [
+      "direct current check or registered location",
+      "tests/test_v0_3_s09_r0028_candidate.py::test_r0028_support_hashes_match_checked_in_files",
+      "tests/test_v0_3_s09_r0030_candidate.py::test_r0030_support_hashes_match_live_files"
+    ],
+    "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_v0_3_s09_checkpoints.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_consumer_h100.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_cpu_rehearsal.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_v0_3_s09_cuda_only.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_environment.py": [
+      "direct current check or registered location",
+      "tests/test_v0_3_s09_r0030_candidate.py::test_r0030_support_hashes_match_live_files"
+    ],
+    "benchmarks/run_v0_3_s09_installed_consumer_cpu.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_long_horizon.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_numerical.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/run_v0_3_s09_profile_matrix.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_3_s09_tf32_backward.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/run_v0_4_s19_job.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_v0_4_s19_self_compare.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/run_v0_4_s19_stage.py": [
+      "tests/test_v0_4_s19_retry_successor.py::test_retry_successor_is_support_only_and_forward_bound @ 20 (unchanged-suite proof)"
+    ],
+    "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/shendruk_v1_dynamic_velocity/fig4_timestep_convergence.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/shendruk_v1_dynamic_velocity/fig4_workflow.py": [
+      "direct current check or registered location"
+    ],
+    "benchmarks/smoke_periodic_fast_path_default.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "benchmarks/v0_2_0_checkpoint_fixtures.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/v0_3_s09_revert_pressure_proxy.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/validate_rc6_recovery_bootstrap.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/validate_v0_4_s19_deployment.py": [
+      "tests/test_v0_4_s19_retry_successor.py::test_retry_successor_is_support_only_and_forward_bound:20-22"
+    ],
+    "benchmarks/verify_v0_3_s10_build_fingerprints.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "benchmarks/verify_v0_4_local_evidence.py": [
+      "direct current check or registered location",
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/verify_v0_4_s16_numerical_equivalence.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/verify_v0_4_s18_r4_step_equivalence.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "benchmarks/verify_v0_4_s18_r5_pcg_equivalence.py": [
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "compare_dealias_100k.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "compare_dealias_final_spectra.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "pssolver/api/capabilities.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/api/results.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/api/runner.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/boundaries/robin.py": [
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/cli/__init__.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/cli/plane.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/control/objectives.py": [
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/core/_canonical.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/core/_compatibility.py": [
+      "R-0131 \u00a72.2 exact compatibility source binding"
+    ],
+    "pssolver/core/boundary.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/core/device_tokens.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/core/domain.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/core/spectral_identity.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/engine/__init__.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/constraints.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/engine/derivatives.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/engine.py": [
+      "tests/test_phase2_provenance_closure.py::test_phase2_provenance_tracks_all_imported_package_facades @ 46 (unchanged-suite proof)",
+      "tests/test_phase2_run_spec_components.py::test_components_remain_provisional_with_three_migrated_consumers @ 943 (unchanged-suite proof)",
+      "tests/test_phase3_runtime_state.py::test_state_is_not_promoted_and_shared_core_owns_runtime_imports @ 568 (unchanged-suite proof)",
+      "tests/test_rc4_checkpoint_identity_primitives.py::test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wired @ 310 (unchanged-suite proof)",
+      "tests/test_rc4_cross_device_checkpoint_plan.py::test_rc426_plan_binds_rc425_and_reviewed_sources @ 52 (unchanged-suite proof)",
+      "tests/test_rc4_fresh_initial_conditioning.py::test_rc434_record_binds_sources_scope_and_qualification_boundary @ 78 (unchanged-suite proof)",
+      "tests/test_rc4_lifting_checkpoint_integration_record.py::test_rc435_record_binds_implementation_and_scope @ 119 (unchanged-suite proof)",
+      "tests/test_rc5_r59_pressure_postcondition_record.py::test_r59_registers_exact_historical_successors @ 121 (unchanged-suite proof)",
+      "tests/test_rc6_1_plane_diagnostic_error_record.py::test_rc6_1_record_binds_the_implementation_and_regression_test @ 145 (unchanged-suite proof)",
+      "tests/test_rc6_1_plane_diagnostic_error_record.py::test_rc6_1_registers_forward_only_historical_successors @ 167 (unchanged-suite proof)",
+      "tests/test_v0_4_s18_r2_checkpoint_artifacts.py::test_r2_writers_delegate_to_one_private_owner @ 125 (unchanged-suite proof)",
+      "tests/test_v0_5_s24_rework.py::test_current_lifting_file_and_rc1_rejection_are_restored_byte_exact @ 54 (unchanged-suite proof)",
+      "tests/test_v0_5_s24_rework.py::test_rework_is_forward_bound_without_rewriting_successor_141 @ 20 (unchanged-suite proof)",
+      "tests/test_v0_5_s24_successor.py::test_s24_successor_binds_current_sources_without_rewriting_history @ 13 (unchanged-suite proof)",
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite @ 23 (unchanged-suite proof)",
+      "tests/test_v0_5_s26_rework.py::test_physical_source_bindings_cover_all_existing_logical_aliases @ 66 (unchanged-suite proof)",
+      "tests/test_v0_5_s28a_successor.py::test_s28a_records_every_retirement_and_changed_source @ 27 (unchanged-suite proof)"
+    ],
+    "pssolver/engine/execution_device.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/engine/field_view.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/groups.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/engine/imex.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/linear.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/members.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/engine/program.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/progress.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/state.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/engine/terms.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/engine/workspace.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/experimental/boundary_pilots.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/experimental/finite_q_anchoring_declarations.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/experimental/finite_q_anchoring_runtime.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/experimental/finite_q_anchoring_workflow.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/experimental/robin_scalar_runtime.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/__init__.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/api.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/channel_activity.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/functional/channel_activity_runtime.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/channel_checkpoint.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/functional/checkpoint_identity.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/functional/contracts.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/errors.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/legacy_declarations/__init__.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/legacy_declarations/_aliases.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/legacy_declarations/active_nematics_equation_adapters.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/active_nematics_equation_systems.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/active_nematics_public.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/active_nematics_simulation_adapters.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/active_nematics_specifications.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/adapters_legacy_boundaries.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/api_declarations.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/api_simulation.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/application_registry.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/boundary_assignment.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/legacy_channel.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/legacy_periodic.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/legacy_plane.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/legacy_restore.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/lifting.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/package_construction.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/plane_beris_edwards.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/plane_beris_edwards_builders.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/plane_beris_edwards_component_graph.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/plane_beris_edwards_components.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/plane_beris_edwards_declarations.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/plane_beris_edwards_schema_v1.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/planning_construction.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/planning_package_construction.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/planning_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/planning_simulation.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/public_complete_stress_validation.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/public_option_validation.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/public_simulation_runner.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/robin.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/simulation.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/simulation_binding.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/simulation_lowering.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/systems_algebraic.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/systems_equations.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_declarations/systems_stokes.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/functional/legacy_identity.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/periodic_activity.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/periodic_checkpoint.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/pressure_metadata.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/validation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/functional/versioning.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "pssolver/io/_checkpoint_artifacts.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/io/checkpoint.py": [
+      "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py::test_glibc_compatibility_record_binds_implementation_and_tests @ 160 (unchanged-suite proof)",
+      "tests/test_rc5_r58_checkpoint_integrity_record.py::test_r58_record_binds_implementation_and_exact_sources @ 257 (unchanged-suite proof)",
+      "tests/test_v0_2_1_n1_checkpoint_nfs_record.py::test_n1_record_binds_the_implementation_commit_and_sources @ 77 (unchanged-suite proof)",
+      "tests/test_v0_2_1_n1_checkpoint_nfs_record.py::test_n1_record_is_a_forward_only_historical_successor @ 100 (unchanged-suite proof)",
+      "tests/test_v0_2_2_v17_checkpoint_symlink_parent_record.py::test_v17_record_binds_current_and_historical_source_bytes @ 66 (unchanged-suite proof)",
+      "tests/test_v0_3_n1_v17_checkpoint_integration.py::test_integration_keeps_the_v03_version_and_exact_runtime_scope @ 50 (unchanged-suite proof)",
+      "tests/test_v0_3_n1_v17_r0005_import.py::test_r0005_import_binds_the_qualified_runtime_without_changing_it @ 80 (unchanged-suite proof)",
+      "tests/test_v0_3_s04_checkpoint_robustness_record.py::test_s04_successors_are_forward_only_and_complete @ 88 (unchanged-suite proof)",
+      "tests/test_v0_3_s04_v25_rework_record.py::test_v25_successors_are_forward_only_and_complete @ 67 (unchanged-suite proof)"
+    ],
+    "pssolver/io/checkpoint_identity.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/io/diagnostic_io.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/io/engine_state.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/io/legacy/__init__.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/io/legacy/periodic_workflow.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/linear_solvers/stokes/_channel_pcg_control.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": [
+      "tests/test_rc447_pressure_bounded_operator_recovery.py::test_v11_successor_sources_are_exact_and_content_addressed @ 95 (unchanged-suite proof)",
+      "tests/test_rc447_python310_compatibility.py::test_recovery_record_binds_failure_and_exact_successor_sources @ 184 (unchanged-suite proof)",
+      "tests/test_rc4_pressure_policy_implementation_record.py::test_rc443_record_binds_parent_contract_and_current_sources @ 190 (unchanged-suite proof)",
+      "tests/test_rc4_pressure_policy_implementation_record.py::test_rc443_registers_exact_historical_successors @ 311 (unchanged-suite proof)",
+      "tests/test_rc5_r59_pressure_postcondition_record.py::test_r59_record_binds_implementation_and_exact_sources @ 114 (unchanged-suite proof)",
+      "tests/test_v0_3_s06_fixed_work_rework_record.py::test_s06_rework_binds_runtime_and_option_b @ 50 (unchanged-suite proof)",
+      "tests/test_v0_3_s06_fixed_work_rework_record.py::test_s06_rework_successors_are_forward_only_and_complete @ 78 (unchanged-suite proof)",
+      "tests/test_v0_3_s06_minimum_floor_rollback_record.py::test_s06_minimum_floor_runtime_and_registry_are_bound @ 51 (unchanged-suite proof)",
+      "tests/test_v0_3_s06_minimum_floor_rollback_record.py::test_s06_minimum_floor_successors_are_forward_only_and_complete @ 84 (unchanged-suite proof)",
+      "tests/test_v0_3_s06_numerics_serialization_record.py::test_s06_record_binds_the_roadmap_and_runtime_sources @ 42 (unchanged-suite proof)",
+      "tests/test_v0_3_s06_numerics_serialization_record.py::test_s06_successors_are_forward_only_and_complete @ 76 (unchanged-suite proof)",
+      "tests/test_v0_3_s09_cpu_diagnosis_record.py::test_s09_optimization_sources_are_content_addressed @ 65 (unchanged-suite proof)",
+      "tests/test_v0_4_s18_r5_r0057_rework.py::test_r0057_import_and_rework_preserve_history_and_bind_sources @ 13 (unchanged-suite proof)",
+      "tests/test_v0_4_s18_r5_successor_104.py::test_successor_104_binds_every_r5_source_forward @ 38 (unchanged-suite proof)"
+    ],
+    "pssolver/linear_solvers/stokes/plane_free_slip.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/linear_solvers/stokes/plane_free_slip_stateless.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/models/active_nematics/__init__.py": [
+      "tests/test_v0_5_s28a_successor.py::test_s28a_records_every_retirement_and_changed_source:27,30"
+    ],
+    "pssolver/models/active_nematics/beris_edwards.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/models/active_nematics/boundaries.py": [
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/models/active_nematics/engine_terms.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/models/active_nematics/fields.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/models/active_nematics/q_tensor.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "pssolver/operators/__init__.py": [
+      "live byte mutation failed unchanged collected test",
+      "R-0131 \u00a72.2 exact compatibility source binding"
+    ],
+    "pssolver/operators/lifting.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/operators/projection.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/operators/robin.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/planning/assemble.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/planning/capabilities.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/planning/engine_plan.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/planning/lifting.py": [
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/planning/robin.py": [
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "pssolver/presets/beris_edwards.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/presets/shendruk.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/runtime/__init__.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)"
+    ],
+    "pssolver/runtime/channel_observations.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/runtime/observations.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/runtime/plane_observations.py": [
+      "direct current check or registered location"
+    ],
+    "pssolver/runtime/runner.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "pssolver/runtime/state_validation.py": [
+      "tests/test_v0_5_s25_disposition.py::test_forward_record_binds_changed_sources_without_historical_rewrite:23"
+    ],
+    "pssolver/visualizer.py": [
+      "live byte mutation failed unchanged collected test"
+    ],
+    "qualification/_legacy_imports.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/generate_s24_retired_fixtures.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "qualification/historical_s26_audit.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/historical_s27_audit.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/historical_s28b_audit.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/historical_stage_audit.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/historical_successor_order.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/__init__.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/analyze.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/channel_comparison.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/checkpoint_fixtures.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/historical_continuations.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/periodic_comparison.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/plane_comparison.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/records.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/retained_v020_fixtures.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/runtime_case.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/runtime_case_v2.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/sampling.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/scenarios.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/scenes_v05.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/identity/trajectory_hashes.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/identity/vjp.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/k2/__init__.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/k2/dispatch_counter.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/k2/measure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/k2/resident_storage.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/run.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s24_source_audit.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s25_boundary_check.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s25_import_scan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s25_source_paths.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s25_test_classify.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s26_guards.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s26_impact.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "qualification/s26_mechanical.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s26_op_trace.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/s26_records.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s26_test_classify.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "qualification/s27_forward.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_guard_crosscheck.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_impact.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "qualification/s27_import_delta.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_mechanical.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_metadata_classes.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_move_check_source.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "qualification/s27_r2_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_records.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_reexports.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_rewrite_closure_source.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s27_statement_map.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "qualification/s27_test_classify.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "qualification/s28a_fault_child.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28a_guard.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28a_import_delta.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28a_pcg_equivalence.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28a_test_classify.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28b_guard.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28b_import_delta.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28b_test_classify.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s28b_trajectory.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s29_compare.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s29_guard.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s29_k2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s29_preflight.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s29_t2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s29_trial.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/s30_guard.py": [
+      "New S-30 guard, not a 7161608 source; independently checked by engineering."
+    ],
+    "qualification/stages/h100_shadow_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_m_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n1_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n1_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n2_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n2_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n3_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n3_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n4_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n4_qualification.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_n_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_n_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o41_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o41_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o42_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o42_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o431_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_o433_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_o434_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_o434_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_o43_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_o43_qualification.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_o4_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o4_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_o_migration.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_p_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_p_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_q2_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_q3_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_q4_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_q4_qualification.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "qualification/stages/stage_q5_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_q61_design.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "qualification/stages/stage_q6_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "scripts_channel/analyze_loop.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/analyze_phase7_channel_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_channel/calibrate_pure_splay_forward.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/check_pressure_bc.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compare_channel_runtime_outputs.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_channel/compare_dal_initial_alpha.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compare_dal_moment_runs.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compare_dal_resolution_convergence.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compare_dal_shape_runs.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compose_beta_3steps.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compose_beta_channel.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/compose_loop_summary.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/defect_histogram.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/generate_pure_splay_loop.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/plot_loop_radius.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/reconstruct_loop.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_alpha_beta_movie.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_alpha_geometry.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_beta_3steps.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_beta_frame.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_channel_geometry.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_dal_initial_target.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_loop_3steps.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/render_loop_5steps.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/run_dal_resolution_convergence.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/run_dal_shape_comparison.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/validate_dal_core_geometry.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/validate_dal_forward.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/velocity_correlation.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/velocity_spectrum.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/velocity_stats.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/visualize_dal_activity_mechanism.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_channel/visualize_dal_result.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_beris_edwards_stationarity.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_fig4_convergence.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_fig4_defect_core_convergence.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_fig4_sigma.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_h15_twist_sigma.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_phase6_compiled_v2_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_phase6_long_run_equivalence.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_shadow_h100_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_shadow_stage_n.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_shadow_stage_n1.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_shadow_stage_n2.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_shadow_stage_n3.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_shadow_stage_n4.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o41_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o42_diagnostics.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o431_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o433_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o434_diagnostic.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o43_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_o4_qualification.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_p.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_q2.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_plane_stage_q3.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_plane_stage_q4.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/analyze_plane_stage_q5.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_plane_stage_q6.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/analyze_plane_stage_q61.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/check_pressure_bc.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/close_plane_stage_o.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/compare_plane_beris_edwards_shadow.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/compare_plane_stage_o4_workflows.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/create_v3_mother_manifest.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/defect_histogram.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_shadow_h100_qualification.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_shadow_stage_n1.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_shadow_stage_n2.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_shadow_stage_n3.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_shadow_stage_n4.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_shadow_stage_n_diagnostics.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o41_qualification.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o42_diagnostics.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o431_qualification.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o433_qualification.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o434_diagnostic.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o43_qualification.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o4_qualification.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_o_migration.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_p.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plan_plane_stage_q4.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/plot_velocity_stats.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/qualify_v3_2d_mother.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/run_beris_edwards_validation.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/run_plane_stage_q4_trajectory.py": [
+      "C1 original-path history; bytes retained"
+    ],
+    "scripts_plane/v3_plane_beris_edwards_stokes.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/validate_beris_edwards_outputs.py": [
+      "unresolved current reader; fail closed, not a new exemption",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/velocity_correlation.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "scripts_plane/velocity_spectrum.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "setup.py": [
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "tests/_categories.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/_dynamic_flags.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/_s28a_pressure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/conftest.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/fixtures/historical_cpu_coverage_v1/generate_fixtures.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "tests/mms/__init__.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/mms/allen_cahn_mms.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/mms/derive_primitives.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/mms/schur_reference.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/mms/test_primitives.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/oracles/channel_pressure_unrolled.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/oracles/s29_diffusion.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/s29_reference.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_active_nematics_initial_conditions.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_active_nematics_q_tensor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_adjudicate_modal_block_crossover.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_allocator_reconciliation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analytic_periodic_defect_gas_2d.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_fig4_convergence.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_phase6_compiled_v2_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_phase6_long_run_equivalence.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_phase9_p95_functional_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_rc4_plane_nyquist_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_rc5_g1_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_v0_3_s09_cpu_6x60_stop.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_v0_3_s09_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_analyze_v0_4_s19_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_import_boundaries.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_architecture_stage_l.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_n1.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_n2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_n3.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_o43.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_o432.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_o433.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_o434.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_architecture_stage_q4.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_auxiliary_canonical_metadata.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_benchmark_bounded_axis_applicability.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_benchmark_v0_3_s09_channel_cpu.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_benchmark_v0_3_s09_channel_cpu_frozen.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_beris_edwards_gradient_cache.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_beris_edwards_pointwise_execution.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_beris_edwards_stress.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_bounded_axis_execution_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_capture_rc4_h100_preflight.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_capture_v0_3_s09_local_environment.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_channel_dal.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_control_q_target.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_core_architecture_contracts.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_core_canonical_helpers.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_core_validation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_create_v3_mother_manifest.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_cuda_memory_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_diagnose_rc6_pressure_floor_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_fig4_numerics_cli.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_free_slip_stokes_manufactured.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_grid_transfer.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_hermitian_half_spectrum.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_initial_conditions.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_loop_conventions.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_loop_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_nematics3d_adapter.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase2_plane_shared_declaration_compatibility.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase2_provenance_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase2_run_spec_components.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_phase2_run_spec_view_delegation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase2_schema_v1_serializer_compatibility.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_phase2_system_declaration_restart_provenance.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase3_canary_connection.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase3_legacy_connection.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase3_runtime_state.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase3_runtime_workspace.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase4_combined_sbdf2_modal_block.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase4_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase4_convergence_restart.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase4_integrator_history.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase4_modal_block_operator.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase4_scalar_sbdf2_reference.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase5_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase6_h100_qualification_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_channel_compiled_v2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_channel_h100_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_channel_local_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_channel_planning.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_channel_run_spec.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_channel_runtime_facade.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_final_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p770_model_geometry_coupling_inventory.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p7710_public_runner_result.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p7712_h100_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p7712_h100_recovery.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p771_equation_system_declarations.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p772_simulation_composition.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p773_simulation_lowering.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p776_h100_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p777_public_simulation_api.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p778_typed_public_declarations.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase7_p779_two_combination_compiler.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_final_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p80_capability_expansion_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p81_public_surface_catalog.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p82_h100_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p82_local_candidate_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p82_periodic_stokes.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p83_channel_complete_stress_operator.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p83_local_candidate_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p841_prescribed_dirichlet_declarations.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p842_plane_static_lifting.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p843_q_lifting_lowering.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p844_lifting_workflow_restart.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_phase8_p84_lifting_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p850_finite_anchoring_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p851_robin_declarations.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p852_robin_eigenbasis_operator.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p853_robin_scalar_runtime.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p854_finite_q_anchoring.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p855_finite_q_workflow_restart.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p856_finite_q_h100_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p860_closure_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p861_local_cumulative_audit.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p861_records_and_p862_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase8_p862_h100_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_final_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p90_control_contract_freeze.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p91_functional_prerequisites.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p91_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p92_periodic_functional_runtime.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p92_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p93_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p94_gradient_consistency.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p94_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p95_closure_and_p96_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p95_gradient_diagnostic_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p95_gradient_validator_v2_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p95_gradient_validator_v2_source_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p95_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p96_closure_and_p970_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p971_channel_functional_declarations.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p971_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p972_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p973_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p974_channel_functional_runtime.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p974_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p976_closure_and_p980_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p981_public_api_surface_inventory.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p982_stable_functional_api.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p983_consumer_migration.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p984_local_cumulative_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_phase9_p985a_runtime_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_plan_rc458_tf32_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_plan_rc5_g1_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_plan_rc6_single_h100_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_plan_v0_3_s09_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_prepare_phase9_p95_inputs.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_profile_combined_sbdf2_modal_block.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_profile_modal_block_crossover.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_projected_transform_truncation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_qualify_v3_2d_mother.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc3_constitutive_compatibility_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc3_known_issues_matrix.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc3_n2_public_api_migration.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc426_cross_device_checkpoint_harness.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc426_functional_checkpoint_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc447_pressure_h100_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc447_python310_compatibility.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc451_cross_runtime_adjudication.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc452_public_robustness_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc453_checkpoint_transactionality.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc454_boundary_semantics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc455_public_robustness.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc456_tf32_execution_scope.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "tests/test_rc457_installed_consumer_impact.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc457_installed_consumer_recovery.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc458_h100_closure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc458_qualification_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc458_reserved_memory_recovery.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc458_transform_counter_recovery.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc458_venv_identity.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc458_venv_identity_recovery_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_checkpoint_identity_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_checkpoint_identity_primitives.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_rc4_checkpoint_identity_primitives_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_cross_device_checkpoint_h100_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_cross_device_checkpoint_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_cross_runtime_robustness_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_fresh_initial_conditioning.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_rc4_functional_checkpoint_identity.py": [
+      "C0.1 / Df7 frozen existing file",
+      "unresolved current reader; fail closed, not a new exemption"
+    ],
+    "tests/test_rc4_functional_checkpoint_identity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_h100_preflight_recovery_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_installed_cpu_closure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_lifting_capability_contract.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_rc4_lifting_capability_restriction_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_lifting_correctness_plan.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_rc4_lifting_h100_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_lifting_installed_cpu_closure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_plane_checkpoint_identity_record.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_rc4_plane_nyquist_cuda.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_plane_nyquist_h100_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_plane_nyquist_qualification_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_post_release_findings.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_adjudication.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_contract_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_h100_qualification_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_metadata_identity_connection.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_policy_implementation_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc4_pressure_public_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_control_identity_migration_handoff.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_balanced_crossover_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_balanced_crossover_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_checkpoint_matrix_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_consumer_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_cpu_closure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_cumulative_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_cumulative_closure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_cumulative_closure_result.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_focused_performance_h100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_focused_performance_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_h100_failure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_historical_audit_portability.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_hpcc_plan_freeze_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_hpcc_preflight_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_measurement_window_implementation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_measurement_window_implementation_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_measurement_window_lifecycle_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_measurement_window_recovery.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_paired_block_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_qualification_support_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_single_h100_qualification_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_stage_producers_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_timing_instrumentation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_timing_instrumentation_result_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_timing_variability_analysis.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_timing_variability_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_transform_window_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_transform_window_recovery_result.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_g1_v13_failure_analysis.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_legacy_functional_checkpoints.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_public_error_boundary.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r511_metadata_and_strict_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r511_metadata_strict_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r513_optional_hygiene_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r52_finite_workflow_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r53_channel_checkpoint_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r53_legacy_channel_checkpoint.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r54_packaging_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r55_tf32_state_restore.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r56_public_error_boundary_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r57_device_normalization_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_r59_pressure_postcondition_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc5_w1_documentation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_rc6_2_pressure_floor_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_3_compile_preflight_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_4_channel_failure_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_6_restart_output_atomicity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_checkpoint_cpu_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_checkpoint_work_root_correction_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_consumer_execution_rebind_correction_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_control_installed_wheel_cpu_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_cuda_toolkit_preflight.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_cumulative_h100_closure_v7.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_h100_stage_producer_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_h100_stage_producers.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_installed_wheel_cpu_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_nvcc_bootstrap_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_pressure_component_diagnostic_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_profile_child_tf32_recovery_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_provider_identity_impact_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_qualification_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_qualification_support_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_rc64_channel_failure_contract.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_rc65_checkpoint_control_flow.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_recovery_bootstrap.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_recovery_bootstrap_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_rc6_single_h100_qualification_plan_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_1.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_0_final.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_0rc4_h100_smoke.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_0rc5_integration_review.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_0rc6_integration_review.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_1.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_1_final.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_1_package_preparation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_2_package_preparation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_rc5.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_2_rc6.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_3_0.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_3_0_package_preparation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_3_0rc1.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_3_0rc1_package_preparation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_release_v0_4_0.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_metadata.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_phase9_p95_h100_qualification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_rc425_installed_checkpoint_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_rc436_installed_lifting_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_rc445_installed_pressure_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_rc5_g1_foundation_stages.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_run_v0_3_s09_installed_consumer_cpu.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_shendruk_v1_dynamic_velocity_fig4_workflow.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_shendruk_v1_dynamic_velocity_timestep_convergence.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_stage_m_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_stage_n_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_stokes_pressure_diagnostics.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_tensor_inventory.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_transform_execution_order.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_1_n1_checkpoint_nfs.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_1_n1_checkpoint_nfs_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_1_n1_checkpoint_nfs_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_1_n1_h100_qualification_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_1_n1_real_nfs_cpu_qualification_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_1_post_release_acceptance_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_2_r0003_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_2_r0004_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_2_v17_checkpoint_symlink_parent.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_2_v17_checkpoint_symlink_parent_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_2_v17_r0002_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_2_v17_real_nfs_qualification_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_2_x_open_issues.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_0_roadmap.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_n1_v17_r0005_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s01_r0006_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s01_registry_migration.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s02_r0007_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s03_checkpoint_permission_errors.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s03_public_errors_metadata_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s03_r0008_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s03_r0009_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s03_rework_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s04_checkpoint_robustness.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s04_r0010_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s04_r0011_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s04_r0012_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s04_v25_rework_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_design.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s05_r0013_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s06_numerics_serialization_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s06_r0014_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s06_r0015_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s06_r0016_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_packaging_metadata_docs.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_qualification_support_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_r0017_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_r0018_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_rework_candidate_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s07_rework_close_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s08_commit_identity_corrections.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s08_historical_cpu_coverage.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s08_historical_cpu_coverage_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s08_r0019_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s08_r0021_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_api11_compatibility_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_cpu_6x60_preregistration.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_cpu_6x60_stop_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_cpu_diagnosis_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_cpu_preflight_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_cpu_rehearsal.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_d0013_closure.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_failure_analysis_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_final_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_functional_execution_scope.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_h100_support.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_legacy_checkpoint_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_pressure_operator_cache.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0022_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0023_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0023_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0024_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0024_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0025_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0026_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0026_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0027_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0028_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0028_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0029_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0029_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0030_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0030_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_r0035_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_s10_integration.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_transient_telemetry.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s09_transient_telemetry_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_final_cleanup.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_prequalification_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_r0032_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_r0033_candidate.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_r0033_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_r0036_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s10_r0037_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s11_r0038_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s11_r0039_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s12_r0040_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_3_s12_r0041_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_0_roadmap.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s13_s14_correction_source.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s13_s14_successor_67.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s14_r0042_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_candidate_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_d0016_successor_75.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_interim_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r0043_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r0044_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r0045_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r0046_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r0047_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r7_canonical_completion.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r8_d0015_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r8_inventory.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r8_inventory_v2.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_r8_local_evidence.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_successor_76.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_successor_77.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_v54_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_v55_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s16_v55_successor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_external_identity_correction.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r0048_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r0048_rework_claims.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r0048_rework_sources.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r0049_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r0050_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r0051_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r3_r6_design_proposal.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r3_r6_implementation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_r3_r6_successor_87.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_v59_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s17_v59_successor_89.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_d0018_confirmation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r0052_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r0052_scope_rework.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_4_s18_r0054_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r0055_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r0056_import.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_4_s18_r0056_import_hash_correction.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r0058_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r1_dispatch.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r1_dispatch_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r1_shadow_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r1_shadow_registry.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_4_s18_r2_checkpoint_integrity_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_4_s18_r2_successor_95.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r4_step_progress_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r4_successor_100.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r4_successor_101.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r4_successor_97.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r4_successor_98.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_4_s18_r4_successor_99.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_channel_pcg_control.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_channel_pcg_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_postcondition.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_r0057_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_successor_104.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_successor_105.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_r5_successor_106.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s18_scope_successor_92.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_consumer_attestation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_d0022.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_deployment.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_failure_classification.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_git_compatibility.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_git_successor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_login_command_boundary.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_plan.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_py310_mean.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_r0060_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_r0062_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_r0064_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_retry_registry.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_retry_successor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s19_self_compare.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_4_s20_closeout.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_4_s20_r0066_import.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_engineering.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_foundation.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_foundation_installed.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s22_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s23_record.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s24_historical_stages.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s24_retirement.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s24_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s24_successor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s25_batch.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s25_dispatch_counter.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s25_disposition.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/test_v0_5_s25_engine_core.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s25_engineering.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s25_historical_tests.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s25_stokes_extraction.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s26_allen_cahn.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s26_assembly.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s26_historical_tests.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s26_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s27_engine.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s27_historical_tests.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s27_members.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s27_r0095_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s27_r0096_rework.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s27_rewrite_contracts.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28a_historical_tests.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28a_m1.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28a_solver_state.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28a_successor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28b_historical_tests.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28b_legacy_restart.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28b_public_frontend.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28b_successor_order.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s28b_trajectory.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s29_boundary.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s29_derivatives.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s29_linear_imex.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s29_registry.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/test_v0_5_s30_closeout.py": [
+      "New test; tests never formatted."
+    ],
+    "tests/test_verify_v0_4_s16_numerical_equivalence.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/v0_3_s03_successor.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/v0_4_r1_legacy_dispatch.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/v0_5_release_manifest.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/v0_5_s24_registry_reference.py": [
+      "C0.1 / Df7 frozen existing file",
+      "direct current check or registered location"
+    ],
+    "tests/v0_5_s25_periodic_v04_checkpoint.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/v0_5_s27_plane_v04_checkpoint.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tests/v0_5_s28a_channel_v04_checkpoint.py": [
+      "C0.1 / Df7 frozen existing file"
+    ],
+    "tools/check.py": [
+      "qualification/s27_forward.py::assert_forward_binding:31,34 (15 existing forwarded tests)",
+      "existing engineering and package gate, unchanged in format proof"
+    ],
+    "tools/check_distributions.py": [
+      "existing engineering and package gate, unchanged in format proof"
+    ],
+    "tools/check_imports.py": [
+      "existing engineering and package gate, unchanged in format proof"
+    ],
+    "tools/structure_metrics.py": [
+      "existing engineering and package gate, unchanged in format proof"
+    ],
+    "visualize_nematics3d_snapshot.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "visualize_nematics3d_snapshot_channel.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ],
+    "visualize_nematics3d_snapshot_plane.py": [
+      "removed in S-30 disposition projection",
+      "C1 retired from the source tree"
+    ]
+  },
+  "formatter_commit": "3885a2b02be0ff7f1f66d35882dc8f711cd3cf33",
+  "formatter_version": "0.17.3",
+  "full_scope_rationale": "Existing frozen tests, source readers, and historical-retention paths are excluded; the format commit contains only pinned Ruff output.",
+  "incompatible": {},
+  "mode": "apply",
+  "projected_format_changes": {
+    "benchmarks/_s19_compare.py": {
+      "new": "2d7f35cc9f8441a6870fb5c8fe7d54eab02575fc0bd5be821a440cadba07db2b",
+      "old": "083e8f289f9a13484f0199085256fd881210edbae32c3e1c76d82c2a762a0df7"
+    },
+    "benchmarks/analyze_finite_q_anchoring_qualification.py": {
+      "new": "b2d16e0808220473d1b52c435434d85b70cf6c4ba4dc08e19a20a0334a197f75",
+      "old": "3e90ee3087ae884cbf5656a11a404b12c0a53b09c1b56756a994690bc79f4dbc"
+    },
+    "benchmarks/analyze_plane_static_lifting_qualification.py": {
+      "new": "fb43f85ca54dda8f764074e996868fc8b44cdb155fe30fa77af75fb746be6831",
+      "old": "e2ea71a1a6f2a8c54a6c6038c23d5d917d36f139d1b0e4cb6060ad987cfbd5f0"
+    },
+    "benchmarks/analyze_public_simulation_h100_qualification.py": {
+      "new": "84abc116990a04b110b1811e056ad22dbbd1f48cbc67a0a797ae2cdf29fb213e",
+      "old": "c8c6a22ee423322a0fdcf6213e245d18d887f32f7f6ad9cec8f4bc05c40bb8e0"
+    },
+    "benchmarks/run_v0_4_s19_environment.py": {
+      "new": "152f0bd5d9b3b8f96aa6a6af7ce207006403b9e532f756246894d7bcdbe283ba",
+      "old": "5d2e51358aadc4e5ceb7518e9cc6a24a3ff1a491e523d918e5a59d685290c744"
+    },
+    "benchmarks/stage_o42_runtime.py": {
+      "new": "47759eaf4cd044e564e7689c4ff2ae273065402f95f152a91e8b0975ca59ad6c",
+      "old": "8cdfe91cca52921640c190509faf94ed848648f2284e4698a479d4ead00199a4"
+    },
+    "benchmarks/validate_phase4_closure.py": {
+      "new": "a205877e860742e55939a661a412e8506f0b1281a68946581afa4270fd6be836",
+      "old": "d10965f728ccb4e06dd3ce7f9df57572110b5dddd9304966a479a8750a0b851c"
+    },
+    "docs/render_beris_edwards_stokes_pdf.py": {
+      "new": "602cfd3c7aa2c743ac621ea8033311249ff484b25431205537578afa6c25b062",
+      "old": "fe3702ca4ef8e2ad3ca0bbecd6af8f2de166a5854997baeae2c1cf7f0c6d2770"
+    },
+    "pssolver/api/declarations.py": {
+      "new": "8b4447ddcad72618ed60ea488896b856f0b824a76dc145208e3c1367b2f14c71",
+      "old": "4d1db4d6ab259a110357c516e43ea4bd9fc4ca864a456b5515de29a03f943688"
+    },
+    "pssolver/api/errors.py": {
+      "new": "5e3028ed60080940c137a4494cdf5829d71f0526b83eb927bbbfce7450da000d",
+      "old": "62f516945996e042ddbd967139d099f26281ce5b10a18908e4c53a1c0257e89b"
+    },
+    "pssolver/backends/bounded.py": {
+      "new": "7d21ab4059b831e5620aa41f341bba230e93395b98407f254127c294d37591af",
+      "old": "6a7a69fde920c761584cb9bd1ebfa235af75ff1098388d48d6279f4d386bddb3"
+    },
+    "pssolver/backends/tensor_product.py": {
+      "new": "0fa434de077785b79310fbb33578d273bcc33517001ddac5fafcf32a68d038b6",
+      "old": "1821029222d5b3de4462686262faef5c6f6e06b9e3f4f29f2e26afa171e95b1b"
+    },
+    "pssolver/boundaries/homogeneous.py": {
+      "new": "7eeef50c2e98edf290c3497c8705acde70ed007ec1fb063e84a7cec6772ef50c",
+      "old": "44e18db099aaf8bad3fc9e99140f93b2f5ae797f6d5ccb34f981c600eae32895"
+    },
+    "pssolver/boundaries/prescribed.py": {
+      "new": "51624255726b9cf5b10b501fd7437f75e01de7f44defb9574edf179b21963095",
+      "old": "115062358101b1b49343a4061f56b21472284ec23cde2d842af84899bbbe9fbd"
+    },
+    "pssolver/control/controls.py": {
+      "new": "9fcf32163a33885e2582f1cf008feac7d3e8afc79b40a63f2975b27f72beb18c",
+      "old": "706827dd82546df8a0b8e676c12488e0463da9c75fdf96ae9b32fd53b1794080"
+    },
+    "pssolver/control/dal.py": {
+      "new": "d7974f70020ea5823748d236b0cf7498804df11a30fb6fbbd4096d37b9f680b3",
+      "old": "517c3244664738bf8a8be4b2705ba8c7baddc4ceb1d36c15643549798eac3b0f"
+    },
+    "pssolver/control/functional.py": {
+      "new": "1255ceff83a7f0af9f98b21dceac0591b4ad9bc9b93cab3c07a3478a08f0df59",
+      "old": "276f9175184cd865ed92a3bffa55cbbaaef14e36fc878cf5061fb6ce4897605b"
+    },
+    "pssolver/control/grid_transfer.py": {
+      "new": "b2fcd265efcbdc7e33ca98275365a4667f16f20580484af21efe1151b34769ab",
+      "old": "e8042114904219b9d530571666d2aa8d67a33a0f4c955312b03cc9ece47d7b58"
+    },
+    "pssolver/control/loop_diagnostics.py": {
+      "new": "ba10a8ed9e52c2d33be24215aafab6a9fa635dcb473ec7d649ec932df6ac888b",
+      "old": "24d3142a40617dc2a05ffc000a7508ac3bdf59682e49b5e349913ddaae821862"
+    },
+    "pssolver/core/fields.py": {
+      "new": "1a7cd4bdc83c969926201f926022b1d47596144cda00a8543ed4e736901abeaa",
+      "old": "5458e8463cf0e31c994cc184d20bc4f50af52d30bf71c4657c7d6329b70ee5c7"
+    },
+    "pssolver/core/geometry.py": {
+      "new": "5413429cf35df073021fa3333997139b3c3ea26648891ab3c5ce07ef2127bc36",
+      "old": "54666cecbb56f7d05372045678a18b2e4c521a226628e1100fa5c808c2718100"
+    },
+    "pssolver/core/integrators.py": {
+      "new": "f74351cce5d3d115d883aec39326f3880b12174249299381b42dd18741e2c105",
+      "old": "ddc83a4f8e429f9c793b88fdab426276547b3aa1af736b239e1b30d927a4ee04"
+    },
+    "pssolver/core/modal_blocks.py": {
+      "new": "63b4076be47fbf3aa4f19f342c1a4b17cb1ef52df36ccfeb2ba6949e4eda7c3f",
+      "old": "85fab4dbe5a70eb005c1d70c4d248e752d9aabdc9ff7b73b4e560181c190217e"
+    },
+    "pssolver/core/numerics.py": {
+      "new": "dca2a64852b80dcae2d9cadadba17db6fe19b04ede6ded5e3834d57d99af816a",
+      "old": "69268ca5774a8bd8c2dc08bc38118c24e2ee74c9693b96caca4910880981e2af"
+    },
+    "pssolver/core/pressure.py": {
+      "new": "4021106893db050e68b3535ddfe58477dd813d7a63eb6a4375afe121e5e0a0b9",
+      "old": "adffd22a72c976b0c972127da5f93f7335aac3fed9dfd156cdd2dfa565305935"
+    },
+    "pssolver/core/problem.py": {
+      "new": "8e74da494ac685dd16ae3151979a09a810755f8a92f32ecda1e1d8c0a713d970",
+      "old": "474aa9388b44f791462606d7837a0fefb8590d24ec295740bd36e8ded1e5eae2"
+    },
+    "pssolver/diagnostics/allocator_reconciliation.py": {
+      "new": "36055538038d65c14f90d4521fd8274ac1b2fae7c1f0e983170cde98620d2fb8",
+      "old": "6a981da87dc41dc9b1f56301c22f8b86e85904a2d04b01a2818961b73727e963"
+    },
+    "pssolver/diagnostics/tensor_inventory.py": {
+      "new": "5c9f95bad72dece6eca6925ce09d996453d934c48e40d540d80eb4790d083cb1",
+      "old": "49221240655d0ec5e9645af5a16f904956a27e4286030fc8b4a341994744c310"
+    },
+    "pssolver/experimental/modal_block_checkpoint.py": {
+      "new": "ab2b62fb7e1e7aab8ecc18b03579c98c232fea45f41956fc11d55426ff39e70d",
+      "old": "0cf818429abe3ef8ae60e054061fb24baf85fb3002f60d53eb16c1870e50c820"
+    },
+    "pssolver/experimental/modal_block_reference.py": {
+      "new": "b9af80dbf79a32eca0da201356ba9569c1269668973984153930ac44bf4b2620",
+      "old": "4d08d755083dd5ce2f152455f2ce3d21028a87bc40903575121680ffb56b5e3c"
+    },
+    "pssolver/experimental/representations.py": {
+      "new": "9ed663cc37c5c0e15cb22a021b586c7dcf657e9e6ecec30239fdf05b298d4478",
+      "old": "711c632a5afee47e86cdc25aadfa12b8bfad5c64756e1f291edd79def3b3d5f6"
+    },
+    "pssolver/geometries/public.py": {
+      "new": "ba8ae030bad61935ec68925d1a80532d7dc93e00599bdd13267640a7b069e1ab",
+      "old": "2fe286b299d6f08ace8b6a054279cf7d4258e04193745931f8ebc0c53dc43761"
+    },
+    "pssolver/geometries/tensor_product.py": {
+      "new": "0dc8f85ff812ea94d7ae5f0bd97e7447e9fe32c1433bfc055c7a268693269b32",
+      "old": "7c85e20c70627716aed430261c781470d81df980c5a0f8a5f81e8cda1edb66b2"
+    },
+    "pssolver/integrators/history.py": {
+      "new": "2dff31fdbcb331fa953cbeee33c4cb01644caea22b2075a820b13ecbbbde1664",
+      "old": "05203eaf41c10cd7822326d6a6fd83ac5e35982fa76d6aca8d9d957aa3a53f72"
+    },
+    "pssolver/integrators/reference_checkpoint.py": {
+      "new": "32eb89021535a78dc8402e5b92a0a72c5a038bcdb20d88639d941083d2d862a0",
+      "old": "f38d2deeb47fd94401a49f96a81fc1cca6a0011f11c96de76f8527ce3c089c19"
+    },
+    "pssolver/integrators/reference_qualification.py": {
+      "new": "c8fac8277b2de861ec2fbdbeabe8655abd3b922f9acb47c008d9d000581e5ab0",
+      "old": "ebfc0dced803d34ed162d1f0c725ec78e421d98ee65fe6142b85b341dd5363d3"
+    },
+    "pssolver/integrators/scalar_reference.py": {
+      "new": "f70e119d825f2681671aa6fefd47caef8273ea85c8b6901acf299aec7e7f3c50",
+      "old": "2fb248d07a4125b72b76c8832923c050f5037e349fa561e816302a5e3143dd16"
+    },
+    "pssolver/linear_solvers/stokes/periodic.py": {
+      "new": "25d260b01b0d1be596a688eecf43a1b63b002c63108682ea2dbb151aff813b15",
+      "old": "d5d6cb4e05d47ccceba788a28352e43746116a81984e3457966cfad04939350c"
+    },
+    "pssolver/models/active_nematics/initial_conditions.py": {
+      "new": "f6efd0907e22e27cd87cc30f389ca53959dbbbb4aac3e1e3827ee46f837b59a5",
+      "old": "32a25c37c74835126945a2e2a9d72127d1e7929b375a1367145a0661caace1f8"
+    },
+    "pssolver/models/active_nematics/nematics3d_adapter.py": {
+      "new": "c3f360bb45ad8a762c0bb3a63f1de4b95c4cb883b724627d1d5226b9991a89b2",
+      "old": "b05482c5f5475826ab78cb77c663546980a7cf5d358e656803bd5d1148900c32"
+    },
+    "pssolver/models/active_nematics/stokes.py": {
+      "new": "b8312c6308ad768cacd2006b11b1f8981ed44df92d5497bc44f408eb273a2133",
+      "old": "d1f028b0d6f941454ddc31d362acf19a45050ef7f466564f7283d5e706a8a3a1"
+    },
+    "pssolver/operators/modal_block.py": {
+      "new": "129ba58af78450ef414bee05cde9823d58ad57e0ad74fdb7bc6a9e41a9c08b1c",
+      "old": "e6ab8ee536be34212a88fcacffa26527d5e018c3e7358f69450088696de11f28"
+    },
+    "pssolver/operators/modal_block_reference.py": {
+      "new": "dabb405650e8d02669608018c4f099357bf0f8814254a990626bbf5675fb7ab6",
+      "old": "036b1f71211ab042f9583a1674074355db6e4810fb95d6b4e83c32a47c4e9b69"
+    },
+    "pssolver/operators/tensor_divergence.py": {
+      "new": "f1c2fade392531f7802c7a3bf190bf03819de439f5480cba503ec7746c039290",
+      "old": "9973caaff7b08063f5ea5d1706a84d676ac47f0c5f2cc0da85e73417cafbf4f2"
+    },
+    "pssolver/runtime/simulation_run.py": {
+      "new": "685e08b76b31c4d4e66fdb7f9fc0aa89a0f76cab89a08a0b78368f30740c1caf",
+      "old": "abd5b37e1e778fc4e8f551d8b1edf6890c6bc8db7b760722fa9f1db5aadde050"
+    },
+    "pssolver/snapshots.py": {
+      "new": "cd91cfc3433b9cf21bc187288c4130360f690146f7f4298253917245ad6a191a",
+      "old": "da1baae35b8d7d1dae00ab94171369e8dd66e2f956a064a7107171e81af75180"
+    },
+    "pssolver/utils.py": {
+      "new": "3ab2fed9a14d22a75ca17c5ade35e09acdf720235015f48021181b71bf4a9b9f",
+      "old": "daad597a0cc2ed182715ba66aeb3378146cbf81b7f2d2102098889d14f1b5578"
+    }
+  },
+  "ruff_sha256": "6761c67c2b307be3905473b165eb5af0fb2f083836b04f9e4a8cdd0caee37833"
+}

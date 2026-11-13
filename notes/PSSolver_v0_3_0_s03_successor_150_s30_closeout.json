@@ -1,0 +1,881 @@
+{
+  "basis_commit": "7161608913809466b0f9dc85e419fe9f3fec5a9e",
+  "classification": "s30_closeout_candidate",
+  "decisions": [
+    "D-0041",
+    "D-0058",
+    "D-0069",
+    "D-0071",
+    "D-0072"
+  ],
+  "design_check": "R-0130",
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "AGENTS.md": {
+      "current_sha256": "767a4e92c6b797abab4399b295fb0315dd55e5534f7714a2d6ec7a49fecd55d6",
+      "historical_sha256": "4e00e22c67798a0430551969f166871e855c3c9a966d126336384236d7fcd4eb",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "ARCHITECTURE.md": {
+      "current_sha256": "1aff2f83e76af2ccfb63e79aa760ee8087f1f401cafd539d8e39a09af9eab7e8",
+      "historical_sha256": "d2f847414461b4956cd75ed32760bd6f240f00091e495cc8e69d45443194997e",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "CHANGELOG.md": {
+      "current_sha256": "b835f2b1dfc1aef69ba0cf6e8b02e2814809d1904ec56bde706ef8c3eba198b1",
+      "historical_sha256": "4063fb3891791c16e71fb6cc65cc753969eb0608773600be07eaad9a2f138be6",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/_s19_compare.py": {
+      "current_sha256": "2d7f35cc9f8441a6870fb5c8fe7d54eab02575fc0bd5be821a440cadba07db2b",
+      "historical_sha256": "083e8f289f9a13484f0199085256fd881210edbae32c3e1c76d82c2a762a0df7",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/analyze_finite_q_anchoring_qualification.py": {
+      "current_sha256": "b2d16e0808220473d1b52c435434d85b70cf6c4ba4dc08e19a20a0334a197f75",
+      "historical_sha256": "3e90ee3087ae884cbf5656a11a404b12c0a53b09c1b56756a994690bc79f4dbc",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/analyze_plane_static_lifting_qualification.py": {
+      "current_sha256": "fb43f85ca54dda8f764074e996868fc8b44cdb155fe30fa77af75fb746be6831",
+      "historical_sha256": "e2ea71a1a6f2a8c54a6c6038c23d5d917d36f139d1b0e4cb6060ad987cfbd5f0",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/analyze_public_simulation_h100_qualification.py": {
+      "current_sha256": "84abc116990a04b110b1811e056ad22dbbd1f48cbc67a0a797ae2cdf29fb213e",
+      "historical_sha256": "c8c6a22ee423322a0fdcf6213e245d18d887f32f7f6ad9cec8f4bc05c40bb8e0",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/run_v0_4_s19_environment.py": {
+      "current_sha256": "152f0bd5d9b3b8f96aa6a6af7ce207006403b9e532f756246894d7bcdbe283ba",
+      "historical_sha256": "5d2e51358aadc4e5ceb7518e9cc6a24a3ff1a491e523d918e5a59d685290c744",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/stage_o42_runtime.py": {
+      "current_sha256": "47759eaf4cd044e564e7689c4ff2ae273065402f95f152a91e8b0975ca59ad6c",
+      "historical_sha256": "8cdfe91cca52921640c190509faf94ed848648f2284e4698a479d4ead00199a4",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "benchmarks/validate_phase4_closure.py": {
+      "current_sha256": "a205877e860742e55939a661a412e8506f0b1281a68946581afa4270fd6be836",
+      "historical_sha256": "d10965f728ccb4e06dd3ce7f9df57572110b5dddd9304966a479a8750a0b851c",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "docs/migration_0_4_to_0_5.md": {
+      "current_sha256": "832c3b275929994b9d5268abe2bf0ca2e788b96fb10400dbcd4f549ba63b59d7",
+      "historical_sha256": "9a8b3a7623d899e266610d2c42a38e13b492e2f2e647919db094b4b52169c52b",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "docs/render_beris_edwards_stokes_pdf.py": {
+      "current_sha256": "602cfd3c7aa2c743ac621ea8033311249ff484b25431205537578afa6c25b062",
+      "historical_sha256": "fe3702ca4ef8e2ad3ca0bbecd6af8f2de166a5854997baeae2c1cf7f0c6d2770",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/capabilities.py": {
+      "current_sha256": "80aeca4eac94b515f3539ba21e627e36c614774febaa37b59caa4fe7bda1ffd9",
+      "historical_sha256": "8fe488c00f5bedac7c187d9945e9bc955c713551765d5dce2f88d84907233ca5",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/declarations.py": {
+      "current_sha256": "8b4447ddcad72618ed60ea488896b856f0b824a76dc145208e3c1367b2f14c71",
+      "historical_sha256": "d1a4897d2ce1833b9ce1612d915b25993adec932177fb4de001bb6e489d6c680",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/errors.py": {
+      "current_sha256": "5e3028ed60080940c137a4494cdf5829d71f0526b83eb927bbbfce7450da000d",
+      "historical_sha256": "b2ec31ab255dded7276273fea87945c208ae2931c5287eefcfd13ca6ad410d33",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/models.py": {
+      "current_sha256": "ee637fc8a4da7a015de8a4adbd945e4b6bf60762d77fe9584e7fb1aee1458b70",
+      "historical_sha256": "fd2d974550f572834f31f8510f7804baa0b07fcfaac7ba5c166a195087564b1b",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/results.py": {
+      "current_sha256": "3d97e704f7f5e3769fb306834f82c537fc1bfe329024261ad511ac3910b501fd",
+      "historical_sha256": "cd0c1474fe11ee941276331f1550b265eb6c9a8c205d37197e98726b737f5f08",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/runner.py": {
+      "current_sha256": "f637b824d9fca9a18998ac73b9414511ff98eda69370ac17a392e755883414be",
+      "historical_sha256": "f3d8c0cc9e69557305602dd0d8ddf9631cbeb06ce19567c5c8a736e421843b68",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/api/simulation.py": {
+      "current_sha256": "02d20d33fcec80cfee98c5bdb2c22f2e2da2cf3ae4a811433ef1f78750626d9f",
+      "historical_sha256": "5e3549db3e7fb61c151b686b1e1a0538192d952c0822b6220180a2345848dcda",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/backends/bounded.py": {
+      "current_sha256": "7d21ab4059b831e5620aa41f341bba230e93395b98407f254127c294d37591af",
+      "historical_sha256": "6a7a69fde920c761584cb9bd1ebfa235af75ff1098388d48d6279f4d386bddb3",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/backends/tensor_product.py": {
+      "current_sha256": "0fa434de077785b79310fbb33578d273bcc33517001ddac5fafcf32a68d038b6",
+      "historical_sha256": "1821029222d5b3de4462686262faef5c6f6e06b9e3f4f29f2e26afa171e95b1b",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/boundaries/homogeneous.py": {
+      "current_sha256": "7eeef50c2e98edf290c3497c8705acde70ed007ec1fb063e84a7cec6772ef50c",
+      "historical_sha256": "a98d6b87ceff3133a7895a849afeed59b0579bd4d8b4227ed27c980236fd96df",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/boundaries/prescribed.py": {
+      "current_sha256": "51624255726b9cf5b10b501fd7437f75e01de7f44defb9574edf179b21963095",
+      "historical_sha256": "115062358101b1b49343a4061f56b21472284ec23cde2d842af84899bbbe9fbd",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/control/controls.py": {
+      "current_sha256": "9fcf32163a33885e2582f1cf008feac7d3e8afc79b40a63f2975b27f72beb18c",
+      "historical_sha256": "706827dd82546df8a0b8e676c12488e0463da9c75fdf96ae9b32fd53b1794080",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/control/dal.py": {
+      "current_sha256": "d7974f70020ea5823748d236b0cf7498804df11a30fb6fbbd4096d37b9f680b3",
+      "historical_sha256": "517c3244664738bf8a8be4b2705ba8c7baddc4ceb1d36c15643549798eac3b0f",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/control/functional.py": {
+      "current_sha256": "1255ceff83a7f0af9f98b21dceac0591b4ad9bc9b93cab3c07a3478a08f0df59",
+      "historical_sha256": "276f9175184cd865ed92a3bffa55cbbaaef14e36fc878cf5061fb6ce4897605b",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/control/grid_transfer.py": {
+      "current_sha256": "b2fcd265efcbdc7e33ca98275365a4667f16f20580484af21efe1151b34769ab",
+      "historical_sha256": "e8042114904219b9d530571666d2aa8d67a33a0f4c955312b03cc9ece47d7b58",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/control/loop_diagnostics.py": {
+      "current_sha256": "ba10a8ed9e52c2d33be24215aafab6a9fa635dcb473ec7d649ec932df6ac888b",
+      "historical_sha256": "24d3142a40617dc2a05ffc000a7508ac3bdf59682e49b5e349913ddaae821862",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/errors.py": {
+      "current_sha256": "a87d687b4a45da54cec6bd605e32a1a981c8dbc653672fadeb88e9627c98f4d5",
+      "historical_sha256": "a50ed583752578f12c17112c5306b7f5e73a74b45697ee26ec5e67c85633cabe",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/fields.py": {
+      "current_sha256": "1a7cd4bdc83c969926201f926022b1d47596144cda00a8543ed4e736901abeaa",
+      "historical_sha256": "5458e8463cf0e31c994cc184d20bc4f50af52d30bf71c4657c7d6329b70ee5c7",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/geometry.py": {
+      "current_sha256": "5413429cf35df073021fa3333997139b3c3ea26648891ab3c5ce07ef2127bc36",
+      "historical_sha256": "7710c5b2d8eef52f4ab6a3215646b0e0521b853e516f06d8cdfbc1970915a85d",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/integrators.py": {
+      "current_sha256": "f74351cce5d3d115d883aec39326f3880b12174249299381b42dd18741e2c105",
+      "historical_sha256": "ddc83a4f8e429f9c793b88fdab426276547b3aa1af736b239e1b30d927a4ee04",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/modal_blocks.py": {
+      "current_sha256": "63b4076be47fbf3aa4f19f342c1a4b17cb1ef52df36ccfeb2ba6949e4eda7c3f",
+      "historical_sha256": "85fab4dbe5a70eb005c1d70c4d248e752d9aabdc9ff7b73b4e560181c190217e",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/numerics.py": {
+      "current_sha256": "dca2a64852b80dcae2d9cadadba17db6fe19b04ede6ded5e3834d57d99af816a",
+      "historical_sha256": "69268ca5774a8bd8c2dc08bc38118c24e2ee74c9693b96caca4910880981e2af",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/pressure.py": {
+      "current_sha256": "4021106893db050e68b3535ddfe58477dd813d7a63eb6a4375afe121e5e0a0b9",
+      "historical_sha256": "adffd22a72c976b0c972127da5f93f7335aac3fed9dfd156cdd2dfa565305935",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/core/problem.py": {
+      "current_sha256": "8e74da494ac685dd16ae3151979a09a810755f8a92f32ecda1e1d8c0a713d970",
+      "historical_sha256": "474aa9388b44f791462606d7837a0fefb8590d24ec295740bd36e8ded1e5eae2",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/diagnostics/allocator_reconciliation.py": {
+      "current_sha256": "36055538038d65c14f90d4521fd8274ac1b2fae7c1f0e983170cde98620d2fb8",
+      "historical_sha256": "6a981da87dc41dc9b1f56301c22f8b86e85904a2d04b01a2818961b73727e963",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/diagnostics/tensor_inventory.py": {
+      "current_sha256": "5c9f95bad72dece6eca6925ce09d996453d934c48e40d540d80eb4790d083cb1",
+      "historical_sha256": "49221240655d0ec5e9645af5a16f904956a27e4286030fc8b4a341994744c310",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/experimental/modal_block_checkpoint.py": {
+      "current_sha256": "ab2b62fb7e1e7aab8ecc18b03579c98c232fea45f41956fc11d55426ff39e70d",
+      "historical_sha256": "0cf818429abe3ef8ae60e054061fb24baf85fb3002f60d53eb16c1870e50c820",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/experimental/modal_block_reference.py": {
+      "current_sha256": "b9af80dbf79a32eca0da201356ba9569c1269668973984153930ac44bf4b2620",
+      "historical_sha256": "4d08d755083dd5ce2f152455f2ce3d21028a87bc40903575121680ffb56b5e3c",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/experimental/representations.py": {
+      "current_sha256": "9ed663cc37c5c0e15cb22a021b586c7dcf657e9e6ecec30239fdf05b298d4478",
+      "historical_sha256": "711c632a5afee47e86cdc25aadfa12b8bfad5c64756e1f291edd79def3b3d5f6",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/geometries/public.py": {
+      "current_sha256": "ba8ae030bad61935ec68925d1a80532d7dc93e00599bdd13267640a7b069e1ab",
+      "historical_sha256": "41a7e0ee7a72025b4a1bc9630fafa24281afcded595b17730c5d97b33288e7a4",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/geometries/tensor_product.py": {
+      "current_sha256": "0dc8f85ff812ea94d7ae5f0bd97e7447e9fe32c1433bfc055c7a268693269b32",
+      "historical_sha256": "346932a45b4c6c83eceec233e61737b22506bbd4647f962c2020386ec06baa54",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/integrators/history.py": {
+      "current_sha256": "2dff31fdbcb331fa953cbeee33c4cb01644caea22b2075a820b13ecbbbde1664",
+      "historical_sha256": "05203eaf41c10cd7822326d6a6fd83ac5e35982fa76d6aca8d9d957aa3a53f72",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/integrators/reference_checkpoint.py": {
+      "current_sha256": "32eb89021535a78dc8402e5b92a0a72c5a038bcdb20d88639d941083d2d862a0",
+      "historical_sha256": "f38d2deeb47fd94401a49f96a81fc1cca6a0011f11c96de76f8527ce3c089c19",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/integrators/reference_qualification.py": {
+      "current_sha256": "c8fac8277b2de861ec2fbdbeabe8655abd3b922f9acb47c008d9d000581e5ab0",
+      "historical_sha256": "ebfc0dced803d34ed162d1f0c725ec78e421d98ee65fe6142b85b341dd5363d3",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/integrators/scalar_reference.py": {
+      "current_sha256": "f70e119d825f2681671aa6fefd47caef8273ea85c8b6901acf299aec7e7f3c50",
+      "historical_sha256": "2fb248d07a4125b72b76c8832923c050f5037e349fa561e816302a5e3143dd16",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "current_sha256": "2c5aee3494c8ebd6558d4de6d4483cb9ae02094abdeab0084f9d464f7dbea821",
+      "historical_sha256": "a2d4bd6b338bd6e0a3d7a36f7164f6dfd2c05544248a0952617ed765e2899d69",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/linear_solvers/stokes/periodic.py": {
+      "current_sha256": "25d260b01b0d1be596a688eecf43a1b63b002c63108682ea2dbb151aff813b15",
+      "historical_sha256": "d5d6cb4e05d47ccceba788a28352e43746116a81984e3457966cfad04939350c",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/models/active_nematics/initial_conditions.py": {
+      "current_sha256": "f6efd0907e22e27cd87cc30f389ca53959dbbbb4aac3e1e3827ee46f837b59a5",
+      "historical_sha256": "32a25c37c74835126945a2e2a9d72127d1e7929b375a1367145a0661caace1f8",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/models/active_nematics/nematics3d_adapter.py": {
+      "current_sha256": "c3f360bb45ad8a762c0bb3a63f1de4b95c4cb883b724627d1d5226b9991a89b2",
+      "historical_sha256": "b05482c5f5475826ab78cb77c663546980a7cf5d358e656803bd5d1148900c32",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/models/active_nematics/stokes.py": {
+      "current_sha256": "b8312c6308ad768cacd2006b11b1f8981ed44df92d5497bc44f408eb273a2133",
+      "historical_sha256": "d1f028b0d6f941454ddc31d362acf19a45050ef7f466564f7283d5e706a8a3a1",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/operators/modal_block.py": {
+      "current_sha256": "129ba58af78450ef414bee05cde9823d58ad57e0ad74fdb7bc6a9e41a9c08b1c",
+      "historical_sha256": "e6ab8ee536be34212a88fcacffa26527d5e018c3e7358f69450088696de11f28",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/operators/modal_block_reference.py": {
+      "current_sha256": "dabb405650e8d02669608018c4f099357bf0f8814254a990626bbf5675fb7ab6",
+      "historical_sha256": "036b1f71211ab042f9583a1674074355db6e4810fb95d6b4e83c32a47c4e9b69",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/operators/tensor_divergence.py": {
+      "current_sha256": "f1c2fade392531f7802c7a3bf190bf03819de439f5480cba503ec7746c039290",
+      "historical_sha256": "9973caaff7b08063f5ea5d1706a84d676ac47f0c5f2cc0da85e73417cafbf4f2",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/runtime/simulation_run.py": {
+      "current_sha256": "685e08b76b31c4d4e66fdb7f9fc0aa89a0f76cab89a08a0b78368f30740c1caf",
+      "historical_sha256": "abd5b37e1e778fc4e8f551d8b1edf6890c6bc8db7b760722fa9f1db5aadde050",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/snapshots.py": {
+      "current_sha256": "cd91cfc3433b9cf21bc187288c4130360f690146f7f4298253917245ad6a191a",
+      "historical_sha256": "da1baae35b8d7d1dae00ab94171369e8dd66e2f956a064a7107171e81af75180",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pssolver/utils.py": {
+      "current_sha256": "3ab2fed9a14d22a75ca17c5ade35e09acdf720235015f48021181b71bf4a9b9f",
+      "historical_sha256": "daad597a0cc2ed182715ba66aeb3378146cbf81b7f2d2102098889d14f1b5578",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "pyproject.toml": {
+      "current_sha256": "f1e1c3840d7d3096efc8dcde4f95ce6dc7835d9b5d7e1bbd75ab4032bce0e6b4",
+      "historical_sha256": "04aa06b2183f1c991a8bfe4ff53c665aa2fafd288a3f6a84fc4b3a504a999227",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "e5bbdd28319abb5e448291aa406b86b58c96c7ef4f0199fc0ce7ccbdaf944647",
+      "historical_sha256": "1cfcb79c94c2fad4961f3f468e451262793cef8a153909d6a5b77eeaabf205e1",
+      "reason": "S-30 forward binding; prior frozen records remain unchanged."
+    }
+  },
+  "implementation_ruling": "R-0131",
+  "introduced_sources": {
+    "qualification/s30_disposition.json": "c3d68622d96db420a031fccdc89f0d831bfbfe79f25a9efa029308ba3893f888",
+    "qualification/s30_format_scope.json": "c0fd433c25a869e0c68a67bd3af78f2f2a4accd611a6616d15b7b28587af1e7f",
+    "qualification/s30_guard.py": "d1f8cd59f251867c4fbe6566aca0bd8a2ab2cb56d5c590fd6f5f00422168228b",
+    "tests/test_v0_5_s30_closeout.py": "b2f330b0390a45cc8e0088122388926af3a59ecf1d451de5743fdad6d965a6cc"
+  },
+  "retired_sources": {
+    "Channel_control.py": {
+      "sha256": "8ec43543b29c2f97cb06ee346477eb0961b56ed5122b16efea636e0bda2684a3",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Channel_control_box.py": {
+      "sha256": "c62304c32bcc72973be13175435d8c3592f5f2cdcdc782f530eed93ba62ece0f",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Channel_control_box_high_temporal_resolution.py": {
+      "sha256": "c40f4a6ea4079639d62a56398644567bfaf9c98b6804662fe1a183c9dcf09910",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Channel_dal.py": {
+      "sha256": "c68389060e48c082b6078f470ff22f77d2327c87e1ad362a5e875f7880bb96db",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Channel_optimal_control.py": {
+      "sha256": "e256d6fa3a7f3f0bfd7466296df4935f613922f51e8e99a68ec35e3c510d58fc",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Periodic.py": {
+      "sha256": "49cbb26dd9c2670b060dc183e16c1fc05cfcf4cd9ff5bae130d3bb5246e195c6",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane.py": {
+      "sha256": "83f6b56062c1b6d074ec3fee89ec262cddc9b2e58a1ba017f23c13331bc12fbf",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_H15_twist_evolution.py": {
+      "sha256": "46f16b8c3f3d69cf66f6d8fd506f4736feaffe091d747176ce4b007ab10d60ce",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_beris_edwards_navier_stokes.py": {
+      "sha256": "a0ce0f877096a0def4b9dec35426d4e98a056bea86236d25d53873286be65489",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_beris_edwards_shadow.py": {
+      "sha256": "5f63dee3dce7e0e97a2f286c6ab889b4a546d10dfaa492b130a69a4e64f11e3c",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_fig4_benchmark.py": {
+      "sha256": "e1935a282b17795ab8cc7630e6376eb5724bd926fa35cfb7528982f1f3a5df96",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_free_slip.py": {
+      "sha256": "6d44fd05f8540db5fe75db4d523aedf88100f5446d87e025a2c5b7ac79ef750d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_free_slip_dealiased.py": {
+      "sha256": "0a03eb7d5fe2a6fdd76b6242ee5f859c1eff616865f3d011f0ef809ca050f4cb",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "Plane_shendruk_stokes.py": {
+      "sha256": "783cf9b884ce237015a1ddd7d0a79f759df5c57db6d5f66279c5dc0210e32840",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/analyze_periodic_hermitian_profiles.py": {
+      "sha256": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": {
+      "sha256": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": {
+      "sha256": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/analyze_rc2_g5_installed_smokes.py": {
+      "sha256": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/benchmark_periodic_fast_path.py": {
+      "sha256": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/benchmark_stokes_pressure_diagnostics.py": {
+      "sha256": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/benchmark_transform_backend.py": {
+      "sha256": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/capture_beris_edwards_nsys.py": {
+      "sha256": "b79cadeef16f14bbe925707dc06652c09676075ab937c5103cba1efce8a032b2",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": {
+      "sha256": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": {
+      "sha256": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/diagnose_plane_static_lifting_recovery.py": {
+      "sha256": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/profile_periodic_hermitian_qualification.py": {
+      "sha256": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/run_periodic_hermitian_profile_matrix.py": {
+      "sha256": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/run_phase9_p95_gradient_diagnostic.py": {
+      "sha256": "9aba2b6c0daa8d3f3d3861d0a4e9c222baa7fcc82ae1ea43a6f4bc772766c27d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/run_phase9_p95_gradient_validator_v2.py": {
+      "sha256": "44930fe16019e318c86493029141b6b9575a2078551395c6399c6ad22d51a137",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/run_public_simulation_h100_case.py": {
+      "sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/run_rc2_g5_installed_smoke.py": {
+      "sha256": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "benchmarks/smoke_periodic_fast_path_default.py": {
+      "sha256": "f10271c79a942a108846c58d47f680a674bc032addcc0f99dde510c80546a1de",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "compare_dealias_100k.py": {
+      "sha256": "2c976ed346f7a3211abcd4ef9d45c9e4ca8ffd2070b17a060489f283e3471fd0",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "compare_dealias_final_spectra.py": {
+      "sha256": "7d6e6c4b5ba2d2ff447a7330fac3a56ae566a48f421b896ea08f92e298c59d34",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "run_dealias_100k_remaining.sh": {
+      "sha256": "afbd5313f11599b0f41cb4322c513a63a5834afbd3bde3aea3643df8a35cf755",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/analyze_loop.py": {
+      "sha256": "acfb1b6f34ef38d5ad7a8c8d1db974635af742f02202e1e63a2d6fab8c003574",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/calibrate_pure_splay_forward.py": {
+      "sha256": "a934950b1b690184b069bf96b63c505ef068ebfb938f70bb3d909c61b9d11705",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/check_pressure_bc.py": {
+      "sha256": "6d9f072f2d3763933a79643e588c69f845b11d9b7c6d0dabd2c7a38cf5a52d64",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compare_dal_initial_alpha.py": {
+      "sha256": "6b67575aa36ce8dfbba41621bef248bde5a0f0dbd2016cda72d41722be1dd363",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compare_dal_moment_runs.py": {
+      "sha256": "19c85095d43be7d43d30ce393432b173d772a7c00b7ef42ed16af786f715b238",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compare_dal_resolution_convergence.py": {
+      "sha256": "66ad23312a6f8a3f92fdd30b459458b72ceeaaaf5176b1f70fda5d54f3742fed",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compare_dal_shape_runs.py": {
+      "sha256": "9032d8af722d5e91b5deae3fef4c17d63f3ba15522e80f000da091cf5e60d70e",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compose_beta_3steps.py": {
+      "sha256": "915587873c11972f340416e99386336ff4f1aa7d5243d66fae652da7efe37ce4",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compose_beta_channel.py": {
+      "sha256": "ad0612f13e4c51ddefdf20118033ae7648d4a33c12c36628ea7a410e6bd81df0",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/compose_loop_summary.py": {
+      "sha256": "ba5db8a3a9b65d899cd35ec983d2b66ed65136964355b2efd0b125a738f0b0d5",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/defect_histogram.py": {
+      "sha256": "55771e46dcf15e0ee6bf529d587be01c03621b7cb3258fe60890b8e99bb4df7f",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/generate_pure_splay_loop.py": {
+      "sha256": "2ad730d926f1e1727991ef61abb6a9bd49494ffbdba2ec964a8eef5fae6ac73d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/plot_loop_radius.py": {
+      "sha256": "fdeaccc741f1f50f9f36986b92d115c249f96236acac7f27e8c8f793c00aa2e3",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/reconstruct_loop.py": {
+      "sha256": "d3cc7cc6415554f82c173aef291319a0835f8c5cfc0184a25cdd07d7ee0ef91d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_alpha_beta_movie.py": {
+      "sha256": "9d1a694be2edd323ef2d72c07630920b4e60aab77985460e4694347566024512",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_alpha_geometry.py": {
+      "sha256": "05880bcef7da8f625f0098d2b4113f934a61587e56a97a101ad4cbf1731ab52d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_beta_3steps.py": {
+      "sha256": "d2835b391d157d254a821f0bd43af0ed3b996dadb95a9fea79cee15fd42cfe5d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_beta_frame.py": {
+      "sha256": "9a9c876af996f2c8078aebbe5aff1e0eec978375516aa116f4534c1f1d1e8b9d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_channel_geometry.py": {
+      "sha256": "d78fe7551ce1fa81ec3f1a55ee17545d8c7a16a12deb43a0d1efa6ea2866d8f1",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_channel_movie.sh": {
+      "sha256": "dcef206bc4af28d5381126715c7f85f89d1197db22f0c02ce7905e12364a7fbc",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_dal_initial_target.py": {
+      "sha256": "939110a6c25bb1a90e7567d6fdc2fa8cf0eb04508e2760b649de28e86f5ace21",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_loop_3steps.py": {
+      "sha256": "e573b67ff6962cd33befc4c5d35a25492f8fbd840642dd97cf14d747855a8d5a",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/render_loop_5steps.py": {
+      "sha256": "c282e07e611a84e0b546f7ba723a931a41c608fefd2debe3fef0366cf4dfaca5",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/run_dal_resolution_convergence.py": {
+      "sha256": "21e21f504dc1a463abb490ac0048b9a3f3167211009ea1e4df7fba8141d5e70b",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/run_dal_shape_comparison.py": {
+      "sha256": "530f1f959bb8476a7e66467522139d2a2e3cb0c6d8d74c95ee2c954b846bb4ae",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/validate_dal_core_geometry.py": {
+      "sha256": "595bfd0e41c035a1efeeb6025be17a5130c261e83ad438da147bb27ec9c7b362",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/validate_dal_forward.py": {
+      "sha256": "02e18568aaa41f062adc1065afd169bdbd03fc05f3bc5c5a255424a5d86b5ca1",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/velocity_correlation.py": {
+      "sha256": "0329acab7772cd9120a2cac6331ccf38a24f3b108783d31fa14720515036e330",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/velocity_spectrum.py": {
+      "sha256": "0397ecfef8311334a114ab73ebc0be67a4e3a50c2d5308abc82bf4c4c0fcce5c",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/velocity_stats.py": {
+      "sha256": "65412d7bd634883f588972a5f6ed56f7128fb041300702bb99219c648d9e742b",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/visualize_dal_activity_mechanism.py": {
+      "sha256": "49caaab3a206d3c49269df0889bda4bf8e2dbdce154a362bd80f80d928cefb34",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_channel/visualize_dal_result.py": {
+      "sha256": "ebfea8cf0f3a7c3b6a03474b2d7319f6728fb6d5600d086c3277dc4824185f0b",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_beris_edwards_stationarity.py": {
+      "sha256": "3ab44c45927954c8c34d090a731b71a16f384707567af372a527877840143f8e",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_fig4_sigma.py": {
+      "sha256": "bf267d8db7d00408f3b343dcb90ea90794bb2e8c3ca17c86b0b93990b6459a83",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_h15_twist_sigma.py": {
+      "sha256": "c6690898a6ab6e5c56201208aa09300e91dc181346bc1b2319848823d3d69a64",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_plane_stage_q2.py": {
+      "sha256": "98b325fd4de2cd128c3d86b0ac9c3efce65b777086e5a0dec30e3cdd9feee658",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_plane_stage_q3.py": {
+      "sha256": "e43a9ed51cb36d9f5a2d89aac406c3f425dac1a81eb96d10c935da4397dc36d7",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_plane_stage_q5.py": {
+      "sha256": "e15cef4bc8a8b85fde90e7e024a245542069684e799081362f2ff76a07849174",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_plane_stage_q6.py": {
+      "sha256": "221cde5d4fa13a9a43f8423cacbcc792a9ded87f507cd69b116a001e11f14ed8",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/analyze_plane_stage_q61.py": {
+      "sha256": "9102cf13c81d7b0685b89865f0835c71238ce27ada948bd8879a073cc5f1ca26",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/check_pressure_bc.py": {
+      "sha256": "6d9f072f2d3763933a79643e588c69f845b11d9b7c6d0dabd2c7a38cf5a52d64",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/close_plane_stage_o.py": {
+      "sha256": "f4772a3fc7637d57666528fa1f7e0322260be7dfe4026478d99477d43d1fc85a",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/defect_histogram.py": {
+      "sha256": "c14bd1dfec7db99f0635f742002f0b120ec7ad6664bf92edfe33deef0daed11f",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_shadow_h100_qualification.py": {
+      "sha256": "801947d4e62726ef226e57eca98356dd326b2ab0658e8e89e47916ddd1a714fd",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n1.py": {
+      "sha256": "91be376b35a385745cfe1c2eb5ee61f3156669009e523480ad8df1d9d32edd2d",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n2.py": {
+      "sha256": "2442bff116e638cab71671710486d5ae945e138d26eded3b104c36add82f1ad6",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n3.py": {
+      "sha256": "95c94040b3c5cd3e580843d97cf00d9683bb5a9fb43bc62f2153ea72e8ac199a",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n4.py": {
+      "sha256": "489d88d99d20c27a5579eb1c6bf0387e7b9b5f2ca1e6efdbb0c3c1a4c7fa9128",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_shadow_stage_n_diagnostics.py": {
+      "sha256": "84bbd807091f1e5f1aeda4ac6782881612919505a11213b8d24a84495df9f74b",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o41_qualification.py": {
+      "sha256": "c4f48ca3dc0f16629d9d75d8e1beb0344ceedcbd700daebb1b2f5ca0e28c34e1",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o42_diagnostics.py": {
+      "sha256": "2d4f6c8dfa55cd73a2a33e41a86b282484517b5b0b0cb72b2c1a241fee4ae66b",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o431_qualification.py": {
+      "sha256": "8c1207320ad6f16c7be1eb1a1aa432be6b4ee7c5e67ce1479e1be49b503ac820",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o433_qualification.py": {
+      "sha256": "014596ed9ca74c6fff0f53c09fa56ef1072333b260937181a509571bdf6fb40b",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o434_diagnostic.py": {
+      "sha256": "940f61ec96535db0892e18a780955d87d803bbf850eea0670fefe877d003b611",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o43_qualification.py": {
+      "sha256": "33819cf15a37bb65b67cc5ef9846e9e8916871bb689543fb43241ea38f97f309",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o4_qualification.py": {
+      "sha256": "e81ce4b67c565072b0b66fd75362cf1906c0979e0ecebb550dcddf11088664c6",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_o_migration.py": {
+      "sha256": "83505a44000c7ed9b2c971d522dfe640632999438dfbdd739b89e7615880582f",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_p.py": {
+      "sha256": "bf5cb93b6ef8b2363cf58fb195ca674c58bafc477ea844bb434a335a58ce0fc4",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plan_plane_stage_q4.py": {
+      "sha256": "7a4fd4ad112167f4cdfc1f8a2ee6acc293540eb1e5b434449e6be0338d869dfe",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/plot_velocity_stats.py": {
+      "sha256": "bfeda6977eb0aa568ed05903044d5062037ce53416e172f976eb76597dd233b7",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/render_nematics3d_movie.sh": {
+      "sha256": "263a8d891dd3c5b798c65ac944632ec36c8493d10d6fde9077c87020660070df",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/run_beris_edwards_validation.py": {
+      "sha256": "54080284731062defea6d47466b35b035b0370a770c669e572e1abcf4b019f88",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/run_fig4_reproduction.sh": {
+      "sha256": "8992f33ae9851fafc798e835c3d80095b5bb2e081b742e3ddd105024bd7f88fe",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/run_fig4_scan.sh": {
+      "sha256": "1398b21be6fc7146a5ec7ac3f224910deac18581c5a92b348b96ee4aae39301f",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/v3_plane_beris_edwards_stokes.py": {
+      "sha256": "76f48f59d1a9928976fa9c3b5b1193659f2263061dfece235008311c5f0086e9",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/validate_beris_edwards_outputs.py": {
+      "sha256": "1346fdf879889aff25ceee9259931c5a03f823f0ac32dffb1d174f6a8ae5f9fe",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/velocity_correlation.py": {
+      "sha256": "db8b58e33c7b1bc0200579f5677b65a7c981959039ac5a7aa2fb33aedd5a3f8c",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "scripts_plane/velocity_spectrum.py": {
+      "sha256": "0397ecfef8311334a114ab73ebc0be67a4e3a50c2d5308abc82bf4c4c0fcce5c",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "visualize_nematics3d_snapshot.py": {
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "visualize_nematics3d_snapshot_channel.py": {
+      "sha256": "a3b952b0c0a112c9f3cbbbb91b0417f528c0946fb83ff69b1fa5639cf842ddb8",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    },
+    "visualize_nematics3d_snapshot_plane.py": {
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be",
+      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
+    }
+  },
+  "root_disposition": {
+    "Channel.py": {
+      "disposition": "historical",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2"
+    },
+    "Channel_control.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "8ec43543b29c2f97cb06ee346477eb0961b56ed5122b16efea636e0bda2684a3"
+    },
+    "Channel_control_box.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "c62304c32bcc72973be13175435d8c3592f5f2cdcdc782f530eed93ba62ece0f"
+    },
+    "Channel_control_box_high_temporal_resolution.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "c40f4a6ea4079639d62a56398644567bfaf9c98b6804662fe1a183c9dcf09910"
+    },
+    "Channel_dal.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "c68389060e48c082b6078f470ff22f77d2327c87e1ad362a5e875f7880bb96db"
+    },
+    "Channel_optimal_control.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "e256d6fa3a7f3f0bfd7466296df4935f613922f51e8e99a68ec35e3c510d58fc"
+    },
+    "Periodic.py": {
+      "disposition": "delete",
+      "reason": "Periodic is only a family label in the S-16 equivalence harness.",
+      "sha256": "49cbb26dd9c2670b060dc183e16c1fc05cfcf4cd9ff5bae130d3bb5246e195c6"
+    },
+    "Plane.py": {
+      "disposition": "delete",
+      "reason": "Plane is only a family label in the S-16 equivalence harness.",
+      "sha256": "83f6b56062c1b6d074ec3fee89ec262cddc9b2e58a1ba017f23c13331bc12fbf"
+    },
+    "Plane_H15_twist_evolution.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "46f16b8c3f3d69cf66f6d8fd506f4736feaffe091d747176ce4b007ab10d60ce"
+    },
+    "Plane_beris_edwards_navier_stokes.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "a0ce0f877096a0def4b9dec35426d4e98a056bea86236d25d53873286be65489"
+    },
+    "Plane_beris_edwards_shadow.py": {
+      "disposition": "delete",
+      "reason": "Only called by the 4c12228 historical test; the live helper has no caller.",
+      "sha256": "5f63dee3dce7e0e97a2f286c6ab889b4a546d10dfaa492b130a69a4e64f11e3c"
+    },
+    "Plane_beris_edwards_shadow_h100.py": {
+      "disposition": "historical",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "a4243797cff07291d3ac40e283faa501662a1e6e9577d4cc6b3e3f66d4899bae"
+    },
+    "Plane_beris_edwards_shadow_stage_n1.py": {
+      "disposition": "historical",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "9d50759fe305e7b0347c9227cbe05dac92b714454c1fd888c95a0dcfcdde50ef"
+    },
+    "Plane_beris_edwards_shadow_stage_n2.py": {
+      "disposition": "historical",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "f4506a5c64d3ebaa4d45e309b44381cc612422b8c6d39bdac11f82695c08bfd3"
+    },
+    "Plane_beris_edwards_shadow_stage_n3.py": {
+      "disposition": "historical",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "6aaea1156def392d5fc3ac8858b1f8c0df5b13862c0379deac63cd51985392f5"
+    },
+    "Plane_beris_edwards_shadow_stage_n4.py": {
+      "disposition": "historical",
+      "reason": "has surviving executable readers; validate exact read sites",
+      "sha256": "38abfdd2ef04074cc11e3ad50029bf5d70840fef23caea4a353784cdae0100a5"
+    },
+    "Plane_fig4_benchmark.py": {
+      "disposition": "delete",
+      "reason": "Metadata labels and an unused test-helper default; the old sweep is retired with it.",
+      "sha256": "e1935a282b17795ab8cc7630e6376eb5724bd926fa35cfb7528982f1f3a5df96"
+    },
+    "Plane_free_slip.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "6d44fd05f8540db5fe75db4d523aedf88100f5446d87e025a2c5b7ac79ef750d"
+    },
+    "Plane_free_slip_dealiased.py": {
+      "disposition": "delete",
+      "reason": "Docstring attribution and self-reported script name; the old sweep is also retired.",
+      "sha256": "0a03eb7d5fe2a6fdd76b6242ee5f859c1eff616865f3d011f0ef809ca050f4cb"
+    },
+    "Plane_shendruk_stokes.py": {
+      "disposition": "delete",
+      "reason": "Only a metadata label, rejection fixture, or historical attribution.",
+      "sha256": "783cf9b884ce237015a1ddd7d0a79f759df5c57db6d5f66279c5dc0210e32840"
+    },
+    "compare_dealias_100k.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "2c976ed346f7a3211abcd4ef9d45c9e4ca8ffd2070b17a060489f283e3471fd0"
+    },
+    "compare_dealias_final_spectra.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "7d6e6c4b5ba2d2ff447a7330fac3a56ae566a48f421b896ea08f92e298c59d34"
+    },
+    "run_dealias_100k_remaining.sh": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "afbd5313f11599b0f41cb4322c513a63a5834afbd3bde3aea3643df8a35cf755"
+    },
+    "visualize_nematics3d_snapshot.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be"
+    },
+    "visualize_nematics3d_snapshot_channel.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "a3b952b0c0a112c9f3cbbbb91b0417f528c0946fb83ff69b1fa5639cf842ddb8"
+    },
+    "visualize_nematics3d_snapshot_plane.py": {
+      "disposition": "delete",
+      "reason": "historical qualification, comparison or research script; no surviving executable reader",
+      "sha256": "2a6104834e4e2d9c51e80fa53033b01486b2c21e56d2c1aedc93782add9731be"
+    }
+  },
+  "thresholds_exceptions_and_references_changed": false
+}

@@ -14,6 +14,19 @@ Periodic, Plane and Channel. See the [migration guide](docs/migration_0_4_to_0_5
 for declaration changes, the retained Functional API 1.1, and supported v0.4
 checkpoint continuation. The old runtime selectors and v1 solver are retired.
 
+Unused v0.4 launchers and qualification scripts were removed from the live
+tree; retrieve the historical copies from `v0.4.0`, or from `7161608` for
+paths listed with that retrieval point in `qualification/s30_disposition.json`.
+The migration guide maps the removed root commands to supported entry points
+or identifies them as historical-only. The original tests, evidence and
+scripts that a current check still reads keep their historical bytes.
+
+The S-23 CPU reference is the comparison contract for Periodic, Plane and
+Channel: the qualified float32/float64 cases include trajectories, restart,
+observations and Functional API 1.1 outputs and VJPs. This does not claim
+bitwise equivalence for unqualified inputs, other devices or the explicitly
+registered S-23/S-28 comparison exceptions.
+
 ## 0.4.0 — 2026-11-04
 
 This release freezes the independently reviewed 0.4 development line. The

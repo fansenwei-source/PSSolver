@@ -193,3 +193,164 @@ from pssolver.functional.legacy_declarations import Simulation, TimeStepping
 These declarations retain their Functional API 1.1 identity and are not
 inputs to the 0.5 public runner. The compatibility declarations retire
 together with Functional API 1.1, not with this migration.
+
+## v0.4.0 package-root names
+
+| v0.4.0 name | 0.5 use |
+| --- | --- |
+| `BasisAwareSpectralProjector` | Removed from the root; the lower-level owner is `pssolver.operators.projection.BasisAwareSpectralProjector`. |
+| `CONVENTION_NAME` | Import from `pssolver.loop_conventions.CONVENTION_NAME`. |
+| `ChannelPressureConvergenceError` | Import `ChannelPressureConvergenceError` from `pssolver`. |
+| `CompiledSimulation` | Import `CompiledSimulation` from `pssolver`. |
+| `DEALIAS_RULE_FRACTIONS` | Removed from the root; the constant lives at `pssolver.core.numerics.DEALIAS_RULE_FRACTIONS`. |
+| `DEFAULT_DEALIAS_RULE` | Removed from the root; the constant lives at `pssolver.core.numerics.DEFAULT_DEALIAS_RULE`. |
+| `DEFAULT_PERIODIC_TRANSFORM_EXECUTION` | Removed from the root; the constant lives at `pssolver.backends.tensor_product.DEFAULT_PERIODIC_TRANSFORM_EXECUTION`. |
+| `DEFAULT_PROJECTED_TRANSFORM_EXECUTION` | Removed from the root; the constant lives at `pssolver.core.numerics.DEFAULT_PROJECTED_TRANSFORM_EXECUTION`. |
+| `DEFAULT_SPECTRAL_STORAGE` | Removed from the root; the constant lives at `pssolver.core.numerics.DEFAULT_SPECTRAL_STORAGE`. |
+| `DEFAULT_TRANSFORM_EXECUTION_ORDER` | Removed from the root; the constant lives at `pssolver.core.numerics.DEFAULT_TRANSFORM_EXECUTION_ORDER`. |
+| `DEFAULT_TRANSFORM_GROUP_INDEXING` | The v1 root constant is removed; leave `transform_group_indexing` unset for the default. |
+| `DeclarationCapability` | Import `DeclarationCapability` from `pssolver`. |
+| `Fields` | Use the public declaration and snapshots. The v1 mutable field container is removed. |
+| `FreeSlipModalStokesSolver` | Removed from the root; the lower-level owner is `pssolver.linear_solvers.stokes.plane_free_slip.FreeSlipModalStokesSolver`. |
+| `GeneratedInitialCondition` | Import `GeneratedInitialCondition` from `pssolver`. |
+| `IDEAL_LOOP_MODE_AXES` | Import from `pssolver.loop_conventions.IDEAL_LOOP_MODE_AXES`. |
+| `Output` | Import `Output` from `pssolver`. |
+| `PDEModel` | Use a model declaration such as `CompleteStressBerisEdwards`; the v1 base class is removed. |
+| `PERIODIC_TRANSFORM_EXECUTION_MODES` | Removed from the root; the constant lives at `pssolver.backends.tensor_product.PERIODIC_TRANSFORM_EXECUTION_MODES`. |
+| `PROJECTED_TRANSFORM_EXECUTION_MODES` | Removed from the root; the constant lives at `pssolver.core.numerics.PROJECTED_TRANSFORM_EXECUTION_MODES`. |
+| `Parameters` | Declare model parameters on the selected model or preset; the v1 container is removed. |
+| `PublicCapabilityCatalog` | Import `PublicCapabilityCatalog` from `pssolver`. |
+| `PublicCompilationRejectionCode` | Import `PublicCompilationRejectionCode` from `pssolver`. |
+| `PublicSimulationCompilationError` | Import `PublicSimulationCompilationError` from `pssolver`. |
+| `QualifiedCombination` | Import `QualifiedCombination` from `pssolver`. |
+| `REPRESENTATIVE_ORDERED_S_DEFINITION` | Import from `pssolver.snapshots.REPRESENTATIVE_ORDERED_S_DEFINITION`. |
+| `SPECTRAL_STORAGE_MODES` | Removed from the root; the constant lives at `pssolver.core.numerics.SPECTRAL_STORAGE_MODES`. |
+| `SemiImplicitEulerIntegrator` | Use `SemiImplicitEuler` with `run_simulation`; the v1 integrator is removed. |
+| `Simulation` | Import `Simulation` from `pssolver`. |
+| `SimulationDiagnosticProtocol` | Import `SimulationDiagnosticProtocol` from `pssolver`. |
+| `SimulationExecutionError` | Import `SimulationExecutionError` from `pssolver`. |
+| `SimulationInputError` | Import `SimulationInputError` from `pssolver`. |
+| `SimulationInputFileNotFoundError` | Import `SimulationInputFileNotFoundError` from `pssolver`. |
+| `SimulationInputIOError` | Import `SimulationInputIOError` from `pssolver`. |
+| `SimulationObservationProtocol` | Import `SimulationObservationProtocol` from `pssolver`. |
+| `SimulationRestartError` | Import `SimulationRestartError` from `pssolver`. |
+| `SimulationResult` | Import `SimulationResult` from `pssolver`. |
+| `SimulationRunStatus` | Import `SimulationRunStatus` from `pssolver`. |
+| `SimulationSnapshot` | Import from `pssolver.snapshots.SimulationSnapshot`. |
+| `SimulationStateError` | Import `SimulationStateError` from `pssolver`. |
+| `SnapshotInitialCondition` | Import `SnapshotInitialCondition` from `pssolver`. |
+| `SpectralNumerics` | Import `SpectralNumerics` from `pssolver`. |
+| `SpectralSolver` | Use `compile_simulation` and `run_simulation`; the v1 solver is removed. |
+| `TRANSFORM_GROUP_INDEXING_MODES` | The v1 root constant is removed; retain a supported `transform_group_indexing` execution option. |
+| `TensorProductTransformBackend` | Removed from the root; the lower-level owner is `pssolver.backends.tensor_product.TensorProductTransformBackend`. |
+| `TimeStepping` | Use `SemiImplicitEuler`; map the cadence as described above. |
+| `TorchSpectralExecution` | Import `TorchSpectralExecution` from `pssolver`. |
+| `__version__` | Import `__version__` from `pssolver`. |
+| `apply_snapshot_to_solver` | Use `SnapshotInitialCondition`; the v1 solver mutation helper is removed. |
+| `available_boundary_policies` | Import `available_boundary_policies` from `pssolver`. |
+| `available_combinations` | Import `available_combinations` from `pssolver`. |
+| `available_geometries` | Import `available_geometries` from `pssolver`. |
+| `available_models` | Import `available_models` from `pssolver`. |
+| `capability_catalog` | Import `capability_catalog` from `pssolver`. |
+| `classify_ideal_loop` | Import from `pssolver.loop_conventions.classify_ideal_loop`. |
+| `compile_simulation` | Import `compile_simulation` from `pssolver`. |
+| `convention_metadata` | Import from `pssolver.loop_conventions.convention_metadata`. |
+| `ideal_loop_axis_angles` | Import from `pssolver.loop_conventions.ideal_loop_axis_angles`. |
+| `load_snapshot` | Import from `pssolver.snapshots.load_snapshot`. |
+| `prepare_new_run_directory` | Import from `pssolver.run_metadata.prepare_new_run_directory`. |
+| `projected_common_basis_stress_divergence` | Removed from the root; the lower-level owner is `pssolver.operators.tensor_divergence.projected_common_basis_stress_divergence`. |
+| `projected_distortion_stress_divergence` | Removed from the root; the lower-level owner is `pssolver.operators.tensor_divergence.projected_distortion_stress_divergence`. |
+| `representative_ordered_S` | Import from `pssolver.snapshots.representative_ordered_S`. |
+| `require_distinct_output_directory` | Import from `pssolver.snapshots.require_distinct_output_directory`. |
+| `run_simulation` | Import `run_simulation` from `pssolver`. |
+| `write_run_metadata` | Import from `pssolver.run_metadata.write_run_metadata`. |
+
+## v0.4.0 Plane CLI options
+
+| v0.4.0 option | 0.5 use |
+| --- | --- |
+| `--activity-number` | Keep the same option. |
+| `--background-angle` | Keep the same option. |
+| `--beta` | Keep the same option. |
+| `--checkpoint-interval` | Keep the same option. |
+| `--coefficient-max` | Keep the same option. |
+| `--coefficient-min` | Keep the same option. |
+| `--dealias-rule` | Keep the same option. |
+| `--defect-core-radius` | Keep the same option. |
+| `--defect-min-separation` | Keep the same option. |
+| `--device` | Keep the same option. |
+| `--diagnostic-interval` | Keep the same option. |
+| `--diagnostics` | Keep the same option. |
+| `--disable-q-gradient-reuse` | Keep the same option. |
+| `--disable-spectral-refresh` | Keep the same option. |
+| `--dry-run` | Keep the same option. |
+| `--dt` | Keep the same option. |
+| `--dtype` | Keep the same option. |
+| `--eta` | Keep the same option. |
+| `--flow-alignment` | Keep the same option. |
+| `--frank-k` | Keep the same option. |
+| `--friction-mode-fric` | Keep the same option. |
+| `--gamma` | Keep the same option. |
+| `--height` | Keep the same option. |
+| `--help` | Keep the same option. |
+| `--initial-s` | Keep the same option. |
+| `--ldg-a` | Keep the same option. |
+| `--ldg-b` | Keep the same option. |
+| `--ldg-c` | Keep the same option. |
+| `--lx` | Keep the same option. |
+| `--ly` | Keep the same option. |
+| `--molecular-field-linear-space` | Keep the same option. |
+| `--num-defect-pairs` | Keep the same option. |
+| `--nx` | Keep the same option. |
+| `--ny` | Keep the same option. |
+| `--nz` | Keep the same option. |
+| `--output-dir` | Keep the same option. |
+| `--parameterization` | Keep the same option. |
+| `--pointwise-execution` | Keep the same option. |
+| `--projected-transform-execution` | Keep the same option. |
+| `--restart-from` | Keep the same option. |
+| `--runtime-path` | Remove it; there is one assembled public path. |
+| `--save-hydrodynamics` | Keep the same option. |
+| `--save-interval` | Keep the same option. |
+| `--save-start-step` | Keep the same option. |
+| `--seed` | Keep the same option. |
+| `--spectral-refresh-steps` | Keep the same option. |
+| `--spectral-refresh-time` | Keep the same option. |
+| `--spectral-storage` | Keep the same option. |
+| `--steps` | Keep the same option. |
+| `--stress-divergence-sum-space` | Keep the same option. |
+| `--tf32` | Keep the same option. |
+| `--transform-execution-order` | Keep the same option. |
+| `--twist-amplitude` | Keep the same option. |
+| `--twist-modes` | Keep the same option. |
+| `--validation-config-sha256` | Keep the same option. |
+| `--zero-mode-policy` | Keep the same option. |
+| `-h` | Keep the same option. |
+
+## Retired v0.4.0 root commands
+
+These are historical invocations, not commands supported from the 0.5 tree.
+Retrieve their original bytes from the `v0.4.0` tag.
+
+| Historical invocation | 0.5 use |
+| --- | --- |
+| `python Channel_control.py` | Removed; research and Control workflows are not part of the Provider CLI. |
+| `python Channel_control_box.py` | Removed; research and Control workflows are not part of the Provider CLI. |
+| `python Channel_control_box_high_temporal_resolution.py` | Removed; research and Control workflows are not part of the Provider CLI. |
+| `python Channel_dal.py` | Removed; research and Control workflows are not part of the Provider CLI. |
+| `python Channel_optimal_control.py` | Removed; research and Control workflows are not part of the Provider CLI. |
+| `python Periodic.py` | Use the Periodic declaration example above. |
+| `python Plane.py` | For supported Plane configurations, use the Plane declaration or CLI above; the legacy runner is removed. |
+| `python Plane_H15_twist_evolution.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python Plane_beris_edwards_navier_stokes.py` | For supported Plane configurations, use the Plane declaration or CLI above; the legacy runner is removed. |
+| `python Plane_beris_edwards_shadow.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python Plane_fig4_benchmark.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python Plane_free_slip.py` | For supported Plane configurations, use the Plane declaration or CLI above; the legacy runner is removed. |
+| `python Plane_free_slip_dealiased.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python Plane_shendruk_stokes.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python compare_dealias_100k.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python compare_dealias_final_spectra.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `bash run_dealias_100k_remaining.sh` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python visualize_nematics3d_snapshot.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python visualize_nematics3d_snapshot_channel.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
+| `python visualize_nematics3d_snapshot_plane.py` | Removed; this was a historical benchmark, audit or visualization driver, not a 0.5 public entry point. |
