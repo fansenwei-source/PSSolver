@@ -24,6 +24,12 @@ FAMILIES = {
 def _declare(tmp_path, family, **output):
     scene = next(row for row in scenarios() if row["id"] == FAMILIES[family])
     simulation = simulation_v05(scene, tmp_path, steps=2)
+    if family == "plane":
+        # The generated initial state on the small S-23 grid fits one pair.
+        initial = simulation.initial_condition
+        simulation = replace(simulation, initial_condition=replace(
+            initial, parameters={**initial.parameters, "num_defect_pairs": 1},
+        ))
     return replace(simulation, output=replace(simulation.output, **output))
 
 

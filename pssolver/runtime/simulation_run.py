@@ -835,7 +835,9 @@ def prepare_run(compiled, *, metadata, device, dtype, legacy_preflight=None, ini
         capture=_capture(compiled, engine, kind, checkpoint_diagnostics),
         metadata=metadata,
     )
-    if kind == "rectangular_channel":
+    if kind == "rectangular_channel" or (
+        kind == "plane_slab" and (is_engine_checkpoint or restore is not None)
+    ):
         runner.constraint_diagnostics.update(diagnostics)
     return _PreparedRun(engine, state, runner, start_step, construction_diagnostics)
 

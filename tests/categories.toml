@@ -6,6 +6,7 @@
 [categories]
 functional = [
   "tests/test_v0_5_s28a_solver_state.py",
+  "tests/test_v0_5_s28b_legacy_restart.py",
   "tests/test_v0_5_s28b_public_frontend.py",
   "tests/test_v0_5_s27_rewrite_contracts.py",
   "tests/test_v0_5_s27_r0095_rework.py",

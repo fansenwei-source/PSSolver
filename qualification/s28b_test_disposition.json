@@ -14503,6 +14503,35 @@
       "reason": "New r2.1 frontend, qualification or provenance coverage.",
       "rule": "T6"
     },
+    "tests/test_v0_5_s28b_legacy_restart.py": {
+      "evidence": {
+        "after": {
+          "changed_module_references": [
+            "qualification.identity.scenes_v05 -> pssolver.functional.legacy_declarations.legacy_channel.translate_channel:152",
+            "qualification.identity.scenes_v05 -> pssolver.functional.legacy_declarations.legacy_periodic.translate_periodic:153",
+            "qualification.identity.scenes_v05 -> pssolver.functional.legacy_declarations.public_simulation_runner.compile_public_simulation:154",
+            "qualification.identity.scenes_v05 -> pssolver.functional.legacy_declarations:151",
+            "qualification.identity.scenes_v05 -> pssolver:5",
+            "tests.test_v0_5_s28b_legacy_restart -> pssolver.api.legacy_checkpoints.downgrade_simulation:12",
+            "tests.test_v0_5_s28b_legacy_restart -> pssolver.cli.plane._parser:13",
+            "tests.test_v0_5_s28b_legacy_restart -> pssolver.cli.plane._simulation:13",
+            "tests.test_v0_5_s28b_legacy_restart -> pssolver.cli.plane.main:13",
+            "tests.test_v0_5_s28b_legacy_restart -> pssolver:11"
+          ],
+          "sha256": "14398de932757e0fffbaddd80926c8dab1deaea0e1bcd8fe2d37e6a1648904e7",
+          "test_units": [
+            "test_downgrade_matches_the_installed_v04_canonical_matrix",
+            "test_downgrade_preserves_true_dry_run_digest_and_checkpoint_path",
+            "test_plane_engine_state_restart_publishes_the_restored_diagnostic",
+            "test_plane_legacy_restart_publishes_the_restored_diagnostic",
+            "test_plane_cli_restart_publishes_the_restored_diagnostic"
+          ]
+        },
+        "before": null
+      },
+      "reason": "New r2.1 frontend, qualification or provenance coverage.",
+      "rule": "T6"
+    },
     "tests/test_v0_5_s28b_public_frontend.py": {
       "evidence": {
         "after": {
@@ -14514,7 +14543,7 @@
             "qualification.identity.scenes_v05 -> pssolver:5",
             "tests.test_v0_5_s28b_public_frontend -> pssolver:11"
           ],
-          "sha256": "8351f8b2554d3eb8a3a971b1b3021a982b9af19d58b2509be398285f747422f4",
+          "sha256": "85bb62310c09c9fcc74dc022935814d05c6bea9b037ec1ded9ddd0bfd5c8f5b1",
           "test_units": [
             "test_public_declaration_and_plan_integrity_fail_closed",
             "test_public_checkpoint_does_not_change_final_state_and_can_resume",

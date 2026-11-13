@@ -133,7 +133,7 @@ def downgrade_simulation(source, *, runtime_path=None):
         ),
         invocation=old.InvocationSpec(
             options={
-                "dry_run": output.dry_run,
+                **({"dry_run": True} if output.dry_run else {}),
                 **(
                     {}
                     if output.validation_config_sha256 is None

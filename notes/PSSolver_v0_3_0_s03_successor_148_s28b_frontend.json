@@ -1,11 +1,12 @@
 {
-  "authority_archive_sha256": "e28d4250e65c45a51121249d9a1e4a21d6ba744524d94993314f18fc6b1e2ec9",
+  "authority_archive_sha256": "d5a2fe1b2d06f974246562227fe7863cf574a4f924bbfa24cea2fb501070c48d",
   "classification": "S28B_IMPLEMENTATION_PENDING_QUALIFICATION",
   "correction_source": [
     "R-0120",
     "R-0121",
     "R-0122",
-    "R-0123"
+    "R-0123",
+    "R-0124"
   ],
   "decisions": [
     "D-0058",
@@ -14,11 +15,11 @@
     "D-0068",
     "D-0069"
   ],
-  "design": "S-28b_public_frontend_r2.md r2.2",
+  "design": "S-28b_public_frontend_r2.md r2.3",
   "git_identity": {
     "earlier_reviewed_trial": "5f9b919105ab71e35d801437ade5ad0fd21c8d1d",
     "implementation_parent": "49d1c32b66ef0088fed4ea13ab71df4d1a1bf802",
-    "reviewed_trial": "0affc6a7fae1677611cb19a272799b201b67135b"
+    "reviewed_trial": "ff7e8373920221a6627ec7109b096cf477982762"
   },
   "historical_records_rewritten": false,
   "historical_successor_sources": {
@@ -198,9 +199,10 @@
     "tests/categories.toml": {
       "accepted_predecessor_sha256": [
         "345fbd68911e45325356f0cc57c8d5db80a7ad8d75c8a4e85a856980c1a628dc",
+        "76e11c59289a4dc7ec449bf5dd2aa85d78e69d8e9fa0484ba725123df0338e87",
         "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830"
       ],
-      "current_sha256": "76e11c59289a4dc7ec449bf5dd2aa85d78e69d8e9fa0484ba725123df0338e87",
+      "current_sha256": "a5895c71fadaf463a33284824db8c08b19d0ab6d3dd948f7ced83a78c0486581",
       "historical_sha256": "8eeb9dd613b46d639f47b7417197dbe21f5770bd50a5a1c5c895811d35339830",
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
@@ -828,10 +830,6 @@
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
     },
     "tests/test_v0_5_s25_disposition.py": {
-      "accepted_predecessor_sha256": [
-        "53f03fbd41d1432c6d64d1c5e3144ac9c73251c3685473534b1ded255b418eca",
-        "94ef8150629c421aadbfe7dba4dca1eeb6592b2bc7fa63a4d15100d9845579c7"
-      ],
       "current_sha256": "903390826fe05109a4403525ff6e53f1e10aabf87b256db512ea4bd47ce2b381",
       "historical_sha256": "53f03fbd41d1432c6d64d1c5e3144ac9c73251c3685473534b1ded255b418eca",
       "reason": "S-28b r2.2 public migration, test or engineering provenance."
@@ -920,7 +918,7 @@
     "docs/migration_0_4_to_0_5.md": "9a8b3a7623d899e266610d2c42a38e13b492e2f2e647919db094b4b52169c52b",
     "notes/PSSolver_v0_3_0_s03_successor_148_s28b_frontend_zh.md": "31699659941e0c0da6d51a80f79670cbef20ec3eb0f0b9897443132b31258f2a",
     "pssolver/api/errors.py": "b2ec31ab255dded7276273fea87945c208ae2931c5287eefcfd13ca6ad410d33",
-    "pssolver/api/legacy_checkpoints.py": "07c212fac46c175dbbec358ad103ea11d2088d548bcebcbee15d0e6a2c10aef4",
+    "pssolver/api/legacy_checkpoints.py": "d4e2d806dc60eee5124e353d5dc18580a6d627700f460ab7dadd8ad27c354988",
     "pssolver/api/lowering.py": "04c19e9a33bfbaaf3721f30ebf5b25d8e8d9a728f6d3e618ef68d15856484a48",
     "pssolver/api/models.py": "fd2d974550f572834f31f8510f7804baa0b07fcfaac7ba5c166a195087564b1b",
     "pssolver/api/snapshot_header.py": "4023f957ded888caaaf43e1bd9d1e8c52eb7dec7ef0551ee4b3063d5ee287c5b",
@@ -969,20 +967,22 @@
     "pssolver/functional/legacy_declarations/systems_equations.py": "b6a22e92b40d29e70dc260e6ac3cfc62357f3f57ad0e216a6cdf27f1d5bfa11f",
     "pssolver/functional/legacy_declarations/systems_stokes.py": "ee3dced549c9fd1fab70cd784e46e73dc24aef7c1ee530ac2ba9ff7e61f5a828",
     "pssolver/io/initial_snapshot.py": "8ca84d6cd7fb7dc5b01f0004ea7903c7f856365d0a0e4939c66e7ebc06676f36",
-    "pssolver/runtime/simulation_run.py": "5ee8f4f4f9d9b8f2f9352170610f3771fae64e6c9b5b3ccac55f21964097b3ff",
+    "pssolver/runtime/simulation_run.py": "30d785e6ced772ce147f29868a4b5d6adc9967eb72d4a25804b246968e8caccd",
     "qualification/historical_s28b_audit.py": "ef18719284a1c9ceb145831abb2a2751ebcdaf006c56d504ab5ddbe5d7552b29",
-    "qualification/identity/scenes_v05.py": "e1f32d516073a88dfe8569b0c05442f073eb6e1cd4c5c2e1a634059e784eb426",
+    "qualification/identity/scenes_v05.py": "b18865098ba49e0fa5e194c4133337e7865115ed84264083216d3ec41240d5ff",
     "qualification/s28b_frozen_callers.json": "12c33fa49aaa8e5ec953e225fbd6d039249ab5b249a245c6e00e2ca075c27063",
     "qualification/s28b_guard.py": "2dc3e72505758605398bd27c165fbdd0cd884165cd75a723d8c05d9bca697b3d",
     "qualification/s28b_historical_tests.json": "c53386167a7490530b9ec8b0873845db048f97236e60459242cfe8933d6a807e",
     "qualification/s28b_import_delta.py": "a20b763d97709d62721f792ffe965eb59e089d8ea0329135021328a487544dfb",
-    "qualification/s28b_tables.json": "a2184e6e888590470c446960f1fbae3c541df6f081721ad708f1b47b6effdb01",
+    "qualification/s28b_tables.json": "ac6cd885aae20e846fb9ee50940aec5ab639a630094eaf38524bc9adcefcf759",
     "qualification/s28b_test_classify.py": "c6c9ce982d6117c543cb216cf2bd17d7facfeb89166bf61c2e5f7230694350d0",
-    "qualification/s28b_test_disposition.json": "236875f4fec9dd507f9d2e2b9cd8878084cd04d5ae576265598ce1ffb0cd4af8",
+    "qualification/s28b_test_disposition.json": "938d806dead1bdc470097ec0174b681e7c2f86214fb9d19719bb544fd92f835e",
     "qualification/s28b_trajectory.py": "39ec2258fbc4d8c671fa83efe61683586a00eec2a41a58f282042adddc45ab8e",
     "qualification/s28b_units.json": "6ad441352983d2fbe3d5985fea7a980a1c6a9470db078daeb0dc2aaa796b7091",
+    "tests/fixtures/s28b_downgrade_v04_canonical.json": "bae500fd92f0631f749b8e558e2690cc49487950cd94ec022144a185c92350b8",
     "tests/test_v0_5_s28b_historical_tests.py": "8f66bc8d6914821cdd45ff619e020a45e5b4f329bd814bed556fe4564f4c1c90",
-    "tests/test_v0_5_s28b_public_frontend.py": "8351f8b2554d3eb8a3a971b1b3021a982b9af19d58b2509be398285f747422f4",
+    "tests/test_v0_5_s28b_legacy_restart.py": "14398de932757e0fffbaddd80926c8dab1deaea0e1bcd8fe2d37e6a1648904e7",
+    "tests/test_v0_5_s28b_public_frontend.py": "85bb62310c09c9fcc74dc022935814d05c6bea9b037ec1ded9ddd0bfd5c8f5b1",
     "tests/test_v0_5_s28b_trajectory.py": "8fa763edad8575a7dbf18ee7ceb3376a64f1c76b5a0463d7a9b99401bcf3fc73"
   },
   "provenance_binding_order": "After code, test dispositions and import delta registration.",

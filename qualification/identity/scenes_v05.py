@@ -18,7 +18,7 @@ CSBE = dict(
 )
 GENERATED = dict(
     seed=24,
-    num_defect_pairs=1,
+    num_defect_pairs=6,
     defect_min_separation=10.0,
     defect_core_radius=1.5,
     background_angle=0.0,
@@ -141,7 +141,7 @@ def simulation_v05(scene, root, *, output_dir=None, steps=None, restart_from=Non
             diagnostic_interval=steps,
             save_start_step=0,
             diagnostics=diagnostics,
-            save_hydrodynamics=True,
+            save_hydrodynamics=family != "plane",
             restart_from=restart_from,
         ),
     )
