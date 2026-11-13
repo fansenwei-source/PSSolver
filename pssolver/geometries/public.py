@@ -62,6 +62,18 @@ class _PeriodicBoxConstructor(_CanonicalFacade):
         axis_names: tuple[str, ...] | None = None,
         grid_placement: GridPlacement = GridPlacement.CELL_CENTERED,
     ) -> _CanonicalPeriodicBox:
+        """Construct a domain periodic along every axis.
+
+        Args:
+            domain: Existing domain, or leave unset and provide shape and lengths.
+            shape: Grid resolution along each axis.
+            lengths: Physical lengths in the same axis order as shape.
+            axis_names: Optional coordinate labels in domain order.
+            grid_placement: Sampling convention when constructing a domain.
+
+        Returns:
+            The canonical periodic-box geometry.
+        """
         resolved = _resolve_domain(
             domain,
             shape=shape,
@@ -85,6 +97,19 @@ class _PlaneSlabConstructor(_CanonicalFacade):
         grid_placement: GridPlacement = GridPlacement.CELL_CENTERED,
         wall_normal_axis: int | None = None,
     ) -> _CanonicalPlaneSlab:
+        """Construct a slab with a single bounded axis.
+
+        Args:
+            domain: Existing domain, or leave unset and provide shape and lengths.
+            shape: Grid resolution along each axis.
+            lengths: Physical lengths in the same axis order as shape.
+            axis_names: Optional coordinate labels in domain order.
+            grid_placement: Sampling convention when constructing a domain.
+            wall_normal_axis: Zero-based bounded axis; defaults to the last axis.
+
+        Returns:
+            The canonical slab geometry.
+        """
         resolved = _resolve_domain(
             domain,
             shape=shape,
@@ -111,6 +136,19 @@ class _RectangularChannelConstructor(_CanonicalFacade):
         grid_placement: GridPlacement = GridPlacement.CELL_CENTERED,
         streamwise_axis: int = 0,
     ) -> _CanonicalRectangularChannel:
+        """Construct a channel with a single periodic streamwise axis.
+
+        Args:
+            domain: Existing domain, or leave unset and provide shape and lengths.
+            shape: Grid resolution along each axis.
+            lengths: Physical lengths in the same axis order as shape.
+            axis_names: Optional coordinate labels in domain order.
+            grid_placement: Sampling convention when constructing a domain.
+            streamwise_axis: Zero-based periodic axis.
+
+        Returns:
+            The canonical rectangular-channel geometry.
+        """
         resolved = _resolve_domain(
             domain,
             shape=shape,
@@ -125,13 +163,23 @@ class _RectangularChannelConstructor(_CanonicalFacade):
 
 
 class PeriodicBox(_CanonicalPeriodicBox, metaclass=_PeriodicBoxConstructor):
-    """Compatibility constructor returning the canonical periodic-box type."""
+    """Construct a periodic box from an existing domain or its grid declaration.
+
+    Attributes:
+        domain: Validated domain shape and physical lengths.
+        axis_topologies: Periodic topology on every axis.
+    """
 
     __slots__ = ()
 
 
 class PlaneSlab(_CanonicalPlaneSlab, metaclass=_PlaneSlabConstructor):
-    """Compatibility constructor returning the canonical Plane-slab type."""
+    """Construct a slab with one bounded axis and periodic tangent axes.
+
+    Attributes:
+        domain: Validated domain shape and physical lengths.
+        axis_topologies: Ordered periodic and bounded axis topologies.
+    """
 
     __slots__ = ()
 
@@ -140,7 +188,12 @@ class RectangularChannel(
     _CanonicalRectangularChannel,
     metaclass=_RectangularChannelConstructor,
 ):
-    """Compatibility constructor returning the canonical Channel type."""
+    """Construct a rectangular channel with periodic streamwise topology.
+
+    Attributes:
+        domain: Validated domain shape and physical lengths.
+        axis_topologies: One periodic axis; all other axes are bounded.
+    """
 
     __slots__ = ()
 

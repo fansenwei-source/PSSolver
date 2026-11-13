@@ -16,7 +16,21 @@ def _finite(value: object, name: str, *, positive: bool = False) -> float:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class CompleteStressBerisEdwards:
-    """Declare complete-stress Beris–Edwards material and Stokes coefficients."""
+    """Declare complete-stress Beris–Edwards material and Stokes coefficients.
+
+    Attributes:
+        ldg_a: Quadratic Landau–de Gennes bulk coefficient.
+        ldg_b: Cubic Landau–de Gennes bulk coefficient.
+        ldg_c: Quartic Landau–de Gennes bulk coefficient.
+        ldg_l1: One-constant Landau–de Gennes elastic coefficient.
+        gamma: Rotational viscosity.
+        flow_alignment: Flow-alignment parameter.
+        activity: Active stress coefficient.
+        beta: Coefficient of the active stress convention.
+        viscosity: Shear viscosity.
+        friction: Linear drag coefficient.
+        tangential_zero_mode_policy: Treatment of tangential mean velocity.
+    """
 
     ldg_a: float
     ldg_b: float
@@ -53,7 +67,24 @@ class CompleteStressBerisEdwards:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ShendrukPlaneBerisEdwards:
-    """Declare the Plane benchmark's activity-number parameterization."""
+    """Declare the Plane benchmark's activity-number parameterization.
+
+    Attributes:
+        activity_number: Dimensionless activity of the slab.
+        parameterization: How Frank elasticity and activity are selected.
+        frank_k: Frank constant for the fixed-elasticity policy.
+        coefficient_min: Lower coefficient bound in the paper-window policy.
+        coefficient_max: Upper coefficient bound in the paper-window policy.
+        ldg_a: Quadratic Landau–de Gennes bulk coefficient.
+        ldg_b: Cubic Landau–de Gennes bulk coefficient.
+        ldg_c: Quartic Landau–de Gennes bulk coefficient.
+        gamma: Rotational viscosity.
+        flow_alignment: Flow-alignment parameter.
+        eta: Shear viscosity.
+        beta: Coefficient of the active stress convention.
+        zero_mode_policy: Treatment of tangential mean velocity.
+        friction_mode_fric: Linear drag under the friction policy.
+    """
 
     activity_number: float
     parameterization: str = "paper-window"

@@ -40,7 +40,11 @@ class GeometrySpec:
 
     @property
     def periodic_axes(self) -> tuple[int, ...]:
-        """Indices of periodic coordinate axes."""
+        """Identify periodic coordinate axes.
+
+        Returns:
+            Zero-based axis indices in domain order.
+        """
 
         return tuple(
             index
@@ -50,7 +54,11 @@ class GeometrySpec:
 
     @property
     def bounded_axes(self) -> tuple[int, ...]:
-        """Indices of wall-bounded coordinate axes."""
+        """Identify wall-bounded coordinate axes.
+
+        Returns:
+            Zero-based axis indices in domain order.
+        """
 
         return tuple(
             index
@@ -59,7 +67,11 @@ class GeometrySpec:
         )
 
     def to_metadata(self) -> dict[str, object]:
-        """Return a JSON-compatible geometry description."""
+        """Serialize the domain and axis topologies.
+
+        Returns:
+            A JSON-compatible dictionary with the geometry name, domain, and axis topology.
+        """
 
         return {
             "name": self.name,

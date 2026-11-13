@@ -107,11 +107,22 @@ class ChannelPressureConvergenceError(SimulationExecutionError):
     stable execution-error context names the inner solve and uses step zero.
     Workflow-level failure metadata separately records the runtime's actual
     completed-step clock.
+
+    Attributes:
+        code: Stable pressure-convergence error classification.
+        details: Copy of the diagnostic context recorded by the pressure solver.
+        diagnostics: Separate legacy mapping of the same diagnostic context.
     """
 
     code = "channel_pressure_convergence_error"
 
     def __init__(self, message: str, *, details: dict[str, object]) -> None:
+        """Record a Channel pressure-solve contract failure.
+
+        Args:
+            message: Human-readable convergence failure description.
+            details: JSON-compatible pressure-solver diagnostics.
+        """
         super().__init__(
             message,
             application_family="channel_pressure",

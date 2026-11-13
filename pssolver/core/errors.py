@@ -33,7 +33,15 @@ def _frozen_details(value: Mapping[str, object]) -> Mapping[str, object]:
 
 
 class SimulationExecutionError(RuntimeError):
-    """Base class for failures after public simulation validation succeeds."""
+    """Raised for a failure after public simulation validation succeeds.
+
+    Attributes:
+        code: Stable error classification token.
+        application_family: Application whose execution failed.
+        stage: Operation that failed.
+        step: Completed-step clock at the failure.
+        details: Immutable JSON-compatible diagnostic context.
+    """
 
     code = "simulation_execution_error"
 
@@ -46,6 +54,19 @@ class SimulationExecutionError(RuntimeError):
         step: int,
         details: Mapping[str, object] | None = None,
     ) -> None:
+        """Attach the operation and clock to an execution failure.
+
+        Args:
+            message: Human-readable failure description.
+            application_family: Non-empty application name.
+            stage: Non-empty operation name.
+            step: Non-negative completed-step clock.
+            details: Optional mapping of diagnostic values.
+
+        Raises:
+            ValueError: The application, stage or clock is invalid.
+            TypeError: Diagnostic details cannot be represented as JSON.
+        """
         super().__init__(message)
         if not isinstance(application_family, str) or not application_family:
             raise ValueError("application_family must be a non-empty string")
@@ -59,6 +80,11 @@ class SimulationExecutionError(RuntimeError):
         self.details = _frozen_details(details or {})
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the error for application failure records.
+
+        Returns:
+            A dictionary containing the classification, message, clock, and context.
+        """
         return {
             "code": self.code,
             "message": str(self),

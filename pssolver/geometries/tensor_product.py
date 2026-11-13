@@ -27,11 +27,21 @@ def _normalize_axis(axis: int, ndim: int, description: str) -> int:
 
 
 class PeriodicBox(GeometrySpec):
-    """A one-, two-, or three-dimensional domain periodic on every axis."""
+    """A one-, two-, or three-dimensional domain periodic on every axis.
+
+    Attributes:
+        domain: Domain specification providing the shape and lengths.
+        axis_topologies: Periodic topology on every axis.
+    """
 
     __slots__ = ()
 
     def __init__(self, domain: DomainSpec) -> None:
+        """Build the canonical periodic geometry.
+
+        Args:
+            domain: Validated domain specification.
+        """
         domain = _require_domain(domain)
         super().__init__(
             name="periodic_box",
@@ -41,7 +51,12 @@ class PeriodicBox(GeometrySpec):
 
 
 class PlaneSlab(GeometrySpec):
-    """A slab with one bounded wall-normal axis and periodic tangent axes."""
+    """A slab with one bounded wall-normal axis and periodic tangent axes.
+
+    Attributes:
+        domain: Domain specification providing the shape and lengths.
+        axis_topologies: One bounded axis and periodic tangential axes.
+    """
 
     __slots__ = ()
 
@@ -51,6 +66,16 @@ class PlaneSlab(GeometrySpec):
         *,
         wall_normal_axis: int | None = None,
     ) -> None:
+        """Build the canonical slab geometry.
+
+        Args:
+            domain: Validated domain specification.
+            wall_normal_axis: Zero-based bounded axis; defaults to the last axis.
+
+        Raises:
+            ValueError: The domain has fewer than two axes or the axis is out of bounds.
+            TypeError: The domain or axis has the wrong type.
+        """
         domain = _require_domain(domain)
         if domain.ndim < 2:
             raise ValueError("a PlaneSlab requires at least two dimensions")
@@ -71,7 +96,12 @@ class PlaneSlab(GeometrySpec):
 
 
 class RectangularChannel(GeometrySpec):
-    """A channel periodic along one streamwise axis and otherwise bounded."""
+    """A channel periodic along one streamwise axis and otherwise bounded.
+
+    Attributes:
+        domain: Domain specification providing the shape and lengths.
+        axis_topologies: One periodic axis and bounded transverse axes.
+    """
 
     __slots__ = ()
 
@@ -81,6 +111,16 @@ class RectangularChannel(GeometrySpec):
         *,
         streamwise_axis: int = 0,
     ) -> None:
+        """Build the canonical rectangular-channel geometry.
+
+        Args:
+            domain: Validated domain specification.
+            streamwise_axis: Zero-based periodic axis.
+
+        Raises:
+            ValueError: The domain has fewer than two axes or the axis is out of bounds.
+            TypeError: The domain or axis has the wrong type.
+        """
         domain = _require_domain(domain)
         if domain.ndim < 2:
             raise ValueError(

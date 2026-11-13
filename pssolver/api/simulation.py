@@ -28,7 +28,18 @@ from .models import CompleteStressBerisEdwards, ShendrukPlaneBerisEdwards
 
 @dataclass(frozen=True, slots=True)
 class Simulation:
-    """Compose one complete simulation request without allocating fields."""
+    """Compose one complete simulation request without allocating fields.
+
+    Attributes:
+        model: Public equation-model declaration and its physical parameters.
+        geometry: Shape, lengths, and topology of the domain.
+        boundaries: Field names mapped to physical or compatibility policies.
+        numerics: Spectral and pressure-solver policies.
+        time: Timestep and refresh schedule.
+        initial_condition: Initial-field generator or snapshot request.
+        execution: Device and implementation options.
+        output: Step, observation, checkpoint, and continuation settings.
+    """
 
     model: CompleteStressBerisEdwards | ShendrukPlaneBerisEdwards
     geometry: PeriodicBox | PlaneSlab | RectangularChannel
@@ -60,7 +71,11 @@ class Simulation:
         object.__setattr__(self, "boundaries", MappingProxyType(dict(self.boundaries)))
 
     def to_metadata(self) -> dict[str, object]:
-        """Return the JSON-compatible public declaration."""
+        """Return the JSON-compatible public declaration.
+
+        Returns:
+            A fresh dictionary representing all declared components.
+        """
         return {
             "model": {"kind": type(self.model).__name__, **asdict(self.model)},
             "geometry": self.geometry.to_metadata(),
@@ -76,11 +91,22 @@ class Simulation:
         }
 
     def canonical_sha256(self) -> str:
-        """Hash the declaration, including non-Plan execution and output choices."""
+        """Hash the declaration, including non-Plan execution and output choices.
+
+        Returns:
+            The lowercase SHA-256 of the canonical declaration.
+        """
         return canonical_sha256(self.to_metadata())
 
     def identity_metadata(self) -> dict[str, object]:
-        """Return declaration metadata and the identity of its assembled Plan."""
+        """Return declaration metadata and the identity of its assembled Plan.
+
+        Returns:
+            A dictionary containing the declaration and Plan identity.
+
+        Raises:
+            PublicSimulationCompilationError: The declaration cannot be assembled.
+        """
         from .runner import compile_simulation
 
         return {

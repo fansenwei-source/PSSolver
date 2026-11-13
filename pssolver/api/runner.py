@@ -37,7 +37,14 @@ class _RunCarrier:
 
 @dataclass(frozen=True, slots=True)
 class CompiledSimulation:
-    """Public Plan, source declaration and their independent identities."""
+    """Public Plan, source declaration and their independent identities.
+
+    Attributes:
+        source: Original immutable simulation declaration.
+        plan: Assembled tensor-free execution plan.
+        plan_identity_sha256: Canonical digest of the execution plan.
+        declaration_sha256: Canonical digest of the source declaration.
+    """
 
     source: Simulation
     plan: Plan
@@ -46,7 +53,11 @@ class CompiledSimulation:
     _run: _RunCarrier | None = field(default=None, init=False, compare=False, hash=False, repr=False)
 
     def validate_integrity(self) -> None:
-        """Check the declaration, Plan and private preparation agree."""
+        """Check the declaration, Plan and private preparation agree.
+
+        Raises:
+            ValueError: The declaration, Plan, or prepared inputs disagree.
+        """
         if self.declaration_sha256 != self.source.canonical_sha256():
             raise ValueError("compiled simulation declaration identity does not match source")
         plan_metadata = self.plan.to_metadata()
@@ -62,7 +73,18 @@ class CompiledSimulation:
 
 
 def compile_simulation(simulation: Simulation) -> CompiledSimulation:
-    """Assemble once, without resolving devices or importing tensor runtimes."""
+    """Assemble once, without resolving devices or importing tensor runtimes.
+
+    Args:
+        simulation: A complete public simulation declaration.
+
+    Returns:
+        The source declaration and its prepared immutable Plan.
+
+    Raises:
+        TypeError: The input is not a public 0.5 simulation declaration.
+        PublicSimulationCompilationError: Lowering or assembly rejects the declaration.
+    """
     if not isinstance(simulation, Simulation):
         raise TypeError("expected a 0.5 Simulation; see docs/migration_0_4_to_0_5.md")
     try:
@@ -86,7 +108,21 @@ def run_simulation(
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
 ) -> SimulationResult:
-    """Run a public declaration or the exact product of compile_simulation."""
+    """Run a public declaration or the exact product of compile_simulation.
+
+    Args:
+        simulation: A declaration or the unchanged result of compilation.
+        progress: Optional iterable of progress indices for the run.
+        emit_metadata: Whether to emit metadata through the runtime's output channel.
+
+    Returns:
+        Dry-run or completion evidence with identities and scheduled outputs.
+
+    Raises:
+        TypeError: The input is invalid or lacks the original prepared runtime data.
+        ValueError: A compiled declaration or Plan fails its integrity check.
+        PublicSimulationCompilationError: Compilation rejects a supplied declaration.
+    """
     compiled = simulation if isinstance(simulation, CompiledSimulation) else compile_simulation(simulation)
     if compiled._run is None:
         raise TypeError("run_simulation requires a product of compile_simulation")

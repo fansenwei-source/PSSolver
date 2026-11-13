@@ -4,7 +4,11 @@ from enum import Enum
 
 
 class PublicCompilationRejectionCode(str, Enum):
-    """Codes for unsupported mathematics, scope and invalid declarations."""
+    """Classify unsupported mathematics, scope, or invalid declarations.
+
+    Attributes:
+        value: Stable machine-readable token describing the reason.
+    """
 
     BOUNDARY_DATA_RESERVED = "boundary_data_reserved"
     DECLARATION_CONTRACT = "declaration_contract"
@@ -25,9 +29,29 @@ class PublicCompilationRejectionCode(str, Enum):
 
 
 class PublicSimulationCompilationError(ValueError):
-    """A failed assembly with a public machine-readable explanation."""
+    """Raised when the public declaration cannot be lowered or assembled.
 
-    def __init__(self, code, reason: str, *, kind="mathematical", source=None, opens_in=None):
+    Attributes:
+        code: Machine-readable rejection code.
+        reason: Human-readable description of the failure.
+        kind: Rejection category, normally mathematical or scope-related.
+        source: Optional authority or rule explaining the restriction.
+        opens_in: Optional version or step in which scope may open.
+    """
+
+    def __init__(self, code: str | PublicCompilationRejectionCode, reason: str, *, kind: str = "mathematical", source: str | None = None, opens_in: str | None = None) -> None:
+        """Store a public compilation rejection and its structured context.
+
+        Args:
+            code: Rejection member or its string value.
+            reason: Explanation of the rejected declaration.
+            kind: Category of rejection.
+            source: Authority or rule behind a restriction, if known.
+            opens_in: Version or step that may open the scope, if known.
+
+        Raises:
+            ValueError: The rejection code is not recognized.
+        """
         self.code = PublicCompilationRejectionCode(code)
         self.kind = kind
         self.reason = reason

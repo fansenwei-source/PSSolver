@@ -37,7 +37,11 @@ BoundaryPolicy = (
 
 
 def neumann_q() -> HomogeneousBoundaryPolicy:
-    """Return homogeneous Neumann anchoring for the logical Q field."""
+    """Declare homogeneous Neumann anchoring for the logical Q field.
+
+    Returns:
+        A physical policy prescribing zero normal Q derivative.
+    """
 
     return HomogeneousBoundaryPolicy(
         field_name="Q",
@@ -47,7 +51,11 @@ def neumann_q() -> HomogeneousBoundaryPolicy:
 
 
 def free_slip_velocity() -> HomogeneousBoundaryPolicy:
-    """Return no-penetration/free-slip conditions for vector velocity."""
+    """Declare no-penetration/free-slip conditions for vector velocity.
+
+    Returns:
+        A physical policy with zero normal velocity and free tangential slip.
+    """
 
     return HomogeneousBoundaryPolicy(
         field_name="velocity",
@@ -57,7 +65,11 @@ def free_slip_velocity() -> HomogeneousBoundaryPolicy:
 
 
 def no_slip_velocity() -> HomogeneousBoundaryPolicy:
-    """Return zero velocity for every component on bounded faces."""
+    """Declare zero velocity for every component on bounded faces.
+
+    Returns:
+        A physical policy prescribing homogeneous no-slip walls.
+    """
 
     return HomogeneousBoundaryPolicy(
         field_name="velocity",
@@ -67,7 +79,11 @@ def no_slip_velocity() -> HomogeneousBoundaryPolicy:
 
 
 def neumann_pressure_compatibility() -> HomogeneousBoundaryPolicy:
-    """Return Neumann modal compatibility for the pressure multiplier."""
+    """Declare Neumann modal compatibility for the pressure multiplier.
+
+    Returns:
+        An algebraic compatibility policy, not a physical wall condition.
+    """
 
     return HomogeneousBoundaryPolicy(
         field_name="pressure",

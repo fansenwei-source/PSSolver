@@ -75,7 +75,12 @@ def _plain_json(value):
 
 
 class SpectralNumerics(NumericsConfig):
-    """Precision, storage and nonlinear projection choices for one simulation."""
+    """Precision, storage and nonlinear projection choices for one simulation.
+
+    Attributes:
+        dtype: Canonical precision token.
+        pressure_solver: Optional immutable Channel pressure-solver configuration.
+    """
 
     __slots__ = ("pressure_solver",)
     pressure_solver: Mapping[str, object] | None
@@ -95,6 +100,21 @@ class SpectralNumerics(NumericsConfig):
         ),
         pressure_solver: Mapping[str, object] | None = None,
     ) -> None:
+        """Declare spectral policies without allocating tensors.
+
+        Args:
+            dtype: Real precision token or precision enum.
+            spectral_storage: Full or Hermitian-half spectral storage policy.
+            dealias_rule: Nonlinear projection rule.
+            projected_transform_execution: Implementation of projected transforms.
+            hermitian_axis: Optional axis that stores the Hermitian half spectrum.
+            transform_execution_order: Execution order of multidimensional transforms.
+            pressure_solver: Optional string-keyed pressure-solver policy.
+
+        Raises:
+            TypeError: Pressure-solver settings are not a string-keyed mapping.
+            ValueError: A numerical policy token or combination is not supported.
+        """
         super().__init__(
             precision=_enum(dtype, Precision, "dtype"),
             dealias_rule=_enum(dealias_rule, DealiasRule, "dealias rule"),
@@ -122,16 +142,30 @@ class SpectralNumerics(NumericsConfig):
 
     @property
     def dtype(self) -> str:
-        """Return the canonical precision token, not a torch dtype."""
+        """Return the canonical precision token, not a torch dtype.
+
+        Returns:
+            The configured real-precision token.
+        """
         return self.precision.value
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize spectral and pressure policies.
+
+        Returns:
+            A fresh dictionary of tensor-free numerical options.
+        """
         return {**super().to_metadata(), "pressure_solver": _plain_json(self.pressure_solver)}
 
 
 @dataclass(frozen=True, slots=True)
 class SemiImplicitEuler:
-    """Declare the fixed timestep and optional dynamic-spectrum refresh cadence."""
+    """Declare the fixed timestep and optional dynamic-spectrum refresh cadence.
+
+    Attributes:
+        dt: Positive finite timestep in simulation time units.
+        refresh: Optional cadence specified by steps or by physical time.
+    """
 
     dt: float
     refresh: Mapping[str, object] | None = None
@@ -150,12 +184,22 @@ class SemiImplicitEuler:
         object.__setattr__(self, "refresh", refresh)
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the timestep and refresh declaration.
+
+        Returns:
+            A fresh dictionary of time-stepping options.
+        """
         return {"dt": self.dt, "refresh": _plain_json(self.refresh)}
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class TorchSpectralExecution:
-    """Device and implementation options; construction does not resolve devices."""
+    """Device and implementation options; construction does not resolve devices.
+
+    Attributes:
+        device: Explicit execution-device token.
+        options: Immutable implementation options; do not repeat the device here.
+    """
 
     device: str = "cpu"
     options: Mapping[str, object] | None = None
@@ -168,12 +212,22 @@ class TorchSpectralExecution:
         object.__setattr__(self, "options", options)
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the requested execution policy.
+
+        Returns:
+            A dictionary with the unresolved device token and plain options.
+        """
         return {"device": self.device, "options": _plain_json(self.options)}
 
 
 @dataclass(frozen=True, slots=True)
 class GeneratedInitialCondition:
-    """Request a generated field from a named initialization family."""
+    """Request a generated field from a named initialization family.
+
+    Attributes:
+        family: Identifier of the initial-field generator.
+        parameters: Immutable generator inputs; available keys depend on the family.
+    """
 
     family: str
     parameters: Mapping[str, object] | None = None
@@ -184,6 +238,11 @@ class GeneratedInitialCondition:
         object.__setattr__(self, "parameters", _mapping(self.parameters, "initial condition parameters"))
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the generated initial-field request.
+
+        Returns:
+            A fresh dictionary identifying the generator and its options.
+        """
         return {
             "source": "generated",
             "family": self.family,
@@ -193,7 +252,13 @@ class GeneratedInitialCondition:
 
 @dataclass(frozen=True, slots=True)
 class SnapshotInitialCondition:
-    """Declare a compact-Q file in an existing snapshot directory."""
+    """Declare a compact-Q file in an existing snapshot directory.
+
+    Attributes:
+        directory: Directory containing the compact-Q snapshot series.
+        step: Non-negative step at which to load the field.
+        mode: Whether to branch from or resume the snapshot clock.
+    """
 
     directory: str | Path
     step: int
@@ -206,6 +271,11 @@ class SnapshotInitialCondition:
         object.__setattr__(self, "directory", Path(self.directory))
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the initial snapshot declaration, without reading its arrays.
+
+        Returns:
+            A dictionary containing the directory, step, and clock mode.
+        """
         return {
             "source": "snapshot",
             "directory": str(self.directory),
@@ -216,7 +286,21 @@ class SnapshotInitialCondition:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Output:
-    """Declare output scheduling and checkpoint/restart options."""
+    """Declare output scheduling and checkpoint/restart options.
+
+    Attributes:
+        directory: Directory in which the run publishes its outputs.
+        steps: Positive number of timesteps to execute.
+        save_interval: Number of timesteps between saved fields.
+        diagnostic_interval: Number of timesteps between diagnostic records.
+        save_start_step: First eligible field-save step.
+        diagnostics: Whether diagnostics are enabled.
+        save_hydrodynamics: Whether to save velocity and pressure with Q.
+        checkpoint_interval: Optional number of timesteps between checkpoints.
+        restart_from: Optional path to the checkpoint used for continuation.
+        dry_run: Whether to validate without executing the simulation.
+        validation_config_sha256: Optional lowercase SHA-256 of validation input.
+    """
 
     directory: str | Path
     steps: int
@@ -256,6 +340,11 @@ class Output:
             object.__setattr__(self, "restart_from", Path(self.restart_from))
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the output declaration without creating its directory.
+
+        Returns:
+            A fresh dictionary with the output and continuation settings.
+        """
         return {
             "directory": str(self.directory),
             "steps": self.steps,

@@ -29,7 +29,14 @@ from .simulation import Simulation
 
 @dataclass(frozen=True, slots=True)
 class DeclarationCapability:
-    """One declaration and whether any assembly probe accepts it."""
+    """One declaration and whether any assembly probe accepts it.
+
+    Attributes:
+        kind: Category of declaration, such as model or boundary policy.
+        key: Stable catalog key in that category.
+        constructor: Dotted path to the declared constructor.
+        executable: Whether at least one probed combination accepts it.
+    """
 
     kind: str
     key: str
@@ -37,12 +44,28 @@ class DeclarationCapability:
     executable: bool
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the declaration's capability entry.
+
+        Returns:
+            A fresh dictionary with the constructor and assembly status.
+        """
         return {**asdict(self), "declarable": True}
 
 
 @dataclass(frozen=True, slots=True)
 class QualifiedCombination:
-    """The assembly verdict for a model, geometry and boundary policy set."""
+    """The assembly verdict for a model, geometry and boundary policy set.
+
+    Attributes:
+        equation_variant: Catalog key of the model.
+        geometry_name: Catalog key of the geometry.
+        boundary_policies: Ordered keys of the selected field policies.
+        qualified: Whether the combination assembled successfully.
+        kind: Rejection category, if the combination was rejected.
+        code: Machine-readable rejection code, if present.
+        reason: Human-readable rejection explanation, if present.
+        opens_in: Version or step that may open the scope, if recorded.
+    """
 
     equation_variant: str
     geometry_name: str
@@ -54,12 +77,25 @@ class QualifiedCombination:
     opens_in: str | None = None
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the combination's verdict and its explanation.
+
+        Returns:
+            A fresh dictionary containing the policies as a list.
+        """
         return {**asdict(self), "boundary_policies": list(self.boundary_policies)}
 
 
 @dataclass(frozen=True, slots=True)
 class PublicCapabilityCatalog:
-    """Public vocabulary and the combinations determined by the assembler."""
+    """Public vocabulary and the combinations determined by the assembler.
+
+    Attributes:
+        models: Recognized model declarations.
+        geometries: Recognized geometry declarations.
+        boundary_policies: Recognized boundary-policy declarations.
+        qualified_combinations: Combinations accepted by assembly.
+        rejected_combinations: Rejected combinations and their explanations.
+    """
 
     models: tuple[DeclarationCapability, ...]
     geometries: tuple[DeclarationCapability, ...]
@@ -68,6 +104,11 @@ class PublicCapabilityCatalog:
     rejected_combinations: tuple[QualifiedCombination, ...]
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize the full capability catalog.
+
+        Returns:
+            A fresh schema-versioned dictionary of vocabulary and verdicts.
+        """
         return {
             "schema_version": 1,
             **{
@@ -127,7 +168,11 @@ def _probe_inputs(model, geometry, boundaries):
 
 
 def capability_catalog() -> PublicCapabilityCatalog:
-    """Probe the Cartesian product, retaining structured assembly rejections."""
+    """Probe the Cartesian product, retaining structured assembly rejections.
+
+    Returns:
+        A tensor-free catalog containing both accepted and rejected combinations.
+    """
     models = _model_vocab()
     geometries = {
         g.name: g for g in (
@@ -172,18 +217,38 @@ def capability_catalog() -> PublicCapabilityCatalog:
 
 
 def available_models() -> tuple[DeclarationCapability, ...]:
+    """List the model declarations known to the assembler.
+
+    Returns:
+        An immutable tuple of model capability records.
+    """
     return capability_catalog().models
 
 
 def available_geometries() -> tuple[DeclarationCapability, ...]:
+    """List the geometry declarations known to the assembler.
+
+    Returns:
+        An immutable tuple of geometry capability records.
+    """
     return capability_catalog().geometries
 
 
 def available_boundary_policies() -> tuple[DeclarationCapability, ...]:
+    """List the boundary policies known to the assembler.
+
+    Returns:
+        An immutable tuple of boundary-policy capability records.
+    """
     return capability_catalog().boundary_policies
 
 
 def available_combinations() -> tuple[QualifiedCombination, ...]:
+    """List model, geometry, and boundary combinations that assemble.
+
+    Returns:
+        An immutable tuple of accepted combination records.
+    """
     return capability_catalog().qualified_combinations
 
 

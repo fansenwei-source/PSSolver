@@ -15,7 +15,11 @@ from pssolver.core._canonical import canonical_json
 
 
 class SimulationRunStatus(str, Enum):
-    """Terminal state returned by the synchronous public runner."""
+    """Terminal state returned by the synchronous public runner.
+
+    Attributes:
+        value: Stable string indicating dry-run validation or completion.
+    """
 
     DRY_RUN = "dry_run"
     COMPLETE = "complete"
@@ -23,7 +27,14 @@ class SimulationRunStatus(str, Enum):
 
 @runtime_checkable
 class SimulationObservationProtocol(Protocol):
-    """Structural Q/velocity/pressure observation shared by applications."""
+    """Structural Q/velocity/pressure observation shared by applications.
+
+    Attributes:
+        step: Step at which the constraints and fields were observed.
+        q: Compact Q tensor in the field's physical layout.
+        velocity: Vector velocity in the field's physical layout.
+        pressure: Scalar pressure in the field's physical layout.
+    """
 
     step: int
     q: object
@@ -33,7 +44,11 @@ class SimulationObservationProtocol(Protocol):
 
 @runtime_checkable
 class SimulationDiagnosticProtocol(Protocol):
-    """Minimum structural identity of one application diagnostic."""
+    """Minimum structural identity of one application diagnostic.
+
+    Attributes:
+        step: Step at which the diagnostic was captured.
+    """
 
     step: int
 
@@ -76,6 +91,21 @@ class SimulationResult:
     protocols, so the public API does not expose Plane- or Channel-specific
     workflow result classes.  No array is copied again while constructing this
     lightweight wrapper.
+
+    Attributes:
+        status: Whether execution completed or only validation was requested.
+        application: Name of the qualified application.
+        plan_identity_sha256: Digest of the executable Plan.
+        source_simulation_sha256: Digest of the source simulation declaration.
+        output_directory: Output location, absent for a dry run.
+        start_step: Starting clock, absent for a dry run.
+        final_step: Final clock, absent for a dry run.
+        elapsed_seconds: Elapsed execution time, absent for a dry run.
+        saved_steps: Steps at which fields were saved.
+        checkpoint_steps: Steps at which checkpoints were written.
+        final_observation: Final constrained fields, absent for a dry run.
+        diagnostics: Diagnostic records captured during execution.
+        provenance: Immutable JSON-compatible run provenance.
     """
 
     status: SimulationRunStatus
@@ -176,9 +206,19 @@ class SimulationResult:
 
     @property
     def completed(self) -> bool:
+        """Report whether the simulation actually executed.
+
+        Returns:
+            True for a completed run, false for a dry run.
+        """
         return self.status is SimulationRunStatus.COMPLETE
 
     def to_metadata(self) -> dict[str, object]:
+        """Serialize run evidence without copying field arrays.
+
+        Returns:
+            A fresh dictionary with identities, timing, output steps and array descriptors.
+        """
         observation = self.final_observation
         observation_metadata = None
         if observation is not None:
