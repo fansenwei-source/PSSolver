@@ -73,19 +73,43 @@ facades      functional/ cli/                       functional API 1.1 (+ its le
 vocabulary   core/                                  canonical hashing, identifiers, errors, specs
 ```
 
-Dependencies point downward only. `tools/check_imports.py` checks the module
-import contracts below (rules in `pyproject.toml`,
-`[tool.pssolver.import-contracts]`):
+`qualification/s30_guard.py` checks the full import contract against
+`[tool.pssolver.architecture-contracts]` in `pyproject.toml`. The existing
+`tools/check_imports.py` checks the original subset. The full contract covers
+static and literal-resolved dynamic imports. Its cycle check covers explicit
+module-initialization imports; local and type-checking-only imports are still
+dependencies, but not cycle edges.
 
 | Package | Must not import |
 |---|---|
-| `core`, `planning` | `torch`; `engine`, `runtime`, `io`, `api`, `functional`, `cli`; the implementation modules of `models` and `presets` |
-| `backends`, `operators`, `linear_solvers` | `api`, `runtime`, `io`, `functional`, `cli`, except registered planning contracts |
+| `core`, `planning` | `torch`, `engine`, `runtime`, `io`, `api`, `functional`, `cli`, `models`, `presets` |
+| `backends`, `operators`, `linear_solvers` | `api`, `runtime`, `io`, `functional`, `cli` |
 | `engine` | `api`, `runtime`, `io`, `functional`, `cli` |
 | `runtime` | `api`, `functional`, `cli` |
-| `io` | `api`, `runtime`, `functional`, `cli`; from `engine`, only the `State` type |
-| `models`, `presets`, `geometries`, `boundaries`, `integrators` | `engine` internals, `runtime`, `io`, `api` |
-| everything in the package | `experimental`; the moved `pssolver.experimental.stage_*` names |
+| `io` | `api`, `runtime`, `functional`, `cli`, `engine` |
+| `models`, `presets`, `geometries`, `boundaries`, `integrators` | `engine`, `runtime`, `io`, `api` |
+| `outside_experimental` | `experimental` |
+
+The only explicitly registered edges for this table are:
+
+- `pssolver.io.engine_state` imports `State` from `pssolver.engine.state`.
+- `pssolver.planning.assemble.AssembledProblem.engine` imports `Engine` from
+  `pssolver.engine.engine` only when called. Importing planning does not load
+  Engine or Torch.
+- `pssolver.integrators.reference_checkpoint` is a reference-test I/O adapter.
+  It imports `checkpoint_directory_transaction` from `pssolver.io`, and
+  `canonical_indented_json_bytes`, `indented_identity_sha256`, `raw_file_sha256`,
+  `read_reference_tensor_record`, `sha256_bytes` and `write_reference_tensor_record`
+  from `pssolver.io._checkpoint_artifacts`.
+- `pssolver.operators.__getattr__` uses
+  `pssolver.core._compatibility.resolve_deprecated_facade_name` to lazily resolve
+  the 13 exact exports in `[tool.pssolver.architecture-facades]` from
+  `pssolver.experimental.boundary_pilots`. Name access preserves object identity
+  and emits the existing deprecation warning. This is not a general dependency
+  on experimental modules.
+
+The frozen v0.4 declarations in `pssolver.functional.legacy_declarations` are
+reported as historical dependencies and are not rewritten.
 
 How `planning` stays torch-free while presets wrap torch kernels:
 - Component objects are created by the caller and passed into `assemble()`.

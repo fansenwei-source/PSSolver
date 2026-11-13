@@ -27,3 +27,51 @@ linear_solvers = ["pssolver.api", "pssolver.runtime"]
 runtime = ["pssolver.api", "pssolver.functional", "pssolver.experimental", "pssolver.cli"]
 io = ["pssolver.api", "pssolver.functional", "pssolver.runtime", "pssolver.models", "pssolver.planning", "pssolver.experimental", "pssolver.cli"]
 cli = ["pssolver.functional", "pssolver.experimental"]
+
+[tool.pssolver.architecture-contracts]
+core = ["torch", "engine", "runtime", "io", "api", "functional", "cli", "models", "presets"]
+planning = ["torch", "engine", "runtime", "io", "api", "functional", "cli", "models", "presets"]
+backends = ["api", "runtime", "io", "functional", "cli"]
+operators = ["api", "runtime", "io", "functional", "cli"]
+linear_solvers = ["api", "runtime", "io", "functional", "cli"]
+engine = ["api", "runtime", "io", "functional", "cli"]
+runtime = ["api", "functional", "cli"]
+io = ["api", "runtime", "functional", "cli", "engine"]
+models = ["engine", "runtime", "io", "api"]
+presets = ["engine", "runtime", "io", "api"]
+geometries = ["engine", "runtime", "io", "api"]
+boundaries = ["engine", "runtime", "io", "api"]
+integrators = ["engine", "runtime", "io", "api"]
+outside_experimental = ["experimental"]
+
+[tool.pssolver.architecture-edges]
+"pssolver.io.engine_state" = ["pssolver.engine.state:State"]
+"pssolver.planning.assemble:AssembledProblem.engine" = ["pssolver.engine.engine:Engine"]
+"pssolver.integrators.reference_checkpoint" = [
+    "pssolver.io:checkpoint_directory_transaction",
+    "pssolver.io._checkpoint_artifacts:canonical_indented_json_bytes",
+    "pssolver.io._checkpoint_artifacts:indented_identity_sha256",
+    "pssolver.io._checkpoint_artifacts:raw_file_sha256",
+    "pssolver.io._checkpoint_artifacts:read_reference_tensor_record",
+    "pssolver.io._checkpoint_artifacts:sha256_bytes",
+    "pssolver.io._checkpoint_artifacts:write_reference_tensor_record",
+]
+
+[tool.pssolver.architecture-facades."pssolver.operators:__getattr__"]
+resolver = "pssolver.core._compatibility:resolve_deprecated_facade_name"
+target = "pssolver.experimental.boundary_pilots"
+exports = [
+    "CellCenteredRobinEigenbasisOperator",
+    "FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION",
+    "FreshInitialConditioningPolicy",
+    "LEGACY_WHOLE_SLAB_SINE",
+    "LOCALIZED_QUINTIC_WALL_TRANSITION",
+    "MaterializedLinearLiftCorrection",
+    "PlaneStaticLiftingOperator",
+    "STRICT_NO_AUTOMATIC_CONDITIONING",
+    "legacy_whole_slab_sine_conditioning",
+    "localized_quintic_wall_transition",
+    "materialize_cell_centered_robin_eigenbasis",
+    "materialize_plane_static_lifting",
+    "strict_no_automatic_conditioning",
+]
