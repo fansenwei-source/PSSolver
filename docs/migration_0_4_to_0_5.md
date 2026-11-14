@@ -327,6 +327,14 @@ together with Functional API 1.1, not with this migration.
 | `--zero-mode-policy` | Keep the same option. |
 | `-h` | Keep the same option. |
 
+## Historical benchmark scripts
+
+The [S-30 disposition table](../qualification/s30_disposition.json) identifies
+the 14 benchmark scripts kept at their original paths for the D-0016 source
+hash check. Their bytes match the pre-S-30 baseline. They are not 0.5 public
+entry points, and a historical import that already failed is not made runnable
+by keeping the source file.
+
 ## Retired v0.4.0 root commands
 
 These are historical invocations, not commands supported from the 0.5 tree.

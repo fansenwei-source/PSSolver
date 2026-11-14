@@ -1,8 +1,8 @@
 {
   "basis": "7161608913809466b0f9dc85e419fe9f3fec5a9e",
   "counts": {
-    "delete": 106,
-    "historical": 96
+    "delete": 92,
+    "historical": 110
   },
   "historical_literals_not_executed": {
     "tests/test_architecture_stage_l.py:149": "Uncalled helper; the active shadow run uses the historical v0.4 checkout.",
@@ -677,53 +677,97 @@
     },
     "benchmarks/analyze_periodic_hermitian_profiles.py": {
       "blob": "7a8e5d6489b4b543757603007dc8b1688ce48d33",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107"
     },
     "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": {
       "blob": "6a34ceaaede9f1e7b9fc21fe63de7b8e2c454f0e",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588"
     },
     "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": {
       "blob": "aacfe7d65342d6f04ff49cc8e745b1e6f8be1078",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c"
     },
     "benchmarks/analyze_rc2_g5_installed_smokes.py": {
       "blob": "8d6816f80ed04a77d87b913e1888c3d435a87a98",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593"
     },
     "benchmarks/analyze_rc437_lifting_h100.py": {
@@ -923,38 +967,71 @@
     },
     "benchmarks/benchmark_periodic_fast_path.py": {
       "blob": "e47b70b818892e6999f56d0728d089a738195d76",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a"
     },
     "benchmarks/benchmark_stokes_pressure_diagnostics.py": {
       "blob": "e11c52af2960c8dc814c10f1825d99eae3e3bd2a",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0"
     },
     "benchmarks/benchmark_transform_backend.py": {
       "blob": "26a1785cc3876c00acbb7ed7e90a6f4771c19108",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56"
     },
     "benchmarks/build_rc6_single_h100_stage_plan.py": {
@@ -1033,28 +1110,50 @@
     },
     "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": {
       "blob": "f14b0827b08a8f182ce9ddaafdf10bba84fdee98",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696"
     },
     "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": {
       "blob": "04e0d48c38fb5af8c30b846646ea56a79ee09485",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c"
     },
     "benchmarks/diagnose_plane_nyquist_storage.py": {
@@ -1091,14 +1190,25 @@
     },
     "benchmarks/diagnose_plane_static_lifting_recovery.py": {
       "blob": "cd7c2ae2369c7594902b3bd87e075e767d53e26c",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s27_expected_unimportable.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f"
     },
     "benchmarks/diagnose_rc451_cross_runtime_residuals.py": {
@@ -1290,15 +1400,26 @@
     },
     "benchmarks/profile_periodic_hermitian_qualification.py": {
       "blob": "55169c61542d3e85de1ac41346f3bb487674df01",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d"
     },
     "benchmarks/profile_plane_runtime_timestep.py": {
@@ -1682,15 +1803,26 @@
     },
     "benchmarks/run_periodic_hermitian_profile_matrix.py": {
       "blob": "60f95ffe8e962320c6abcf1c918f4c9de955f698",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s25_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056"
     },
     "benchmarks/run_phase9_p95_gradient_diagnostic.py": {
@@ -1721,27 +1853,49 @@
     },
     "benchmarks/run_public_simulation_h100_case.py": {
       "blob": "3d64a11e77cb0ac99065fa005a465a522479b262",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s27_expected_unimportable.json",
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb"
     },
     "benchmarks/run_rc2_g5_installed_smoke.py": {
       "blob": "85e426db5ae508b3d78a222d0a7356a512a85623",
-      "consumer_scan": [],
-      "disposition": "delete",
+      "consumer_scan": [
+        [
+          "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py",
+          217,
+          "d0016_catalog_hash"
+        ]
+      ],
+      "current_tree_readers": [
+        {
+          "line": 217,
+          "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+        }
+      ],
+      "disposition": "historical",
       "marked_by": [
         "qualification/s28b_frozen_callers.json"
       ],
       "mode": "100644",
-      "reason": "historical qualification, comparison or research script; no surviving executable reader",
-      "retrieval_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+      "reason": "R-0134: current D-0016 catalog check reads and hashes original source.",
       "sha256": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4"
     },
     "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py": {

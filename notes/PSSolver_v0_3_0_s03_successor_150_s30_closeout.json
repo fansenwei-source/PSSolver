@@ -22,7 +22,7 @@
       "reason": "S-30 forward binding; prior frozen records remain unchanged."
     },
     "CHANGELOG.md": {
-      "current_sha256": "b835f2b1dfc1aef69ba0cf6e8b02e2814809d1904ec56bde706ef8c3eba198b1",
+      "current_sha256": "d07aa01bf2902bf3b7b9d3ac79172b914340f4b290a67538a05d64e64800de6e",
       "historical_sha256": "4063fb3891791c16e71fb6cc65cc753969eb0608773600be07eaad9a2f138be6",
       "reason": "S-30 forward binding; prior frozen records remain unchanged."
     },
@@ -62,7 +62,7 @@
       "reason": "S-30 forward binding; prior frozen records remain unchanged."
     },
     "docs/migration_0_4_to_0_5.md": {
-      "current_sha256": "832c3b275929994b9d5268abe2bf0ca2e788b96fb10400dbcd4f549ba63b59d7",
+      "current_sha256": "aefaf6d76bd2832e0c13081193229f4fbb487753a982cdc32a8de8d113bc0983",
       "historical_sha256": "9a8b3a7623d899e266610d2c42a38e13b492e2f2e647919db094b4b52169c52b",
       "reason": "S-30 forward binding; prior frozen records remain unchanged."
     },
@@ -314,10 +314,34 @@
   },
   "implementation_ruling": "R-0131",
   "introduced_sources": {
-    "qualification/s30_disposition.json": "c3d68622d96db420a031fccdc89f0d831bfbfe79f25a9efa029308ba3893f888",
-    "qualification/s30_format_scope.json": "c0fd433c25a869e0c68a67bd3af78f2f2a4accd611a6616d15b7b28587af1e7f",
+    "qualification/s30_disposition.json": "18d658fae0e24fcce5aa49afef11d4526d9f0137879696218afd4b0857772dae",
+    "qualification/s30_format_scope.json": "6374d5a5ea1c84e3440811dcfc667915225dde3cd04575590973768ad61cfb5e",
     "qualification/s30_guard.py": "d1f8cd59f251867c4fbe6566aca0bd8a2ab2cb56d5c590fd6f5f00422168228b",
     "tests/test_v0_5_s30_closeout.py": "b2f330b0390a45cc8e0088122388926af3a59ecf1d451de5743fdad6d965a6cc"
+  },
+  "r0134_original_path_retention": {
+    "paths": {
+      "benchmarks/analyze_periodic_hermitian_profiles.py": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107",
+      "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588",
+      "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c",
+      "benchmarks/analyze_rc2_g5_installed_smokes.py": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593",
+      "benchmarks/benchmark_periodic_fast_path.py": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a",
+      "benchmarks/benchmark_stokes_pressure_diagnostics.py": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0",
+      "benchmarks/benchmark_transform_backend.py": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56",
+      "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696",
+      "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c",
+      "benchmarks/diagnose_plane_static_lifting_recovery.py": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f",
+      "benchmarks/profile_periodic_hermitian_qualification.py": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d",
+      "benchmarks/run_periodic_hermitian_profile_matrix.py": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056",
+      "benchmarks/run_public_simulation_h100_case.py": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb",
+      "benchmarks/run_rc2_g5_installed_smoke.py": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4"
+    },
+    "reader": {
+      "line": 217,
+      "nodeid": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_every_retained_or_frozen_helper_script_is_byte_pinned"
+    },
+    "ruling": "R-0134",
+    "source_commit": "7161608913809466b0f9dc85e419fe9f3fec5a9e"
   },
   "retired_sources": {
     "Channel_control.py": {
@@ -376,56 +400,8 @@
       "sha256": "783cf9b884ce237015a1ddd7d0a79f759df5c57db6d5f66279c5dc0210e32840",
       "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
     },
-    "benchmarks/analyze_periodic_hermitian_profiles.py": {
-      "sha256": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": {
-      "sha256": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": {
-      "sha256": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/analyze_rc2_g5_installed_smokes.py": {
-      "sha256": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/benchmark_periodic_fast_path.py": {
-      "sha256": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/benchmark_stokes_pressure_diagnostics.py": {
-      "sha256": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/benchmark_transform_backend.py": {
-      "sha256": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
     "benchmarks/capture_beris_edwards_nsys.py": {
       "sha256": "b79cadeef16f14bbe925707dc06652c09676075ab937c5103cba1efce8a032b2",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": {
-      "sha256": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": {
-      "sha256": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/diagnose_plane_static_lifting_recovery.py": {
-      "sha256": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/profile_periodic_hermitian_qualification.py": {
-      "sha256": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/run_periodic_hermitian_profile_matrix.py": {
-      "sha256": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056",
       "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
     },
     "benchmarks/run_phase9_p95_gradient_diagnostic.py": {
@@ -434,14 +410,6 @@
     },
     "benchmarks/run_phase9_p95_gradient_validator_v2.py": {
       "sha256": "44930fe16019e318c86493029141b6b9575a2078551395c6399c6ad22d51a137",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/run_public_simulation_h100_case.py": {
-      "sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb",
-      "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
-    },
-    "benchmarks/run_rc2_g5_installed_smoke.py": {
-      "sha256": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4",
       "source_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda"
     },
     "benchmarks/smoke_periodic_fast_path_default.py": {

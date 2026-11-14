@@ -20,6 +20,8 @@ paths listed with that retrieval point in `qualification/s30_disposition.json`.
 The migration guide maps the removed root commands to supported entry points
 or identifies them as historical-only. The original tests, evidence and
 scripts that a current check still reads keep their historical bytes.
+This includes the 14 benchmark scripts read by the D-0016 inventory check;
+they remain at their original paths for evidence checks, not as 0.5 entry points.
 
 The S-23 CPU reference is the comparison contract for Periodic, Plane and
 Channel: the qualified float32/float64 cases include trajectories, restart,

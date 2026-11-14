@@ -390,9 +390,8 @@
     ],
     "benchmarks/analyze_periodic_hermitian_profiles.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/analyze_phase8_cumulative_closure.py": [
       "direct current check or registered location",
@@ -403,20 +402,18 @@
     ],
     "benchmarks/analyze_phase9_p95_gradient_diagnostic.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/analyze_phase9_p95_gradient_validator_v2.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/analyze_rc2_g5_installed_smokes.py": [
       "direct current check or registered location",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/analyze_rc426_cross_device_checkpoint.py": [
       "direct current check or registered location",
@@ -538,20 +535,18 @@
     ],
     "benchmarks/benchmark_periodic_fast_path.py": [
       "direct current check or registered location",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/benchmark_stokes_pressure_diagnostics.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/benchmark_transform_backend.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/benchmark_v0_3_s09_channel_cpu.py": [
       "direct current check or registered location",
@@ -589,15 +584,13 @@
     ],
     "benchmarks/diagnose_phase9_p95_gradient_epsilon.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/diagnose_plane_nyquist_storage.py": [
       "direct current check or registered location",
@@ -606,9 +599,8 @@
     ],
     "benchmarks/diagnose_plane_static_lifting_recovery.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/diagnose_rc451_cross_runtime_residuals.py": [
       "direct current check or registered location",
@@ -719,9 +711,8 @@
     ],
     "benchmarks/profile_periodic_hermitian_qualification.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/profile_plane_runtime_timestep.py": [
       "direct current check or registered location",
@@ -798,9 +789,8 @@
     ],
     "benchmarks/run_periodic_hermitian_profile_matrix.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/run_phase9_p95_gradient_diagnostic.py": [
       "unresolved current reader; fail closed, not a new exemption",
@@ -817,15 +807,13 @@
     ],
     "benchmarks/run_public_simulation_h100_case.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/run_rc2_g5_installed_smoke.py": [
       "direct current check or registered location",
-      "unresolved current reader; fail closed, not a new exemption",
-      "removed in S-30 disposition projection",
-      "C1 retired from the source tree"
+      "C1 original-path history; bytes retained",
+      "R-0134: frozen D-0016 catalog hash reader"
     ],
     "benchmarks/run_rc425_installed_checkpoint_closure.py": [
       "direct current check or registered location",
